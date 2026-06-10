@@ -13,5 +13,9 @@ export { communicationConfig, type CommunicationConfig } from "./services/commun
 export { reportingConfig, type ReportingConfig } from "./services/reporting";
 export { messagingConfig, type MessagingConfig } from "./services/messaging";
 export { notificationConfig, type NotificationConfig } from "./services/notification";
+export { aiNotesConfig, type AiNotesConfig } from "./services/ai-notes";
+export { marketplaceConfig, type MarketplaceConfig } from "./services/marketplace";
+export { enterpriseConfig, type EnterpriseConfig } from "./services/enterprise";
 export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
 export { gatewayConfig, type GatewayConfig } from "./services/gateway";
+export * from "./regions/constants";

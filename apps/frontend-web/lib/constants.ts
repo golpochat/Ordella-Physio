@@ -16,6 +16,9 @@ export const API_ROUTES = {
   reporting: "/api/reporting",
   messaging: "/api/messaging",
   notifications: "/api/notifications",
+  ai: "/api/ai",
+  marketplace: "/api/marketplace",
+  enterprise: "/api/enterprise",
 } as const;
 
 export const GATEWAY_PATHS = {
@@ -30,6 +33,9 @@ export const GATEWAY_PATHS = {
   reporting: "/reporting",
   messaging: "/messaging",
   notifications: "/notifications",
+  ai: "/ai",
+  marketplace: "/marketplace",
+  enterprise: "/enterprise",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;

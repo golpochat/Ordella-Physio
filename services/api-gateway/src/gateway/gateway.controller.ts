@@ -24,6 +24,11 @@ export class GatewayController {
     return this.gatewayService.getDownstreamHealth();
   }
 
+  @Get("health/region")
+  regionHealth() {
+    return this.gatewayService.getRegionHealth();
+  }
+
   @Get("metrics")
   @Header("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
   async metrics(@Res() response: Response) {

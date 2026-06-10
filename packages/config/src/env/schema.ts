@@ -29,6 +29,50 @@ export const appointmentEnvSchema = coreEnvSchema;
 export const notesEnvSchema = coreEnvSchema;
 export const messagingEnvSchema = coreEnvSchema;
 export const notificationEnvSchema = coreEnvSchema;
+
+export const enterpriseEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  ENTERPRISE_SSO_CALLBACK_URL: z.string().url().default("http://localhost:3049/enterprise/sso/oauth/callback"),
+  ENTERPRISE_SAML_ACS_URL: z.string().url().default("http://localhost:3049/enterprise/sso/saml/acs"),
+  ENTERPRISE_FRONTEND_CALLBACK_URL: z.string().url().default("http://localhost:3010/clinic/enterprise/sso/callback"),
+  TENANT_SERVICE_URL: z.string().url().default("http://localhost:3052"),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
+export const marketplaceEnvSchema = coreEnvSchema.extend({
+  MARKETPLACE_OAUTH_CALLBACK_URL: z.string().url().default("http://localhost:3049/marketplace/oauth/redirect"),
+  MARKETPLACE_FRONTEND_CALLBACK_URL: z.string().url().default("http://localhost:3010/clinic/marketplace/oauth/callback"),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  DROPBOX_CLIENT_ID: z.string().optional(),
+  DROPBOX_CLIENT_SECRET: z.string().optional(),
+  ONEDRIVE_CLIENT_ID: z.string().optional(),
+  ONEDRIVE_CLIENT_SECRET: z.string().optional(),
+  ZOOM_CLIENT_ID: z.string().optional(),
+  ZOOM_CLIENT_SECRET: z.string().optional(),
+  APPOINTMENT_SERVICE_URL: z.string().url().default("http://appointment-service:3054"),
+  NOTES_SERVICE_URL: z.string().url().default("http://notes-service:3055"),
+  COMMUNICATION_SERVICE_URL: z.string().url().default("http://communication-service:3058"),
+  BILLING_SERVICE_URL: z.string().url().default("http://billing-service:3056"),
+});
+
+export const aiNotesEnvSchema = coreEnvSchema.extend({
+  AI_PROVIDER: z.enum(["openai", "azure"]).default("openai"),
+  OPENAI_API_KEY: z.string().optional(),
+  AZURE_OPENAI_KEY: z.string().optional(),
+  AZURE_OPENAI_ENDPOINT: z
+    .preprocess((value) => (value === "" ? undefined : value), z.string().url().optional()),
+  AZURE_OPENAI_DEPLOYMENT: z.string().optional(),
+  MODEL_NAME: z.string().default("gpt-4o-mini"),
+  MAX_TOKENS: z.coerce.number().int().positive().default(2000),
+  TEMPERATURE: z.coerce.number().min(0).max(2).default(0.3),
+  PATIENT_SERVICE_URL: z.string().url().default("http://patient-service:3053"),
+  APPOINTMENT_SERVICE_URL: z.string().url().default("http://appointment-service:3054"),
+  NOTES_SERVICE_URL: z.string().url().default("http://notes-service:3055"),
+});
 export const billingEnvSchema = coreEnvSchema.extend({
   STRIPE_SECRET_KEY: z.string().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
@@ -75,6 +119,9 @@ export const gatewayServiceUrlsSchema = z.object({
   REPORTING_SERVICE_URL: z.string().url(),
   MESSAGING_SERVICE_URL: z.string().url(),
   NOTIFICATION_SERVICE_URL: z.string().url(),
+  AI_NOTES_SERVICE_URL: z.string().url(),
+  MARKETPLACE_SERVICE_URL: z.string().url(),
+  ENTERPRISE_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({
@@ -87,7 +134,14 @@ export const gatewayEnvSchema = z.object({
   GATEWAY_RATE_LIMIT_TENANT: z.coerce.number().int().positive().default(200),
   GATEWAY_BODY_LIMIT: z.string().default("1mb"),
   CORS_ORIGIN: z.string().default("*"),
-}).merge(gatewayServiceUrlsSchema).refine(
+  ORDELLA_REGION: z.enum(["eu-west", "us-east", "apac"]).default("eu-west"),
+  REGION_ROUTING_ENABLED: z.coerce.boolean().default(false),
+  REGION_ENDPOINT_EU_WEST: z.string().url().optional(),
+  REGION_ENDPOINT_US_EAST: z.string().url().optional(),
+  REGION_ENDPOINT_APAC: z.string().url().optional(),
+  TENANT_SERVICE_URL: z.string().url(),
+  REDIS_URL: z.string().url().optional(),
+}).merge(gatewayServiceUrlsSchema.omit({ TENANT_SERVICE_URL: true })).refine(
   (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
   { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
 );

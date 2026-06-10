@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { EmailDeliveryService } from "@/delivery/email-delivery.service";
+import { PushDeliveryService } from "@/delivery/push-delivery.service";
 import { EventsModule } from "@/events/events.module";
 import { JwtGuard } from "@/notifications/guards/jwt.guard";
 import { NotificationTenantGuard } from "@/notifications/guards/notification-tenant.guard";
@@ -16,6 +17,7 @@ import { JwtStrategy } from "@/notifications/strategies/jwt.strategy";
     NotificationsService,
     NotificationsRepository,
     EmailDeliveryService,
+    PushDeliveryService,
     JwtStrategy,
     JwtGuard,
     NotificationTenantGuard,

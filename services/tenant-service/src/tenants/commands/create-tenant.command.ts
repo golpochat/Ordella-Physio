@@ -41,6 +41,7 @@ export class CreateTenantCommand {
       currency: input.dto.currency ?? defaults.currency,
       address: input.dto.address,
       phone: input.dto.phone,
+      homeRegion: input.dto.homeRegion ?? "eu-west",
       isActive: defaults.isActive,
       branding: { create: buildDefaultBranding() },
       subscription: { create: buildDefaultSubscription() },

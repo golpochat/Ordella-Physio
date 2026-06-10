@@ -58,6 +58,18 @@ export class TenantsService {
     });
   }
 
+  async getHomeRegion(tenantId: string) {
+    const tenant = await this.tenantsRepository.findById(tenantId);
+    if (!tenant) {
+      return null;
+    }
+
+    return {
+      tenantId: tenant.id,
+      homeRegion: tenant.homeRegion,
+    };
+  }
+
   update(tenantId: string, dto: UpdateTenantDto, correlationId?: string) {
     return this.updateTenantCommand.execute({ tenantId, dto, correlationId });
   }

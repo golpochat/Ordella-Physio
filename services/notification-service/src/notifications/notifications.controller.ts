@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
 import {
   listNotificationsSchema,
   markNotificationsReadSchema,
+  registerDeviceTokenSchema,
+  unregisterDeviceTokenSchema,
   UseZodValidation,
 } from "@ordella/validation";
 import { PermissionGuard, RequirePermissions } from "@ordella/security";
@@ -11,7 +13,12 @@ import { NotificationTenantGuard } from "@/notifications/guards/notification-ten
 import { TenantId } from "@/notifications/guards/tenant-id.decorator";
 import { NotificationsService } from "@/notifications/notifications.service";
 import type { AuthenticatedNotificationUser } from "@/utils/notification-helpers";
-import type { ListNotificationsInput, MarkNotificationsReadInput } from "@ordella/validation";
+import type {
+  ListNotificationsInput,
+  MarkNotificationsReadInput,
+  RegisterDeviceTokenInput,
+  UnregisterDeviceTokenInput,
+} from "@ordella/validation";
 
 @Controller("notifications")
 export class NotificationsController {
@@ -62,5 +69,30 @@ export class NotificationsController {
   markAllRead(@TenantId() tenantId: string, @Req() request: OrdellaRequest) {
     const user = request.user as AuthenticatedNotificationUser;
     return this.notificationsService.markAllRead(tenantId, user, request.correlationId);
+  }
+
+  @Post("device-tokens")
+  @UseGuards(JwtGuard, NotificationTenantGuard, PermissionGuard)
+  @RequirePermissions("notifications.write")
+  @UseZodValidation(registerDeviceTokenSchema)
+  registerDeviceToken(
+    @TenantId() tenantId: string,
+    @Body() dto: RegisterDeviceTokenInput,
+    @Req() request: OrdellaRequest,
+  ) {
+    const user = request.user as AuthenticatedNotificationUser;
+    return this.notificationsService.registerDeviceToken(tenantId, user, dto);
+  }
+
+  @Delete("device-tokens")
+  @UseGuards(JwtGuard, NotificationTenantGuard, PermissionGuard)
+  @RequirePermissions("notifications.write")
+  @UseZodValidation(unregisterDeviceTokenSchema, "query")
+  unregisterDeviceToken(
+    @Query() query: UnregisterDeviceTokenInput,
+    @Req() request: OrdellaRequest,
+  ) {
+    const user = request.user as AuthenticatedNotificationUser;
+    return this.notificationsService.unregisterDeviceToken(user, query);
   }
 }

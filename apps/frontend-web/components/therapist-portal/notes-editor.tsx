@@ -12,6 +12,8 @@ import {
   useTherapistPatients,
   useUpdateTherapistNote,
 } from "@/hooks/useTherapistPortal";
+import { AiDisclaimer } from "@/components/therapist-portal/ai-notes/ai-disclaimer";
+import { AiNotesAssistant } from "@/components/therapist-portal/ai-notes/ai-notes-assistant";
 import type {
   CreateTherapistNotePayload,
   TherapistNote,
@@ -155,6 +157,23 @@ export function NotesEditor({ mode, note }: NotesEditorProps) {
               required
             />
           </div>
+
+          {therapistId ? (
+            <div className="space-y-3 rounded-lg border border-dashed p-4">
+              <p className="text-sm font-medium">AI Clinical Assistant</p>
+              <AiDisclaimer />
+              <AiNotesAssistant
+                patientId={patientId}
+                therapistId={therapistId}
+                appointmentId={appointmentId || undefined}
+                rawText={content}
+                onInsertContent={(nextContent, noteType) => {
+                  setContent(nextContent);
+                  if (noteType) setType(noteType);
+                }}
+              />
+            </div>
+          ) : null}
 
           <div className="flex flex-wrap gap-3">
             <Button type="submit" disabled={isPending}>

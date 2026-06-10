@@ -15,4 +15,6 @@ export const SUPER_ADMIN_PORTAL_NAV: SuperAdminPortalNavLink[] = [
   { href: "/super-admin/settings", label: "Settings" },
   { href: "/super-admin/messages", label: "Messages" },
   { href: "/super-admin/notifications", label: "Notifications" },
+  { href: "/super-admin/marketplace", label: "Marketplace" },
+  { href: "/super-admin/enterprise", label: "Enterprise" },
 ];

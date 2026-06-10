@@ -9,6 +9,7 @@ export type TenantResponse = {
   address: string | null;
   phone: string | null;
   stripeCustomerId: string | null;
+  homeRegion: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -31,6 +32,7 @@ export function toTenantResponse(tenant: Tenant): TenantResponse {
     address: tenant.address,
     phone: tenant.phone,
     stripeCustomerId: tenant.stripeCustomerId,
+    homeRegion: tenant.homeRegion,
     isActive: tenant.isActive,
     createdAt: tenant.createdAt.toISOString(),
     updatedAt: tenant.updatedAt.toISOString(),

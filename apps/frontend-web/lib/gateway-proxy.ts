@@ -14,6 +14,9 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   reporting: GATEWAY_PATHS.reporting,
   messaging: GATEWAY_PATHS.messaging,
   notifications: GATEWAY_PATHS.notifications,
+  ai: GATEWAY_PATHS.ai,
+  marketplace: GATEWAY_PATHS.marketplace,
+  enterprise: GATEWAY_PATHS.enterprise,
 };
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
@@ -28,6 +31,9 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   reporting: "/api/reporting",
   messaging: "/api/messaging",
   notifications: "/api/notifications",
+  ai: "/api/ai",
+  marketplace: "/api/marketplace",
+  enterprise: "/api/enterprise",
 };
 
 const PROXY_STRIP_REQUEST_HEADERS = [

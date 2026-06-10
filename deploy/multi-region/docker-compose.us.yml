@@ -1,0 +1,64 @@
+# Ordella Physio — US-East (secondary region, read replica)
+# Usage: docker compose --env-file .env.us -f docker-compose.us.yml up -d --build
+
+name: ordella-physio-us-east
+
+include:
+  - path: docker-compose.region.yml
+
+networks:
+  ordella-region-network:
+    name: ordella-us-east-network
+
+services:
+  postgres:
+    container_name: ordella_us_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/replication-replica.conf:/etc/postgresql/conf.d/replication.conf:ro
+    environment:
+      POSTGRES_REPLICATION_MODE: replica
+      POSTGRES_PRIMARY_HOST: ${POSTGRES_PRIMARY_HOST}
+      POSTGRES_PRIMARY_PORT: ${POSTGRES_PRIMARY_PORT:-5432}
+      POSTGRES_REPLICATION_USER: ${POSTGRES_REPLICATION_USER:-replicator}
+      POSTGRES_REPLICATION_PASSWORD: ${POSTGRES_REPLICATION_PASSWORD}
+
+  redis:
+    container_name: ordella_us_redis
+
+  nats:
+    container_name: ordella_us_nats
+    volumes:
+      - nats_data:/data
+      - ./nats/nats-us.conf:/etc/nats/nats-server.conf:ro
+
+  api-gateway:
+    container_name: ordella_us_api_gateway
+    environment:
+      ORDELLA_REGION: us-east
+      REGION_ROUTING_ENABLED: "true"
+      REGION_ENDPOINT_EU_WEST: ${REGION_ENDPOINT_EU_WEST}
+      REGION_ENDPOINT_US_EAST: ${REGION_ENDPOINT_US_EAST}
+      REGION_ENDPOINT_APAC: ${REGION_ENDPOINT_APAC}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.us-api.rule=Host(`${API_HOST}`)
+      - traefik.http.routers.us-api.entrypoints=websecure
+      - traefik.http.routers.us-api.tls=true
+      - traefik.http.routers.us-api.tls.certresolver=letsencrypt
+      - traefik.http.services.us-api.loadbalancer.server.port=3049
+      - traefik.http.services.us-api.loadbalancer.healthcheck.path=/health
+      - traefik.http.services.us-api.loadbalancer.healthcheck.interval=30s
+
+  frontend-web:
+    container_name: ordella_us_frontend_web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.us-frontend.rule=Host(`${FRONTEND_HOST}`)
+      - traefik.http.routers.us-frontend.entrypoints=websecure
+      - traefik.http.routers.us-frontend.tls=true
+      - traefik.http.routers.us-frontend.tls.certresolver=letsencrypt
+      - traefik.http.services.us-frontend.loadbalancer.server.port=3010
+
+  traefik:
+    container_name: ordella_us_traefik

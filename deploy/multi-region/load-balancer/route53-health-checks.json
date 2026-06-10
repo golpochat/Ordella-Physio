@@ -1,0 +1,67 @@
+{
+  "Description": "AWS Route53 health checks and latency-based routing for Ordella Physio",
+  "HealthChecks": [
+    {
+      "Name": "ordella-eu-api",
+      "Type": "HTTPS",
+      "ResourcePath": "/health",
+      "FullyQualifiedDomainName": "api.eu.ordella-physio.com",
+      "Port": 443,
+      "RequestInterval": 30,
+      "FailureThreshold": 3
+    },
+    {
+      "Name": "ordella-us-api",
+      "Type": "HTTPS",
+      "ResourcePath": "/health",
+      "FullyQualifiedDomainName": "api.us.ordella-physio.com",
+      "Port": 443,
+      "RequestInterval": 30,
+      "FailureThreshold": 3
+    },
+    {
+      "Name": "ordella-apac-api",
+      "Type": "HTTPS",
+      "ResourcePath": "/health",
+      "FullyQualifiedDomainName": "api.apac.ordella-physio.com",
+      "Port": 443,
+      "RequestInterval": 30,
+      "FailureThreshold": 3
+    }
+  ],
+  "RecordSets": [
+    {
+      "Name": "api.ordella-physio.com",
+      "Type": "A",
+      "SetIdentifier": "eu-west",
+      "Region": "eu-west-1",
+      "TTL": 60,
+      "HealthCheckId": "ordella-eu-api",
+      "RoutingPolicy": "LATENCY"
+    },
+    {
+      "Name": "api.ordella-physio.com",
+      "Type": "A",
+      "SetIdentifier": "us-east",
+      "Region": "us-east-1",
+      "TTL": 60,
+      "HealthCheckId": "ordella-us-api",
+      "RoutingPolicy": "LATENCY"
+    },
+    {
+      "Name": "api.ordella-physio.com",
+      "Type": "A",
+      "SetIdentifier": "ap-southeast",
+      "Region": "ap-southeast-1",
+      "TTL": 60,
+      "HealthCheckId": "ordella-apac-api",
+      "RoutingPolicy": "LATENCY"
+    }
+  ],
+  "FailoverRecord": {
+    "Name": "api-failover.ordella-physio.com",
+    "Primary": "api.eu.ordella-physio.com",
+    "Secondary": "api.us.ordella-physio.com",
+    "RoutingPolicy": "FAILOVER"
+  }
+}

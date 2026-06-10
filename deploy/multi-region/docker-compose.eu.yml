@@ -1,0 +1,59 @@
+# Ordella Physio — EU-West (primary region)
+# Usage: docker compose --env-file .env.eu -f docker-compose.eu.yml up -d --build
+
+name: ordella-physio-eu-west
+
+include:
+  - path: docker-compose.region.yml
+
+networks:
+  ordella-region-network:
+    name: ordella-eu-west-network
+
+services:
+  postgres:
+    container_name: ordella_eu_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../infrastructure/deployment-layer/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+      - ./postgres/replication-primary.conf:/docker-entrypoint-initdb.d/replication-primary.conf:ro
+
+  redis:
+    container_name: ordella_eu_redis
+
+  nats:
+    container_name: ordella_eu_nats
+    volumes:
+      - nats_data:/data
+      - ./nats/nats-eu.conf:/etc/nats/nats-server.conf:ro
+
+  api-gateway:
+    container_name: ordella_eu_api_gateway
+    environment:
+      ORDELLA_REGION: eu-west
+      REGION_ROUTING_ENABLED: "true"
+      REGION_ENDPOINT_EU_WEST: ${REGION_ENDPOINT_EU_WEST}
+      REGION_ENDPOINT_US_EAST: ${REGION_ENDPOINT_US_EAST}
+      REGION_ENDPOINT_APAC: ${REGION_ENDPOINT_APAC}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.eu-api.rule=Host(`${API_HOST}`)
+      - traefik.http.routers.eu-api.entrypoints=websecure
+      - traefik.http.routers.eu-api.tls=true
+      - traefik.http.routers.eu-api.tls.certresolver=letsencrypt
+      - traefik.http.services.eu-api.loadbalancer.server.port=3049
+      - traefik.http.services.eu-api.loadbalancer.healthcheck.path=/health
+      - traefik.http.services.eu-api.loadbalancer.healthcheck.interval=30s
+
+  frontend-web:
+    container_name: ordella_eu_frontend_web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.eu-frontend.rule=Host(`${FRONTEND_HOST}`)
+      - traefik.http.routers.eu-frontend.entrypoints=websecure
+      - traefik.http.routers.eu-frontend.tls=true
+      - traefik.http.routers.eu-frontend.tls.certresolver=letsencrypt
+      - traefik.http.services.eu-frontend.loadbalancer.server.port=3010
+
+  traefik:
+    container_name: ordella_eu_traefik

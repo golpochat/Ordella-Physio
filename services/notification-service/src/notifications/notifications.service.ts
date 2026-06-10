@@ -3,8 +3,11 @@ import type { Prisma } from "@/generated/prisma";
 import type {
   ListNotificationsInput,
   MarkNotificationsReadInput,
+  RegisterDeviceTokenInput,
+  UnregisterDeviceTokenInput,
 } from "@ordella/validation";
 import { EmailDeliveryService } from "@/delivery/email-delivery.service";
+import { PushDeliveryService } from "@/delivery/push-delivery.service";
 import { NotificationEventPublisher } from "@/events/notification-event.publisher";
 import { NotificationsRepository } from "@/notifications/notifications.repository";
 import { toNotificationResponse } from "@/notifications/notifications.mapper";
@@ -16,6 +19,7 @@ export class NotificationsService {
     private readonly repository: NotificationsRepository,
     private readonly events: NotificationEventPublisher,
     private readonly emailDelivery: EmailDeliveryService,
+    private readonly pushDelivery: PushDeliveryService,
   ) {}
 
   private includeGlobal(user: AuthenticatedNotificationUser) {
@@ -62,6 +66,19 @@ export class NotificationsService {
       },
       input.correlationId,
     );
+
+    if (input.tenantId) {
+      const deviceTokens = await this.repository.listDeviceTokensForUser(
+        input.userId,
+        input.tenantId,
+      );
+      await this.pushDelivery.sendToTokens({
+        tokens: deviceTokens.map((entry) => entry.token),
+        title: input.title,
+        message: input.message,
+        metadata: input.metadata,
+      });
+    }
 
     return toNotificationResponse(notification);
   }
@@ -175,5 +192,26 @@ export class NotificationsService {
     );
 
     return { updated: result.count };
+  }
+
+  registerDeviceToken(
+    tenantId: string,
+    user: AuthenticatedNotificationUser,
+    input: RegisterDeviceTokenInput,
+  ) {
+    return this.repository.upsertDeviceToken({
+      tenantId,
+      userId: user.userId,
+      token: input.token,
+      platform: input.platform,
+    });
+  }
+
+  async unregisterDeviceToken(
+    user: AuthenticatedNotificationUser,
+    input: UnregisterDeviceTokenInput,
+  ) {
+    const result = await this.repository.deleteDeviceToken(input.token, user.userId);
+    return { removed: result.count };
   }
 }

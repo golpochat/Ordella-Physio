@@ -101,4 +101,38 @@ export class NotificationsRepository {
       where: { id: { in: notificationIds }, userId },
     });
   }
+
+  upsertDeviceToken(input: {
+    tenantId: string;
+    userId: string;
+    token: string;
+    platform: string;
+  }) {
+    return this.db.deviceToken.upsert({
+      where: { token: input.token },
+      create: {
+        tenantId: input.tenantId,
+        userId: input.userId,
+        token: input.token,
+        platform: input.platform,
+      },
+      update: {
+        tenantId: input.tenantId,
+        userId: input.userId,
+        platform: input.platform,
+      },
+    });
+  }
+
+  deleteDeviceToken(token: string, userId: string) {
+    return this.db.deviceToken.deleteMany({
+      where: { token, userId },
+    });
+  }
+
+  listDeviceTokensForUser(userId: string, tenantId: string) {
+    return this.db.deviceToken.findMany({
+      where: { userId, tenantId },
+    });
+  }
 }

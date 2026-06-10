@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model IntegrationProvider {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String
+  description String
+  authType    String
+  createdAt   DateTime @default(now())
+
+  integrations TenantIntegration[]
+
+  @@map("integration_providers")
+}
+
+model TenantIntegration {
+  id           String    @id @default(cuid())
+  tenantId     String
+  providerId   String
+  accessToken  String?
+  refreshToken String?
+  apiKey       String?
+  apiSecret    String?
+  metadata     Json?
+  expiresAt    DateTime?
+  status       String    @default("connected")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  provider IntegrationProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  usageLogs  IntegrationUsageLog[]
+
+  @@unique([tenantId, providerId])
+  @@index([tenantId])
+  @@map("tenant_integrations")
+}
+
+model IntegrationUsageLog {
+  id            String   @id @default(cuid())
+  tenantId      String
+  integrationId String
+  action        String
+  status        String
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  integration TenantIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@index([integrationId])
+  @@map("integration_usage_logs")
+}
+
+model OAuthState {
+  id         String   @id @default(cuid())
+  tenantId   String
+  providerId String
+  userId     String
+  state      String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([state])
+  @@map("oauth_states")
+}

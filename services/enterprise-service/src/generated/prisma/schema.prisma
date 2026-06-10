@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SsoConfig {
+  id           String   @id @default(cuid())
+  tenantId     String
+  provider     String
+  name         String
+  isEnabled    Boolean  @default(false)
+  entityId     String?
+  ssoUrl       String?
+  certificate  String?
+  clientId     String?
+  clientSecret String?
+  issuerUrl    String?
+  metadataUrl  String?
+  redirectUri  String?
+  scopes       Json?
+  attributeMap Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, provider])
+  @@index([tenantId])
+  @@map("sso_configs")
+}
+
+model PermissionGroup {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  description String?
+  permissions Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles CustomRole[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("permission_groups")
+}
+
+model CustomRole {
+  id                String   @id @default(cuid())
+  tenantId          String
+  name              String
+  slug              String
+  description       String?
+  parentRoleId      String?
+  permissionGroupId String?
+  permissions       Json
+  isSystem          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  parentRole      CustomRole?      @relation("RoleInheritance", fields: [parentRoleId], references: [id], onDelete: SetNull)
+  childRoles      CustomRole[]     @relation("RoleInheritance")
+  permissionGroup PermissionGroup? @relation(fields: [permissionGroupId], references: [id], onDelete: SetNull)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("custom_roles")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  tenantId   String
+  actorId    String?
+  actorEmail String?
+  action     String
+  resource   String
+  resourceId String?
+  status     String   @default("success")
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String?
+  eventType String
+  source    String
+  status    String   @default("success")
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@index([eventType])
+  @@map("activity_logs")
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  tenantId    String
+  name        String
+  keyPrefix   String
+  keyHash     String
+  scopes      Json
+  createdById String?
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  usageLogs ApiKeyUsageLog[]
+
+  @@index([tenantId])
+  @@index([keyPrefix])
+  @@map("api_keys")
+}
+
+model ApiKeyUsageLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  apiKeyId  String
+  endpoint  String
+  method    String
+  status    String
+  createdAt DateTime @default(now())
+
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@index([apiKeyId])
+  @@map("api_key_usage_logs")
+}
+
+model WebhookConfig {
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String
+  url        String
+  secret     String
+  eventTypes Json
+  isEnabled  Boolean  @default(true)
+  maxRetries Int      @default(3)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  deliveries WebhookDelivery[]
+
+  @@index([tenantId])
+  @@map("webhook_configs")
+}
+
+model WebhookDelivery {
+  id           String    @id @default(cuid())
+  tenantId     String
+  webhookId    String
+  eventType    String
+  payload      Json
+  status       String    @default("pending")
+  attemptCount Int       @default(0)
+  nextRetryAt  DateTime?
+  lastResponse String?
+  signature    String?
+  createdAt    DateTime  @default(now())
+  deliveredAt  DateTime?
+
+  webhook WebhookConfig @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+  @@index([webhookId])
+  @@map("webhook_deliveries")
+}

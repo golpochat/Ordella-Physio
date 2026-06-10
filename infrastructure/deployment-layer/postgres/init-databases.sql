@@ -10,3 +10,6 @@ CREATE DATABASE ordella_reporting;
 CREATE DATABASE ordella_event_bus;
 CREATE DATABASE ordella_messaging;
 CREATE DATABASE ordella_notification;
+CREATE DATABASE ordella_ai_notes;
+CREATE DATABASE ordella_marketplace;
+CREATE DATABASE ordella_enterprise;

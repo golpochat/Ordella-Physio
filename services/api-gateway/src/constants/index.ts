@@ -38,7 +38,10 @@ export type ServiceEnvKey =
   | "COMMUNICATION_SERVICE_URL"
   | "REPORTING_SERVICE_URL"
   | "MESSAGING_SERVICE_URL"
-  | "NOTIFICATION_SERVICE_URL";
+  | "NOTIFICATION_SERVICE_URL"
+  | "AI_NOTES_SERVICE_URL"
+  | "MARKETPLACE_SERVICE_URL"
+  | "ENTERPRISE_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -114,33 +117,57 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     healthPath: "/notifications/health",
     defaultUrl: "http://notification-service:3062",
   },
+  {
+    name: "ai-notes",
+    envKey: "AI_NOTES_SERVICE_URL",
+    healthPath: "/ai/health",
+    defaultUrl: "http://ai-notes-service:3063",
+  },
+  {
+    name: "marketplace",
+    envKey: "MARKETPLACE_SERVICE_URL",
+    healthPath: "/marketplace/health",
+    defaultUrl: "http://marketplace-service:3064",
+  },
+  {
+    name: "enterprise",
+    envKey: "ENTERPRISE_SERVICE_URL",
+    healthPath: "/enterprise/health",
+    defaultUrl: "http://enterprise-service:3065",
+  },
 ];
 
 export const PUBLIC_PATHS = [
   "/health",
+  "/health/region",
   "/metrics",
   "/docs",
   "/auth",
   "/payments/webhook",
   "/billing/webhook",
+  "/tenants/internal",
 ];
 
 export const SKIP_TENANT_PATHS = [
   "/health",
+  "/health/region",
   "/metrics",
   "/docs",
   "/auth",
   "/payments/webhook",
   "/billing/webhook",
+  "/tenants/internal",
 ];
 
 export const PUBLIC_JWT_PATHS = [
   "/health",
+  "/health/region",
   "/metrics",
   "/docs",
   "/auth",
   "/payments/webhook",
   "/billing/webhook",
+  "/tenants/internal",
 ];
 
 export const GATEWAY_SERVICE_NAME = "api-gateway";

@@ -1,0 +1,68 @@
+{
+  "description": "Cloudflare Load Balancing — geo-routing for Ordella Physio global endpoints",
+  "pools": [
+    {
+      "name": "ordella-api-eu",
+      "origins": [{ "name": "api-eu", "address": "api.eu.ordella-physio.com", "weight": 1 }],
+      "monitor": "ordella-api-health",
+      "latitude": 51.5074,
+      "longitude": -0.1278
+    },
+    {
+      "name": "ordella-api-us",
+      "origins": [{ "name": "api-us", "address": "api.us.ordella-physio.com", "weight": 1 }],
+      "monitor": "ordella-api-health",
+      "latitude": 39.0438,
+      "longitude": -77.4874
+    },
+    {
+      "name": "ordella-api-apac",
+      "origins": [{ "name": "api-apac", "address": "api.apac.ordella-physio.com", "weight": 1 }],
+      "monitor": "ordella-api-health",
+      "latitude": 1.3521,
+      "longitude": 103.8198
+    }
+  ],
+  "load_balancers": [
+    {
+      "name": "api.ordella-physio.com",
+      "fallback_pool": "ordella-api-eu",
+      "region_pools": {
+        "WNAM": ["ordella-api-us"],
+        "ENAM": ["ordella-api-us"],
+        "WEU": ["ordella-api-eu"],
+        "EEU": ["ordella-api-eu"],
+        "SEAS": ["ordella-api-apac"],
+        "NEAS": ["ordella-api-apac"],
+        "OC": ["ordella-api-apac"]
+      },
+      "steering_policy": "geo",
+      "session_affinity": "cookie",
+      "proxied": true
+    },
+    {
+      "name": "ordella-physio.com",
+      "fallback_pool": "ordella-api-eu",
+      "steering_policy": "geo",
+      "proxied": true,
+      "comment": "Frontend pool mirrors API geo steering via Cloudflare Workers or separate frontend pools"
+    }
+  ],
+  "monitors": [
+    {
+      "name": "ordella-api-health",
+      "type": "https",
+      "path": "/health",
+      "interval": 60,
+      "retries": 2,
+      "timeout": 10,
+      "expected_codes": "200",
+      "follow_redirects": true
+    }
+  ],
+  "failover": {
+    "enabled": true,
+    "policy": "least_outstanding_requests",
+    "description": "Unhealthy regional pools are removed automatically; traffic fails over to EU primary"
+  }
+}

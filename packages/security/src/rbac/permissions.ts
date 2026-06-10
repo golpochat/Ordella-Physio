@@ -17,6 +17,14 @@ export const PERMISSIONS = {
   MESSAGING_WRITE: "messaging.write",
   NOTIFICATIONS_READ: "notifications.read",
   NOTIFICATIONS_WRITE: "notifications.write",
+  AI_NOTES_READ: "ai.notes.read",
+  AI_NOTES_WRITE: "ai.notes.write",
+  MARKETPLACE_READ: "marketplace.read",
+  MARKETPLACE_WRITE: "marketplace.write",
+  MARKETPLACE_MANAGE: "marketplace.manage",
+  ENTERPRISE_READ: "enterprise.read",
+  ENTERPRISE_WRITE: "enterprise.write",
+  ENTERPRISE_MANAGE: "enterprise.manage",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

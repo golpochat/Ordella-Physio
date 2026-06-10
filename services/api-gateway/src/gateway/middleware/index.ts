@@ -19,6 +19,7 @@ import type { MiddlewareConsumer } from "@nestjs/common";
 import { RequestMethod } from "@nestjs/common";
 import { PUBLIC_PATHS } from "@/constants";
 import { AuthContextMiddleware } from "./auth-context.middleware";
+import { RegionRoutingMiddleware } from "@/gateway/region/region-routing.middleware";
 import { TenantContextMiddleware } from "./tenant-context.middleware";
 
 const config = gatewayConfig;
@@ -51,6 +52,7 @@ export const gatewayMiddlewareProviders = [
   GatewayRateLimitMiddleware,
   TenantContextMiddleware,
   AuthContextMiddleware,
+  RegionRoutingMiddleware,
   GatewayRequestLoggingMiddleware,
   GatewayRequestMetricsMiddleware,
   GatewayRequestTracingMiddleware,
@@ -75,6 +77,7 @@ export function configureGatewayMiddleware(consumer: MiddlewareConsumer): void {
       GatewayRateLimitMiddleware,
       TenantContextMiddleware,
       AuthContextMiddleware,
+      RegionRoutingMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

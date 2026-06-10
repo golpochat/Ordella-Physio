@@ -1,0 +1,462 @@
+# Shared regional stack template — included by docker-compose.{eu,us,apac}.yml
+# Deploy with: docker compose --env-file .env.<region> -f docker-compose.<region>.yml up -d --build
+
+networks:
+  ordella-region-network:
+    name: ${ORDELLA_NETWORK}
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  nats_data:
+  traefik_certs:
+  prometheus_data:
+  grafana_data:
+
+x-jwt-secret: &jwt-secret ${JWT_ACCESS_SECRET}
+x-postgres-user: &postgres-user ${POSTGRES_USER:-physio}
+x-postgres-password: &postgres-password ${POSTGRES_PASSWORD}
+
+x-service-health: &service-health
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 120s
+
+x-microservice: &microservice
+  restart: always
+  networks:
+    - ordella-region-network
+  healthcheck:
+    <<: *service-health
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../infrastructure/deployment-layer/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    networks:
+      - ordella-region-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-physio}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - ordella-region-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nats:
+    image: nats:2.10
+    restart: always
+    command: ["-c", "/etc/nats/nats-server.conf"]
+    volumes:
+      - nats_data:/data
+    networks:
+      - ordella-region-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/auth-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3051
+      DATABASE_URL: ${AUTH_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3051/auth/health"]
+
+  tenant-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/tenant-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3052
+      DATABASE_URL: ${TENANT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3052/tenants/health"]
+
+  patient-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/patient-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3053
+      DATABASE_URL: ${PATIENT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3053/patients/health"]
+
+  appointment-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/appointment-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3054
+      DATABASE_URL: ${APPOINTMENT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3054/appointments/health"]
+
+  notes-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/notes-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3055
+      DATABASE_URL: ${NOTES_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3055/notes/health"]
+
+  billing-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/billing-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3056
+      DATABASE_URL: ${BILLING_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3056/billing/health"]
+
+  payment-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/payment-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3057
+      DATABASE_URL: ${PAYMENT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3057/payments/health"]
+
+  communication-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/communication-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3058
+      DATABASE_URL: ${COMMUNICATION_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3058/communication/health"]
+
+  reporting-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/reporting-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3059
+      DATABASE_URL: ${REPORTING_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3059/reporting/health"]
+
+  messaging-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/messaging-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3061
+      DATABASE_URL: ${MESSAGING_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3061/messaging/health"]
+
+  notification-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/notification-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3062
+      DATABASE_URL: ${NOTIFICATION_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3062/notifications/health"]
+
+  event-bus-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/event-bus-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3060
+      DATABASE_URL: ${EVENT_BUS_DATABASE_URL}
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3060/event-bus/health"]
+
+  ai-notes-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/ai-notes-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3063
+      DATABASE_URL: ${AI_NOTES_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3063/ai/health"]
+
+  marketplace-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/marketplace-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3064
+      DATABASE_URL: ${MARKETPLACE_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3064/marketplace/health"]
+
+  enterprise-service:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/enterprise-service/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3065
+      DATABASE_URL: ${ENTERPRISE_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      ENTERPRISE_SSO_CALLBACK_URL: ${ENTERPRISE_SSO_CALLBACK_URL}
+      ENTERPRISE_SAML_ACS_URL: ${ENTERPRISE_SAML_ACS_URL}
+      ENTERPRISE_FRONTEND_CALLBACK_URL: ${ENTERPRISE_FRONTEND_CALLBACK_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      tenant-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3065/enterprise/health"]
+
+  api-gateway:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: services/api-gateway/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3049
+      JWT_ACCESS_SECRET: *jwt-secret
+      AUTH_SERVICE_URL: http://auth-service:3051
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      NOTES_SERVICE_URL: http://notes-service:3055
+      BILLING_SERVICE_URL: http://billing-service:3056
+      PAYMENT_SERVICE_URL: http://payment-service:3057
+      COMMUNICATION_SERVICE_URL: http://communication-service:3058
+      REPORTING_SERVICE_URL: http://reporting-service:3059
+      MESSAGING_SERVICE_URL: http://messaging-service:3061
+      NOTIFICATION_SERVICE_URL: http://notification-service:3062
+      AI_NOTES_SERVICE_URL: http://ai-notes-service:3063
+      MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
+      ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
+      ORDELLA_REGION: ${ORDELLA_REGION}
+      REGION_ROUTING_ENABLED: ${REGION_ROUTING_ENABLED:-true}
+      REGION_ENDPOINT_EU_WEST: ${REGION_ENDPOINT_EU_WEST}
+      REGION_ENDPOINT_US_EAST: ${REGION_ENDPOINT_US_EAST}
+      REGION_ENDPOINT_APAC: ${REGION_ENDPOINT_APAC}
+      CORS_ORIGIN: ${FRONTEND_URL}
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      tenant-service:
+        condition: service_healthy
+      patient-service:
+        condition: service_healthy
+      appointment-service:
+        condition: service_healthy
+      notes-service:
+        condition: service_healthy
+      billing-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      communication-service:
+        condition: service_healthy
+      reporting-service:
+        condition: service_healthy
+      messaging-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      ai-notes-service:
+        condition: service_healthy
+      marketplace-service:
+        condition: service_healthy
+      enterprise-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3049/health"]
+
+  frontend-web:
+    <<: *microservice
+    build:
+      context: ../../
+      dockerfile: apps/frontend-web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_GATEWAY_URL: ${NEXT_PUBLIC_API_GATEWAY_URL}
+        NEXT_PUBLIC_DEFAULT_TENANT_ID: ${TENANT_DEFAULT}
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+      NEXT_PUBLIC_APP_URL: ${FRONTEND_URL}
+      NEXT_PUBLIC_API_GATEWAY_URL: ${NEXT_PUBLIC_API_GATEWAY_URL}
+      NEXTAUTH_URL: ${FRONTEND_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3010/"]
+
+  traefik:
+    image: traefik:v3.3
+    restart: always
+    command:
+      - --api.dashboard=true
+      - --ping=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=${ORDELLA_NETWORK}
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_certs:/certs
+    networks:
+      - ordella-region-network
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

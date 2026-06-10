@@ -1,0 +1,41 @@
+{
+  "description": "Cloudflare CDN rules for global frontend static asset caching",
+  "zone": "ordella-physio.com",
+  "cache_rules": [
+    {
+      "name": "static-assets-long-cache",
+      "expression": "(http.request.uri.path matches \"^/_next/static/.*\") or (http.request.uri.path matches \"^/static/.*\") or (http.request.uri.path matches \".*\\.(js|css|woff2|png|jpg|svg|ico)$\")",
+      "action": "cache",
+      "edge_ttl": 2592000,
+      "browser_ttl": 86400,
+      "cache_key": "include_host_header"
+    },
+    {
+      "name": "api-bypass-cache",
+      "expression": "(http.host eq \"api.ordella-physio.com\") or (http.host matches \"^api\\..*ordella-physio\\.com$\")",
+      "action": "bypass_cache"
+    },
+    {
+      "name": "frontend-stale-while-revalidate",
+      "expression": "(http.host eq \"ordella-physio.com\") or (http.host matches \"^(eu|us|apac)\\.ordella-physio\\.com$\")",
+      "action": "cache",
+      "edge_ttl": 300,
+      "browser_ttl": 60,
+      "stale_while_revalidate": 3600
+    }
+  ],
+  "tiered_cache": {
+    "enabled": true,
+    "description": "Regional tiered cache — EU hub with US and APAC child tiers reduces origin load"
+  },
+  "argo_smart_routing": {
+    "enabled": true,
+    "description": "Optimizes path to nearest regional origin for mobile and web clients"
+  },
+  "mobile_optimizations": {
+    "brotli": true,
+    "http3": true,
+    "early_hints": true,
+    "polish": "lossless"
+  }
+}

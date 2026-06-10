@@ -24,3 +24,16 @@ model Notification {
   @@index([userId, createdAt])
   @@map("notifications")
 }
+
+model DeviceToken {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+  token     String   @unique
+  platform  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, userId])
+  @@map("device_tokens")
+}

@@ -16,10 +16,15 @@ import { PAYMENT_ROUTES } from "@/routes/payment.routes";
 import { REPORTING_ROUTES } from "@/routes/reporting.routes";
 import { MESSAGING_ROUTES } from "@/routes/messaging.routes";
 import { NOTIFICATION_ROUTES } from "@/routes/notification.routes";
+import { AI_NOTES_ROUTES } from "@/routes/ai-notes.routes";
+import { MARKETPLACE_ROUTES } from "@/routes/marketplace.routes";
+import { ENTERPRISE_ROUTES } from "@/routes/enterprise.routes";
 import { TENANT_ROUTES } from "@/routes/tenant.routes";
 import { configureGatewayMiddleware, gatewayMiddlewareProviders } from "./middleware";
 import { GatewayController } from "./gateway.controller";
 import { GatewayService } from "./gateway.service";
+import { RegionRoutingService } from "./region/region-routing.service";
+import { RegionRoutingMiddleware } from "./region/region-routing.middleware";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { ResponseInterceptor } from "./interceptors/response.interceptor";
 import { TimeoutInterceptor } from "./interceptors/timeout.interceptor";
@@ -28,6 +33,10 @@ import { ProxyModule } from "./proxy/proxy.module";
 
 const proxyControllers = [
   createProxyController(AUTH_ROUTES.base, "AUTH_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/tenants/internal", "TENANT_SERVICE_URL", {
     public: true,
     skipTenant: true,
   }),
@@ -43,6 +52,25 @@ const proxyControllers = [
   createProxyController(REPORTING_ROUTES.base, "REPORTING_SERVICE_URL"),
   createProxyController(MESSAGING_ROUTES.base, "MESSAGING_SERVICE_URL"),
   createProxyController(NOTIFICATION_ROUTES.base, "NOTIFICATION_SERVICE_URL"),
+  createProxyController(AI_NOTES_ROUTES.base, "AI_NOTES_SERVICE_URL"),
+  createProxyController("/marketplace/oauth", "MARKETPLACE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/marketplace/webhooks", "MARKETPLACE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(MARKETPLACE_ROUTES.base, "MARKETPLACE_SERVICE_URL"),
+  createProxyController("/enterprise/sso/saml", "ENTERPRISE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/enterprise/sso/oauth", "ENTERPRISE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(ENTERPRISE_ROUTES.base, "ENTERPRISE_SERVICE_URL"),
 ];
 
 @Module({
@@ -58,6 +86,8 @@ const proxyControllers = [
   providers: [
     Reflector,
     GatewayService,
+    RegionRoutingService,
+    RegionRoutingMiddleware,
     ...gatewayMiddlewareProviders,
     JwtAuthGuard,
     RoleGuard,

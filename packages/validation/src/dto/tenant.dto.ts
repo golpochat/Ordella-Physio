@@ -5,6 +5,8 @@ import { nonEmptyString, slugString } from "../zod/string-schemas";
 
 export const staffRoleSchema = z.enum(["OWNER", "ADMIN", "THERAPIST", "STAFF"]);
 
+export const tenantRegionSchema = z.enum(["eu-west", "us-east", "apac"]);
+
 export const createTenantSchema = z.object({
   name: nonEmptyString.min(2),
   slug: slugString,
@@ -12,6 +14,7 @@ export const createTenantSchema = z.object({
   currency: z.string().optional(),
   address: z.string().optional(),
   phone: phoneSchema.optional(),
+  homeRegion: tenantRegionSchema.optional(),
 });
 
 export const updateTenantSchema = z.object({
@@ -20,6 +23,7 @@ export const updateTenantSchema = z.object({
   currency: z.string().optional(),
   address: z.string().optional(),
   phone: phoneSchema.optional(),
+  homeRegion: tenantRegionSchema.optional(),
 });
 
 export const createLocationSchema = z.object({

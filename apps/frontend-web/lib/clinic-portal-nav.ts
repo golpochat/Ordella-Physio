@@ -15,5 +15,7 @@ export const CLINIC_PORTAL_NAV: ClinicPortalNavLink[] = [
   { href: "/clinic/reports", label: "Reports" },
   { href: "/clinic/messages", label: "Messages" },
   { href: "/clinic/notifications", label: "Notifications" },
+  { href: "/clinic/marketplace", label: "Marketplace" },
+  { href: "/clinic/enterprise", label: "Enterprise" },
   { href: "/clinic/profile", label: "Profile" },
 ];

@@ -30,6 +30,7 @@ model Tenant {
   address              String?
   phone                String?
   stripeCustomerId     String?             @unique
+  homeRegion           String              @default("eu-west")
   isActive             Boolean             @default(true)
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt

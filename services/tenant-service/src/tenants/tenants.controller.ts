@@ -61,6 +61,11 @@ export class TenantsController {
     });
   }
 
+  @Get("internal/home-region/:id")
+  resolveHomeRegion(@Param("id") id: string) {
+    return this.tenantsService.getHomeRegion(id);
+  }
+
   @Get(":id")
   @UseGuards(JwtGuard, TenantMatchGuard)
   findById(@Param("id") id: string) {
