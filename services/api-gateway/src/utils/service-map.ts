@@ -21,6 +21,8 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     PAYMENT_SERVICE_URL: config.paymentServiceUrl,
     COMMUNICATION_SERVICE_URL: config.communicationServiceUrl,
     REPORTING_SERVICE_URL: config.reportingServiceUrl,
+    MESSAGING_SERVICE_URL: config.messagingServiceUrl,
+    NOTIFICATION_SERVICE_URL: config.notificationServiceUrl,
   };
 
   return map[envKey];

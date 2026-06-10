@@ -36,7 +36,9 @@ export type ServiceEnvKey =
   | "BILLING_SERVICE_URL"
   | "PAYMENT_SERVICE_URL"
   | "COMMUNICATION_SERVICE_URL"
-  | "REPORTING_SERVICE_URL";
+  | "REPORTING_SERVICE_URL"
+  | "MESSAGING_SERVICE_URL"
+  | "NOTIFICATION_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -100,6 +102,18 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     healthPath: "/reporting/health",
     defaultUrl: "http://reporting-service:3059",
   },
+  {
+    name: "messaging",
+    envKey: "MESSAGING_SERVICE_URL",
+    healthPath: "/messaging/health",
+    defaultUrl: "http://messaging-service:3061",
+  },
+  {
+    name: "notification",
+    envKey: "NOTIFICATION_SERVICE_URL",
+    healthPath: "/notifications/health",
+    defaultUrl: "http://notification-service:3062",
+  },
 ];
 
 export const PUBLIC_PATHS = [
@@ -108,10 +122,25 @@ export const PUBLIC_PATHS = [
   "/docs",
   "/auth",
   "/payments/webhook",
+  "/billing/webhook",
 ];
 
-export const SKIP_TENANT_PATHS = ["/health", "/metrics", "/docs", "/auth", "/payments/webhook"];
+export const SKIP_TENANT_PATHS = [
+  "/health",
+  "/metrics",
+  "/docs",
+  "/auth",
+  "/payments/webhook",
+  "/billing/webhook",
+];
 
-export const PUBLIC_JWT_PATHS = ["/health", "/metrics", "/docs", "/auth", "/payments/webhook"];
+export const PUBLIC_JWT_PATHS = [
+  "/health",
+  "/metrics",
+  "/docs",
+  "/auth",
+  "/payments/webhook",
+  "/billing/webhook",
+];
 
 export const GATEWAY_SERVICE_NAME = "api-gateway";

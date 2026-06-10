@@ -8,6 +8,7 @@ export type TenantResponse = {
   currency: string;
   address: string | null;
   phone: string | null;
+  stripeCustomerId: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -29,6 +30,7 @@ export function toTenantResponse(tenant: Tenant): TenantResponse {
     currency: tenant.currency,
     address: tenant.address,
     phone: tenant.phone,
+    stripeCustomerId: tenant.stripeCustomerId,
     isActive: tenant.isActive,
     createdAt: tenant.createdAt.toISOString(),
     updatedAt: tenant.updatedAt.toISOString(),
@@ -50,6 +52,8 @@ export function toBrandingResponse(branding: TenantBranding) {
 export function toSubscriptionResponse(subscription: TenantSubscription) {
   return {
     plan: subscription.plan,
+    stripeSubscriptionId: subscription.stripeSubscriptionId,
+    subscriptionStatus: subscription.subscriptionStatus,
     usageLimit: subscription.usageLimit,
     usageCurrent: subscription.usageCurrent,
     renewsAt: subscription.renewsAt?.toISOString() ?? null,

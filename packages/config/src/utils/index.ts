@@ -29,8 +29,12 @@ export function parseNumber(value: string | undefined, fallback?: number): numbe
   return parsed;
 }
 
+export function isStaging(nodeEnv: string = process.env.NODE_ENV ?? "development"): boolean {
+  return nodeEnv === "staging";
+}
+
 export function isProduction(nodeEnv: string = process.env.NODE_ENV ?? "development"): boolean {
-  return nodeEnv === "production";
+  return nodeEnv === "production" || nodeEnv === "staging";
 }
 
 export function isDevelopment(nodeEnv: string = process.env.NODE_ENV ?? "development"): boolean {

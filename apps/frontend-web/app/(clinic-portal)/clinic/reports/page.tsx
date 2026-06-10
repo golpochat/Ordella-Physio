@@ -1,13 +1,11 @@
-import { ClinicReportsPlaceholder } from "@/components/clinic-portal/reports-placeholder";
+import { PortalReportsPage } from "@/components/reporting/portal-reports-page";
 
 export default function ClinicReportsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Reports</h1>
-        <p className="text-muted-foreground">Analytics and reporting dashboards coming soon.</p>
-      </div>
-      <ClinicReportsPlaceholder />
-    </div>
+    <PortalReportsPage
+      title="Reports"
+      description="Operational, financial, and clinical reporting for your clinic."
+      roles={["ADMIN"]}
+    />
   );
 }

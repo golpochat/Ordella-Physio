@@ -24,6 +24,8 @@ export const SERVICE_NAMES = {
   payment: "payment-service",
   communication: "communication-service",
   reporting: "reporting-service",
+  messaging: "messaging-service",
+  notification: "notification-service",
   gateway: "api-gateway",
 } as const;
 

@@ -151,3 +151,45 @@ export type CreateClinicAppointmentPayload = {
   type: string;
   notes?: string;
 };
+
+export type ClinicSubscriptionPlan = "STARTER" | "PROFESSIONAL" | "ENTERPRISE";
+
+export type ClinicStripeSubscription = {
+  tenantId: string;
+  stripeCustomerId: string | null;
+  defaultPaymentMethodId: string | null;
+  status: string;
+  plan: ClinicSubscriptionPlan | null;
+  subscription: {
+    id: string;
+    priceId: string;
+    status: string;
+    plan: ClinicSubscriptionPlan;
+    currentPeriodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+    canceledAt: string | null;
+  } | null;
+};
+
+export type ClinicStripeInvoice = {
+  id: string;
+  number: string | null;
+  status: string | null;
+  amountDue: number;
+  amountPaid: number;
+  currency: string;
+  hostedInvoiceUrl: string | null;
+  invoicePdf: string | null;
+  createdAt: string;
+  periodStart: string | null;
+  periodEnd: string | null;
+};
+
+export type CreateClinicSubscriptionPayload = {
+  plan: ClinicSubscriptionPlan;
+  paymentMethodId?: string;
+};
+
+export type CancelClinicSubscriptionPayload = {
+  immediately?: boolean;
+};

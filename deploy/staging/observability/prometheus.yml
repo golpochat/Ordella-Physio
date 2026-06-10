@@ -1,0 +1,32 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: api-gateway
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api-gateway:3049"]
+
+  - job_name: auth-service
+    metrics_path: /auth/metrics
+    static_configs:
+      - targets: ["auth-service:3051"]
+
+  - job_name: tenant-service
+    metrics_path: /tenants/metrics
+    static_configs:
+      - targets: ["tenant-service:3052"]
+
+  - job_name: patient-service
+    metrics_path: /patients/metrics
+    static_configs:
+      - targets: ["patient-service:3053"]
+
+  - job_name: traefik
+    static_configs:
+      - targets: ["traefik:8080"]

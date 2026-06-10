@@ -5,6 +5,7 @@ import { TaxRatesModule } from "@/tax-rates/tax-rates.module";
 import { DiscountsModule } from "@/discounts/discounts.module";
 import { DatabaseModule } from "@/database/database.module";
 import { EventsModule } from "@/events/events.module";
+import { StripeModule } from "@/stripe/stripe.module";
 import { configureBillingMiddleware } from "@/middleware";
 
 @Module({
@@ -18,6 +19,7 @@ import { configureBillingMiddleware } from "@/middleware";
     InvoicesModule,
     TaxRatesModule,
     DiscountsModule,
+    StripeModule,
   ],
 })
 export class AppModule implements NestModule {

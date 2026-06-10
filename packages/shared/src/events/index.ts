@@ -8,3 +8,5 @@ export * from "./billing.events";
 export * from "./payment.events";
 export * from "./communication.events";
 export * from "./reporting.events";
+export * from "./messaging.events";
+export * from "./notification.events";

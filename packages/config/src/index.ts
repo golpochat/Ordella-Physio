@@ -11,5 +11,7 @@ export { billingConfig, type BillingConfig } from "./services/billing";
 export { paymentConfig, type PaymentConfig } from "./services/payment";
 export { communicationConfig, type CommunicationConfig } from "./services/communication";
 export { reportingConfig, type ReportingConfig } from "./services/reporting";
+export { messagingConfig, type MessagingConfig } from "./services/messaging";
+export { notificationConfig, type NotificationConfig } from "./services/notification";
 export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
 export { gatewayConfig, type GatewayConfig } from "./services/gateway";

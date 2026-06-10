@@ -10,8 +10,10 @@ import {
   normalizeStaffList,
 } from "@/lib/clinic-portal-api";
 import type {
+  CancelClinicSubscriptionPayload,
   CreateClinicAppointmentPayload,
   CreateClinicPatientPayload,
+  CreateClinicSubscriptionPayload,
   CreateClinicStaffPayload,
   UpdateClinicPatientPayload,
   UpdateClinicProfilePayload,
@@ -219,6 +221,68 @@ export function useClinicBilling() {
     queryKey: ["clinic", "billing", tenantId],
     queryFn: async () => normalizeList(await requireApi(clinicApi).listBilling()),
     enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useClinicSubscription() {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "subscription", tenantId],
+    queryFn: () => requireApi(clinicApi).getSubscription(),
+    enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useClinicStripeInvoices() {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "stripe-invoices", tenantId],
+    queryFn: async () => {
+      const invoices = await requireApi(clinicApi).listStripeInvoices();
+      return Array.isArray(invoices) ? invoices : [];
+    },
+    enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useCreateClinicSubscription() {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: (payload: CreateClinicSubscriptionPayload) =>
+      requireApi(clinicApi).createSubscription(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "subscription", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["clinic", "stripe-invoices", tenantId] });
+    },
+  });
+}
+
+export function useCancelClinicSubscription() {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: (payload: CancelClinicSubscriptionPayload) =>
+      requireApi(clinicApi).cancelSubscription(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "subscription", tenantId] });
+    },
+  });
+}
+
+export function useClinicCustomerPortal() {
+  const clinicApi = useClinicPortalApi();
+
+  return useMutation({
+    mutationFn: (returnUrl?: string) => requireApi(clinicApi).createCustomerPortal(returnUrl),
   });
 }
 

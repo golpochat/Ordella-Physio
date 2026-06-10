@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const nodeEnvSchema = z.enum(["development", "test", "production"]);
+export const nodeEnvSchema = z.enum(["development", "test", "staging", "production"]);
 
 export const coreEnvSchema = z.object({
   NODE_ENV: nodeEnvSchema.default("development"),
@@ -27,7 +27,17 @@ export const tenantEnvSchema = coreEnvSchema.extend({
 export const patientEnvSchema = coreEnvSchema;
 export const appointmentEnvSchema = coreEnvSchema;
 export const notesEnvSchema = coreEnvSchema;
-export const billingEnvSchema = coreEnvSchema;
+export const messagingEnvSchema = coreEnvSchema;
+export const notificationEnvSchema = coreEnvSchema;
+export const billingEnvSchema = coreEnvSchema.extend({
+  STRIPE_SECRET_KEY: z.string().min(1).optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
+  STRIPE_PRICE_STARTER: z.string().optional(),
+  STRIPE_PRICE_PRO: z.string().optional(),
+  STRIPE_PRICE_ENTERPRISE: z.string().optional(),
+  TENANT_SERVICE_URL: z.string().url().optional(),
+  FRONTEND_URL: z.string().url().optional(),
+});
 
 export const paymentEnvSchema = coreEnvSchema.extend({
   STRIPE_SECRET_KEY: z.string().min(1),
@@ -63,6 +73,8 @@ export const gatewayServiceUrlsSchema = z.object({
   PAYMENT_SERVICE_URL: z.string().url(),
   COMMUNICATION_SERVICE_URL: z.string().url(),
   REPORTING_SERVICE_URL: z.string().url(),
+  MESSAGING_SERVICE_URL: z.string().url(),
+  NOTIFICATION_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({
@@ -91,6 +103,9 @@ export const fullEnvSchema = coreEnvSchema
     REFRESH_TOKEN_EXPIRES_IN: z.string().optional(),
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),
+    STRIPE_PRICE_STARTER: z.string().optional(),
+    STRIPE_PRICE_PRO: z.string().optional(),
+    STRIPE_PRICE_ENTERPRISE: z.string().optional(),
     EMAIL_PROVIDER_API_KEY: z.string().optional(),
     SMS_PROVIDER_API_KEY: z.string().optional(),
     EMAIL_FROM: z.string().optional(),

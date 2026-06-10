@@ -4,11 +4,15 @@ import { persist } from "zustand/middleware";
 type UiState = {
   sidebarCollapsed: boolean;
   mobileNavOpen: boolean;
+  messagingPanelOpen: boolean;
+  notificationPanelOpen: boolean;
   theme: "light" | "dark" | "system";
   correlationId: string | null;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
   setMobileNavOpen: (open: boolean) => void;
+  setMessagingPanelOpen: (open: boolean) => void;
+  setNotificationPanelOpen: (open: boolean) => void;
   setTheme: (theme: UiState["theme"]) => void;
   setCorrelationId: (correlationId: string | null) => void;
 };
@@ -18,11 +22,15 @@ export const useUiStore = create<UiState>()(
     (set) => ({
       sidebarCollapsed: false,
       mobileNavOpen: false,
+      messagingPanelOpen: false,
+      notificationPanelOpen: false,
       theme: "system",
       correlationId: null,
       setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
       toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
       setMobileNavOpen: (mobileNavOpen) => set({ mobileNavOpen }),
+      setMessagingPanelOpen: (messagingPanelOpen) => set({ messagingPanelOpen }),
+      setNotificationPanelOpen: (notificationPanelOpen) => set({ notificationPanelOpen }),
       setTheme: (theme) => set({ theme }),
       setCorrelationId: (correlationId) => set({ correlationId }),
     }),

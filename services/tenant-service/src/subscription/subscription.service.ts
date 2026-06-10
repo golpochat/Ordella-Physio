@@ -39,4 +39,27 @@ export class SubscriptionService {
   trackUsage(tenantId: string, amount = 1) {
     return this.subscriptionRepository.incrementUsage(tenantId, amount);
   }
+
+  async syncFromStripe(
+    tenantId: string,
+    data: {
+      stripeSubscriptionId?: string;
+      plan?: string;
+      subscriptionStatus?: string;
+    },
+  ) {
+    const planMap: Record<string, "STARTER" | "PROFESSIONAL" | "ENTERPRISE"> = {
+      STARTER: "STARTER",
+      PROFESSIONAL: "PROFESSIONAL",
+      ENTERPRISE: "ENTERPRISE",
+    };
+
+    const subscription = await this.subscriptionRepository.upsert(tenantId, {
+      ...(data.plan && planMap[data.plan] ? { plan: planMap[data.plan] } : {}),
+      ...(data.stripeSubscriptionId ? { stripeSubscriptionId: data.stripeSubscriptionId } : {}),
+      ...(data.subscriptionStatus ? { subscriptionStatus: data.subscriptionStatus } : {}),
+    });
+
+    return toSubscriptionResponse(subscription);
+  }
 }

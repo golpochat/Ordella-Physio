@@ -71,3 +71,60 @@ export type DashboardMonthlyInput = z.infer<typeof dashboardMonthlySchema>;
 export type DashboardQueryInput = z.infer<typeof dashboardQuerySchema>;
 export type ExportCsvInput = z.infer<typeof exportCsvSchema>;
 export type ExportPdfInput = z.infer<typeof exportPdfSchema>;
+
+export const reportTypeSchema = z.enum([
+  "appointments_summary",
+  "appointments_detailed",
+  "billing_summary",
+  "billing_detailed",
+  "notes_summary",
+  "therapist_activity",
+  "patient_activity",
+  "clinic_overview",
+  "tenant_usage",
+]);
+
+export const reportStatusSchema = z.enum(["pending", "processing", "completed", "failed"]);
+
+export const reportFormatSchema = z.enum(["json", "csv"]);
+
+export const reportFiltersSchema = dateRangeObjectSchema
+  .extend({
+    therapistId: idSchema.optional(),
+    patientId: idSchema.optional(),
+    status: z.string().min(1).max(50).optional(),
+    format: reportFormatSchema.optional(),
+  })
+  .refine(
+    (value) => {
+      if (!value.startDate || !value.endDate) {
+        return true;
+      }
+      return value.startDate <= value.endDate;
+    },
+    { message: "startDate must be before or equal to endDate", path: ["endDate"] },
+  );
+
+export const createReportRequestSchema = z.object({
+  type: reportTypeSchema,
+  filters: reportFiltersSchema,
+});
+
+export const listReportRequestsSchema = z.object({
+  status: reportStatusSchema.optional(),
+  type: reportTypeSchema.optional(),
+  page,
+  limit,
+});
+
+export const downloadReportSchema = z.object({
+  format: reportFormatSchema.optional(),
+});
+
+export type ReportType = z.infer<typeof reportTypeSchema>;
+export type ReportStatus = z.infer<typeof reportStatusSchema>;
+export type ReportFormat = z.infer<typeof reportFormatSchema>;
+export type ReportFiltersInput = z.infer<typeof reportFiltersSchema>;
+export type CreateReportRequestInput = z.infer<typeof createReportRequestSchema>;
+export type ListReportRequestsInput = z.infer<typeof listReportRequestsSchema>;
+export type DownloadReportInput = z.infer<typeof downloadReportSchema>;

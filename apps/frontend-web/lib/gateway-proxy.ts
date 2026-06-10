@@ -12,6 +12,8 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   payment: GATEWAY_PATHS.payment,
   communication: GATEWAY_PATHS.communication,
   reporting: GATEWAY_PATHS.reporting,
+  messaging: GATEWAY_PATHS.messaging,
+  notifications: GATEWAY_PATHS.notifications,
 };
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
@@ -24,6 +26,8 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   payment: "/api/payment",
   communication: "/api/communication",
   reporting: "/api/reporting",
+  messaging: "/api/messaging",
+  notifications: "/api/notifications",
 };
 
 const PROXY_STRIP_REQUEST_HEADERS = [

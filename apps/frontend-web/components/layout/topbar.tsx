@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTenant } from "@/hooks/useTenant";
 import { useUiStore } from "@/store/ui.store";
 import { useTheme } from "next-themes";
+import { MessagingLauncher } from "@/components/messaging/messaging-launcher";
+import { NotificationLauncher } from "@/components/notifications/notification-launcher";
 
 export function Topbar() {
   const { user, logout } = useAuth();
@@ -46,6 +48,8 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-2">
+        <NotificationLauncher />
+        <MessagingLauncher />
         <Button
           variant="ghost"
           size="icon"

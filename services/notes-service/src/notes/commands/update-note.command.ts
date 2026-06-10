@@ -32,6 +32,8 @@ export class UpdateNoteCommand {
       {
         tenantId: input.tenantId,
         noteId: note.id,
+        patientId: note.patientId,
+        therapistId: note.therapistId,
         changes: input.dto as Record<string, unknown>,
         updatedAt: note.updatedAt.toISOString(),
       },

@@ -11,5 +11,6 @@ export const THERAPIST_PORTAL_NAV: TherapistPortalNavLink[] = [
   { href: "/therapist/billing", label: "Billing" },
   { href: "/therapist/messages", label: "Messages" },
   { href: "/therapist/notifications", label: "Notifications" },
+  { href: "/therapist/reports", label: "Reports" },
   { href: "/therapist/profile", label: "Profile" },
 ];

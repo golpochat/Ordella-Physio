@@ -1,0 +1,641 @@
+name: ordella-physio-staging
+
+# Ordella Physio — staging deployment stack
+# Usage: docker compose --env-file .env.staging -f docker-compose.staging.yml up -d --build
+
+networks:
+  ordella-staging-network:
+    name: ordella-staging-network
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  nats_data:
+  loki_data:
+  prometheus_data:
+  grafana_data:
+  tempo_data:
+  traefik_certs:
+
+x-jwt-secret: &jwt-secret ${JWT_ACCESS_SECRET}
+x-postgres-user: &postgres-user ${POSTGRES_USER:-physio}
+x-postgres-password: &postgres-password ${POSTGRES_PASSWORD}
+
+x-service-health: &service-health
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 90s
+
+services:
+  # ---------------------------------------------------------------------------
+  # Data & messaging
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15
+    container_name: ordella_staging_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../infrastructure/deployment-layer/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-physio}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: ordella_staging_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nats:
+    image: nats:2.10
+    container_name: ordella_staging_nats
+    restart: unless-stopped
+    command: ["-js", "-m", "8222"]
+    volumes:
+      - nats_data:/var/lib/nats
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Backend microservices
+  # ---------------------------------------------------------------------------
+  auth-service:
+    build:
+      context: ../../
+      dockerfile: services/auth-service/Dockerfile
+    container_name: ordella_staging_auth_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3051
+      DATABASE_URL: ${AUTH_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      JWT_SECRET: ${JWT_SECRET}
+      NATS_URL: ${NATS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3051/auth/health"]
+
+  tenant-service:
+    build:
+      context: ../../
+      dockerfile: services/tenant-service/Dockerfile
+    container_name: ordella_staging_tenant_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3052
+      DATABASE_URL: ${TENANT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3052/tenants/health"]
+
+  patient-service:
+    build:
+      context: ../../
+      dockerfile: services/patient-service/Dockerfile
+    container_name: ordella_staging_patient_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3053
+      DATABASE_URL: ${PATIENT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3053/patients/health"]
+
+  appointment-service:
+    build:
+      context: ../../
+      dockerfile: services/appointment-service/Dockerfile
+    container_name: ordella_staging_appointment_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3054
+      DATABASE_URL: ${APPOINTMENT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3054/appointments/health"]
+
+  notes-service:
+    build:
+      context: ../../
+      dockerfile: services/notes-service/Dockerfile
+    container_name: ordella_staging_notes_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3055
+      DATABASE_URL: ${NOTES_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3055/notes/health"]
+
+  billing-service:
+    build:
+      context: ../../
+      dockerfile: services/billing-service/Dockerfile
+    container_name: ordella_staging_billing_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3056
+      DATABASE_URL: ${BILLING_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER}
+      STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO}
+      STRIPE_PRICE_ENTERPRISE: ${STRIPE_PRICE_ENTERPRISE}
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      FRONTEND_URL: ${FRONTEND_URL}
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3056/billing/health"]
+
+  payment-service:
+    build:
+      context: ../../
+      dockerfile: services/payment-service/Dockerfile
+    container_name: ordella_staging_payment_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3057
+      DATABASE_URL: ${PAYMENT_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3057/payments/health"]
+
+  communication-service:
+    build:
+      context: ../../
+      dockerfile: services/communication-service/Dockerfile
+    container_name: ordella_staging_communication_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3058
+      DATABASE_URL: ${COMMUNICATION_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER}
+      EMAIL_PROVIDER_API_KEY: ${EMAIL_PROVIDER_API_KEY}
+      SMS_PROVIDER_API_KEY: ${SMS_PROVIDER_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3058/communication/health"]
+
+  reporting-service:
+    build:
+      context: ../../
+      dockerfile: services/reporting-service/Dockerfile
+    container_name: ordella_staging_reporting_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3059
+      DATABASE_URL: ${REPORTING_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3059/reporting/health"]
+
+  messaging-service:
+    build:
+      context: ../../
+      dockerfile: services/messaging-service/Dockerfile
+    container_name: ordella_staging_messaging_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3061
+      DATABASE_URL: ${MESSAGING_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3061/messaging/health"]
+
+  notification-service:
+    build:
+      context: ../../
+      dockerfile: services/notification-service/Dockerfile
+    container_name: ordella_staging_notification_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3062
+      DATABASE_URL: ${NOTIFICATION_DATABASE_URL}
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: ${NATS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3062/notifications/health"]
+
+  event-bus-service:
+    build:
+      context: ../../
+      dockerfile: services/event-bus-service/Dockerfile
+    container_name: ordella_staging_event_bus_service
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3060
+      DATABASE_URL: ${EVENT_BUS_DATABASE_URL}
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3060/event-bus/health"]
+
+  api-gateway:
+    build:
+      context: ../../
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: ordella_staging_api_gateway
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: staging
+      PORT: 3049
+      JWT_ACCESS_SECRET: *jwt-secret
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URL: http://auth-service:3051
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      NOTES_SERVICE_URL: http://notes-service:3055
+      BILLING_SERVICE_URL: http://billing-service:3056
+      PAYMENT_SERVICE_URL: http://payment-service:3057
+      COMMUNICATION_SERVICE_URL: http://communication-service:3058
+      REPORTING_SERVICE_URL: http://reporting-service:3059
+      MESSAGING_SERVICE_URL: http://messaging-service:3061
+      NOTIFICATION_SERVICE_URL: http://notification-service:3062
+      CORS_ORIGIN: ${FRONTEND_URL}
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      tenant-service:
+        condition: service_healthy
+      patient-service:
+        condition: service_healthy
+      appointment-service:
+        condition: service_healthy
+      notes-service:
+        condition: service_healthy
+      billing-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      communication-service:
+        condition: service_healthy
+      reporting-service:
+        condition: service_healthy
+      messaging-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3049/health"]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.staging-api.rule=Host(`api.staging.ordella-physio.com`)
+      - traefik.http.routers.staging-api.entrypoints=websecure
+      - traefik.http.routers.staging-api.tls=true
+      - traefik.http.routers.staging-api.tls.certresolver=letsencrypt
+      - traefik.http.services.staging-api.loadbalancer.server.port=3049
+
+  frontend-web:
+    build:
+      context: ../../
+      dockerfile: apps/frontend-web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_GATEWAY_URL: ${NEXT_PUBLIC_API_GATEWAY_URL}
+        NEXT_PUBLIC_DEFAULT_TENANT_ID: ${TENANT_DEFAULT}
+        DEFAULT_TENANT_ID: ${TENANT_DEFAULT}
+    container_name: ordella_staging_frontend_web
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+      NEXT_PUBLIC_APP_URL: ${FRONTEND_URL}
+      NEXT_PUBLIC_API_GATEWAY_URL: ${NEXT_PUBLIC_API_GATEWAY_URL}
+      NEXT_PUBLIC_DEFAULT_TENANT_ID: ${TENANT_DEFAULT}
+      DEFAULT_TENANT_ID: ${TENANT_DEFAULT}
+      API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
+      NEXTAUTH_URL: ${FRONTEND_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      <<: *service-health
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3010/"]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.staging-frontend.rule=Host(`staging.ordella-physio.com`)
+      - traefik.http.routers.staging-frontend.entrypoints=websecure
+      - traefik.http.routers.staging-frontend.tls=true
+      - traefik.http.routers.staging-frontend.tls.certresolver=letsencrypt
+      - traefik.http.services.staging-frontend.loadbalancer.server.port=3010
+
+  # ---------------------------------------------------------------------------
+  # Reverse proxy (Traefik)
+  # ---------------------------------------------------------------------------
+  traefik:
+    image: traefik:v3.3
+    container_name: ordella_staging_traefik
+    restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --api.insecure=false
+      - --ping=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=ordella-staging-network
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --log.level=INFO
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "${TRAEFIK_DASHBOARD_PORT:-8082}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_certs:/certs
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - traefik.enable=false
+
+  # ---------------------------------------------------------------------------
+  # Observability stack
+  # ---------------------------------------------------------------------------
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: ordella_staging_loki
+    restart: unless-stopped
+    volumes:
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3100/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  promtail:
+    image: grafana/promtail:2.9.4
+    container_name: ordella_staging_promtail
+    restart: unless-stopped
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      loki:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: ordella_staging_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: https://grafana.staging.ordella-physio.com
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      prometheus:
+        condition: service_started
+      loki:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.staging-grafana.rule=Host(`grafana.staging.ordella-physio.com`)
+      - traefik.http.routers.staging-grafana.entrypoints=websecure
+      - traefik.http.routers.staging-grafana.tls=true
+      - traefik.http.routers.staging-grafana.tls.certresolver=letsencrypt
+      - traefik.http.services.staging-grafana.loadbalancer.server.port=3000
+
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: ordella_staging_prometheus
+    restart: unless-stopped
+    volumes:
+      - prometheus_data:/prometheus
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: ordella_staging_alertmanager
+    restart: unless-stopped
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: ordella_staging_tempo
+    restart: unless-stopped
+    volumes:
+      - tempo_data:/var/tempo
+    command:
+      - -config.file=/etc/tempo.yaml
+    networks:
+      - ordella-staging-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3200/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5

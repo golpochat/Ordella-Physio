@@ -36,4 +36,19 @@ export class ReportingEventPublisher implements OnModuleInit, OnModuleDestroy {
   async publishDataIngested(event: DataIngestedEvent, correlationId?: string) {
     await this.publish(REPORTING_EVENTS.DATA_INGESTED, event.tenantId, event, correlationId);
   }
+
+  async publishReportRequestCreated(payload: Record<string, unknown>, correlationId?: string) {
+    const tenantId = String(payload.tenantId ?? "");
+    await this.publish(REPORTING_EVENTS.REQUEST_CREATED, tenantId, payload, correlationId);
+  }
+
+  async publishReportRequestCompleted(payload: Record<string, unknown>, correlationId?: string) {
+    const tenantId = String(payload.tenantId ?? "");
+    await this.publish(REPORTING_EVENTS.REQUEST_COMPLETED, tenantId, payload, correlationId);
+  }
+
+  async publishReportRequestFailed(payload: Record<string, unknown>, correlationId?: string) {
+    const tenantId = String(payload.tenantId ?? "");
+    await this.publish(REPORTING_EVENTS.REQUEST_FAILED, tenantId, payload, correlationId);
+  }
 }

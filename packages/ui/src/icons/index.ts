@@ -12,6 +12,7 @@ export {
   Home,
   Loader2,
   Menu,
+  MessageCircle,
   Moon,
   Search,
   Settings,

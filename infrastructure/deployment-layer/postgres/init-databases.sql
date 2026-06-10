@@ -8,3 +8,5 @@ CREATE DATABASE ordella_payment;
 CREATE DATABASE ordella_communication;
 CREATE DATABASE ordella_reporting;
 CREATE DATABASE ordella_event_bus;
+CREATE DATABASE ordella_messaging;
+CREATE DATABASE ordella_notification;

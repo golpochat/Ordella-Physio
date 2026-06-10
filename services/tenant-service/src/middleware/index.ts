@@ -21,14 +21,16 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "tenant-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+const TENANT_PUBLIC_PATHS = ["/tenants/health", "/tenants", "/tenants/internal/billing-sync"];
+
 export const TenantServiceTenantMiddleware = createTenantMiddleware({
   required: false,
-  skipPaths: ["/tenants/health", "/tenants"],
+  skipPaths: TENANT_PUBLIC_PATHS,
 });
 
 export const TenantServiceAuthContextMiddleware = createAuthContextMiddleware({
   required: false,
-  skipPaths: ["/tenants/health"],
+  skipPaths: TENANT_PUBLIC_PATHS,
 });
 
 export const TenantServiceRequestLoggingMiddleware = createRequestLoggingMiddleware({

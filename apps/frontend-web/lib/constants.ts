@@ -14,6 +14,8 @@ export const API_ROUTES = {
   payment: "/api/payment",
   communication: "/api/communication",
   reporting: "/api/reporting",
+  messaging: "/api/messaging",
+  notifications: "/api/notifications",
 } as const;
 
 export const GATEWAY_PATHS = {
@@ -26,6 +28,8 @@ export const GATEWAY_PATHS = {
   payment: "/payments",
   communication: "/communication",
   reporting: "/reporting",
+  messaging: "/messaging",
+  notifications: "/notifications",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;

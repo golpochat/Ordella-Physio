@@ -14,6 +14,8 @@ import { NOTES_ROUTES } from "@/routes/notes.routes";
 import { PATIENT_ROUTES } from "@/routes/patient.routes";
 import { PAYMENT_ROUTES } from "@/routes/payment.routes";
 import { REPORTING_ROUTES } from "@/routes/reporting.routes";
+import { MESSAGING_ROUTES } from "@/routes/messaging.routes";
+import { NOTIFICATION_ROUTES } from "@/routes/notification.routes";
 import { TENANT_ROUTES } from "@/routes/tenant.routes";
 import { configureGatewayMiddleware, gatewayMiddlewareProviders } from "./middleware";
 import { GatewayController } from "./gateway.controller";
@@ -39,6 +41,8 @@ const proxyControllers = [
   createProxyController(PAYMENT_ROUTES.base, "PAYMENT_SERVICE_URL"),
   createProxyController(COMMUNICATION_ROUTES.base, "COMMUNICATION_SERVICE_URL"),
   createProxyController(REPORTING_ROUTES.base, "REPORTING_SERVICE_URL"),
+  createProxyController(MESSAGING_ROUTES.base, "MESSAGING_SERVICE_URL"),
+  createProxyController(NOTIFICATION_ROUTES.base, "NOTIFICATION_SERVICE_URL"),
 ];
 
 @Module({

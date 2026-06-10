@@ -1,13 +1,11 @@
-import { PlatformReportsPlaceholder } from "@/components/super-admin-portal/reports-placeholder";
+import { PortalReportsPage } from "@/components/reporting/portal-reports-page";
 
 export default function SuperAdminReportsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Reports</h1>
-        <p className="text-muted-foreground">Platform analytics and reporting dashboards.</p>
-      </div>
-      <PlatformReportsPlaceholder />
-    </div>
+    <PortalReportsPage
+      title="Reports"
+      description="Platform analytics, tenant usage, and global operational reporting."
+      roles={["SYSTEM"]}
+    />
   );
 }

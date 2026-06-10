@@ -22,5 +22,7 @@ data:
   PAYMENT_SERVICE_URL: "http://payment-service:3057"
   COMMUNICATION_SERVICE_URL: "http://communication-service:3058"
   REPORTING_SERVICE_URL: "http://reporting-service:3059"
+  MESSAGING_SERVICE_URL: "http://messaging-service:3061"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:3062"
   GATEWAY_TIMEOUT_MS: "30000"
   CORS_ORIGIN: "*"

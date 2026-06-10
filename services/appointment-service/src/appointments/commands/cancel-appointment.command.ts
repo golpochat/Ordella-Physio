@@ -59,6 +59,8 @@ export class CancelAppointmentCommand {
       {
         tenantId: input.tenantId,
         appointmentId: appointment.id,
+        patientId: appointment.patientId,
+        therapistId: appointment.therapistId,
         reason: input.dto.reason,
         cancelledAt: appointment.updatedAt.toISOString(),
       },

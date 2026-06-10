@@ -5,6 +5,7 @@ import { LocationsModule } from "@/locations/locations.module";
 import { StaffModule } from "@/staff/staff.module";
 import { BrandingModule } from "@/branding/branding.module";
 import { SubscriptionModule } from "@/subscription/subscription.module";
+import { BillingModule } from "@/billing/billing.module";
 import { DatabaseModule } from "@/database/database.module";
 import { EventsModule } from "@/events/events.module";
 import { configureTenantMiddleware } from "@/middleware";
@@ -22,6 +23,7 @@ import { configureTenantMiddleware } from "@/middleware";
     StaffModule,
     BrandingModule,
     SubscriptionModule,
+    BillingModule,
   ],
 })
 export class AppModule implements NestModule {

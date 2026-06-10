@@ -18,6 +18,8 @@ function createGatewayConfig() {
     paymentServiceUrl: env.PAYMENT_SERVICE_URL,
     communicationServiceUrl: env.COMMUNICATION_SERVICE_URL,
     reportingServiceUrl: env.REPORTING_SERVICE_URL,
+    messagingServiceUrl: env.MESSAGING_SERVICE_URL,
+    notificationServiceUrl: env.NOTIFICATION_SERVICE_URL,
     gatewayTimeoutMs: env.GATEWAY_TIMEOUT_MS,
     gatewayRateLimitIp: env.GATEWAY_RATE_LIMIT_IP,
     gatewayRateLimitTenant: env.GATEWAY_RATE_LIMIT_TENANT,

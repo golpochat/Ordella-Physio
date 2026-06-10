@@ -67,6 +67,16 @@ export const EVENT_TYPES = {
   METRICS_GENERATED: "metrics.generated",
   DATA_INGESTED: "data.ingested",
   AUDIT_LOGGED: "audit.logged",
+  MESSAGING_CONVERSATION_CREATED: "messaging.conversation.created",
+  MESSAGING_MESSAGE_CREATED: "messaging.message.created",
+  MESSAGING_MESSAGE_READ: "messaging.message.read",
+  MESSAGING_TYPING: "messaging.typing",
+  NOTIFICATION_CREATE: "notification.create",
+  NOTIFICATION_READ: "notification.read",
+  NOTIFICATION_BROADCAST: "notification.broadcast",
+  REPORTING_REQUEST_CREATED: "reporting.request.created",
+  REPORTING_REQUEST_COMPLETED: "reporting.request.completed",
+  REPORTING_REQUEST_FAILED: "reporting.request.failed",
 } as const;
 
 export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];

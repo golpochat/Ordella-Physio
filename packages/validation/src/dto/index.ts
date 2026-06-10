@@ -23,6 +23,10 @@ export {
   type UpdateTenantInput,
 } from "./tenant.dto";
 export {
+  tenantBillingSyncSchema,
+  type TenantBillingSyncInput,
+} from "./tenant-billing-sync.dto";
+export {
   createPatientSchema,
   genderSchema,
   searchPatientSchema,
@@ -89,6 +93,19 @@ export {
   type UpdateTaxRateInput,
 } from "./billing.dto";
 export {
+  cancelStripeSubscriptionSchema,
+  createCustomerPortalSchema,
+  createStripeCustomerSchema,
+  createStripeSubscriptionSchema,
+  subscriptionPlanSchema,
+  updateStripePaymentMethodSchema,
+  type CancelStripeSubscriptionInput,
+  type CreateCustomerPortalInput,
+  type CreateStripeCustomerInput,
+  type CreateStripeSubscriptionInput,
+  type UpdateStripePaymentMethodInput,
+} from "./stripe-billing.dto";
+export {
   cancelPaymentIntentSchema,
   confirmPaymentSchema,
   createLedgerEntrySchema,
@@ -138,6 +155,19 @@ export {
   type ExportCsvInput,
   type ExportPdfInput,
   type MetricsQueryInput,
+  createReportRequestSchema,
+  downloadReportSchema,
+  listReportRequestsSchema,
+  reportFormatSchema,
+  reportStatusSchema,
+  reportTypeSchema,
+  type CreateReportRequestInput,
+  type DownloadReportInput,
+  type ListReportRequestsInput,
+  type ReportFiltersInput,
+  type ReportFormat,
+  type ReportStatus,
+  type ReportType,
 } from "./reporting.dto";
 export {
   listDeadLetterSchema,
@@ -145,3 +175,20 @@ export {
   type ListDeadLetterInput,
   type ReplayEventsInput,
 } from "./event-bus.dto";
+export {
+  conversationParticipantSchema,
+  createConversationSchema,
+  createMessageSchema,
+  listMessagesSchema,
+  messageTypingSchema,
+  type CreateConversationInput,
+  type CreateMessageInput,
+  type ListMessagesInput,
+  type MessageTypingInput,
+} from "./messaging.dto";
+export {
+  listNotificationsSchema,
+  markNotificationsReadSchema,
+  type ListNotificationsInput,
+  type MarkNotificationsReadInput,
+} from "./notification.dto";

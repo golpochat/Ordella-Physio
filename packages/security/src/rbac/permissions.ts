@@ -11,7 +11,12 @@ export const PERMISSIONS = {
   PAYMENTS_WRITE: "payments.write",
   COMMUNICATION_SEND: "communication.send",
   REPORTING_READ: "reporting.read",
+  REPORTING_WRITE: "reporting.write",
   TENANT_MANAGE: "tenant.manage",
+  MESSAGING_READ: "messaging.read",
+  MESSAGING_WRITE: "messaging.write",
+  NOTIFICATIONS_READ: "notifications.read",
+  NOTIFICATIONS_WRITE: "notifications.write",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

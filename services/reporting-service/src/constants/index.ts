@@ -10,6 +10,28 @@ export const REPORTING_EVENTS = {
   DATA_INGESTED: EVENT_TYPES.DATA_INGESTED,
   METRICS_DAILY_UPDATED: EVENT_TYPES.METRICS_DAILY_UPDATED,
   METRICS_MONTHLY_UPDATED: EVENT_TYPES.METRICS_MONTHLY_UPDATED,
+  REQUEST_CREATED: EVENT_TYPES.REPORTING_REQUEST_CREATED,
+  REQUEST_COMPLETED: EVENT_TYPES.REPORTING_REQUEST_COMPLETED,
+  REQUEST_FAILED: EVENT_TYPES.REPORTING_REQUEST_FAILED,
+} as const;
+
+export const REPORT_STATUSES = {
+  PENDING: "pending",
+  PROCESSING: "processing",
+  COMPLETED: "completed",
+  FAILED: "failed",
+} as const;
+
+export const REPORT_TYPES = {
+  APPOINTMENTS_SUMMARY: "appointments_summary",
+  APPOINTMENTS_DETAILED: "appointments_detailed",
+  BILLING_SUMMARY: "billing_summary",
+  BILLING_DETAILED: "billing_detailed",
+  NOTES_SUMMARY: "notes_summary",
+  THERAPIST_ACTIVITY: "therapist_activity",
+  PATIENT_ACTIVITY: "patient_activity",
+  CLINIC_OVERVIEW: "clinic_overview",
+  TENANT_USAGE: "tenant_usage",
 } as const;
 
 export const INGESTION_SOURCES = {

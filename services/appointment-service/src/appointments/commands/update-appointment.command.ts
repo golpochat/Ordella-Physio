@@ -34,6 +34,8 @@ export class UpdateAppointmentCommand {
       {
         tenantId: input.tenantId,
         appointmentId: appointment.id,
+        patientId: appointment.patientId,
+        therapistId: appointment.therapistId,
         changes: input.dto as Record<string, unknown>,
         updatedAt: appointment.updatedAt.toISOString(),
       },

@@ -21,14 +21,16 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "billing-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+const BILLING_PUBLIC_PATHS = ["/billing/health", "/billing/webhook"];
+
 export const BillingServiceTenantMiddleware = createTenantMiddleware({
   required: true,
-  skipPaths: ["/billing/health"],
+  skipPaths: BILLING_PUBLIC_PATHS,
 });
 
 export const BillingServiceAuthContextMiddleware = createAuthContextMiddleware({
   required: false,
-  skipPaths: ["/billing/health"],
+  skipPaths: BILLING_PUBLIC_PATHS,
 });
 
 export const BillingServiceRequestLoggingMiddleware = createRequestLoggingMiddleware({
@@ -47,7 +49,7 @@ export const BillingServiceRateLimitMiddleware = createRateLimitMiddleware({
   windowMs: 60_000,
   maxRequestsPerIp: 100,
   maxRequestsPerTenant: 200,
-  skipPaths: ["/billing/health"],
+  skipPaths: BILLING_PUBLIC_PATHS,
 });
 
 export function configureBillingMiddleware(consumer: MiddlewareConsumer): void {

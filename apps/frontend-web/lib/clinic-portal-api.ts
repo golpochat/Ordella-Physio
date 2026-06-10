@@ -10,6 +10,10 @@ import type {
   ClinicProfile,
   ClinicStaffMember,
   ClinicLocation,
+  ClinicStripeInvoice,
+  ClinicStripeSubscription,
+  CancelClinicSubscriptionPayload,
+  CreateClinicSubscriptionPayload,
   CreateClinicAppointmentPayload,
   CreateClinicPatientPayload,
   CreateClinicStaffPayload,
@@ -91,6 +95,28 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
 
     getInvoice(invoiceId: string) {
       return api.get<ClinicInvoice>("billing", `/invoices/${invoiceId}`);
+    },
+
+    getSubscription() {
+      return api.get<ClinicStripeSubscription>("billing", "/subscription");
+    },
+
+    listStripeInvoices() {
+      return api.get<ClinicStripeInvoice[]>("billing", "/stripe-invoices");
+    },
+
+    createSubscription(payload: CreateClinicSubscriptionPayload) {
+      return api.post<ClinicStripeSubscription>("billing", "/create-subscription", payload);
+    },
+
+    cancelSubscription(payload: CancelClinicSubscriptionPayload) {
+      return api.post<ClinicStripeSubscription>("billing", "/cancel-subscription", payload);
+    },
+
+    createCustomerPortal(returnUrl?: string) {
+      return api.post<{ url: string }>("billing", "/customer-portal", {
+        returnUrl,
+      });
     },
 
     listNotes(params?: { page?: number; limit?: number }) {

@@ -9,6 +9,8 @@ import { ProtectedRoute } from "@/components/navigation/protected-route";
 import { RoleGuard } from "@/components/navigation/role-guard";
 import { useAuth } from "@/hooks/useAuth";
 import { usePatientContext } from "@/hooks/usePatientPortal";
+import { PortalMessagingActions } from "@/components/messaging/portal-messaging-actions";
+import { PortalNotificationActions } from "@/components/notifications/portal-notification-actions";
 import { PATIENT_PORTAL_NAV } from "@/lib/patient-portal-nav";
 import { useUiStore } from "@/store/ui.store";
 import { useState } from "react";
@@ -76,19 +78,27 @@ export function PatientPortalShell({ children }: { children: React.ReactNode }) 
           </aside>
 
           <div className="flex min-h-screen flex-1 flex-col">
+            <header className="hidden h-14 items-center justify-end gap-1 border-b bg-card px-4 md:flex">
+              <PortalNotificationActions />
+              <PortalMessagingActions />
+            </header>
             <header className="flex h-14 items-center justify-between border-b bg-card px-4 md:hidden">
               <div>
                 <p className="text-sm font-semibold">{displayName}</p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMobileOpen((open) => !open)}
-                aria-label="Toggle navigation"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <PortalNotificationActions />
+                <PortalMessagingActions />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileOpen((open) => !open)}
+                  aria-label="Toggle navigation"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </div>
             </header>
 
             {mobileOpen ? (

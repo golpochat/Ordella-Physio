@@ -22,16 +22,17 @@ enum SubscriptionPlan {
 }
 
 model Tenant {
-  id           String              @id @default(cuid())
-  name         String
-  slug         String              @unique
-  timezone     String              @default("UTC")
-  currency     String              @default("GBP")
-  address      String?
-  phone        String?
-  isActive     Boolean             @default(true)
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  id                   String              @id @default(cuid())
+  name                 String
+  slug                 String              @unique
+  timezone             String              @default("UTC")
+  currency             String              @default("GBP")
+  address              String?
+  phone                String?
+  stripeCustomerId     String?             @unique
+  isActive             Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
   locations    Location[]
   staff        Staff[]
   branding     TenantBranding?
@@ -86,15 +87,17 @@ model TenantBranding {
 }
 
 model TenantSubscription {
-  id           String           @id @default(cuid())
-  tenantId     String           @unique
-  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  plan         SubscriptionPlan @default(STARTER)
-  usageLimit   Int?
-  usageCurrent Int              @default(0)
-  renewsAt     DateTime?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id                   String           @id @default(cuid())
+  tenantId             String           @unique
+  tenant               Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan                 SubscriptionPlan @default(STARTER)
+  stripeSubscriptionId String?
+  subscriptionStatus   String?
+  usageLimit           Int?
+  usageCurrent         Int              @default(0)
+  renewsAt             DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
 
   @@map("tenant_subscriptions")
 }
