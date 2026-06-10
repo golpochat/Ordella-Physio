@@ -23,12 +23,23 @@ out
 Thumbs.db
 
 # Logs
+logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Testing
 coverage
+*.lcov
+.nyc_output
+
+# Caches
+.cache
+.eslintcache
+.parcel-cache
+.npm
 
 # Misc
 *.tsbuildinfo
