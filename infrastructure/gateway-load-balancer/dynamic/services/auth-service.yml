@@ -1,0 +1,10 @@
+http:
+  services:
+    auth-service:
+      loadBalancer:
+        healthCheck:
+          path: /auth/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://auth-service:3051

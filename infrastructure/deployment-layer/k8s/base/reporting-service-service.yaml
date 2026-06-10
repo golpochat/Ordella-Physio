@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-service
+  labels:
+    app: reporting-service
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: reporting-service
+  ports:
+    - name: http
+      port: 3059
+      targetPort: 3059

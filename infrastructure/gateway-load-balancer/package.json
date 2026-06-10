@@ -1,0 +1,6 @@
+{
+  "name": "@ordella/gateway-load-balancer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Traefik gateway and load balancer for Ordella Physio"
+}

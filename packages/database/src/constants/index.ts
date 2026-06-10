@@ -1,0 +1,9 @@
+export {
+  DB_ERROR_CODES,
+  PRISMA_ERROR_CODE_MAP,
+  TENANT_ID_FIELD,
+  DELETED_AT_FIELD,
+  DEFAULT_PAGE_SIZE,
+  MAX_PAGE_SIZE,
+  type DbErrorCode,
+} from "./db-errors";

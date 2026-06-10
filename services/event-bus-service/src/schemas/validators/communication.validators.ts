@@ -1,0 +1,3 @@
+import { COMMUNICATION_EVENT_CONTRACTS } from "@ordella/event-contracts";
+
+export const COMMUNICATION_VALIDATORS = COMMUNICATION_EVENT_CONTRACTS;

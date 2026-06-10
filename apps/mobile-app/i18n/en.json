@@ -1,0 +1,86 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "offline": "You are offline",
+    "offlineHint": "Changes will sync when you reconnect.",
+    "error": "Something went wrong",
+    "seeAll": "See all"
+  },
+  "auth": {
+    "login": "Sign in",
+    "register": "Create account",
+    "forgotPassword": "Forgot password?",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "resetSent": "If an account exists, reset instructions have been sent.",
+    "welcomeBack": "Welcome back",
+    "signInSubtitle": "Sign in to manage your clinic on the go"
+  },
+  "tabs": {
+    "home": "Home",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "billing": "Billing",
+    "profile": "Profile"
+  },
+  "home": {
+    "title": "Dashboard",
+    "upcoming": "Upcoming appointments",
+    "quickActions": "Quick actions",
+    "notifications": "Notifications",
+    "recentActivity": "Recent activity",
+    "newAppointment": "New appointment",
+    "addPatient": "Add patient",
+    "addNote": "Add note"
+  },
+  "appointments": {
+    "title": "Appointments",
+    "upcoming": "Upcoming",
+    "calendar": "Calendar",
+    "calendarPlaceholder": "Calendar view coming soon",
+    "empty": "No appointments scheduled",
+    "details": "Appointment details"
+  },
+  "patients": {
+    "title": "Patients",
+    "empty": "No patients found",
+    "profile": "Patient profile",
+    "records": "Medical records",
+    "notes": "Notes"
+  },
+  "notes": {
+    "title": "Notes",
+    "soap": "SOAP notes",
+    "clinical": "Clinical notes",
+    "empty": "No notes yet",
+    "add": "Add note"
+  },
+  "billing": {
+    "title": "Billing",
+    "invoices": "Invoices",
+    "payments": "Payments",
+    "outstanding": "Outstanding balance",
+    "empty": "No invoices found"
+  },
+  "profile": {
+    "title": "Profile",
+    "changePassword": "Change password",
+    "language": "Language",
+    "darkMode": "Dark mode",
+    "notifications": "Notification preferences",
+    "logout": "Sign out",
+    "english": "English",
+    "bangla": "বাংলা"
+  },
+  "modals": {
+    "createAppointment": "Create appointment",
+    "addPatient": "Add patient",
+    "addNote": "Add note"
+  }
+}

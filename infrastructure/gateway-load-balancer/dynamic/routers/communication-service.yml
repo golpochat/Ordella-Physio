@@ -1,0 +1,12 @@
+http:
+  routers:
+    communication-service:
+      rule: PathPrefix(`/communication-service`)
+      entryPoints:
+        - websecure
+      service: communication-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

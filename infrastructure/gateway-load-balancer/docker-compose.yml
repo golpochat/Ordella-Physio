@@ -1,0 +1,36 @@
+services:
+  traefik:
+    image: traefik:v3.3
+    container_name: ordella_gateway_load_balancer
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8082:8082"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
+      - ./certs:/etc/traefik/certs
+    networks:
+      - ordella-network
+    labels:
+      - traefik.enable=false
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  ordella-network:
+    external: true
+    name: ${ORDELLA_NETWORK:-ordella_physio_backend}

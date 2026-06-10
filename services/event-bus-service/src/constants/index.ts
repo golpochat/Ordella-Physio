@@ -1,0 +1,31 @@
+import { CORRELATION_ID_HEADER } from "@ordella/middleware";
+import { EVENT_TYPES } from "@ordella/shared";
+
+export { CORRELATION_ID_HEADER };
+
+export const EVENT_BUS_SERVICE_NAME = "event-bus-service";
+
+export const DOMAIN_STREAM_NAMES = {
+  AUTH: "ORDELLA_AUTH",
+  TENANT: "ORDELLA_TENANT",
+  PATIENT: "ORDELLA_PATIENT",
+  APPOINTMENT: "ORDELLA_APPOINTMENT",
+  NOTES: "ORDELLA_NOTES",
+  BILLING: "ORDELLA_BILLING",
+  PAYMENT: "ORDELLA_PAYMENT",
+  COMMUNICATION: "ORDELLA_COMMUNICATION",
+  REPORTING: "ORDELLA_REPORTING",
+  DEAD_LETTER: "ORDELLA_DLQ",
+} as const;
+
+export const AUDIT_EVENTS = {
+  AUDIT_LOGGED: EVENT_TYPES.AUDIT_LOGGED,
+} as const;
+
+export const DEFAULT_EVENT_VERSION = 1;
+
+export const CONSUMER_DEFAULTS = {
+  MAX_DELIVER: 5,
+  ACK_WAIT_MS: 30_000,
+  QUEUE_GROUP: "ordella-event-bus",
+} as const;

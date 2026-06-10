@@ -1,0 +1,10 @@
+http:
+  services:
+    reporting-service:
+      loadBalancer:
+        healthCheck:
+          path: /reporting/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://reporting-service:3059

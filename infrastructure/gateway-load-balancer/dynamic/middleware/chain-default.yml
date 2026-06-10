@@ -1,0 +1,10 @@
+http:
+  middlewares:
+    chain-default:
+      chain:
+        middlewares:
+          - cors
+          - compression
+          - security
+          - retry
+          - rate-limit

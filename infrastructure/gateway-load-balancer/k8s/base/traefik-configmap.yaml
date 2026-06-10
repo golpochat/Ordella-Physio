@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-config
+data:
+  dynamic.yml: |
+    http:
+      routers: {}
+      services: {}

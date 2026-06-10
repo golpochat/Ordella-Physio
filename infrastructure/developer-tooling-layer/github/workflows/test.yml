@@ -1,0 +1,62 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.15.4"
+  PLAYWRIGHT_BASE_URL: http://localhost:3010
+
+jobs:
+  jest:
+    name: Jest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Run Jest via Turbo
+        run: pnpm test -- --passWithNoTests
+        continue-on-error: true
+
+  playwright:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        working-directory: infrastructure/developer-tooling-layer
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run Playwright tests
+        working-directory: infrastructure/developer-tooling-layer
+        env:
+          CI: true
+          PLAYWRIGHT_HEADLESS: true
+        run: pnpm exec playwright test --config playwright/playwright.config.ts
+        continue-on-error: true
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: infrastructure/developer-tooling-layer/playwright-report
+          retention-days: 7

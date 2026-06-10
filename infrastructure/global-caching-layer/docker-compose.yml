@@ -1,0 +1,54 @@
+services:
+  redis:
+    image: redis/redis-stack:latest
+    container_name: ordella-redis
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_STACK_INSIGHT_PORT:-8001}:8001"
+    volumes:
+      - ./redis.conf:/redis.conf:ro
+      - ./redis-stack.conf:/redis-stack.conf:ro
+      - redis-data:/data
+    command:
+      - sh
+      - -c
+      - exec redis-server /redis.conf --requirepass "$$REDIS_PASSWORD"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-changeme-redis-password}
+    networks:
+      - ordella-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-changeme-redis-password}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: ordella-redis-insight
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "${REDIS_INSIGHT_PORT:-8002}:8001"
+    volumes:
+      - redis-insight-data:/data
+    networks:
+      - ordella-network
+
+volumes:
+  redis-data:
+    name: ordella_global_redis_data
+  redis-insight-data:
+    name: ordella_redis_insight_data
+
+networks:
+  ordella-network:
+    external: true
+    name: ${ORDELLA_NETWORK:-ordella_physio_backend}

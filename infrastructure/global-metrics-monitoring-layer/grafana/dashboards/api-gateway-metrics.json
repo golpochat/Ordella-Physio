@@ -1,0 +1,45 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "targets": [{ "expr": "sum(rate(http_requests_total{service=\"api-gateway\"}[5m]))", "refId": "A" }],
+      "title": "Gateway Traffic",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "targets": [
+        { "expr": "sum(rate(http_requests_total{service=\"api-gateway\",status_code=~\"4..\"}[5m]))", "legendFormat": "4xx", "refId": "A" },
+        { "expr": "sum(rate(http_requests_total{service=\"api-gateway\",status_code=~\"5..\"}[5m]))", "legendFormat": "5xx", "refId": "B" }
+      ],
+      "title": "Gateway 4xx / 5xx",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "id": 3,
+      "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service=\"api-gateway\"}[5m])) by (le))", "refId": "A" }],
+      "title": "Upstream Latency P95",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["ordella", "api-gateway"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "API Gateway Metrics",
+  "uid": "ordella-api-gateway-metrics",
+  "version": 1
+}

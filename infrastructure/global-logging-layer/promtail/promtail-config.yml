@@ -1,0 +1,96 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    tenant_id: ordella
+
+scrape_configs:
+  - job_name: docker-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: docker
+          cluster: ordella-physio
+          __path__: /var/lib/docker/containers/*/*-json.log
+    pipeline_stages:
+      - docker: {}
+      - json:
+          expressions:
+            level: level
+            msg: message
+            message: msg
+            service: service
+            tenantId: tenantId
+            correlationId: correlationId
+            time: time
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+          fallback_formats:
+            - RFC3339
+            - Unix
+      - labels:
+          level:
+          service:
+          tenantId:
+          correlationId:
+      - output:
+          source: message
+
+  - job_name: microservices
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      - source_labels: ["__meta_docker_container_id"]
+        target_label: __path__
+        replacement: /var/lib/docker/containers/$1/$1-json.log
+      - source_labels: ["__meta_docker_container_name"]
+        regex: "/(.*)"
+        target_label: container
+      - source_labels: ["__meta_docker_container_label_com_docker_compose_service"]
+        target_label: service
+      - source_labels: ["__meta_docker_container_label_traefik_router"]
+        target_label: router
+      - source_labels: ["__meta_docker_container_log_stream"]
+        target_label: stream
+      - target_label: job
+        replacement: microservices
+      - target_label: cluster
+        replacement: ordella-physio
+    pipeline_stages:
+      - docker: {}
+      - match:
+          selector: '{job="microservices"}'
+          stages:
+            - json:
+                expressions:
+                  level: level
+                  msg: message
+                  message: msg
+                  service: service
+                  tenantId: tenantId
+                  correlationId: correlationId
+                  time: time
+            - timestamp:
+                source: time
+                format: RFC3339Nano
+                fallback_formats:
+                  - RFC3339
+            - labels:
+                level:
+                service:
+                tenantId:
+                correlationId:
+            - multiline:
+                firstline: '^\d{4}-\d{2}-\d{2}|^\{'
+                max_wait_time: 3s
+            - output:
+                source: message

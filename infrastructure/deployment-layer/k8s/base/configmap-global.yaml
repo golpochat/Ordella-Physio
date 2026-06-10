@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-config
+  labels:
+    app.kubernetes.io/part-of: ordella-physio
+data:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  METRICS_ENABLED: "true"
+  TRACING_ENABLED: "true"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  EVENT_BUS_URL: "nats://event-bus-service:4222"
+  API_GATEWAY_URL: "http://api-gateway"
+  AUTH_SERVICE_URL: "http://auth-service:3051"
+  TENANT_SERVICE_URL: "http://tenant-service:3052"
+  PATIENT_SERVICE_URL: "http://patient-service:3053"
+  APPOINTMENT_SERVICE_URL: "http://appointment-service:3054"
+  NOTES_SERVICE_URL: "http://notes-service:3055"
+  BILLING_SERVICE_URL: "http://billing-service:3056"
+  PAYMENT_SERVICE_URL: "http://payment-service:3057"
+  COMMUNICATION_SERVICE_URL: "http://communication-service:3058"
+  REPORTING_SERVICE_URL: "http://reporting-service:3059"
+  GATEWAY_TIMEOUT_MS: "30000"
+  CORS_ORIGIN: "*"

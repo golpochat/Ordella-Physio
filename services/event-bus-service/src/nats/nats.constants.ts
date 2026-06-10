@@ -1,0 +1,2 @@
+export const NATS_CONNECTION_TOKEN = "NATS_CONNECTION";
+export const EVENT_BUS_TOKEN = "EVENT_BUS";

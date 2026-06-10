@@ -1,0 +1,13 @@
+{
+  "name": "@ordella/config-typescript",
+  "version": "0.0.0",
+  "private": true,
+  "files": ["base.json", "expo.json", "nextjs.json", "node.json", "tsconfig.base.json"],
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./base.json": "./base.json",
+    "./expo.json": "./expo.json",
+    "./nextjs.json": "./nextjs.json",
+    "./node.json": "./node.json"
+  }
+}

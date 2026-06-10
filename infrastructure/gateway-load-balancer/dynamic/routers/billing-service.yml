@@ -1,0 +1,12 @@
+http:
+  routers:
+    billing-service:
+      rule: PathPrefix(`/billing-service`)
+      entryPoints:
+        - websecure
+      service: billing-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

@@ -1,0 +1,10 @@
+http:
+  services:
+    patient-service:
+      loadBalancer:
+        healthCheck:
+          path: /patient/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://patient-service:3053

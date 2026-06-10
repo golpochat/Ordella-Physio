@@ -1,0 +1,12 @@
+http:
+  routers:
+    notes-service:
+      rule: PathPrefix(`/notes-service`)
+      entryPoints:
+        - websecure
+      service: notes-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

@@ -1,0 +1,6 @@
+{
+  "name": "@ordella/global-caching-layer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Redis caching layer for Ordella Physio"
+}

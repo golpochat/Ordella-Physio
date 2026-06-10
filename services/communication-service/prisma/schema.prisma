@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  WEBHOOK
+}
+
+enum NotificationStatus {
+  PENDING
+  SENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum ReminderType {
+  APPOINTMENT
+  PAYMENT
+  FOLLOW_UP
+}
+
+enum ReminderChannel {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum ReminderStatus {
+  PENDING
+  SCHEDULED
+  SENT
+  FAILED
+  CANCELLED
+}
+
+model Notification {
+  id           String             @id @default(cuid())
+  tenantId     String
+  channel      NotificationChannel
+  templateKey  String?
+  to           String
+  subject      String?
+  body         String
+  payload      Json?
+  status       NotificationStatus @default(PENDING)
+  scheduledAt  DateTime?
+  errorMessage String?
+  jobId        String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, channel, status])
+  @@index([tenantId, scheduledAt])
+  @@map("notifications")
+}
+
+model Reminder {
+  id            String          @id @default(cuid())
+  tenantId      String
+  type          ReminderType
+  channel       ReminderChannel
+  patientId     String?
+  appointmentId String?
+  paymentId     String?
+  to            String
+  subject       String?
+  message       String
+  sendAt        DateTime
+  recurring     Boolean         @default(false)
+  status        ReminderStatus  @default(SCHEDULED)
+  jobId         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@index([tenantId, status, sendAt])
+  @@map("reminders")
+}
+
+model Template {
+  id        String              @id @default(cuid())
+  tenantId  String
+  key       String
+  channel   NotificationChannel
+  subject   String?
+  body      String
+  variables String[]            @default([])
+  isDefault Boolean             @default(false)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@unique([tenantId, key])
+  @@index([tenantId, channel])
+  @@map("templates")
+}

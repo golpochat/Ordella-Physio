@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: patient-service
+  labels:
+    app: patient-service
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: patient-service
+  ports:
+    - name: http
+      port: 3053
+      targetPort: 3053

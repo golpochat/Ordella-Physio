@@ -1,0 +1,127 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: ordella-prometheus
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle
+      - --web.enable-admin-api
+    networks:
+      - ordella-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: ordella-alertmanager
+    restart: unless-stopped
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    networks:
+      - ordella-network
+    depends_on:
+      prometheus:
+        condition: service_healthy
+
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: ordella-tempo
+    restart: unless-stopped
+    ports:
+      - "${TEMPO_PORT:-3200}:3200"
+      - "${TEMPO_OTLP_HTTP_PORT:-4318}:4318"
+      - "${TEMPO_OTLP_GRPC_PORT:-4317}:4317"
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo-data:/var/tempo
+    command:
+      - -config.file=/etc/tempo/tempo.yml
+    networks:
+      - ordella-network
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: ordella-metrics-grafana
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-changeme-metrics-grafana}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: http://localhost:${GRAFANA_PORT:-3031}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    ports:
+      - "${GRAFANA_PORT:-3031}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - ordella-network
+    depends_on:
+      - prometheus
+      - tempo
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.58.0
+    container_name: ordella-redis-exporter
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: redis://ordella-redis:6379
+    networks:
+      - ordella-network
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.0
+    container_name: ordella-node-exporter
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    networks:
+      - ordella-network
+
+volumes:
+  prometheus-data:
+    name: ordella_prometheus_data
+  alertmanager-data:
+    name: ordella_alertmanager_data
+  grafana-data:
+    name: ordella_metrics_grafana_data
+  tempo-data:
+    name: ordella_tempo_data
+
+networks:
+  ordella-network:
+    external: true
+    name: ${ORDELLA_NETWORK:-ordella_physio_backend}

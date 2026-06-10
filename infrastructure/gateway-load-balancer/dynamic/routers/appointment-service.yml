@@ -1,0 +1,12 @@
+http:
+  routers:
+    appointment-service:
+      rule: PathPrefix(`/appointment-service`)
+      entryPoints:
+        - websecure
+      service: appointment-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

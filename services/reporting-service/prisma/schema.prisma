@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DailyMetrics {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  date                  DateTime @db.Date
+  totalAppointments     Int      @default(0)
+  completedAppointments Int      @default(0)
+  cancelledAppointments Int      @default(0)
+  noShowAppointments    Int      @default(0)
+  newPatients           Int      @default(0)
+  revenue               Decimal  @default(0) @db.Decimal(12, 2)
+  outstandingBalance    Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([tenantId, date])
+  @@index([tenantId])
+  @@map("daily_metrics")
+}
+
+model WeeklyMetrics {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  week                  String
+  totalAppointments     Int      @default(0)
+  completedAppointments Int      @default(0)
+  cancelledAppointments Int      @default(0)
+  noShowAppointments    Int      @default(0)
+  newPatients           Int      @default(0)
+  revenue               Decimal  @default(0) @db.Decimal(12, 2)
+  outstandingBalance    Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([tenantId, week])
+  @@index([tenantId])
+  @@map("weekly_metrics")
+}
+
+model MonthlyMetrics {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  month                 String
+  totalAppointments     Int      @default(0)
+  completedAppointments Int      @default(0)
+  cancelledAppointments Int      @default(0)
+  noShowAppointments    Int      @default(0)
+  newPatients           Int      @default(0)
+  revenue               Decimal  @default(0) @db.Decimal(12, 2)
+  outstandingBalance    Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([tenantId, month])
+  @@index([tenantId])
+  @@map("monthly_metrics")
+}
+
+model IngestedEvent {
+  id            String   @id @default(cuid())
+  tenantId      String
+  sourceService String
+  eventType     String
+  entityType    String
+  entityId      String
+  payload       Json
+  ingestedAt    DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([tenantId, eventType])
+  @@index([tenantId, entityType, entityId])
+  @@index([tenantId, ingestedAt])
+  @@map("ingested_events")
+}
+
+model DashboardSnapshot {
+  id            String    @id @default(cuid())
+  tenantId      String
+  dashboardType String
+  payload       Json
+  generatedAt   DateTime  @default(now())
+  expiresAt     DateTime?
+
+  @@unique([tenantId, dashboardType])
+  @@index([tenantId])
+  @@map("dashboard_snapshots")
+}

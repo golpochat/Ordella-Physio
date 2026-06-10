@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-load-balancer
+  labels:
+    app: gateway-load-balancer
+    tier: infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-load-balancer
+  template:
+    metadata:
+      labels:
+        app: gateway-load-balancer
+        tier: infra
+    spec:
+      containers:
+        - name: traefik
+          image: traefik:v3.3
+          args:
+            - --api.dashboard=true
+            - --api.insecure=false
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --providers.kubernetesingress=true
+            - --ping=true
+          ports:
+            - containerPort: 80
+              name: web
+            - containerPort: 443
+              name: websecure
+            - containerPort: 8080
+              name: dashboard
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

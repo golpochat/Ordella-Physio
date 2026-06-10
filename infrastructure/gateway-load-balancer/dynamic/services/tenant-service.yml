@@ -1,0 +1,10 @@
+http:
+  services:
+    tenant-service:
+      loadBalancer:
+        healthCheck:
+          path: /tenant/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://tenant-service:3052

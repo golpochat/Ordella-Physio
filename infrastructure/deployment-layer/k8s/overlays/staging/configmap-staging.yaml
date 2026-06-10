@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-config
+data:
+  NODE_ENV: staging
+  LOG_LEVEL: info
+  environment: staging
+  API_GATEWAY_URL: https://api.staging.ordella-physio.com
+  CORS_ORIGIN: https://app.staging.ordella-physio.com

@@ -1,0 +1,5 @@
+http:
+  middlewares:
+    circuit-breaker:
+      circuitBreaker:
+        expression: "LatencyAtQuantileMS(50.0) > 100"

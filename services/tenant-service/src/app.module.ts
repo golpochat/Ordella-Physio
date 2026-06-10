@@ -1,0 +1,31 @@
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { TenantsModule } from "@/tenants/tenants.module";
+import { LocationsModule } from "@/locations/locations.module";
+import { StaffModule } from "@/staff/staff.module";
+import { BrandingModule } from "@/branding/branding.module";
+import { SubscriptionModule } from "@/subscription/subscription.module";
+import { DatabaseModule } from "@/database/database.module";
+import { EventsModule } from "@/events/events.module";
+import { configureTenantMiddleware } from "@/middleware";
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [".env", ".env.local"],
+    }),
+    DatabaseModule,
+    EventsModule,
+    TenantsModule,
+    LocationsModule,
+    StaffModule,
+    BrandingModule,
+    SubscriptionModule,
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    configureTenantMiddleware(consumer);
+  }
+}

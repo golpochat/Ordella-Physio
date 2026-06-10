@@ -1,0 +1,12 @@
+http:
+  routers:
+    tenant-service:
+      rule: PathPrefix(`/tenant-service`)
+      entryPoints:
+        - websecure
+      service: tenant-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

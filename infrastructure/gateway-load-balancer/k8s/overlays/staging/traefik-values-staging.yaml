@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-values
+  labels:
+    environment: staging
+data:
+  logLevel: INFO
+  replicas: "1"

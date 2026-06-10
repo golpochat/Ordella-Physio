@@ -1,0 +1,42 @@
+groups:
+  - name: service_traffic
+    interval: 30s
+    rules:
+      - record: service:http_requests_total:rate1m
+        expr: sum by (service) (rate(http_requests_total[1m]))
+
+      - record: service:http_request_errors_total:rate1m
+        expr: sum by (service) (rate(http_requests_errors_total[1m]))
+
+      - record: service:http_request_duration_seconds:p95
+        expr: histogram_quantile(0.95, sum by (service, le) (rate(http_request_duration_seconds_bucket[5m])))
+
+      - record: service:http_request_duration_seconds:p99
+        expr: histogram_quantile(0.99, sum by (service, le) (rate(http_request_duration_seconds_bucket[5m])))
+
+  - name: service_errors
+    interval: 30s
+    rules:
+      - record: service:http_error_rate:ratio1m
+        expr: |
+          sum by (service) (rate(http_requests_errors_total[1m]))
+          /
+          clamp_min(sum by (service) (rate(http_requests_total[1m])), 1)
+
+  - name: resource_usage
+    interval: 30s
+    rules:
+      - record: service:process_cpu_seconds_total:rate5m
+        expr: sum by (service) (rate(process_cpu_seconds_total[5m]))
+
+      - record: service:process_resident_memory_bytes:avg
+        expr: avg by (service) (process_resident_memory_bytes)
+
+  - name: event_bus
+    interval: 30s
+    rules:
+      - record: service:event_bus_messages_total:rate1m
+        expr: sum by (service) (rate(event_bus_messages_total[1m]))
+
+      - record: service:event_bus_consumer_lag:max
+        expr: max by (service) (event_bus_consumer_lag)

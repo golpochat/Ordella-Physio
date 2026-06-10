@@ -1,0 +1,74 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "content": "Enter a **correlationId** to trace requests across API Gateway, microservices, event bus, and background jobs.", "mode": "markdown" },
+      "title": "Correlation ID Explorer",
+      "type": "text"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "table" }, "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "expr": "sum by (service) (count_over_time({cluster=\"ordella-physio\", correlationId=~\"$correlationId\"}[1h]))",
+          "legendFormat": "{{service}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Services Touched by Correlation ID",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 12 },
+      "id": 3,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Ascending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "expr": "{cluster=\"ordella-physio\", correlationId=~\"$correlationId\"} | json",
+          "refId": "A"
+        }
+      ],
+      "title": "End-to-End Correlation Trace",
+      "type": "logs"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["ordella", "logging", "correlation", "tracing"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": false, "text": "", "value": "" },
+        "hide": 0,
+        "label": "Correlation ID",
+        "name": "correlationId",
+        "options": [{ "selected": true, "text": "", "value": "" }],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "title": "Correlation ID Explorer",
+  "uid": "ordella-correlation-tracing",
+  "version": 1
+}

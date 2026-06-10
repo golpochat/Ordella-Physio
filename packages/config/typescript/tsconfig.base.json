@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "baseUrl": "../../..",
+    "paths": {
+      "@ordella/shared-ui": ["shared/shared-ui/src"],
+      "@ordella/shared-utils": ["shared/shared-utils/src"],
+      "@ordella/shared-config": ["shared/shared-config/src"],
+      "@ordella/shared-validation": ["shared/shared-validation/src"],
+      "@ordella/shared-icons": ["shared/shared-icons/src"],
+      "@ordella/*": ["packages/*/src"]
+    }
+  }
+}

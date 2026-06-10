@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StaffRole {
+  OWNER
+  ADMIN
+  THERAPIST
+  STAFF
+}
+
+enum SubscriptionPlan {
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+model Tenant {
+  id           String              @id @default(cuid())
+  name         String
+  slug         String              @unique
+  timezone     String              @default("UTC")
+  currency     String              @default("GBP")
+  address      String?
+  phone        String?
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  locations    Location[]
+  staff        Staff[]
+  branding     TenantBranding?
+  subscription TenantSubscription?
+
+  @@map("tenants")
+}
+
+model Location {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name       String
+  address    String?
+  phone      String?
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([tenantId])
+  @@map("locations")
+}
+
+model Staff {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId    String
+  role      StaffRole @default(STAFF)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@map("staff")
+}
+
+model TenantBranding {
+  id               String   @id @default(cuid())
+  tenantId         String   @unique
+  tenant           Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  logoUrl          String?
+  primaryColor     String?  @default("#0f766e")
+  secondaryColor   String?  @default("#f0fdfa")
+  theme            String?  @default("light")
+  emailTemplateKey String?
+  metadata         Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("tenant_branding")
+}
+
+model TenantSubscription {
+  id           String           @id @default(cuid())
+  tenantId     String           @unique
+  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan         SubscriptionPlan @default(STARTER)
+  usageLimit   Int?
+  usageCurrent Int              @default(0)
+  renewsAt     DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("tenant_subscriptions")
+}

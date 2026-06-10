@@ -1,0 +1,30 @@
+services:
+  reporting-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ordella
+      POSTGRES_PASSWORD: ordella
+      POSTGRES_DB: ordella_reporting
+    ports:
+      - "5441:5432"
+    volumes:
+      - reporting-db-data:/var/lib/postgresql/data
+
+  reporting-service:
+    build:
+      context: ../..
+      dockerfile: services/reporting-service/Dockerfile
+    ports:
+      - "3059:3059"
+    environment:
+      PORT: 3059
+      DATABASE_URL: postgresql://ordella:ordella@reporting-db:5432/ordella_reporting?schema=public
+      NATS_URL: nats://host.docker.internal:4222
+      REDIS_URL: redis://host.docker.internal:6379
+      CACHE_REDIS_URL: redis://host.docker.internal:6379
+      JWT_ACCESS_SECRET: change-me-access-secret-min-32-chars-long
+    depends_on:
+      - reporting-db
+
+volumes:
+  reporting-db-data:

@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@ordella/shared-ui": ["../../shared/shared-ui/src"],
+      "@ordella/shared-ui/icons": ["../../shared/shared-icons/src"],
+      "@ordella/shared-utils": ["../../shared/shared-utils/src"],
+      "@ordella/shared-config": ["../../shared/shared-config/src"],
+      "@ordella/shared-validation": ["../../shared/shared-validation/src"],
+      "@ordella/shared-icons": ["../../shared/shared-icons/src"],
+      "@ordella/ui": ["../../packages/ui/src/index.ts"],
+      "@ordella/shared": ["../../packages/shared/src/index.ts"],
+      "@ordella/config": ["../../packages/config/src/index.ts"],
+      "@ordella/security": ["../../packages/security/src/index.ts"],
+      "@ordella/utils": ["../../packages/utils/src/index.ts"],
+      "@ordella/validation": ["../../packages/validation/src/index.ts"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

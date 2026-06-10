@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ordella
+
+commonLabels:
+  app.kubernetes.io/part-of: ordella-physio
+  app.kubernetes.io/managed-by: kustomize
+
+resources:
+  - namespace.yaml
+  - configmap-global.yaml
+  - secret-global.yaml
+  - api-gateway-deployment.yaml
+  - api-gateway-service.yaml
+  - auth-service-deployment.yaml
+  - auth-service-service.yaml
+  - tenant-service-deployment.yaml
+  - tenant-service-service.yaml
+  - patient-service-deployment.yaml
+  - patient-service-service.yaml
+  - appointment-service-deployment.yaml
+  - appointment-service-service.yaml
+  - notes-service-deployment.yaml
+  - notes-service-service.yaml
+  - billing-service-deployment.yaml
+  - billing-service-service.yaml
+  - payment-service-deployment.yaml
+  - payment-service-service.yaml
+  - communication-service-deployment.yaml
+  - communication-service-service.yaml
+  - reporting-service-deployment.yaml
+  - reporting-service-service.yaml
+  - event-bus-service-deployment.yaml
+  - event-bus-service-service.yaml
+  - frontend-web-deployment.yaml
+  - frontend-web-service.yaml
+  - gateway-load-balancer-deployment.yaml
+  - gateway-load-balancer-service.yaml
+  - redis-deployment.yaml
+  - redis-service.yaml
+  - loki-deployment.yaml
+  - loki-service.yaml
+  - promtail-daemonset.yaml
+  - grafana-deployment.yaml
+  - grafana-service.yaml
+  - prometheus-deployment.yaml
+  - prometheus-service.yaml
+  - alertmanager-deployment.yaml
+  - alertmanager-service.yaml
+  - tempo-deployment.yaml
+  - tempo-service.yaml
+  - ingress.yaml

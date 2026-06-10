@@ -1,0 +1,67 @@
+groups:
+  - name: service_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: service:http_error_rate:ratio1m > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High HTTP error rate on {{ $labels.service }}
+          description: Error rate exceeds 5% for 5 minutes on {{ $labels.service }}.
+
+      - alert: HighLatencyP95
+        expr: service:http_request_duration_seconds:p95 > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High P95 latency on {{ $labels.service }}
+          description: P95 latency exceeds 1s for 5 minutes on {{ $labels.service }}.
+
+      - alert: HighLatencyP99
+        expr: service:http_request_duration_seconds:p99 > 2
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: High P99 latency on {{ $labels.service }}
+          description: P99 latency exceeds 2s for 5 minutes on {{ $labels.service }}.
+
+      - alert: ServiceDown
+        expr: up{service!="", service!="node-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Service {{ $labels.service }} is down
+          description: Prometheus cannot scrape {{ $labels.service }} for more than 2 minutes.
+
+  - name: infra_alerts
+    rules:
+      - alert: RedisDown
+        expr: up{service="redis"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Redis metrics exporter is down
+          description: redis-exporter is unreachable — Redis may be unavailable.
+
+      - alert: EventBusLagHigh
+        expr: service:event_bus_consumer_lag:max > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Event bus consumer lag is high
+          description: Consumer lag exceeds 1000 messages on {{ $labels.service }}.
+
+      - alert: GatewayLoadBalancerDown
+        expr: up{service="gateway-load-balancer"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Gateway load balancer metrics unavailable
+          description: Traefik metrics endpoint is not reachable.

@@ -1,0 +1,12 @@
+http:
+  routers:
+    patient-service:
+      rule: PathPrefix(`/patient-service`)
+      entryPoints:
+        - websecure
+      service: patient-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

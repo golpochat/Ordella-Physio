@@ -1,0 +1,22 @@
+// Placeholder schema for @ordella/database package scaffolding.
+// Each microservice maintains its own Prisma schema and generated client.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Placeholder {
+  id        String   @id @default(cuid())
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([tenantId])
+  @@map("_ordella_database_placeholder")
+}

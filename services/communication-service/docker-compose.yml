@@ -1,0 +1,17 @@
+services:
+  communication-service:
+    build:
+      context: ../..
+      dockerfile: services/communication-service/Dockerfile
+    ports:
+      - "3058:3058"
+    environment:
+      PORT: 3058
+      NODE_ENV: development
+      DATABASE_URL: postgresql://ordella:ordella@localhost:5437/ordella_communication?schema=public
+      JWT_ACCESS_SECRET: change-me-jwt-secret-min-32-characters-long
+      NATS_URL: nats://localhost:4222
+      REDIS_URL: redis://localhost:6379
+      QUEUE_REDIS_URL: redis://localhost:6379
+      EMAIL_PROVIDER_API_KEY: placeholder
+      SMS_PROVIDER_API_KEY: placeholder

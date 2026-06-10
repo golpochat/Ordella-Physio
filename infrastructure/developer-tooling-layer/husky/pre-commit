@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/../../../.husky/_/husky.sh" 2>/dev/null || true
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+TOOLING_DIR="$ROOT_DIR/infrastructure/developer-tooling-layer"
+
+cd "$ROOT_DIR" || exit 1
+
+if [ -f "$TOOLING_DIR/lint-staged/lint-staged.config.js" ]; then
+  pnpm exec lint-staged --config "$TOOLING_DIR/lint-staged/lint-staged.config.js"
+else
+  echo "lint-staged config not found at $TOOLING_DIR/lint-staged/lint-staged.config.js"
+  exit 1
+fi

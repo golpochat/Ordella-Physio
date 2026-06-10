@@ -1,0 +1,54 @@
+{
+  "files": [],
+  "references": [
+    { "path": "apps/frontend-web" },
+    { "path": "apps/admin-dashboard" },
+    { "path": "apps/web" },
+    { "path": "apps/mobile-app" },
+    { "path": "apps/marketing-site" },
+    { "path": "apps/app" },
+
+    { "path": "services/auth-service" },
+    { "path": "services/tenant-service" },
+    { "path": "services/patient-service" },
+    { "path": "services/appointment-service" },
+    { "path": "services/notes-service" },
+    { "path": "services/billing-service" },
+    { "path": "services/payment-service" },
+    { "path": "services/communication-service" },
+    { "path": "services/reporting-service" },
+    { "path": "services/event-bus-service" },
+    { "path": "services/api-gateway" },
+
+    { "path": "packages/ui" },
+    { "path": "packages/utils" },
+    { "path": "packages/config" },
+    { "path": "packages/validation" },
+    { "path": "packages/shared" },
+    { "path": "packages/database" },
+    { "path": "packages/domain" },
+    { "path": "packages/errors" },
+    { "path": "packages/event-bus" },
+    { "path": "packages/event-contracts" },
+    { "path": "packages/middleware" },
+    { "path": "packages/observability" },
+    { "path": "packages/security" },
+    { "path": "packages/testing" },
+    { "path": "packages/caching" }
+  ],
+  "extends": "./packages/config/typescript/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@ordella/shared-ui": ["shared/shared-ui/src"],
+      "@ordella/shared-utils": ["shared/shared-utils/src"],
+      "@ordella/shared-config": ["shared/shared-config/src"],
+      "@ordella/shared-validation": ["shared/shared-validation/src"],
+      "@ordella/shared-icons": ["shared/shared-icons/src"],
+      "@ordella/*": ["packages/*/src"]
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "common": {
+    "appName": "Ordella Admin",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "actions": "Actions",
+    "export": "Export",
+    "scaffold": "Scaffold",
+    "modulePlaceholder": "Module scaffold placeholder",
+    "comingSoon": "Business logic will be implemented in a future iteration."
+  },
+  "auth": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "tenantId": "Tenant ID",
+    "resetPassword": "Reset password",
+    "loginDescription": "Authenticate via the API Gateway auth service.",
+    "resetPasswordDescription": "Request a password reset link for your account.",
+    "resetPasswordSent": "If the account exists, a reset link has been sent.",
+    "backToLogin": "Back to sign in"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "tenants": "Tenants",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "notes": "Notes",
+    "billing": "Billing",
+    "payments": "Payments",
+    "communication": "Communication",
+    "reporting": "Reporting"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "revenue": "Revenue",
+    "outstanding": "Outstanding invoices",
+    "recentActivity": "Recent activity",
+    "appointmentsTrend": "Appointments trend",
+    "revenueTrend": "Revenue trend"
+  },
+  "users": {
+    "title": "Users",
+    "description": "Manage clinic users, invitations, and role assignments.",
+    "list": "User list",
+    "invite": "Invite user",
+    "roles": "Assign roles"
+  },
+  "tenants": {
+    "title": "Tenants",
+    "description": "Manage tenant organizations, settings, and locations.",
+    "list": "Tenant list",
+    "settings": "Tenant settings",
+    "locations": "Locations"
+  },
+  "patients": {
+    "title": "Patients",
+    "description": "Browse patients, profiles, and medical records.",
+    "list": "Patient list",
+    "profile": "Patient profile",
+    "records": "Medical records"
+  },
+  "appointments": {
+    "title": "Appointments",
+    "description": "Schedule and manage appointments.",
+    "calendar": "Calendar view",
+    "list": "List view",
+    "create": "Create / edit"
+  },
+  "notes": {
+    "title": "Notes",
+    "description": "Clinical documentation workspace.",
+    "soap": "SOAP notes",
+    "clinical": "Clinical notes"
+  },
+  "billing": {
+    "title": "Billing",
+    "description": "Invoices, line items, and tax configuration.",
+    "invoices": "Invoices",
+    "items": "Invoice items",
+    "taxRates": "Tax rates"
+  },
+  "payments": {
+    "title": "Payments",
+    "description": "Payment history and refund management.",
+    "history": "Payment history",
+    "refunds": "Refunds"
+  },
+  "communication": {
+    "title": "Communication",
+    "description": "Notifications, reminders, and templates.",
+    "notifications": "Notifications",
+    "reminders": "Reminders",
+    "templates": "Templates"
+  },
+  "reporting": {
+    "title": "Reporting",
+    "description": "Operational and financial metrics.",
+    "daily": "Daily metrics",
+    "monthly": "Monthly metrics",
+    "export": "Export CSV / PDF"
+  }
+}

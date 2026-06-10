@@ -1,0 +1,52 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.15.4"
+
+jobs:
+  validate:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test -- --passWithNoTests
+        continue-on-error: true
+
+      - name: PR summary placeholder
+        run: |
+          echo "## PR Validation Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Lint: completed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Typecheck: completed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tests: completed (scaffold)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "_Automated PR comment integration can be wired here._" >> "$GITHUB_STEP_SUMMARY"

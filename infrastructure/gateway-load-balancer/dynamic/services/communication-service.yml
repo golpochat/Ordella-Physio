@@ -1,0 +1,10 @@
+http:
+  services:
+    communication-service:
+      loadBalancer:
+        healthCheck:
+          path: /communication/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://communication-service:3058

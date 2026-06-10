@@ -1,0 +1,14 @@
+services:
+  event-bus-service:
+    build:
+      context: ../..
+      dockerfile: services/event-bus-service/Dockerfile
+    ports:
+      - "3060:3060"
+    environment:
+      PORT: 3060
+      NATS_URL: nats://host.docker.internal:4222
+      REDIS_URL: redis://host.docker.internal:6379
+      JETSTREAM_REPLICAS: 1
+      JETSTREAM_MAX_AGE_HOURS: 168
+      JETSTREAM_MAX_BYTES: 1000000000

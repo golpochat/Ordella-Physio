@@ -1,0 +1,8 @@
+http:
+  middlewares:
+    compression:
+      compress:
+        excludedContentTypes:
+          - text/event-stream
+        minResponseBodyBytes: 1024
+        # Traefik compress middleware provides gzip; enable brotli via CDN or plugin in production

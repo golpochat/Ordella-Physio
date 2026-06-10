@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  UNKNOWN
+}
+
+model Patient {
+  id                   String         @id @default(cuid())
+  tenantId             String
+  firstName            String
+  lastName             String
+  email                String?
+  phone                String?
+  dateOfBirth          DateTime?      @db.Date
+  gender               Gender         @default(UNKNOWN)
+  address              String?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  notes                String?
+  deletedAt            DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  medicalRecord        MedicalRecord?
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([tenantId, lastName, firstName])
+  @@map("patients")
+}
+
+model MedicalRecord {
+  id          String   @id @default(cuid())
+  patientId   String   @unique
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  tenantId    String
+  allergies   String?
+  medications String?
+  conditions  String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId])
+  @@map("medical_records")
+}

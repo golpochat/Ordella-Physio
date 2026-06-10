@@ -1,0 +1,10 @@
+http:
+  services:
+    payment-service:
+      loadBalancer:
+        healthCheck:
+          path: /payment/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://payment-service:3057

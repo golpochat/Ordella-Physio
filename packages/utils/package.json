@@ -1,0 +1,33 @@
+{
+  "name": "@ordella/utils",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@ordella/config-typescript": "workspace:*",
+    "@types/node": "^22.10.2",
+    "picocolors": "^1.1.1",
+    
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

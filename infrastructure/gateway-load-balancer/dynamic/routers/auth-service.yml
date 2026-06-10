@@ -1,0 +1,12 @@
+http:
+  routers:
+    auth-service:
+      rule: PathPrefix(`/auth-service`)
+      entryPoints:
+        - websecure
+      service: auth-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

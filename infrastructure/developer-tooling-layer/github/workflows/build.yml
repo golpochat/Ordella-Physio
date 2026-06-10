@@ -1,0 +1,99 @@
+name: Build Matrix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.15.4"
+  DOCKER_REGISTRY: ${{ vars.CI_DOCKER_REGISTRY || 'ghcr.io/ordella' }}
+  DOCKER_IMAGE_PREFIX: ${{ vars.CI_DOCKER_IMAGE_PREFIX || 'ordella-physio' }}
+
+jobs:
+  build-packages:
+    name: Build workspace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  build-microservices:
+    name: Build microservices (matrix)
+    needs: build-packages
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - auth-service
+          - tenant-service
+          - patient-service
+          - appointment-service
+          - notes-service
+          - billing-service
+          - payment-service
+          - communication-service
+          - reporting-service
+          - event-bus-service
+          - api-gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build ${{ matrix.service }}
+        run: pnpm --filter "./services/${{ matrix.service }}" build
+        continue-on-error: true
+
+  build-frontend:
+    name: Build frontend apps
+    needs: build-packages
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [frontend-web, admin-dashboard, web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build ${{ matrix.app }}
+        run: pnpm --filter "@ordella/${{ matrix.app }}" build
+        continue-on-error: true
+
+  docker-build-push:
+    name: Docker build & push (placeholder)
+    needs: [build-microservices, build-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker placeholder
+        run: |
+          echo "Docker build & push placeholder"
+          echo "Registry: $DOCKER_REGISTRY"
+          echo "Image prefix: $DOCKER_IMAGE_PREFIX"
+          echo "Wire docker/build-push-action when images are ready for CI."

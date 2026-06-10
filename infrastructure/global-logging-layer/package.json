@@ -1,0 +1,6 @@
+{
+  "name": "@ordella/global-logging-layer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Loki and Promtail logging layer for Ordella Physio"
+}

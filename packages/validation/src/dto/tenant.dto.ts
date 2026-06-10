@@ -1,0 +1,51 @@
+import { z } from "zod";
+import { phoneSchema } from "../zod/base-schemas";
+import { idSchema } from "../zod/base-schemas";
+import { nonEmptyString, slugString } from "../zod/string-schemas";
+
+export const staffRoleSchema = z.enum(["OWNER", "ADMIN", "THERAPIST", "STAFF"]);
+
+export const createTenantSchema = z.object({
+  name: nonEmptyString.min(2),
+  slug: slugString,
+  timezone: z.string().optional(),
+  currency: z.string().optional(),
+  address: z.string().optional(),
+  phone: phoneSchema.optional(),
+});
+
+export const updateTenantSchema = z.object({
+  name: nonEmptyString.min(2).optional(),
+  timezone: z.string().optional(),
+  currency: z.string().optional(),
+  address: z.string().optional(),
+  phone: phoneSchema.optional(),
+});
+
+export const createLocationSchema = z.object({
+  name: nonEmptyString.min(2),
+  address: z.string().optional(),
+  phone: phoneSchema.optional(),
+});
+
+export const updateLocationSchema = z.object({
+  name: nonEmptyString.min(2).optional(),
+  address: z.string().optional(),
+  phone: phoneSchema.optional(),
+});
+
+export const createStaffSchema = z.object({
+  userId: idSchema,
+  role: staffRoleSchema,
+});
+
+export const updateStaffRoleSchema = z.object({
+  role: staffRoleSchema,
+});
+
+export type CreateTenantInput = z.infer<typeof createTenantSchema>;
+export type UpdateTenantInput = z.infer<typeof updateTenantSchema>;
+export type CreateLocationInput = z.infer<typeof createLocationSchema>;
+export type UpdateLocationInput = z.infer<typeof updateLocationSchema>;
+export type CreateStaffInput = z.infer<typeof createStaffSchema>;
+export type UpdateStaffRoleInput = z.infer<typeof updateStaffRoleSchema>;

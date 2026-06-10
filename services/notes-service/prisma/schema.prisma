@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NoteType {
+  SOAP
+  GENERAL
+  EXERCISE_PLAN
+  PROGRESS
+}
+
+model Note {
+  id            String       @id @default(cuid())
+  tenantId      String
+  patientId     String
+  appointmentId String?
+  therapistId   String
+  type          NoteType
+  content       String
+  attachments   String[]     @default([])
+  deletedAt     DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  soapNote      SoapNote?
+  noteAttachments Attachment[]
+
+  @@index([tenantId])
+  @@index([tenantId, patientId])
+  @@index([tenantId, therapistId])
+  @@index([tenantId, appointmentId])
+  @@index([tenantId, type, createdAt])
+  @@map("notes")
+}
+
+model SoapNote {
+  id         String   @id @default(cuid())
+  tenantId   String
+  noteId     String   @unique
+  note       Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  subjective String
+  objective  String
+  assessment String
+  plan       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([tenantId])
+  @@map("soap_notes")
+}
+
+model Attachment {
+  id        String    @id @default(cuid())
+  tenantId  String
+  noteId    String
+  note      Note      @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  url       String
+  fileName  String?
+  mimeType  String?
+  sizeBytes Int?
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([tenantId, noteId])
+  @@map("attachments")
+}

@@ -1,0 +1,6 @@
+{
+  "name": "@ordella/deployment-layer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Docker Compose and Kubernetes deployment layer for Ordella Physio"
+}

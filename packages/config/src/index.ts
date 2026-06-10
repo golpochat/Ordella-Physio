@@ -1,0 +1,15 @@
+export * from "./env";
+export * from "./constants";
+export * from "./utils";
+
+export { authConfig, type AuthConfig } from "./services/auth";
+export { tenantConfig, type TenantConfig } from "./services/tenant";
+export { patientConfig, type PatientConfig } from "./services/patient";
+export { appointmentConfig, type AppointmentConfig } from "./services/appointment";
+export { notesConfig, type NotesConfig } from "./services/notes";
+export { billingConfig, type BillingConfig } from "./services/billing";
+export { paymentConfig, type PaymentConfig } from "./services/payment";
+export { communicationConfig, type CommunicationConfig } from "./services/communication";
+export { reportingConfig, type ReportingConfig } from "./services/reporting";
+export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
+export { gatewayConfig, type GatewayConfig } from "./services/gateway";

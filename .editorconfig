@@ -1,0 +1,56 @@
+# Root EditorConfig for Ordella Physio Monorepo
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.yml]
+indent_size = 2
+
+[*.yaml]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+[*.ts]
+indent_size = 2
+
+[*.tsx]
+indent_size = 2
+
+[*.js]
+indent_size = 2
+
+[*.jsx]
+indent_size = 2
+
+[*.sh]
+indent_style = space
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+# Ensure consistent formatting across all monorepo folders
+[apps/**]
+indent_size = 2
+
+[services/**]
+indent_size = 2
+
+[packages/**]
+indent_size = 2
+
+[infrastructure/**]
+indent_size = 2
+
+# End of file

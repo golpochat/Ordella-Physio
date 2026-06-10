@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-service
+  labels:
+    app: billing-service
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: billing-service
+  ports:
+    - name: http
+      port: 3056
+      targetPort: 3056

@@ -1,0 +1,10 @@
+http:
+  services:
+    billing-service:
+      loadBalancer:
+        healthCheck:
+          path: /billing/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://billing-service:3056

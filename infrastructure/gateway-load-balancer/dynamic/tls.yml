@@ -1,0 +1,7 @@
+# Optional local TLS certificates (uncomment when ordella.local.crt/key exist in certs/)
+# tls:
+#   stores:
+#     default:
+#       defaultCertificate:
+#         certFile: /etc/traefik/certs/ordella.local.crt
+#         keyFile: /etc/traefik/certs/ordella.local.key

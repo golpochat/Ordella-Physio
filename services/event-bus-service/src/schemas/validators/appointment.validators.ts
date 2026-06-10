@@ -1,0 +1,3 @@
+import { APPOINTMENT_EVENT_CONTRACTS } from "@ordella/event-contracts";
+
+export const APPOINTMENT_VALIDATORS = APPOINTMENT_EVENT_CONTRACTS;

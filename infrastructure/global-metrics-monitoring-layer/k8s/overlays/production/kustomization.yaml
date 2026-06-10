@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ordella-production
+
+resources:
+  - ../../base
+
+commonLabels:
+  environment: production
+
+replicas:
+  - name: prometheus
+    count: 1
+  - name: grafana
+    count: 1

@@ -1,0 +1,6 @@
+{
+  "name": "@ordella/global-metrics-monitoring-layer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Prometheus, Grafana, and Tempo monitoring layer for Ordella Physio"
+}

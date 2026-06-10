@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ordella-staging
+
+resources:
+  - ../../base
+
+patches:
+  - path: configmap-staging.yaml
+  - path: secret-staging.yaml
+  - path: ingress-staging.yaml
+
+commonLabels:
+  environment: staging
+
+images:
+  - name: ghcr.io/ordella/api-gateway
+    newTag: staging
+  - name: ghcr.io/ordella/auth-service
+    newTag: staging
+  - name: ghcr.io/ordella/tenant-service
+    newTag: staging
+  - name: ghcr.io/ordella/patient-service
+    newTag: staging
+  - name: ghcr.io/ordella/appointment-service
+    newTag: staging
+  - name: ghcr.io/ordella/notes-service
+    newTag: staging
+  - name: ghcr.io/ordella/billing-service
+    newTag: staging
+  - name: ghcr.io/ordella/payment-service
+    newTag: staging
+  - name: ghcr.io/ordella/communication-service
+    newTag: staging
+  - name: ghcr.io/ordella/reporting-service
+    newTag: staging
+  - name: ghcr.io/ordella/event-bus-service
+    newTag: staging
+  - name: ghcr.io/ordella/frontend-web
+    newTag: staging

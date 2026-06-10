@@ -1,0 +1,36 @@
+groups:
+  - name: ordella-logging-alerts
+    interval: 1m
+    rules:
+      - alert: HighErrorLogRate
+        expr: |
+          sum(rate({level="error"}[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: High error log rate detected
+          description: Error log rate exceeded threshold across ordella-physio services.
+
+      - alert: ServiceLogSilence
+        expr: |
+          absent_over_time({service="api-gateway"}[15m])
+        for: 15m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: No logs from api-gateway
+          description: api-gateway has produced no logs for 15 minutes.
+
+      - alert: TenantErrorSpike
+        expr: |
+          sum by (tenantId) (rate({level="error"}[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: Elevated tenant error rate
+          description: Tenant {{ $labels.tenantId }} error log rate is elevated.

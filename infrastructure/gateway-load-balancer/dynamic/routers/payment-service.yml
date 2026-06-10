@@ -1,0 +1,12 @@
+http:
+  routers:
+    payment-service:
+      rule: PathPrefix(`/payment-service`)
+      entryPoints:
+        - websecure
+      service: payment-service
+      middlewares:
+        - chain-default
+        - circuit-breaker
+      tls:
+        certResolver: letsencrypt

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      containers:
+        - name: traefik
+          image: traefik:v3.0
+          args:
+            - "--providers.file.directory=/etc/traefik/dynamic"
+            - "--entrypoints.web.address=:80"
+          volumeMounts:
+            - name: dynamic
+              mountPath: /etc/traefik/dynamic
+      volumes:
+        - name: dynamic
+          configMap:
+            name: traefik-config

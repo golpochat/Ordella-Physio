@@ -1,0 +1,10 @@
+http:
+  services:
+    notes-service:
+      loadBalancer:
+        healthCheck:
+          path: /notes/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://notes-service:3055

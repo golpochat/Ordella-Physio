@@ -1,0 +1,10 @@
+http:
+  services:
+    appointment-service:
+      loadBalancer:
+        healthCheck:
+          path: /appointment/health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://appointment-service:3054

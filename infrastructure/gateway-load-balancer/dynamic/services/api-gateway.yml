@@ -1,0 +1,10 @@
+http:
+  services:
+    api-gateway:
+      loadBalancer:
+        healthCheck:
+          path: /health
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://api-gateway:3049

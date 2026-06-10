@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum DayOfWeek {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  tenantId    String
+  patientId   String
+  therapistId String
+  locationId  String
+  startTime   DateTime
+  endTime     DateTime
+  status      AppointmentStatus @default(SCHEDULED)
+  type        String
+  notes              String?
+  cancellationReason String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, therapistId, startTime])
+  @@index([tenantId, patientId])
+  @@map("appointments")
+}
+
+model Availability {
+  id          String    @id @default(cuid())
+  tenantId    String
+  therapistId String
+  dayOfWeek   DayOfWeek
+  startTime   String
+  endTime     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([tenantId, therapistId])
+  @@map("availability")
+}
+
+model BlockedSlot {
+  id          String   @id @default(cuid())
+  tenantId    String
+  therapistId String
+  startTime   DateTime
+  endTime     DateTime
+  reason      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId, therapistId, startTime])
+  @@map("blocked_slots")
+}

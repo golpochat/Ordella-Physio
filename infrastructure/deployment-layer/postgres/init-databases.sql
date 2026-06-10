@@ -1,0 +1,10 @@
+CREATE DATABASE ordella_auth;
+CREATE DATABASE ordella_tenant;
+CREATE DATABASE ordella_patient;
+CREATE DATABASE ordella_appointment;
+CREATE DATABASE ordella_notes;
+CREATE DATABASE ordella_billing;
+CREATE DATABASE ordella_payment;
+CREATE DATABASE ordella_communication;
+CREATE DATABASE ordella_reporting;
+CREATE DATABASE ordella_event_bus;
