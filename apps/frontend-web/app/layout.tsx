@@ -4,7 +4,7 @@ import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Ordella Physio",
-  description: "Unified frontend for admin, clinic, therapist, and patient portals",
+  description: "Practice management platform for physiotherapy clinics",
   icons: {
     icon: "/favicon.ico",
     apple: "/logo.svg",

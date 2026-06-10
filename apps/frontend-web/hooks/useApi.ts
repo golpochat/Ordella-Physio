@@ -9,7 +9,8 @@ import { useUiStore } from "@/store/ui.store";
 
 export function useApi() {
   const accessToken = useAuthStore((state) => state.accessToken);
-  const tenantId = useTenantStore((state) => state.tenant?.id);
+  const userTenantId = useAuthStore((state) => state.user?.tenantId);
+  const tenantId = useTenantStore((state) => state.tenant?.id) ?? userTenantId;
   const correlationId = useUiStore((state) => state.correlationId);
 
   return useMemo(
@@ -19,6 +20,6 @@ export function useApi() {
         tenantId: tenantId ?? null,
         correlationId: correlationId ?? uuidv4(),
       })),
-    [accessToken, tenantId, correlationId],
+    [accessToken, tenantId, userTenantId, correlationId],
   );
 }

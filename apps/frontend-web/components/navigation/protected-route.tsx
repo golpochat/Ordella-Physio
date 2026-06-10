@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getStoredIsAuthenticated } from "@/lib/auth-storage";
+import { getResolvedTenantId } from "@/lib/session-manager";
+import { resolveUserRoles } from "@/lib/rbac";
 import { useAuthStore } from "@/store/auth.store";
 
 export type ProtectedRouteProps = {
@@ -12,15 +15,31 @@ export type ProtectedRouteProps = {
 
 export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const router = useRouter();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const storeAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    setHydrated(true);
+  }, []);
+
+  const isAuthenticated = storeAuthenticated || (hydrated && getStoredIsAuthenticated());
+  const roles = user ? resolveUserRoles(user) : [];
+  const tenantId = hydrated ? getResolvedTenantId() : user?.tenantId ?? null;
+  const requiresTenant = !roles.includes("SYSTEM");
+  const hasValidSession = Boolean(isAuthenticated && user && (!requiresTenant || tenantId));
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    if (!hasValidSession) {
       router.replace("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [hasValidSession, hydrated, router]);
 
-  if (!isAuthenticated) {
+  if (!hydrated || !hasValidSession) {
     return (
       fallback ?? (
         <div className="space-y-3 p-6">

@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { TenantSelector } from "@/components/auth/tenant-selector";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { AppForm } from "@/components/forms/form";
 import { useAuth } from "@/hooks/useAuth";
+import { getDefaultTenantId } from "@/lib/tenant-config";
 
 type RegisterFormValues = {
   firstName: string;
@@ -16,6 +20,8 @@ type RegisterFormValues = {
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const [tenantId, setTenantId] = useState(getDefaultTenantId() ?? "");
+  const [submitting, setSubmitting] = useState(false);
 
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
@@ -27,11 +33,26 @@ export default function RegisterPage() {
         <CardBody>
           <AppForm<RegisterFormValues>
             defaultValues={{ firstName: "", lastName: "", email: "", password: "" }}
-            onSubmit={(values) => register(values)}
+            onSubmit={async (values) => {
+              if (!tenantId) {
+                toast.error("Select a clinic before registering.");
+                return;
+              }
+
+              setSubmitting(true);
+              try {
+                await register({ ...values, tenantId });
+              } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Unable to create account.");
+              } finally {
+                setSubmitting(false);
+              }
+            }}
             className="space-y-4"
           >
             {(form) => (
               <>
+                <TenantSelector value={tenantId} onChange={setTenantId} />
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First name</Label>
@@ -50,8 +71,8 @@ export default function RegisterPage() {
                   <Label htmlFor="password">Password</Label>
                   <Input id="password" type="password" {...form.register("password", { required: true })} />
                 </div>
-                <Button type="submit" className="w-full">
-                  Register
+                <Button type="submit" className="w-full" disabled={submitting}>
+                  {submitting ? "Creating account..." : "Register"}
                 </Button>
               </>
             )}

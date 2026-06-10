@@ -31,12 +31,29 @@ export const GATEWAY_PATHS = {
 export type ApiServiceKey = keyof typeof API_ROUTES;
 
 export const DASHBOARD_ROUTES = {
+  superAdmin: "/super-admin",
   admin: "/admin",
   clinic: "/clinic",
   therapist: "/therapist",
   patient: "/patient",
+  pharmacy: "/pharmacy",
+  staff: "/staff",
+  user: "/user",
 } as const;
 
-export const PUBLIC_ROUTES = ["/login", "/register", "/reset-password"] as const;
+export const PUBLIC_ROUTES = [
+  "/",
+  "/pricing",
+  "/features",
+  "/about",
+  "/contact",
+  "/product",
+  "/solutions",
+  "/faq",
+  "/blog",
+  "/login",
+  "/register",
+  "/reset-password",
+] as const;
 
 export const TOKEN_REFRESH_BUFFER_MS = 60_000;

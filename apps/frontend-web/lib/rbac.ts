@@ -1,27 +1,33 @@
 import type { SecurityRole } from "@ordella/security";
 import { DASHBOARD_ROUTES } from "./constants";
 
-export type PortalRole = SecurityRole | "PATIENT";
+export type PortalRole = SecurityRole | "PATIENT" | "PHARMACY" | "USER";
 
 export const ROLE_DASHBOARD_MAP: Record<PortalRole, string> = {
-  SYSTEM: DASHBOARD_ROUTES.admin,
+  SYSTEM: DASHBOARD_ROUTES.superAdmin,
   OWNER: DASHBOARD_ROUTES.admin,
   ADMIN: DASHBOARD_ROUTES.clinic,
   THERAPIST: DASHBOARD_ROUTES.therapist,
-  STAFF: DASHBOARD_ROUTES.clinic,
+  STAFF: DASHBOARD_ROUTES.staff,
   PATIENT: DASHBOARD_ROUTES.patient,
+  PHARMACY: DASHBOARD_ROUTES.pharmacy,
+  USER: DASHBOARD_ROUTES.user,
 };
 
 export const ROUTE_ROLE_ACCESS: Record<string, PortalRole[]> = {
-  [DASHBOARD_ROUTES.admin]: ["SYSTEM", "OWNER"],
-  [DASHBOARD_ROUTES.clinic]: ["ADMIN", "STAFF"],
+  [DASHBOARD_ROUTES.superAdmin]: ["SYSTEM"],
+  [DASHBOARD_ROUTES.admin]: ["OWNER"],
+  [DASHBOARD_ROUTES.clinic]: ["ADMIN"],
   [DASHBOARD_ROUTES.therapist]: ["THERAPIST"],
   [DASHBOARD_ROUTES.patient]: ["PATIENT"],
+  [DASHBOARD_ROUTES.pharmacy]: ["PHARMACY"],
+  [DASHBOARD_ROUTES.staff]: ["STAFF"],
+  [DASHBOARD_ROUTES.user]: ["USER"],
   "/appointments": ["ADMIN", "STAFF", "THERAPIST", "PATIENT"],
   "/patients": ["ADMIN", "STAFF", "THERAPIST"],
   "/billing": ["ADMIN", "STAFF", "PATIENT"],
   "/notes": ["ADMIN", "STAFF", "THERAPIST", "PATIENT"],
-  "/settings": ["SYSTEM", "OWNER", "ADMIN", "STAFF", "THERAPIST", "PATIENT"],
+  "/settings": ["SYSTEM", "OWNER", "ADMIN", "STAFF", "THERAPIST", "PATIENT", "PHARMACY", "USER"],
 };
 
 export function hasRole(userRoles: PortalRole[], required: PortalRole | PortalRole[]): boolean {
@@ -50,5 +56,16 @@ export function canAccessRoute(pathname: string, roles: PortalRole[]): boolean {
 export function getDefaultDashboardForRoles(roles: PortalRole[] | undefined): string {
   const resolved = roles?.length ? roles : [];
   const primary = resolved.find((role) => ROLE_DASHBOARD_MAP[role]);
-  return primary ? ROLE_DASHBOARD_MAP[primary] : DASHBOARD_ROUTES.patient;
+  return primary ? ROLE_DASHBOARD_MAP[primary] : DASHBOARD_ROUTES.user;
+}
+
+export function resolveUserRoles(user: {
+  role?: PortalRole;
+  roles?: PortalRole[];
+}): PortalRole[] {
+  if (user.roles?.length) {
+    return user.roles;
+  }
+
+  return user.role ? [user.role] : [];
 }

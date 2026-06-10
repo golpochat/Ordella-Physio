@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { attemptTokenRefresh, handleApiAuthError } from "@/lib/session-manager";
 import { API_ROUTES, AUTHORIZATION_HEADER, CORRELATION_ID_HEADER, TENANT_HEADER } from "./constants";
 
 export class ApiError extends Error {
@@ -24,6 +25,7 @@ export type ApiClientOptions = Omit<RequestInit, "body"> & {
   params?: Record<string, string | number | boolean | undefined>;
   context?: ApiClientContext;
   jsonBody?: unknown;
+  _retried?: boolean;
 };
 
 function buildServiceUrl(
@@ -67,6 +69,17 @@ export function createApiClient(getContext: () => ApiClientContext) {
     const payload = await response.json().catch(() => null);
 
     if (!response.ok) {
+      if ((response.status === 401 || response.status === 403) && !options._retried) {
+        if (response.status === 401) {
+          const refreshed = await attemptTokenRefresh();
+          if (refreshed) {
+            return request<T>({ ...options, _retried: true });
+          }
+        }
+
+        await handleApiAuthError(response.status);
+      }
+
       throw new ApiError(
         (payload as { message?: string } | null)?.message ?? "API request failed",
         response.status,
@@ -88,6 +101,12 @@ export function createApiClient(getContext: () => ApiClientContext) {
       request<T>({ ...options, service, path, jsonBody, method: "POST" }),
     put: <T>(service: keyof typeof API_ROUTES, path?: string, jsonBody?: unknown, options?: Omit<ApiClientOptions, "service" | "path" | "jsonBody" | "method">) =>
       request<T>({ ...options, service, path, jsonBody, method: "PUT" }),
+    patch: <T>(
+      service: keyof typeof API_ROUTES,
+      path?: string,
+      jsonBody?: unknown,
+      options?: Omit<ApiClientOptions, "service" | "path" | "jsonBody" | "method">,
+    ) => request<T>({ ...options, service, path, jsonBody, method: "PATCH" }),
     delete: <T>(service: keyof typeof API_ROUTES, path?: string, options?: Omit<ApiClientOptions, "service" | "path" | "method">) =>
       request<T>({ ...options, service, path, method: "DELETE" }),
   };

@@ -12,8 +12,8 @@ platform. It contains:
 5. PENDING CURSOR COMMANDS (PCC)
 
 ======================================================================
-1. MASTER TODO LIST (MTL)
-======================================================================
+
+1. # MASTER TODO LIST (MTL)
 
 [ ] 1. Backend microservices (DONE)
 [ ] 2. API Gateway (DONE)
@@ -22,35 +22,34 @@ platform. It contains:
 [ ] 5. Tenant-aware auth (DONE)
 [ ] 6. Frontend dashboard scaffolding (DONE)
 [ ] 7. Tenant selection on login/register (DONE)
-[ ] 8. Role-based dashboards (PENDING)
-[ ] 9. Marketing website (PENDING)
-[ ] 10. Pricing page (PENDING)
-[ ] 11. Public landing site (PENDING)
-[ ] 12. Patient portal (PENDING)
-[ ] 13. Therapist portal (PENDING)
-[ ] 14. Clinic admin portal (PENDING)
-[ ] 15. Super admin portal (PENDING)
-[ ] 16. Pharmacy portal (PENDING)
-[ ] 17. User portal (PENDING)
-[ ] 18. Full E2E workflow automation (IN PROGRESS)
-[ ] 19. Staging deployment (PENDING)
-[ ] 20. Production deployment (PENDING)
+[ ] 8. Role-based dashboards (DONE)
+[ ] 9. Marketing website (DONE)
+[ ] 10. Pricing page (DONE)
+[ ] 11. Public landing site (DONE)
+[ ] 12. Patient portal (DONE)
+[ ] 13. Therapist portal (DONE)
+[ ] 14. Clinic admin portal (DONE)
+[ ] 15. Super admin portal (DONE)
+[ ] 16. Pharmacy portal (DONE)
+[ ] 17. Staff portal (DONE)
+[ ] 18. User portal (DONE)
+[ ] 19. Full E2E workflow automation (DONE)
+[ ] 20. Staging deployment (IN PROGRESS)
+[ ] 21. Production deployment (PENDING)
 
-======================================================================
-2. CURRENT POSITION MARKER (CPM)
+====================================================================== 2. CURRENT POSITION MARKER (CPM)
 ======================================================================
 
 CURRENT STEP:
-"Implement role-based dashboards (Step 8)"
+"Staging Deployment (Step 20)"
 
 NEXT STEP:
-"Build marketing website (Step 9)"
+"Deploy to production (Step 21)"
 
 LAST COMPLETED STEP:
-"Tenant selection on login/register"
+"Full E2E Workflow Automation"
 
-======================================================================
-3. ERROR INTERRUPTION HANDLER (EIH)
+====================================================================== 3. ERROR INTERRUPTION HANDLER (EIH)
 ======================================================================
 
 RULE:
@@ -66,6 +65,7 @@ EIH - Active Error:
 None
 
 EIH - Resolved Errors:
+
 - Docker build failures
 - Missing Prisma client
 - Missing email templates
@@ -74,8 +74,7 @@ EIH - Resolved Errors:
 - Event-bus JetStream crash
 - Docker Compose unification issues
 
-======================================================================
-4. COMPLETED TASK LOG (CTL)
+====================================================================== 4. COMPLETED TASK LOG (CTL)
 ======================================================================
 
 - All backend microservices built
@@ -85,22 +84,22 @@ EIH - Resolved Errors:
 - Tenant-aware auth implemented
 - Frontend dashboard scaffolded
 - Tenant selection added
+- Role-based dashboards implemented
+- Marketing website implemented
+- Pricing page enhancements implemented
+- Public landing site enhancements implemented
+- Patient portal implementation completed
+- Therapist portal implementation completed
+- Clinic admin portal implementation completed
+- Super admin portal implementation completed
+- Pharmacy portal implementation completed
+- Staff portal implementation completed
+- User portal implementation completed
+- Full E2E workflow automation completed
 
-======================================================================
-5. PENDING CURSOR COMMANDS (PCC)
+====================================================================== 5. PENDING CURSOR COMMANDS (PCC)
 ======================================================================
 
-- Implement role-based dashboards
-- Build marketing website
-- Build pricing page
-- Build public landing site
-- Build patient portal
-- Build therapist portal
-- Build clinic admin portal
-- Build super admin portal
-- Build pharmacy portal
-- Build user portal
-- Automate full E2E workflow
 - Deploy to staging
 - Deploy to production
 

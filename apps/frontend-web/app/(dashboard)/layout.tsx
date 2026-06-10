@@ -1,5 +1,5 @@
-import { PortalShell } from "@/components/layout/portal-shell";
+import { DashboardShell } from "@/components/layout/dashboard-shell";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return <PortalShell>{children}</PortalShell>;
+  return <DashboardShell>{children}</DashboardShell>;
 }
