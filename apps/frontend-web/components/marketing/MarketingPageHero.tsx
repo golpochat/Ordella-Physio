@@ -12,7 +12,7 @@ export function MarketingPageHero({ title, description, className }: MarketingPa
   return (
     <section
       className={cn(
-        "marketing-container mb-2xl bg-brand-gradient-hero py-3xl text-center",
+        "marketing-container mb-2xl bg-brand-gradient-hero py-3xl text-center max-sm:mb-xl max-sm:py-2xl",
         className,
       )}
     >

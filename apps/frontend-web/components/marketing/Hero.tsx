@@ -44,7 +44,7 @@ export default function Hero() {
           </CtaLink>
         </div>
 
-        <div className="hero-image mx-auto w-full max-w-5xl">
+        <div className="hero-image mx-auto w-full max-w-full sm:max-w-5xl">
           <ProductMockup variant="dashboard" priority />
         </div>
       </div>

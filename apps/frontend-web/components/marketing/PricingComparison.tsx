@@ -25,8 +25,10 @@ function CheckCell({ included }: { included: boolean }) {
 
 export function PricingComparison() {
   return (
-    <section className="marketing-container mt-2xl py-2xl">
-      <h2 className="mb-md font-display text-4xl font-bold text-foreground">Compare plans</h2>
+    <section className="marketing-container mt-2xl py-2xl max-sm:mt-xl max-sm:py-xl">
+      <h2 className="mb-md font-display text-3xl font-bold text-foreground sm:text-4xl">
+        Compare plans
+      </h2>
 
       <div className="overflow-x-auto rounded-lg border bg-card shadow-soft">
         <table className="w-full min-w-[640px] border-collapse text-left">

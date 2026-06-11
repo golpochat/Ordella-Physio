@@ -41,7 +41,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="marketing-container mt-2xl py-2xl text-center">
+      <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
           <h2 className={cn("mb-md", marketingHeading.h2)}>Prefer to talk directly?</h2>
           <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>

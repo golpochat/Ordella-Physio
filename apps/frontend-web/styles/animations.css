@@ -41,7 +41,24 @@
   }
 }
 
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+@media (max-width: 640px) {
+  .fade-up,
+  .fade-in,
+  .fade-in-delayed,
+  .fade-in-stagger > * {
+    animation-duration: 0.5s;
+    transform: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .fade-up,
   .fade-in,
   .fade-in-delayed,
   .fade-in-stagger > * {

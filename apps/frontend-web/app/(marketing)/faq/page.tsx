@@ -64,11 +64,15 @@ export default function FaqPage() {
 
       <FAQSection title="General" items={[...GENERAL_FAQ]} />
 
-      <FAQSection className="bg-muted/40 py-2xl" title="Pricing & billing" items={[...PRICING_FAQ]} />
+      <FAQSection
+        className="bg-muted/40 py-2xl max-sm:py-xl"
+        title="Pricing & billing"
+        items={[...PRICING_FAQ]}
+      />
 
       <FAQSection title="Product" items={[...PRODUCT_FAQ]} />
 
-      <section className="marketing-container mt-2xl py-2xl text-center">
+      <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
           <h2 className={cn("mb-md", marketingHeading.h2)}>Still have questions?</h2>
           <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>

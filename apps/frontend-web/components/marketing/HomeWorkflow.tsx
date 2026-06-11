@@ -9,8 +9,11 @@ export type HomeWorkflowProps = {
 
 export function HomeWorkflow({ step, title, description }: HomeWorkflowProps) {
   return (
-    <div className="fade-in flex items-start gap-xl">
-      <div className="font-display text-4xl font-bold leading-tight text-brand-primary" aria-hidden>
+    <div className="fade-in flex items-start gap-xl max-sm:gap-md">
+      <div
+        className="font-display text-4xl font-bold leading-tight text-brand-primary max-sm:text-3xl"
+        aria-hidden
+      >
         {step}
       </div>
       <div>

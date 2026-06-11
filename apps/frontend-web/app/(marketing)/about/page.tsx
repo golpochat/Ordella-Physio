@@ -96,7 +96,7 @@ export default function AboutPage() {
         </div>
       </AboutSection>
 
-      <section className="marketing-container mt-2xl py-2xl text-center">
+      <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
           <h2 className={cn("mb-md", marketingHeading.h2)}>Ready to join the journey?</h2>
           <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>

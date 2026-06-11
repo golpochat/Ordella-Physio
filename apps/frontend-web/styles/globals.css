@@ -5,8 +5,10 @@
 @import "./micro.css";
 @import "./motion.css";
 @import "./navbar.css";
+@import "./navbar-final.css";
 @import "./hero.css";
 @import "./product.css";
+@import "./footer.css";
 
 @font-face {
   font-family: "Inter";
@@ -130,19 +132,45 @@
   }
 
   .marketing-card {
-    @apply rounded-lg bg-card p-xl shadow-soft transition-all duration-200 hover:-translate-y-1 hover:shadow-medium;
+    @apply rounded-lg bg-card p-xl shadow-soft transition-all duration-200 hover:-translate-y-1 hover:shadow-medium max-sm:p-lg;
+  }
+
+  .marketing-site {
+    @apply overflow-x-hidden;
+  }
+
+  .marketing-site img,
+  .marketing-site picture,
+  .marketing-site video {
+    @apply h-auto max-w-full object-contain;
   }
 
   .marketing-section-hero {
-    @apply py-3xl;
+    @apply py-3xl max-sm:py-2xl;
   }
 
   .marketing-section-major {
-    @apply py-2xl;
+    @apply py-2xl max-sm:py-xl;
   }
 
   .marketing-section-sub {
-    @apply py-xl;
+    @apply py-xl max-sm:py-lg;
+  }
+
+  .grid-2 {
+    @apply grid grid-cols-2 gap-lg;
+  }
+
+  .grid-3 {
+    @apply grid grid-cols-3 gap-lg;
+  }
+
+  .marketing-feature-icon {
+    @apply mb-md text-3xl text-brand-primary max-sm:mb-sm max-sm:text-2xl;
+  }
+
+  .marketing-image {
+    @apply h-auto max-w-full object-contain;
   }
 
   .marketing-grid {
@@ -200,14 +228,23 @@
   }
 
   .product-mockup {
-    min-height: 20rem;
+    width: 100%;
+    max-width: 100%;
+    min-height: 16rem;
     aspect-ratio: 16 / 10;
     contain: layout style paint;
     content-visibility: auto;
-    contain-intrinsic-size: auto 20rem;
+    contain-intrinsic-size: auto 16rem;
   }
 
   @media (min-width: 640px) {
+    .product-mockup {
+      min-height: 20rem;
+      contain-intrinsic-size: auto 20rem;
+    }
+  }
+
+  @media (min-width: 768px) {
     .product-mockup {
       min-height: 24rem;
       contain-intrinsic-size: auto 24rem;
@@ -281,5 +318,27 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .marketing-site .animate-fade-in-up,
+  .marketing-site .animate-fade-in {
+    animation-duration: 0.5s;
+    transform: none !important;
+  }
+
+  .marketing-site .pricing-cards > * {
+    width: 100%;
   }
 }

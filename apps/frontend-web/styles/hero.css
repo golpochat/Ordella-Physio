@@ -52,15 +52,19 @@
 .marketing-site .hero-cta-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   gap: var(--space-md);
+  width: 100%;
+  max-width: 20rem;
+  margin: 0 auto;
 }
 
 .marketing-site .hero-cta-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   padding: var(--space-md) var(--space-xl);
   border-radius: var(--radius-md);
   background: var(--brand-primary);
@@ -86,6 +90,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   padding: var(--space-md) var(--space-xl);
   border: 1px solid var(--brand-primary);
   border-radius: var(--radius-md);
@@ -108,6 +113,8 @@
 
 .marketing-site .hero-image {
   margin-top: var(--space-3xl);
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-medium);
@@ -118,6 +125,9 @@
 }
 
 .marketing-site .hero-image .product-mockup {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
   border: none;
   box-shadow: none;
 }
@@ -132,21 +142,41 @@
 @media (min-width: 640px) {
   .marketing-site .hero-cta-group {
     flex-direction: row;
+    align-items: center;
+    max-width: none;
+    width: auto;
     gap: var(--space-md);
+  }
+
+  .marketing-site .hero-cta-primary,
+  .marketing-site .hero-cta-secondary {
+    width: auto;
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 640px) {
+  .marketing-site .hero {
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+  }
+
+  .marketing-site .hero::before {
+    width: 540px;
+    height: 540px;
+    filter: blur(48px);
+  }
+
   .marketing-site .hero-title {
     font-size: var(--font-size-4xl);
   }
 
   .marketing-site .hero-subtitle {
     font-size: var(--font-size-lg);
+    margin-bottom: var(--space-xl);
   }
 
   .marketing-site .hero-image {
-    margin-top: var(--space-2xl);
+    margin-top: var(--space-xl);
   }
 }
 

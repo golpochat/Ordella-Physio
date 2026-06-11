@@ -35,7 +35,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   render() {
     if (this.state.hasError) {
       return (
-        <div className="marketing-container py-2xl text-center">
+        <div className="marketing-container py-2xl text-center max-sm:py-xl">
           <h2 className="mb-md font-display text-3xl font-bold text-foreground">
             Something went wrong
           </h2>

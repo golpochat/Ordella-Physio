@@ -98,7 +98,7 @@ export default function MarketingHomePage() {
       </HomeSection>
 
       <section
-        className="marketing-container py-2xl text-center"
+        className="marketing-container py-2xl text-center max-sm:py-xl"
         aria-labelledby="home-cta-title"
       >
         <ScrollReveal>

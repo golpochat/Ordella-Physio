@@ -1,0 +1,99 @@
+/* Marketing navbar — final polish layer */
+.marketing-site .navbar,
+.marketing-site .nav-link,
+.marketing-site .nav-cta {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.marketing-site .navbar-inner,
+.marketing-site .nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.marketing-site .navbar {
+  overflow: visible;
+  white-space: nowrap;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.marketing-site .navbar.scrolled {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.marketing-site .nav-items {
+  gap: var(--space-xl);
+}
+
+.marketing-site .nav-right {
+  gap: var(--space-lg);
+}
+
+.marketing-site .nav-link {
+  transition:
+    opacity 0.18s ease,
+    color 0.18s ease;
+}
+
+.marketing-site .nav-link:hover {
+  opacity: 0.75;
+  color: var(--brand-primary);
+}
+
+.marketing-site .nav-link-active {
+  opacity: 1;
+  color: var(--brand-primary);
+}
+
+.marketing-site .nav-cta {
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.marketing-site .nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.marketing-site .nav-logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marketing-site .mobile-menu {
+  animation: navbar-final-slide-down 0.22s ease;
+}
+
+@keyframes navbar-final-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-site .mobile-menu {
+    animation: none;
+  }
+
+  .marketing-site .nav-cta:hover {
+    transform: none;
+  }
+
+}

@@ -26,7 +26,8 @@ export function PricingCard({
       className={cn(
         marketingCardClass,
         "fade-in",
-        popular && "border-2 border-brand-primary lg:scale-105",
+        popular && "border-2 border-brand-primary max-lg:scale-100 lg:scale-105",
+        "max-sm:p-xl",
       )}
     >
       {popular ? (
@@ -42,7 +43,7 @@ export function PricingCard({
         <span className={`text-base font-normal ${marketingHeading.body}`}> /mo</span>
       </p>
 
-      <ul className="mb-lg space-y-sm">
+      <ul className="mb-lg space-y-sm max-sm:space-y-xs">
         {features.map((feature) => (
           <li key={feature} className="flex items-center gap-sm">
             <span className="text-brand-primary" aria-hidden>

@@ -31,7 +31,7 @@ export function HomeSection({
 
   return (
     <section
-      className={cn("marketing-container py-2xl", className)}
+      className={cn("marketing-container py-2xl max-sm:py-xl", className)}
       aria-labelledby={resolvedTitleId}
     >
       <ScrollReveal>

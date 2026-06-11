@@ -11,7 +11,7 @@ export type FeatureSectionProps = {
 
 export function FeatureSection({ title, subtitle, children, className }: FeatureSectionProps) {
   return (
-    <section className={cn("marketing-container py-2xl", className)}>
+    <section className={cn("marketing-container py-2xl max-sm:py-xl", className)}>
       <h2 className={cn("mb-md", marketingHeading.h2)}>{title}</h2>
       <p className={cn("mb-xl", marketingHeading.subtitle)}>{subtitle}</p>
       <div className={marketingGridCards}>{children}</div>

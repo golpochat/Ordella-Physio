@@ -1,0 +1,67 @@
+/* Marketing footer — scoped to avoid portal bleed */
+.marketing-site .footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.marketing-site .footer-cta {
+  text-align: center;
+}
+
+.marketing-site .footer-columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-xl);
+}
+
+.marketing-site .footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.marketing-site .footer-nav {
+  text-align: left;
+}
+
+.marketing-site .footer-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+@media (max-width: 767px) {
+  .marketing-site .footer {
+    gap: var(--space-lg);
+    text-align: center;
+  }
+
+  .marketing-site .footer-cta {
+    padding: var(--space-xl);
+  }
+
+  .marketing-site .footer-columns {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    text-align: center;
+  }
+
+  .marketing-site .footer-brand {
+    align-items: center;
+  }
+
+  .marketing-site .footer-brand p {
+    max-width: none;
+  }
+
+  .marketing-site .footer-nav {
+    text-align: center;
+  }
+
+  .marketing-site .footer-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+}

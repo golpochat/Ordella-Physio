@@ -17,7 +17,9 @@ export function ScrollReveal({ children, className }: ScrollRevealProps) {
       ref={ref}
       className={cn(
         "transition-all duration-500",
-        visible ? "animate-fade-in-up opacity-100" : "translate-y-4 opacity-0",
+        visible
+          ? "animate-fade-in-up opacity-100 max-sm:translate-y-0"
+          : "translate-y-4 opacity-0 max-sm:translate-y-0",
         className,
       )}
     >

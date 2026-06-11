@@ -10,7 +10,7 @@ export type HomeFeatureProps = {
 export function HomeFeature({ icon, title, description }: HomeFeatureProps) {
   return (
     <article className={`${marketingCardClass} fade-in`}>
-      <div className="mb-md text-3xl text-brand-primary" aria-hidden>
+      <div className="marketing-feature-icon" aria-hidden>
         {icon}
       </div>
       <h3 className={`mb-sm ${marketingHeading.h4}`}>{title}</h3>

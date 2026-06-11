@@ -12,7 +12,7 @@ export type FeatureCardProps = {
 export function FeatureCard({ icon, title, description, className }: FeatureCardProps) {
   return (
     <div className={cn(marketingCardClass, "fade-in", className)}>
-      <div className="mb-md text-3xl text-brand-primary">{icon}</div>
+      <div className="marketing-feature-icon">{icon}</div>
       <h3 className={cn("mb-sm", marketingHeading.h4)}>{title}</h3>
       <p className={marketingHeading.body}>{description}</p>
     </div>

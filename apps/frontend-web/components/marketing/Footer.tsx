@@ -20,10 +20,10 @@ export default function Footer() {
 
   return (
     <footer
-      className="mt-2xl border-t border-brand-gray/20 bg-brand-light py-2xl"
+      className="footer mt-2xl border-t border-brand-gray/20 bg-brand-light py-2xl max-sm:py-xl"
       role="contentinfo"
     >
-      <div className="marketing-container mb-xl rounded-lg bg-card p-xl text-center shadow-soft">
+      <div className="footer-cta marketing-container mb-xl rounded-lg bg-card p-xl text-center shadow-soft max-sm:p-xl">
         <h2 className={cn("mb-sm", marketingHeading.h3)}>Ready to modernize your clinic?</h2>
         <p className={cn("mb-md", marketingHeading.body)}>
           Join clinics using Ordella Physio to streamline operations and patient care.
@@ -47,18 +47,18 @@ export default function Footer() {
         />
       </div>
 
-      <div className="marketing-container grid grid-cols-1 gap-xl md:grid-cols-4">
-        <div>
-          <Link href="/" prefetch className="mb-md flex items-center gap-sm">
+      <div className="footer-columns marketing-container">
+        <div className="footer-brand">
+          <Link href="/" prefetch className="mb-md flex items-center gap-sm max-sm:mx-auto">
             <MarketingLogo />
           </Link>
-          <p className="max-w-sm text-brand-gray">
+          <p className="max-w-sm text-brand-gray max-sm:mx-auto">
             A modern, unified platform for physiotherapy clinics — built for clarity, efficiency,
             and exceptional patient care.
           </p>
         </div>
 
-        <nav aria-labelledby="footer-product-heading">
+        <nav className="footer-nav" aria-labelledby="footer-product-heading">
           <h4
             id="footer-product-heading"
             className="mb-sm font-display text-lg font-semibold text-foreground"
@@ -80,7 +80,7 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <nav aria-labelledby="footer-company-heading">
+        <nav className="footer-nav" aria-labelledby="footer-company-heading">
           <h4
             id="footer-company-heading"
             className="mb-sm font-display text-lg font-semibold text-foreground"
@@ -102,7 +102,7 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <nav aria-labelledby="footer-connect-heading">
+        <nav className="footer-nav" aria-labelledby="footer-connect-heading">
           <h4
             id="footer-connect-heading"
             className="mb-sm font-display text-lg font-semibold text-foreground"
@@ -127,8 +127,8 @@ export default function Footer() {
         </nav>
       </div>
 
-      <div className="marketing-container mt-xl border-t border-brand-gray/20 pt-xl">
-        <div className="flex flex-col items-center justify-between gap-md text-sm text-brand-gray md:flex-row">
+      <div className="marketing-container mt-xl border-t border-brand-gray/20 pt-xl max-sm:pt-lg">
+        <div className="footer-bar text-sm text-brand-gray">
           <p>&copy; {currentYear} Ordella Physio. All rights reserved.</p>
           <nav aria-label="Legal">
             <ul className="flex flex-wrap items-center justify-center gap-md">

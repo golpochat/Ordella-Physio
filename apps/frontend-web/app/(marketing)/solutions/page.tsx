@@ -15,7 +15,7 @@ export const metadata = generateSEO({
 
 export default function SolutionsPage() {
   return (
-    <div className="bg-background pb-2xl pt-2xl">
+    <div className="bg-background pb-2xl pt-2xl max-sm:pb-xl max-sm:pt-xl">
       <MarketingPageHero
         title="Solutions for every part of your clinic"
         description="Ordella Physio adapts to the needs of therapists, staff, and clinic owners — delivering clarity, efficiency, and seamless workflows."
@@ -85,7 +85,7 @@ export default function SolutionsPage() {
         />
       </SolutionSection>
 
-      <section className="marketing-container mt-2xl py-2xl text-center">
+      <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
           <h2 className={cn("mb-md", marketingHeading.h2)}>Ready to streamline your clinic?</h2>
           <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>

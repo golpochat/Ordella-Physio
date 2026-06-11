@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { CtaLink } from "@/components/marketing/CtaLink";
-import { NavResourcesDropdown } from "@/components/marketing/NavResourcesDropdown";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "@ordella/shared-icons";
@@ -46,7 +44,7 @@ export default function Navbar() {
     <header className={cn("navbar", scrolled && "scrolled")}>
       <nav className="navbar-inner marketing-container" aria-label="Main navigation">
         <div className="nav-left">
-          <Link href="/" prefetch className="flex items-center">
+          <Link href="/" prefetch className="nav-logo">
             <MarketingLogo priority />
           </Link>
         </div>
@@ -63,22 +61,15 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <NavResourcesDropdown />
         </div>
 
         <div className="nav-right">
           <Link href="/login" prefetch className="nav-link">
             Log in
           </Link>
-          <CtaLink
-            href="/contact"
-            prefetch
-            location="navbar"
-            label="Contact us"
-            className="nav-cta ripple"
-          >
-            Contact Us
-          </CtaLink>
+          <Link href="/signup" prefetch className="nav-cta">
+            Sign Up
+          </Link>
         </div>
 
         <button
@@ -95,7 +86,7 @@ export default function Navbar() {
 
       {open ? (
         <nav id="mobile-menu" className="mobile-menu" aria-label="Mobile navigation">
-          <div className="marketing-container flex flex-col gap-sm">
+          <div className="marketing-container mobile-menu-inner">
             {MARKETING_NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -109,8 +100,6 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <NavResourcesDropdown variant="mobile" onNavigate={() => setOpen(false)} />
-
             <Link
               href="/login"
               prefetch
@@ -119,16 +108,14 @@ export default function Navbar() {
             >
               Log in
             </Link>
-            <CtaLink
-              href="/contact"
+            <Link
+              href="/signup"
               prefetch
-              location="navbar_mobile"
-              label="Contact us"
-              className="nav-cta nav-cta-block ripple"
+              className="nav-cta nav-cta-block"
               onClick={() => setOpen(false)}
             >
-              Contact Us
-            </CtaLink>
+              Sign Up
+            </Link>
           </div>
         </nav>
       ) : null}

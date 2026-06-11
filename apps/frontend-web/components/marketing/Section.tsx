@@ -18,9 +18,9 @@ const variantClasses: Record<NonNullable<SectionProps["variant"]>, string> = {
 };
 
 const sizeClasses: Record<NonNullable<SectionProps["size"]>, string> = {
-  hero: "py-3xl",
-  major: "py-2xl",
-  sub: "py-xl",
+  hero: "py-3xl max-sm:py-2xl",
+  major: "py-2xl max-sm:py-xl",
+  sub: "py-xl max-sm:py-lg",
 };
 
 export function Section({
