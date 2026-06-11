@@ -17,8 +17,11 @@ ENV DEFAULT_TENANT_ID=$DEFAULT_TENANT_ID
 RUN pnpm turbo run build --filter=@ordella/frontend-web
 
 WORKDIR /app/apps/frontend-web
-RUN cp -r .next/static .next/standalone/apps/frontend-web/.next/static
-RUN if [ -d public ]; then cp -r public .next/standalone/apps/frontend-web/public; fi
+# Replace standalone's placeholder static dir — copying on top nests static/static and breaks chunk URLs.
+RUN rm -rf .next/standalone/apps/frontend-web/.next/static && \
+    cp -r .next/static .next/standalone/apps/frontend-web/.next/static
+RUN rm -rf .next/standalone/apps/frontend-web/public && \
+    if [ -d public ]; then cp -r public .next/standalone/apps/frontend-web/public; fi
 
 WORKDIR /app/apps/frontend-web/.next/standalone
 
