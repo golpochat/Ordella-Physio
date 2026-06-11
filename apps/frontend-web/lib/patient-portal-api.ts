@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   PatientAppointment,
   PatientAppointmentListResponse,
@@ -18,7 +19,7 @@ export const PATIENT_API_PATHS = {
   billingDetail: (id: string) => `/${id}`,
   notesList: "/list",
   notesDetail: (id: string) => `/${id}`,
-  userMe: "/me",
+  userMe: "/users/me",
 } as const;
 
 export function createPatientPortalApi(api: PatientApiClient) {
@@ -54,7 +55,7 @@ export function createPatientPortalApi(api: PatientApiClient) {
     },
 
     updateProfile(payload: UpdatePatientProfilePayload) {
-      return api.patch<PatientProfile>("auth", PATIENT_API_PATHS.userMe, payload);
+      return api.put<UpdateUserProfileResponse>("auth", PATIENT_API_PATHS.userMe, payload);
     },
   };
 }

@@ -132,7 +132,7 @@ export function useUpdateStaffProfile() {
   return useMutation({
     mutationFn: (payload: UpdateStaffProfilePayload) =>
       requireApi(staffApi).updateProfile(payload),
-    onSuccess: (profile) => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["staff", "profile"] });
       if (user && accessToken && refreshToken) {
         setSession({
@@ -140,9 +140,9 @@ export function useUpdateStaffProfile() {
           refreshToken,
           user: {
             ...user,
-            email: profile.email ?? user.email,
-            firstName: profile.firstName ?? user.firstName,
-            lastName: profile.lastName ?? user.lastName,
+            email: response.user.email ?? user.email,
+            firstName: response.user.firstName ?? user.firstName,
+            lastName: response.user.lastName ?? user.lastName,
           },
         });
       }

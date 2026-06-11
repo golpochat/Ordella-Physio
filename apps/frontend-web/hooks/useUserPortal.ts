@@ -115,7 +115,7 @@ export function useUpdateUserProfile() {
   return useMutation({
     mutationFn: (payload: UpdatePortalUserProfilePayload) =>
       requireApi(userApi).updateProfile(payload),
-    onSuccess: (profile) => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["user-portal", "profile"] });
       if (user && accessToken && refreshToken) {
         setSession({
@@ -123,9 +123,9 @@ export function useUpdateUserProfile() {
           refreshToken,
           user: {
             ...user,
-            email: profile.email ?? user.email,
-            firstName: profile.firstName ?? user.firstName,
-            lastName: profile.lastName ?? user.lastName,
+            email: response.user.email ?? user.email,
+            firstName: response.user.firstName ?? user.firstName,
+            lastName: response.user.lastName ?? user.lastName,
           },
         });
       }

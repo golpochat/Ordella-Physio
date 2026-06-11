@@ -41,7 +41,8 @@ export default function ClinicLocationConfigPage({ params }: ClinicLocationConfi
     }
 
     if ("notFound" in parsed && parsed.notFound) {
-      toast.error(parsed.message ?? parsed.generalError ?? "Location does not exist.");
+      const errorMessage = "message" in parsed ? parsed.message : parsed.generalError;
+      toast.error(errorMessage ?? "Location does not exist.");
       router.replace("/clinic/locations");
     }
   }, [isLoading, loadError, locationQuery.error, router]);

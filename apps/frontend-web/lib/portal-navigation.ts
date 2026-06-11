@@ -104,6 +104,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
           item("users", "Users", "/clinic/users", ["admin"]),
           item("users", "Staff", "/clinic/staff", ["admin"]),
           item("clinic", "Locations", "/clinic/locations", ["admin"]),
+          item("clinic", "Terminals", "/clinic/terminals", ["admin"]),
           item("users", "Roles", "/clinic/roles", ["admin"]),
           item("reports", "Reports", "/clinic/reports", ["admin"]),
         ],

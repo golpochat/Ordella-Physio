@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   PortalUserAppointment,
   PortalUserAppointmentListResponse,
@@ -48,11 +49,11 @@ export function createUserPortalApi(api: UserPortalApiClient) {
     },
 
     getProfile() {
-      return api.get<PortalUserProfile>("auth", "/me");
+      return api.get<PortalUserProfile>("auth", "/users/me");
     },
 
     updateProfile(payload: UpdatePortalUserProfilePayload) {
-      return api.patch<PortalUserProfile>("auth", "/me", payload);
+      return api.put<UpdateUserProfileResponse>("auth", "/users/me", payload);
     },
   };
 }

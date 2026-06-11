@@ -42,7 +42,8 @@ export type ServiceEnvKey =
   | "AI_NOTES_SERVICE_URL"
   | "MARKETPLACE_SERVICE_URL"
   | "ENTERPRISE_SERVICE_URL"
-  | "ORGANIZATION_SERVICE_URL";
+  | "ORGANIZATION_SERVICE_URL"
+  | "TERMINAL_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -141,6 +142,12 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     envKey: "ORGANIZATION_SERVICE_URL",
     healthPath: "/organizations/health",
     defaultUrl: "http://organization-service:3066",
+  },
+  {
+    name: "terminal",
+    envKey: "TERMINAL_SERVICE_URL",
+    healthPath: "/terminals/health",
+    defaultUrl: "http://terminal-service:3067",
   },
 ];
 

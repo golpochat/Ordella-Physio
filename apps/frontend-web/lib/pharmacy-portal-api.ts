@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   PharmacyAppointment,
   PharmacyAppointmentListResponse,
@@ -130,11 +131,11 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
     },
 
     getProfile() {
-      return api.get<PharmacyProfile>("auth", "/me");
+      return api.get<PharmacyProfile>("auth", "/users/me");
     },
 
     updateProfile(payload: UpdatePharmacyProfilePayload) {
-      return api.patch<PharmacyProfile>("auth", "/me", payload);
+      return api.put<UpdateUserProfileResponse>("auth", "/users/me", payload);
     },
   };
 }

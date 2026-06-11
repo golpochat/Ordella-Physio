@@ -128,7 +128,7 @@ export function SettingsForm() {
 
       <Card>
         <p className="dashboard-section-title">Super admin profile</p>
-        <p className="dashboard-cell-muted">Update your account via PATCH /auth/me.</p>
+        <p className="dashboard-cell-muted">Refresh your session profile from PUT /auth/users/me.</p>
         <Button
           className="btn-secondary"
           onClick={() => {
@@ -137,7 +137,7 @@ export function SettingsForm() {
               {
                 onSuccess: () => toast.success("Profile synced"),
                 onError: () =>
-                  toast.error("Unable to update profile. PATCH /me may not be available yet."),
+                  toast.error("Unable to sync profile. Please try again."),
               },
             );
           }}

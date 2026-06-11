@@ -27,6 +27,7 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     MARKETPLACE_SERVICE_URL: config.marketplaceServiceUrl,
     ENTERPRISE_SERVICE_URL: config.enterpriseServiceUrl,
     ORGANIZATION_SERVICE_URL: config.organizationServiceUrl,
+    TERMINAL_SERVICE_URL: config.terminalServiceUrl,
   };
 
   return map[envKey];

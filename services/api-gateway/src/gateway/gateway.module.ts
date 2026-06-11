@@ -20,6 +20,7 @@ import { AI_NOTES_ROUTES } from "@/routes/ai-notes.routes";
 import { MARKETPLACE_ROUTES } from "@/routes/marketplace.routes";
 import { ENTERPRISE_ROUTES } from "@/routes/enterprise.routes";
 import { ORGANIZATION_ROUTES } from "@/routes/organization.routes";
+import { TERMINAL_ROUTES } from "@/routes/terminal.routes";
 import { TENANT_ROUTES } from "@/routes/tenant.routes";
 import { configureGatewayMiddleware, gatewayMiddlewareProviders } from "./middleware";
 import { GatewayController } from "./gateway.controller";
@@ -77,6 +78,7 @@ const proxyControllers = [
   }),
   createProxyController(ENTERPRISE_ROUTES.base, "ENTERPRISE_SERVICE_URL"),
   createProxyController(ORGANIZATION_ROUTES.base, "ORGANIZATION_SERVICE_URL"),
+  createProxyController(TERMINAL_ROUTES.base, "TERMINAL_SERVICE_URL"),
 ];
 
 @Module({

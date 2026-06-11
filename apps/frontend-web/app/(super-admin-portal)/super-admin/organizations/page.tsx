@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
-import { OrganizationListFilters } from "@/components/organizations/OrganizationListFilters";
+import { OrganizationListFilters as OrganizationListFiltersPanel } from "@/components/organizations/OrganizationListFilters";
 import { OrganizationListTable } from "@/components/organizations/OrganizationListTable";
 import { usePlatformOrganizations } from "@/hooks/useSuperAdminPortal";
 import { WithPermission } from "@/lib/auth/withPermission";
@@ -153,7 +153,7 @@ export default function SuperAdminOrganizationsPage() {
         onRetry={() => void refetch()}
         loadingRows={6}
       >
-        <OrganizationListFilters
+        <OrganizationListFiltersPanel
           filters={filters}
           draftSearch={draftSearch}
           disabled={isFetching}

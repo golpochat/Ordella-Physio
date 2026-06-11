@@ -33,6 +33,7 @@ const TENANT_PUBLIC_PATHS = [
   "/tenants/internal/organization-tenants",
   "/tenants/internal/unassigned-tenants",
   "/tenants/internal/organization-tenant",
+  "/tenants/internal/locations",
 ];
 
 export const TenantServiceDomainResolverMiddleware = createDomainResolverMiddleware({

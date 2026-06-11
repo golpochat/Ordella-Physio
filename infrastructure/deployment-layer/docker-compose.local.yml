@@ -423,6 +423,27 @@ services:
     networks:
       - ordella-network
 
+  terminal-service:
+    build:
+      context: ../../
+      dockerfile: services/terminal-service/Dockerfile
+    container_name: ordella_local_terminal_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3067
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_terminal?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+    depends_on:
+      postgres:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+    networks:
+      - ordella-network
+
   event-bus-service:
     build:
       context: ../../
@@ -472,6 +493,7 @@ services:
       MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
       ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
+      TERMINAL_SERVICE_URL: http://terminal-service:3067
       CORS_ORIGIN: "*"
     ports:
       - "${API_GATEWAY_PORT:-3049}:3049"
@@ -491,6 +513,7 @@ services:
       - marketplace-service
       - enterprise-service
       - organization-service
+      - terminal-service
     networks:
       - ordella-network
 

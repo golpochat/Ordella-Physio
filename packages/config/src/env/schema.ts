@@ -38,6 +38,15 @@ export const organizationEnvSchema = coreEnvSchema.extend({
   { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
 );
 
+export const terminalEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  TENANT_SERVICE_URL: z.string().url().default("http://localhost:3052"),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
 export const enterpriseEnvSchema = coreEnvSchema.extend({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
@@ -131,6 +140,7 @@ export const gatewayServiceUrlsSchema = z.object({
   MARKETPLACE_SERVICE_URL: z.string().url(),
   ENTERPRISE_SERVICE_URL: z.string().url(),
   ORGANIZATION_SERVICE_URL: z.string().url(),
+  TERMINAL_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({

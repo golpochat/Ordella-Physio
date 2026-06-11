@@ -17,6 +17,7 @@ export { aiNotesConfig, type AiNotesConfig } from "./services/ai-notes";
 export { marketplaceConfig, type MarketplaceConfig } from "./services/marketplace";
 export { enterpriseConfig, type EnterpriseConfig } from "./services/enterprise";
 export { organizationConfig, type OrganizationConfig } from "./services/organization";
+export { terminalConfig, type TerminalConfig } from "./services/terminal";
 export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
 export { gatewayConfig, type GatewayConfig } from "./services/gateway";
 export * from "./regions/constants";

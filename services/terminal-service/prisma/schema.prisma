@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TerminalType {
+  POS
+  KIOSK
+  PRINTER
+  TABLET
+  OTHER
+}
+
+enum TerminalStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Terminal {
+  id         String         @id @default(cuid())
+  tenantId   String
+  locationId String
+  name       String
+  code       String
+  type       TerminalType
+  ipAddress  String?
+  macAddress String?
+  status     TerminalStatus @default(ACTIVE)
+  lastSeenAt DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@unique([locationId, code])
+  @@index([tenantId])
+  @@map("terminals")
+}

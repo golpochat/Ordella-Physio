@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   StaffAppointment,
   StaffAppointmentListResponse,
@@ -56,11 +57,11 @@ export function createStaffPortalApi(api: StaffApiClient) {
     },
 
     getProfile() {
-      return api.get<StaffProfile>("auth", "/me");
+      return api.get<StaffProfile>("auth", "/users/me");
     },
 
     updateProfile(payload: UpdateStaffProfilePayload) {
-      return api.patch<StaffProfile>("auth", "/me", payload);
+      return api.put<UpdateUserProfileResponse>("auth", "/users/me", payload);
     },
   };
 }

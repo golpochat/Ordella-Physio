@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   CreateTherapistNotePayload,
   TherapistAppointment,
@@ -60,11 +61,11 @@ export function createTherapistPortalApi(api: TherapistApiClient) {
     },
 
     getProfile() {
-      return api.get<TherapistProfile>("auth", "/me");
+      return api.get<TherapistProfile>("auth", "/users/me");
     },
 
     updateProfile(payload: UpdateTherapistProfilePayload) {
-      return api.patch<TherapistProfile>("auth", "/me", payload);
+      return api.put<UpdateUserProfileResponse>("auth", "/users/me", payload);
     },
   };
 }

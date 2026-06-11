@@ -20,6 +20,7 @@ export const API_ROUTES = {
   marketplace: "/api/marketplace",
   enterprise: "/api/enterprise",
   organization: "/api/organization",
+  terminal: "/api/terminal",
 } as const;
 
 export const GATEWAY_PATHS = {
@@ -38,6 +39,7 @@ export const GATEWAY_PATHS = {
   marketplace: "/marketplace",
   enterprise: "/enterprise",
   organization: "/organizations",
+  terminal: "/terminals",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;

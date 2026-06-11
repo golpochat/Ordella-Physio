@@ -16,6 +16,7 @@ export const PERMISSION_ROLE_MAP = {
   "settings.manage": ["SYSTEM"],
   "organization.manage": ["SYSTEM"],
   "location.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "terminal.manage": ["SYSTEM", "OWNER", "ADMIN"],
 } as const satisfies Record<string, SecurityRole[]>;
 
 export type RolePermissionKey = keyof typeof PERMISSION_ROLE_MAP;

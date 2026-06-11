@@ -27,6 +27,7 @@ export const PERMISSIONS = {
   ENTERPRISE_MANAGE: "enterprise.manage",
   ORGANIZATION_MANAGE: "organization.manage",
   LOCATION_MANAGE: "location.manage",
+  TERMINAL_MANAGE: "terminal.manage",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

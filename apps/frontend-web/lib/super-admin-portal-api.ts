@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type { ApiServiceKey } from "@/lib/constants";
 import type {
   CreatePlatformRolePayload,
@@ -585,11 +586,11 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     getProfile() {
-      return api.get<PlatformProfile>("auth", "/me");
+      return api.get<PlatformProfile>("auth", "/users/me");
     },
 
     updateProfile(payload: UpdatePlatformProfilePayload) {
-      return api.patch<PlatformProfile>("auth", "/me", payload);
+      return api.put<UpdateUserProfileResponse>("auth", "/users/me", payload);
     },
 
     getSettings() {

@@ -14,6 +14,7 @@ export const DASHBOARD_GRID = {
   organizationsTable: "1.2fr 1fr 1.5fr 1fr 1fr minmax(10rem, 1.2fr)",
   organizationTenantsTable: "1.2fr 1fr 1fr minmax(8rem, 1fr)",
   locationsTable: "1.2fr 1fr 1.5fr 1fr 1fr 1fr minmax(10rem, 1.2fr)",
+  terminalsTable: "1.2fr 1fr 0.8fr 1fr 1fr 0.8fr 1fr 1fr minmax(10rem, 1.2fr)",
 } as const;
 
 export type DashboardGridKey = keyof typeof DASHBOARD_GRID;

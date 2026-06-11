@@ -16,6 +16,7 @@ export const PERMISSIONS = {
   "settings.manage": ["SYSTEM"],
   "organization.manage": ["SYSTEM"],
   "location.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "terminal.manage": ["SYSTEM", "OWNER", "ADMIN"],
 } as const satisfies Record<string, SecurityRole[]>;
 
 export type AuthPermission = keyof typeof PERMISSIONS;

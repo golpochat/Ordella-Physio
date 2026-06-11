@@ -29,6 +29,7 @@ function createGatewayConfig() {
     marketplaceServiceUrl: env.MARKETPLACE_SERVICE_URL,
     enterpriseServiceUrl: env.ENTERPRISE_SERVICE_URL,
     organizationServiceUrl: env.ORGANIZATION_SERVICE_URL,
+    terminalServiceUrl: env.TERMINAL_SERVICE_URL,
     gatewayTimeoutMs: env.GATEWAY_TIMEOUT_MS,
     gatewayRateLimitIp: env.GATEWAY_RATE_LIMIT_IP,
     gatewayRateLimitTenant: env.GATEWAY_RATE_LIMIT_TENANT,

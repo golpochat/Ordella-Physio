@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { LocationsService } from "@/locations/locations.service";
 import { LocationsRepository } from "@/locations/locations.repository";
 import { LocationController } from "@/locations/location.controller";
+import { InternalLocationController } from "@/locations/internal-location.controller";
 import { LocationConfigController } from "@/location-config/location-config.controller";
 import { LocationConfigService } from "@/location-config/location-config.service";
 import { LocationConfigRepository } from "@/location-config/location-config.repository";
@@ -15,7 +16,7 @@ import { TenantMatchGuard } from "@/tenants/guards/tenant-match.guard";
 
 @Module({
   imports: [EventsModule],
-  controllers: [LocationController, LocationConfigController],
+  controllers: [LocationController, LocationConfigController, InternalLocationController],
   providers: [
     LocationsService,
     LocationsRepository,
