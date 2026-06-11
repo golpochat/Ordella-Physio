@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function MarketplaceOAuthCallbackPage() {
@@ -30,28 +31,26 @@ export default function MarketplaceOAuthCallbackPage() {
   }, [isSuccess, provider, router]);
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
+    <>
+      <PageHeader
+        title={isSuccess ? "Integration connected" : "Connection incomplete"}
+        subtitle={
+          isSuccess
+            ? `Your ${provider ?? "provider"} account was linked successfully. Redirecting...`
+            : "The OAuth flow did not complete. Try connecting again from the marketplace."
+        }
+      />
       <Card>
-        <CardBody className="space-y-4 text-center">
-          <h1 className="text-xl font-semibold">
-            {isSuccess ? "Integration connected" : "Connection incomplete"}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isSuccess
-              ? `Your ${provider ?? "provider"} account was linked successfully. Redirecting...`
-              : "The OAuth flow did not complete. Try connecting again from the marketplace."}
-          </p>
-          {provider ? (
-            <Button asChild>
-              <Link href={`/clinic/marketplace/${provider}`}>View integration</Link>
-            </Button>
-          ) : (
-            <Button asChild>
-              <Link href="/clinic/marketplace">Back to marketplace</Link>
-            </Button>
-          )}
-        </CardBody>
+        {provider ? (
+          <Button asChild>
+            <Link href={`/clinic/marketplace/${provider}`}>View integration</Link>
+          </Button>
+        ) : (
+          <Button asChild>
+            <Link href="/clinic/marketplace">Back to marketplace</Link>
+          </Button>
+        )}
       </Card>
-    </div>
+    </>
   );
 }

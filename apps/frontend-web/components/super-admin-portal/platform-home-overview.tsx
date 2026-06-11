@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
   usePlatformBilling,
@@ -45,72 +46,48 @@ export function PlatformHomeOverview() {
   const tenants = tenantsQuery.data ?? [];
   const users = usersQuery.data ?? [];
   const roles = rolesQuery.data ?? [];
-  const invoices = Array.isArray(billingQuery.data) ? billingQuery.data : [];
   const healthyServices = (healthQuery.data ?? []).filter((item) => item.status === "ok").length;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Platform-wide oversight for tenants, users, and system health.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome, ${displayName}`}
+        subtitle="Platform-wide oversight for tenants, users, and system health."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Tenants</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{tenants.length}</p>
-          </CardBody>
+      <div className="dashboard-stat-grid">
+        <Card compact>
+          <p className="dashboard-stat-label">Tenants</p>
+          <p className="dashboard-stat-value">{tenants.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Users</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{users.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Users</p>
+          <p className="dashboard-stat-value">{users.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Roles</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{roles.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Roles</p>
+          <p className="dashboard-stat-value">{roles.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Services healthy</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{healthyServices}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Services healthy</p>
+          <p className="dashboard-stat-value">{healthyServices}</p>
         </Card>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Quick actions</h2>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button asChild variant="outline" size="sm">
+      <Card>
+        <p className="dashboard-section-title">Quick actions</p>
+        <div className="dashboard-actions">
+          <Button asChild className="btn-primary">
             <Link href="/super-admin/tenants/create">Create tenant</Link>
           </Button>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/super-admin/users/create">Create user</Link>
+          <Button asChild className="btn-secondary" variant="outline">
+            <Link href="/super-admin/users">Manage users</Link>
           </Button>
-          <Button asChild variant="outline" size="sm">
+          <Button asChild className="btn-secondary" variant="outline">
             <Link href="/super-admin/system">System health</Link>
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground">
-          {invoices.length} billing records visible across the platform.
-        </p>
-      </section>
-    </div>
+      </Card>
+    </>
   );
 }

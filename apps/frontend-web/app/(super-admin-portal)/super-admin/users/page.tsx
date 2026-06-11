@@ -1,29 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
+import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
-import { PlatformUserList } from "@/components/super-admin-portal/user-list";
-import { PageError, PageLoading } from "@/components/patient-portal/page-state";
-import { usePlatformUsers } from "@/hooks/useSuperAdminPortal";
+import { UserList } from "@/components/super-admin/users/UserList";
+import { usePlatformTenants, usePlatformUsers } from "@/hooks/useSuperAdminPortal";
 
 export default function SuperAdminUsersPage() {
   const { data, isLoading, isError, refetch } = usePlatformUsers();
+  const { data: tenants } = usePlatformTenants();
+
+  const users = useMemo(() => {
+    const tenantNameById = new Map((tenants ?? []).map((tenant) => [tenant.id, tenant.name]));
+
+    return (data ?? []).map((user) => ({
+      ...user,
+      tenant: { name: tenantNameById.get(user.tenantId) },
+    }));
+  }, [data, tenants]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Users</h1>
-          <p className="text-muted-foreground">Global user management across tenants.</p>
-        </div>
-        <Button asChild>
+    <ListPage
+      title="Users"
+      subtitle="Global user management across tenants."
+      action={
+        <Button asChild className="btn-primary">
           <Link href="/super-admin/users/create">Create user</Link>
         </Button>
-      </div>
-
-      {isLoading ? <PageLoading /> : null}
-      {isError ? <PageError onRetry={() => void refetch()} /> : null}
-      {!isLoading && !isError ? <PlatformUserList users={data ?? []} /> : null}
-    </div>
+      }
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
+    >
+      <UserList users={users} />
+    </ListPage>
   );
 }

@@ -14,7 +14,7 @@ export default function PatientAppointmentDetailPage({ params }: PatientAppointm
   const { data, isLoading, isError, refetch } = usePatientAppointment(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/patient/appointments">&larr; Back to appointments</Link>
       </Button>
@@ -25,6 +25,6 @@ export default function PatientAppointmentDetailPage({ params }: PatientAppointm
       {!isLoading && !isError && !data ? (
         <PageError message="Appointment not found." />
       ) : null}
-    </div>
+    </>
   );
 }

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { TherapistAppointmentList } from "@/components/therapist-portal/appointment-list";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
@@ -44,52 +45,34 @@ export function TherapistHomeOverview() {
   const notes = notesQuery.data ?? [];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Your schedule, patients, and clinical notes in one workspace.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome, ${displayName}`}
+        subtitle="Your schedule, patients, and clinical notes in one workspace."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Today</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{today.length}</p>
-          </CardBody>
+      <div className="dashboard-stat-grid">
+        <Card compact>
+          <p className="dashboard-stat-label">Today</p>
+          <p className="dashboard-stat-value">{today.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Upcoming</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{upcoming.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Upcoming</p>
+          <p className="dashboard-stat-value">{upcoming.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Patients</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{patients.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Patients</p>
+          <p className="dashboard-stat-value">{patients.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Notes</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{notes.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Notes</p>
+          <p className="dashboard-stat-value">{notes.length}</p>
         </Card>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Today&apos;s appointments</h2>
+      <Card>
+        <p className="dashboard-section-title">Today&apos;s appointments</p>
+        <div className="dashboard-actions">
           <Button asChild variant="outline" size="sm">
             <Link href="/therapist/appointments">View all</Link>
           </Button>
@@ -99,11 +82,11 @@ export function TherapistHomeOverview() {
           emptyTitle="No appointments today"
           emptyDescription="Your schedule is clear for today."
         />
-      </section>
+      </Card>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Upcoming appointments</h2>
+      <Card>
+        <p className="dashboard-section-title">Upcoming appointments</p>
+        <div className="dashboard-actions">
           <Button asChild variant="outline" size="sm">
             <Link href="/therapist/appointments">View all</Link>
           </Button>
@@ -113,7 +96,7 @@ export function TherapistHomeOverview() {
           emptyTitle="No upcoming appointments"
           emptyDescription="Future sessions will appear here."
         />
-      </section>
-    </div>
+      </Card>
+    </>
   );
 }

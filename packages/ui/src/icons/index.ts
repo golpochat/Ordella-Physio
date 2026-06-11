@@ -8,6 +8,8 @@ export {
   ChevronDown,
   ChevronRight,
   CreditCard,
+  Eye,
+  EyeOff,
   FileText,
   Home,
   Loader2,

@@ -14,7 +14,7 @@ export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailP
   const { data, isLoading, isError, refetch } = useClinicPatient(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/clinic/patients">&larr; Back to patients</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailP
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <ClinicPatientDetail patient={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Patient not found." /> : null}
-    </div>
+    </>
   );
 }

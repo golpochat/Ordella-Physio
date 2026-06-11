@@ -14,7 +14,7 @@ export default function StaffPatientDetailPage({ params }: StaffPatientDetailPag
   const { data, isLoading, isError, refetch } = useStaffPatient(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/staff/patients">&larr; Back to patients</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function StaffPatientDetailPage({ params }: StaffPatientDetailPag
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <StaffPatientDetail patient={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Patient not found." /> : null}
-    </div>
+    </>
   );
 }

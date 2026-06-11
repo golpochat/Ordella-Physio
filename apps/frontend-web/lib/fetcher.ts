@@ -1,4 +1,5 @@
 import { ApiError } from "./api-client";
+import { resolveAuthErrorMessage } from "./auth-error-messages";
 import { TENANT_HEADER } from "./constants";
 import { getDefaultTenantId } from "./tenant-config";
 
@@ -20,6 +21,10 @@ function buildUrl(path: string, params?: FetcherOptions["params"]): string {
   return url.toString();
 }
 
+function extractErrorMessage(payload: unknown, fallback: string): string {
+  return resolveAuthErrorMessage(payload, fallback);
+}
+
 export async function fetcher<T>(path: string, options: FetcherOptions = {}): Promise<T> {
   const { params, headers, ...init } = options;
   const response = await fetch(buildUrl(path, params), {
@@ -37,7 +42,7 @@ export async function fetcher<T>(path: string, options: FetcherOptions = {}): Pr
 
   if (!response.ok) {
     throw new ApiError(
-      (payload as { message?: string } | null)?.message ?? "Request failed",
+      extractErrorMessage(payload, "Request failed"),
       response.status,
       payload,
     );

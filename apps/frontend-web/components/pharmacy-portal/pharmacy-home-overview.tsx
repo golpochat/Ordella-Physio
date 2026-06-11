@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
   usePharmacyAppointments,
@@ -65,54 +66,34 @@ export function PharmacyHomeOverview() {
   const todaysAppointments = getTodaysAppointments(appointments);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Prescription requests, fulfillment, and patient lookup for your pharmacy.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome, ${displayName}`}
+        subtitle="Prescription requests, fulfillment, and patient lookup for your pharmacy."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Pending Rx</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{pendingRx}</p>
-          </CardBody>
+      <div className="dashboard-stat-grid">
+        <Card compact>
+          <p className="dashboard-stat-label">Pending Rx</p>
+          <p className="dashboard-stat-value">{pendingRx}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Fulfillment</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{activeFulfillment}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Fulfillment</p>
+          <p className="dashboard-stat-value">{activeFulfillment}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Patients</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{patients.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Patients</p>
+          <p className="dashboard-stat-value">{patients.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Today&apos;s visits</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{todaysAppointments.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Today&apos;s visits</p>
+          <p className="dashboard-stat-value">{todaysAppointments.length}</p>
         </Card>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Quick actions</h2>
-        </div>
-        <div className="flex flex-wrap gap-3">
+      <Card>
+        <p className="dashboard-section-title">Quick actions</p>
+        <div className="dashboard-actions">
           <Button asChild variant="outline" size="sm">
             <Link href="/pharmacy/prescriptions">Prescriptions</Link>
           </Button>
@@ -123,10 +104,10 @@ export function PharmacyHomeOverview() {
             <Link href="/pharmacy/patients">Patient lookup</Link>
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="dashboard-empty">
           {invoices.length} billing records available for view-only reference.
         </p>
-      </section>
-    </div>
+      </Card>
+    </>
   );
 }

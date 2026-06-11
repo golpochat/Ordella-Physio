@@ -1,4 +1,40 @@
 :root {
+  --border-light: rgba(0, 0, 0, 0.08);
+
+  --font-sans: var(--font-body);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --sa-font-title: 600 22px/1.2 var(--font-sans);
+  --sa-font-subtitle: 400 15px/1.5 var(--font-sans);
+  --sa-font-body: 400 14px/1.5 var(--font-sans);
+  --sa-font-label: 500 13px/1.4 var(--font-sans);
+  --sa-font-mono: 400 13px/1.4 var(--font-mono);
+
+  --sa-section-spacing: 32px;
+  --sa-row-spacing: 14px;
+  --sa-card-padding: 20px;
+
+  --card-padding: 20px;
+  --card-padding-sm: 16px;
+  --row-padding: 14px;
+  --section-spacing: 32px;
+  --header-spacing: 20px;
+  --grid-gap: 20px;
+  --dashboard-grid: 1.5fr 1.5fr 1fr 1fr auto;
+
+  --dashboard-font-title: 600 22px/1.2 var(--font-sans);
+  --dashboard-font-subtitle: 400 15px/1.5 var(--font-sans);
+  --dashboard-font-body: 400 14px/1.5 var(--font-sans);
+  --dashboard-font-label: 500 13px/1.4 var(--font-sans);
+
+  --nav-item-height: 44px;
+  --nav-icon-size: 20px;
+  --nav-radius: 8px;
+  --nav-bg: #ffffff;
+  --nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --nav-active-bg: rgba(120, 80, 255, 0.12);
+  --nav-border: rgba(0, 0, 0, 0.08);
+
   /* Spacing scale */
   --space-2xs: 4px;
   --space-xs: 8px;
@@ -19,6 +55,7 @@
   --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
 
   /* Typography */
+  --font-size-sm: 14px;
   --font-size-base: 16px;
   --font-size-lg: 18px;
   --font-size-xl: 24px;

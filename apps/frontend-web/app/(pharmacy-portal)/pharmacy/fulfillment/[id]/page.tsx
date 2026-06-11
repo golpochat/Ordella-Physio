@@ -16,7 +16,7 @@ export default function PharmacyFulfillmentDetailPage({
   const { data, isLoading, isError, refetch } = usePharmacyFulfillmentOrder(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/pharmacy/fulfillment">&larr; Back to fulfillment</Link>
       </Button>
@@ -25,6 +25,6 @@ export default function PharmacyFulfillmentDetailPage({
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <PharmacyFulfillmentDetail order={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Fulfillment order not found." /> : null}
-    </div>
+    </>
   );
 }

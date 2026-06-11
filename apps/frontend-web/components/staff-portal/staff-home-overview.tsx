@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StaffAppointmentList } from "@/components/staff-portal/appointment-list";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
@@ -55,52 +56,34 @@ export function StaffHomeOverview() {
   const invoices = billingQuery.data ?? [];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Front-desk support for scheduling, patients, and clinic coordination.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome, ${displayName}`}
+        subtitle="Front-desk support for scheduling, patients, and clinic coordination."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Today</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{today.length}</p>
-          </CardBody>
+      <div className="dashboard-stat-grid">
+        <Card compact>
+          <p className="dashboard-stat-label">Today</p>
+          <p className="dashboard-stat-value">{today.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Upcoming</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{upcoming.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Upcoming</p>
+          <p className="dashboard-stat-value">{upcoming.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Patients</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{patients.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Patients</p>
+          <p className="dashboard-stat-value">{patients.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Invoices</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{invoices.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Invoices</p>
+          <p className="dashboard-stat-value">{invoices.length}</p>
         </Card>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Today&apos;s appointments</h2>
+      <Card>
+        <p className="dashboard-section-title">Today&apos;s appointments</p>
+        <div className="dashboard-actions">
           <Button asChild variant="outline" size="sm">
             <Link href="/staff/appointments">View all</Link>
           </Button>
@@ -110,11 +93,13 @@ export function StaffHomeOverview() {
           emptyTitle="No appointments today"
           emptyDescription="The clinic schedule is clear for today."
         />
-      </section>
+      </Card>
 
-      <p className="text-sm text-muted-foreground">
-        {notes.length} clinical notes available for read-only reference.
-      </p>
-    </div>
+      <Card>
+        <p className="dashboard-empty">
+          {notes.length} clinical notes available for read-only reference.
+        </p>
+      </Card>
+    </>
   );
 }

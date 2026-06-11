@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ClinicAppointmentList } from "@/components/clinic-portal/appointment-list";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
@@ -55,76 +56,62 @@ export function ClinicHomeOverview() {
   const invoices = billingQuery.data ?? [];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Manage therapists, patients, appointments, and clinic operations.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome, ${displayName}`}
+        subtitle="Manage therapists, patients, appointments, and clinic operations."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Therapists</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{therapists.length}</p>
-          </CardBody>
+      <div className="dashboard-stat-grid">
+        <Card compact>
+          <p className="dashboard-stat-label">Therapists</p>
+          <p className="dashboard-stat-value">{therapists.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Patients</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{patients.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Patients</p>
+          <p className="dashboard-stat-value">{patients.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Today</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{today.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Today</p>
+          <p className="dashboard-stat-value">{today.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Invoices</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{invoices.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Invoices</p>
+          <p className="dashboard-stat-value">{invoices.length}</p>
         </Card>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Today&apos;s appointments</h2>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/clinic/appointments">View all</Link>
-          </Button>
+      <Card>
+        <div className="page-header">
+          <p className="dashboard-section-title">Today&apos;s appointments</p>
+          <div className="page-header-action">
+            <Button asChild className="btn-secondary" variant="outline" size="sm">
+              <Link href="/clinic/appointments">View all</Link>
+            </Button>
+          </div>
         </div>
         <ClinicAppointmentList
           appointments={today}
           emptyTitle="No appointments today"
           emptyDescription="Scheduled visits will appear here."
         />
-      </section>
+      </Card>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Upcoming appointments</h2>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/clinic/appointments">View all</Link>
-          </Button>
+      <Card>
+        <div className="page-header">
+          <p className="dashboard-section-title">Upcoming appointments</p>
+          <div className="page-header-action">
+            <Button asChild className="btn-secondary" variant="outline" size="sm">
+              <Link href="/clinic/appointments">View all</Link>
+            </Button>
+          </div>
         </div>
         <ClinicAppointmentList
           appointments={upcoming.slice(0, 3)}
           emptyTitle="No upcoming appointments"
           emptyDescription="Future sessions will appear here."
         />
-      </section>
-    </div>
+      </Card>
+    </>
   );
 }

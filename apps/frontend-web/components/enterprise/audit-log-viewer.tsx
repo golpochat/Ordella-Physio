@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardBody } from "@/components/ui/card";
+import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { StatusBadge } from "@/components/super-admin/shared/StatusBadge";
 import { useAuditLogs } from "@/hooks/useEnterprise";
 import { formatPatientDateTime } from "@/lib/patient-portal-utils";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
@@ -17,32 +17,35 @@ export function AuditLogViewer({ global = false }: AuditLogViewerProps) {
   if (logsQuery.isLoading) return <PageLoading rows={5} />;
   if (logsQuery.isError) return <PageError onRetry={() => void logsQuery.refetch()} />;
 
-  if (!logs.length) {
-    return (
-      <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-        No audit logs recorded yet.
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-3">
-      {logs.map((log) => (
-        <Card key={log.id}>
-          <CardBody className="flex flex-wrap items-center justify-between gap-3 text-sm">
+    <DataTable
+      columns={["Action", "Actor", "Tenant", "Status", ""]}
+      emptyMessage="No audit logs recorded yet."
+      isEmpty={logs.length === 0}
+    >
+      {logs.map((log) => {
+        const action = log?.action ?? "Unknown";
+        const resource = log?.resource ?? "resource";
+        const actor = log?.actorEmail ?? log?.actorId ?? "System";
+        const tenant = global ? (log?.tenantId ?? "N/A") : "Current tenant";
+        const status = log?.status ?? "unknown";
+        const createdAt = log?.createdAt ? formatPatientDateTime(log.createdAt) : "N/A";
+
+        return (
+          <article key={log.id} className="table-row grid-baseline row">
             <div>
-              <p className="font-medium">
-                {log.action} — {log.resource}
+              <p className="sa-cell-primary">
+                {action} — {resource}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {log.actorEmail ?? log.actorId ?? "System"} · {formatPatientDateTime(log.createdAt)}
-                {global ? ` · Tenant ${log.tenantId}` : ""}
-              </p>
+              <p className="sa-cell-muted">{createdAt}</p>
             </div>
-            <Badge variant={log.status === "success" ? "default" : "destructive"}>{log.status}</Badge>
-          </CardBody>
-        </Card>
-      ))}
-    </div>
+            <p className="sa-cell-muted">{actor}</p>
+            <p className="sa-cell-muted">{tenant}</p>
+            <StatusBadge status={status} />
+            <span className="sa-cell-muted">{status}</span>
+          </article>
+        );
+      })}
+    </DataTable>
   );
 }

@@ -14,7 +14,7 @@ export default function PatientNoteDetailPage({ params }: PatientNoteDetailPageP
   const { data, isLoading, isError, refetch } = usePatientNote(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/patient/notes">&larr; Back to notes</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function PatientNoteDetailPage({ params }: PatientNoteDetailPageP
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <NoteDetail note={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Note not found." /> : null}
-    </div>
+    </>
   );
 }

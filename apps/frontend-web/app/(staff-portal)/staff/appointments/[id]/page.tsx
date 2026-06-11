@@ -14,7 +14,7 @@ export default function StaffAppointmentDetailPage({ params }: StaffAppointmentD
   const { data, isLoading, isError, refetch } = useStaffAppointment(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/staff/appointments">&larr; Back to appointments</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function StaffAppointmentDetailPage({ params }: StaffAppointmentD
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <StaffAppointmentDetail appointment={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Appointment not found." /> : null}
-    </div>
+    </>
   );
 }

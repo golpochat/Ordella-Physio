@@ -92,4 +92,10 @@ export class AuthController {
   me(@CurrentUser() user: AuthenticatedRequestUser, @TenantId() tenantId: string) {
     return this.authService.getMe(tenantId, user.userId);
   }
+
+  @Get("session")
+  @UseGuards(JwtGuard, SecurityTenantGuard)
+  session(@CurrentUser() user: AuthenticatedRequestUser, @TenantId() tenantId: string) {
+    return this.authService.getSession(tenantId, user.userId);
+  }
 }

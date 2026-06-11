@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import type { LoginDto } from "@/auth/dto/login.dto";
 import { UsersService } from "@/users/users.service";
 import { TokensService } from "@/tokens/tokens.service";
@@ -6,6 +6,11 @@ import { AuthEventPublisher } from "@/events/auth-event.publisher";
 import { createUserLoggedInEvent } from "@/auth/events/user-logged-in.event";
 import { TokenBuilder } from "@/utils/token-builder";
 import { toAuthResponse } from "@/auth/auth.mapper";
+import {
+  invalidCredentialsError,
+  missingFieldsError,
+  userDisabledError,
+} from "@/utils/auth-errors";
 
 export type LoginCommandInput = {
   tenantId: string;
@@ -25,14 +30,25 @@ export class LoginCommand {
   ) {}
 
   async execute(input: LoginCommandInput) {
-    const user = await this.usersService.findByEmail(input.tenantId, input.dto.email);
-    if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
+    const email = input.dto.email?.trim();
+    const password = input.dto.password;
+
+    if (!email || !password) {
+      throw missingFieldsError();
     }
 
-    const valid = await this.usersService.validatePassword(user, input.dto.password);
+    const user = await this.usersService.findByEmail(input.tenantId, email);
+    if (!user) {
+      throw invalidCredentialsError();
+    }
+
+    if (user.isActive === false) {
+      throw userDisabledError();
+    }
+
+    const valid = await this.usersService.validatePassword(user, password);
     if (!valid) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw invalidCredentialsError();
     }
 
     const sessionId = this.tokenBuilder.createSessionId();

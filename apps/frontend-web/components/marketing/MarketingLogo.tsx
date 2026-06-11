@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 export type MarketingLogoProps = {
@@ -8,14 +7,16 @@ export type MarketingLogoProps = {
 
 export function MarketingLogo({ priority = false, className }: MarketingLogoProps) {
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element -- SVG logo; avoids Next/Image optimizer issues
+    <img
       src="/logo.svg"
       alt="Ordella Physio logo"
       width={160}
       height={32}
-      priority={priority}
-      loading={priority ? undefined : "lazy"}
-      className={cn("h-8 w-auto", className)}
+      decoding="async"
+      fetchPriority={priority ? "high" : "auto"}
+      loading={priority ? "eager" : "lazy"}
+      className={cn("marketing-logo", className)}
     />
   );
 }

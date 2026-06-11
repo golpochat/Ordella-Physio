@@ -1,13 +1,14 @@
 import { ClinicRoleAssignment } from "@/components/clinic-portal/role-assignment";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function ClinicRolesPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Role assignments</h1>
-        <p className="text-muted-foreground">Assign and manage clinic roles for team members.</p>
-      </div>
+    <>
+      <PageHeader
+        title="Role assignments"
+        subtitle="Assign and manage clinic roles for team members."
+      />
       <ClinicRoleAssignment />
-    </div>
+    </>
   );
 }

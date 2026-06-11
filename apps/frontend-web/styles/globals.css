@@ -9,6 +9,10 @@
 @import "./hero.css";
 @import "./product.css";
 @import "./footer.css";
+@import "./super-admin.css";
+@import "./navigation.css";
+@import "./dashboard-global.css";
+@import "./auth.css";
 
 @font-face {
   font-family: "Inter";
@@ -139,10 +143,18 @@
     @apply overflow-x-hidden;
   }
 
-  .marketing-site img,
+  .marketing-site img:not(.marketing-logo),
   .marketing-site picture,
   .marketing-site video {
     @apply h-auto max-w-full object-contain;
+  }
+
+  .marketing-logo {
+    display: block;
+    height: 2rem;
+    width: auto;
+    max-width: 10rem;
+    object-fit: contain;
   }
 
   .marketing-section-hero {

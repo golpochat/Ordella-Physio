@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlatformUserDetail } from "@/components/super-admin-portal/user-detail";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import { usePlatformUser } from "@/hooks/useSuperAdminPortal";
+import { getUserDisplayName } from "@/lib/super-admin-portal-utils";
 
 type SuperAdminUserDetailPageProps = {
   params: { id: string };
@@ -17,15 +19,21 @@ export default function SuperAdminUserDetailPage({ params }: SuperAdminUserDetai
   const { data, isLoading, isError, refetch } = usePlatformUser(params.id, tenantId);
 
   return (
-    <div className="space-y-6">
-      <Button asChild variant="ghost">
-        <Link href="/super-admin/users">&larr; Back to users</Link>
-      </Button>
+    <>
+      <PageHeader
+        title={data ? getUserDisplayName(data) : "User"}
+        subtitle={data?.email ?? "Review and manage user account details."}
+        action={
+          <Button asChild variant="ghost">
+            <Link href="/super-admin/users">&larr; Back to users</Link>
+          </Button>
+        }
+      />
 
       {isLoading ? <PageLoading rows={2} /> : null}
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <PlatformUserDetail user={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="User not found." /> : null}
-    </div>
+    </>
   );
 }

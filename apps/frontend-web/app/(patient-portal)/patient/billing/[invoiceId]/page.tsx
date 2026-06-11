@@ -14,7 +14,7 @@ export default function PatientInvoiceDetailPage({ params }: PatientInvoiceDetai
   const { data, isLoading, isError, refetch } = usePatientInvoice(params.invoiceId);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/patient/billing">&larr; Back to billing</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function PatientInvoiceDetailPage({ params }: PatientInvoiceDetai
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <InvoiceDetail invoice={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Invoice not found." /> : null}
-    </div>
+    </>
   );
 }

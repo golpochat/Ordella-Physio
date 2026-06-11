@@ -14,7 +14,7 @@ export default function TherapistPatientDetailPage({ params }: TherapistPatientD
   const { data, isLoading, isError, refetch } = useTherapistPatient(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/therapist/patients">&larr; Back to patients</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function TherapistPatientDetailPage({ params }: TherapistPatientD
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <TherapistPatientDetail patient={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Patient not found." /> : null}
-    </div>
+    </>
   );
 }

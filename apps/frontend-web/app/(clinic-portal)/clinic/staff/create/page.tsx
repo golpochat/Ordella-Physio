@@ -4,7 +4,7 @@ import { ClinicStaffCreateForm } from "@/components/clinic-portal/staff-create-f
 
 export default function ClinicStaffCreatePage() {
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/clinic/staff">&larr; Back to staff</Link>
       </Button>
@@ -14,6 +14,6 @@ export default function ClinicStaffCreatePage() {
         description="Link an existing user as clinic staff."
         successRedirect="/clinic/staff"
       />
-    </div>
+    </>
   );
 }

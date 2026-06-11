@@ -4,11 +4,11 @@ import { ClinicPatientCreateForm } from "@/components/clinic-portal/patient-crea
 
 export default function ClinicPatientCreatePage() {
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/clinic/patients">&larr; Back to patients</Link>
       </Button>
       <ClinicPatientCreateForm />
-    </div>
+    </>
   );
 }

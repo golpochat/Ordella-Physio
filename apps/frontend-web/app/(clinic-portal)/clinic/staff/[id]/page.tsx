@@ -14,7 +14,7 @@ export default function ClinicStaffDetailPage({ params }: ClinicStaffDetailPageP
   const { data, isLoading, isError, refetch } = useClinicStaffMember(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/clinic/staff">&larr; Back to staff</Link>
       </Button>
@@ -25,6 +25,6 @@ export default function ClinicStaffDetailPage({ params }: ClinicStaffDetailPageP
         <ClinicStaffDetail member={data} backHref="/clinic/staff" backLabel="Back to staff" />
       ) : null}
       {!isLoading && !isError && !data ? <PageError message="Staff member not found." /> : null}
-    </div>
+    </>
   );
 }

@@ -34,6 +34,14 @@
   display: flex;
   flex-shrink: 0;
   align-items: center;
+  min-width: 10rem;
+}
+
+.marketing-site .nav-logo .marketing-logo {
+  display: block;
+  height: 2rem;
+  width: auto;
+  max-width: 10rem;
 }
 
 .marketing-site .nav-items {

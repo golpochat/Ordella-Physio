@@ -1,4 +1,4 @@
-import { hashPassword, comparePassword } from "@ordella/security";
+import { comparePassword, hashPassword } from "@/utils/password";
 
 export class PasswordHasher {
   async hash(plain: string): Promise<string> {

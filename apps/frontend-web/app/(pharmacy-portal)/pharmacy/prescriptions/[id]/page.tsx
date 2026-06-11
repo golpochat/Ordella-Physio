@@ -16,7 +16,7 @@ export default function PharmacyPrescriptionDetailPage({
   const { data, isLoading, isError, refetch } = usePharmacyPrescription(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/pharmacy/prescriptions">&larr; Back to prescriptions</Link>
       </Button>
@@ -25,6 +25,6 @@ export default function PharmacyPrescriptionDetailPage({
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <PharmacyPrescriptionDetail prescription={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Prescription not found." /> : null}
-    </div>
+    </>
   );
 }

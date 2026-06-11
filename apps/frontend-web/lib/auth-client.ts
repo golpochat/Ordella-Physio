@@ -73,4 +73,10 @@ export const authClient = {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
   },
+
+  session(accessToken: string) {
+    return fetcher<{ user: AuthUser; tenantId: string; role: string }>(`${API_ROUTES.auth}/session`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  },
 };

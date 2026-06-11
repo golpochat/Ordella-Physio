@@ -31,7 +31,7 @@ export function EnterpriseDashboard({ globalView = false }: EnterpriseDashboardP
         {TABS.map((tab) => (
           <Button
             key={tab.id}
-            variant={activeTab === tab.id ? "primary" : "outline"}
+            className={activeTab === tab.id ? "btn-primary" : "btn-secondary"}
             size="sm"
             onClick={() => setActiveTab(tab.id)}
           >

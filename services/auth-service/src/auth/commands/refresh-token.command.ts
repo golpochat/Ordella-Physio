@@ -1,9 +1,10 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import type { RefreshTokenDto } from "@/auth/dto/refresh-token.dto";
 import { TokensService } from "@/tokens/tokens.service";
 import { UsersService } from "@/users/users.service";
 import { TokenBuilder } from "@/utils/token-builder";
 import { toAuthResponse } from "@/auth/auth.mapper";
+import { invalidTokenError, userDisabledError } from "@/utils/auth-errors";
 
 export type RefreshTokenCommandInput = {
   tenantId: string;
@@ -21,6 +22,10 @@ export class RefreshTokenCommand {
   ) {}
 
   async execute(input: RefreshTokenCommandInput) {
+    if (!input.dto.refreshToken?.trim()) {
+      throw invalidTokenError();
+    }
+
     const rotated = await this.tokensService.rotateRefreshToken({
       tenantId: input.tenantId,
       refreshToken: input.dto.refreshToken,
@@ -30,12 +35,16 @@ export class RefreshTokenCommand {
     });
 
     if (!rotated) {
-      throw new UnauthorizedException("Invalid or expired refresh token");
+      throw invalidTokenError();
     }
 
     const user = await this.usersService.findById(input.tenantId, rotated.userId);
     if (!user) {
-      throw new UnauthorizedException("User not found");
+      throw invalidTokenError();
+    }
+
+    if (user.isActive === false) {
+      throw userDisabledError();
     }
 
     return toAuthResponse(user, rotated.tokens);

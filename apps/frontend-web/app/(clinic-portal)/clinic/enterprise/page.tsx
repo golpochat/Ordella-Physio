@@ -1,18 +1,17 @@
 import { EnterpriseDashboard } from "@/components/enterprise/enterprise-dashboard";
 import { EnterpriseGate } from "@/components/enterprise/enterprise-gate";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function ClinicEnterprisePage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Enterprise</h1>
-        <p className="text-muted-foreground">
-          SSO, custom roles, audit logs, API keys, and webhooks for your clinic.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title="Enterprise"
+        subtitle="SSO, custom roles, audit logs, API keys, and webhooks for your clinic."
+      />
       <EnterpriseGate>
         <EnterpriseDashboard />
       </EnterpriseGate>
-    </div>
+    </>
   );
 }

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { AppointmentList } from "@/components/patient-portal/appointment-list";
 import { BillingList } from "@/components/patient-portal/billing-list";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
@@ -44,52 +45,34 @@ export function PatientHomeOverview() {
   const notes = notesQuery.data ?? [];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome back, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Your appointments, billing, and care notes in one place.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome back, ${displayName}`}
+        subtitle="Your appointments, billing, and care notes in one place."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Upcoming</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{upcoming.length}</p>
-          </CardBody>
+      <div className="dashboard-stat-grid">
+        <Card compact>
+          <p className="dashboard-stat-label">Upcoming</p>
+          <p className="dashboard-stat-value">{upcoming.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Past visits</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{past.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Past visits</p>
+          <p className="dashboard-stat-value">{past.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Invoices</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{invoices.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Invoices</p>
+          <p className="dashboard-stat-value">{invoices.length}</p>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Notes</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold">{notes.length}</p>
-          </CardBody>
+        <Card compact>
+          <p className="dashboard-stat-label">Notes</p>
+          <p className="dashboard-stat-value">{notes.length}</p>
         </Card>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Upcoming appointments</h2>
+      <Card>
+        <p className="dashboard-section-title">Upcoming appointments</p>
+        <div className="dashboard-actions">
           <Button asChild variant="outline" size="sm">
             <Link href="/patient/appointments">View all</Link>
           </Button>
@@ -99,17 +82,17 @@ export function PatientHomeOverview() {
           emptyTitle="No upcoming appointments"
           emptyDescription="Book your next session through the clinic."
         />
-      </section>
+      </Card>
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">Recent billing</h2>
+      <Card>
+        <p className="dashboard-section-title">Recent billing</p>
+        <div className="dashboard-actions">
           <Button asChild variant="outline" size="sm">
             <Link href="/patient/billing">View all</Link>
           </Button>
         </div>
         <BillingList invoices={invoices.slice(0, 3)} />
-      </section>
-    </div>
+      </Card>
+    </>
   );
 }

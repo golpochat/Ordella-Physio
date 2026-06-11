@@ -60,6 +60,15 @@ export class AuthService {
     return sanitizeUser(user);
   }
 
+  async getSession(tenantId: string, userId: string) {
+    const user = await this.getMe(tenantId, userId);
+    return {
+      user,
+      tenantId: user.tenantId,
+      role: user.role,
+    };
+  }
+
   async verifyEmail(tenantId: string, dto: VerifyEmailDto) {
     void tenantId;
     void dto.token.replace(VERIFY_TOKEN_PREFIX, "");

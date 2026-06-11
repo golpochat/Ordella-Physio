@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const RATE_LIMIT = 20;
+const RATE_LIMIT = Number(process.env.API_RATE_LIMIT ?? 120);
 const WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_DISABLED = process.env.DISABLE_API_RATE_LIMIT === "true";
+
+const RATE_LIMIT_EXEMPT_PREFIXES = ["/api/next-auth/", "/api/health"];
 
 const ipHits = new Map<string, number[]>();
 
@@ -15,13 +18,17 @@ function getClientIp(request: NextRequest): string {
   return request.ip ?? "unknown";
 }
 
-function isRateLimited(ip: string): boolean {
+function isExemptApiPath(pathname: string): boolean {
+  return RATE_LIMIT_EXEMPT_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isRateLimited(key: string): boolean {
   const now = Date.now();
-  const hits = ipHits.get(ip) ?? [];
+  const hits = ipHits.get(key) ?? [];
   const recent = hits.filter((timestamp) => now - timestamp < WINDOW_MS);
 
   recent.push(now);
-  ipHits.set(ip, recent);
+  ipHits.set(key, recent);
 
   if (ipHits.size > 10000) {
     ipHits.clear();
@@ -35,14 +42,21 @@ function applyStaticCacheHeaders(response: NextResponse) {
   return response;
 }
 
+function rateLimitResponse() {
+  return NextResponse.json({ message: "Too many requests" }, { status: 429 });
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/api/")) {
-    const ip = getClientIp(request);
+    if (!RATE_LIMIT_DISABLED && !isExemptApiPath(pathname)) {
+      const ip = getClientIp(request);
 
-    if (isRateLimited(ip)) {
-      return new NextResponse("Too many requests", { status: 429 });
+      // Standalone Docker / local dev often has no client IP — skip shared "unknown" bucket.
+      if (ip !== "unknown" && isRateLimited(ip)) {
+        return rateLimitResponse();
+      }
     }
 
     return NextResponse.next();

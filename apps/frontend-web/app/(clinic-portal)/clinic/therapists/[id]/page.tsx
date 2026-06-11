@@ -14,7 +14,7 @@ export default function ClinicTherapistDetailPage({ params }: ClinicTherapistDet
   const { data, isLoading, isError, refetch } = useClinicStaffMember(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/clinic/therapists">&larr; Back to therapists</Link>
       </Button>
@@ -29,6 +29,6 @@ export default function ClinicTherapistDetailPage({ params }: ClinicTherapistDet
         />
       ) : null}
       {!isLoading && !isError && !data ? <PageError message="Therapist not found." /> : null}
-    </div>
+    </>
   );
 }

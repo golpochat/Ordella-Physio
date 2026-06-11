@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ProviderDetail } from "@/components/marketplace/provider-detail";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import { useMarketplaceProviders } from "@/hooks/useMarketplace";
@@ -13,38 +15,67 @@ export default function SuperAdminMarketplaceProviderPage() {
   const providersQuery = useMarketplaceProviders({ platformCatalog: true });
 
   if (providersQuery.isLoading) {
-    return <PageLoading rows={4} />;
+    return (
+      <>
+        <PageHeader
+          title="Marketplace"
+          subtitle="Provider configuration and availability."
+        />
+        <PageLoading rows={4} />
+      </>
+    );
   }
 
   if (providersQuery.isError) {
-    return <PageError onRetry={() => void providersQuery.refetch()} />;
+    return (
+      <>
+        <PageHeader
+          title="Marketplace"
+          subtitle="Provider configuration and availability."
+          action={
+            <Button asChild variant="outline">
+              <Link href="/super-admin/marketplace">Back to marketplace</Link>
+            </Button>
+          }
+        />
+        <PageError onRetry={() => void providersQuery.refetch()} />
+      </>
+    );
   }
 
   const provider = providersQuery.data?.find((entry) => entry.slug === slug);
 
   if (!provider) {
     return (
-      <div className="space-y-4">
-        <p className="text-muted-foreground">Provider not found.</p>
-        <Button asChild variant="outline">
-          <Link href="/super-admin/marketplace">Back to marketplace</Link>
-        </Button>
-      </div>
+      <>
+        <PageHeader
+          title="Provider not found"
+          subtitle="The requested marketplace provider could not be loaded."
+          action={
+            <Button asChild variant="outline">
+              <Link href="/super-admin/marketplace">Back to marketplace</Link>
+            </Button>
+          }
+        />
+        <PageError message="Provider not found." />
+      </>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">{provider.name}</h1>
-          <p className="text-muted-foreground">Provider configuration and availability.</p>
-        </div>
-        <Button asChild variant="outline">
-          <Link href="/super-admin/marketplace">Back to marketplace</Link>
-        </Button>
-      </div>
-      <ProviderDetail provider={provider} allowConnect={false} />
-    </div>
+    <>
+      <PageHeader
+        title={provider.name}
+        subtitle="Provider configuration and availability."
+        action={
+          <Button asChild variant="outline">
+            <Link href="/super-admin/marketplace">Back to marketplace</Link>
+          </Button>
+        }
+      />
+      <Card>
+        <ProviderDetail provider={provider} allowConnect={false} />
+      </Card>
+    </>
   );
 }

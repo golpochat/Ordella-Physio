@@ -16,7 +16,7 @@ export default function TherapistAppointmentDetailPage({
   const { data, isLoading, isError, refetch } = useTherapistAppointment(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/therapist/appointments">&larr; Back to appointments</Link>
       </Button>
@@ -25,6 +25,6 @@ export default function TherapistAppointmentDetailPage({
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <TherapistAppointmentDetail appointment={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Appointment not found." /> : null}
-    </div>
+    </>
   );
 }

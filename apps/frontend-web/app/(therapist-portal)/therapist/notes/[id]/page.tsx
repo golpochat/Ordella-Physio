@@ -14,7 +14,7 @@ export default function TherapistNoteDetailPage({ params }: TherapistNoteDetailP
   const { data, isLoading, isError, refetch } = useTherapistNote(params.id);
 
   return (
-    <div className="space-y-6">
+    <>
       <Button asChild variant="ghost">
         <Link href="/therapist/notes">&larr; Back to notes</Link>
       </Button>
@@ -23,6 +23,6 @@ export default function TherapistNoteDetailPage({ params }: TherapistNoteDetailP
       {isError ? <PageError onRetry={() => void refetch()} /> : null}
       {!isLoading && !isError && data ? <TherapistNoteDetailView note={data} /> : null}
       {!isLoading && !isError && !data ? <PageError message="Note not found." /> : null}
-    </div>
+    </>
   );
 }

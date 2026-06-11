@@ -1,13 +1,17 @@
+import { Card } from "@/components/dashboard/Card";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PlatformFeatureFlagsPlaceholder } from "@/components/super-admin-portal/feature-flags-placeholder";
 
 export default function SuperAdminFlagsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Feature flags</h1>
-        <p className="text-muted-foreground">Toggle platform capabilities per environment.</p>
-      </div>
-      <PlatformFeatureFlagsPlaceholder />
-    </div>
+    <>
+      <PageHeader
+        title="Feature flags"
+        subtitle="Toggle platform capabilities per environment."
+      />
+      <Card>
+        <PlatformFeatureFlagsPlaceholder />
+      </Card>
+    </>
   );
 }
