@@ -6,6 +6,7 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
 } from "@ordella/middleware";
 import {
@@ -26,7 +27,17 @@ const TENANT_PUBLIC_PATHS = [
   "/tenants/directory",
   "/tenants",
   "/tenants/internal/billing-sync",
+  "/tenants/internal/localization",
+  "/tenants/internal/domain",
+  "/tenants/internal/status",
+  "/tenants/internal/organization-tenants",
+  "/tenants/internal/unassigned-tenants",
+  "/tenants/internal/organization-tenant",
 ];
+
+export const TenantServiceDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: TENANT_PUBLIC_PATHS,
+});
 
 export const TenantServiceTenantMiddleware = createTenantMiddleware({
   required: false,
@@ -69,6 +80,7 @@ export function configureTenantMiddleware(consumer: MiddlewareConsumer): void {
       TenantServiceRequestMetricsMiddleware,
       TenantServiceRequestTracingMiddleware,
       TenantServiceRateLimitMiddleware,
+      TenantServiceDomainResolverMiddleware,
       TenantServiceTenantMiddleware,
       SanitizeMiddleware,
     )

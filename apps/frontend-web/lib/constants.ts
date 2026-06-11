@@ -19,6 +19,7 @@ export const API_ROUTES = {
   ai: "/api/ai",
   marketplace: "/api/marketplace",
   enterprise: "/api/enterprise",
+  organization: "/api/organization",
 } as const;
 
 export const GATEWAY_PATHS = {
@@ -36,6 +37,7 @@ export const GATEWAY_PATHS = {
   ai: "/ai",
   marketplace: "/marketplace",
   enterprise: "/enterprise",
+  organization: "/organizations",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;
@@ -63,7 +65,11 @@ export const PUBLIC_ROUTES = [
   "/blog",
   "/login",
   "/register",
+  "/forgot-password",
   "/reset-password",
+  "/verify-email",
+  "/mfa/verify",
+  "/forbidden",
 ] as const;
 
 export const TOKEN_REFRESH_BUFFER_MS = 60_000;

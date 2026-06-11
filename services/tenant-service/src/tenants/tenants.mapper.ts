@@ -3,14 +3,18 @@ import type { Location, Staff, Tenant, TenantBranding, TenantSubscription } from
 export type TenantResponse = {
   id: string;
   name: string;
+  code: string;
   slug: string;
+  ownerUserId: string | null;
   timezone: string;
   currency: string;
   address: string | null;
   phone: string | null;
   stripeCustomerId: string | null;
   homeRegion: string;
+  status: "ACTIVE" | "SUSPENDED";
   isActive: boolean;
+  organizationId: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -23,17 +27,23 @@ export type TenantDetailResponse = TenantResponse & {
 };
 
 export function toTenantResponse(tenant: Tenant): TenantResponse {
+  const status = tenant.status ?? (tenant.isActive ? "ACTIVE" : "SUSPENDED");
+
   return {
     id: tenant.id,
     name: tenant.name,
+    code: tenant.code ?? tenant.slug,
     slug: tenant.slug,
+    ownerUserId: tenant.ownerUserId ?? null,
     timezone: tenant.timezone,
     currency: tenant.currency,
     address: tenant.address,
     phone: tenant.phone,
     stripeCustomerId: tenant.stripeCustomerId,
     homeRegion: tenant.homeRegion,
+    status,
     isActive: tenant.isActive,
+    organizationId: tenant.organizationId ?? null,
     createdAt: tenant.createdAt.toISOString(),
     updatedAt: tenant.updatedAt.toISOString(),
   };
@@ -68,9 +78,17 @@ export function toLocationResponse(location: Location) {
     id: location.id,
     tenantId: location.tenantId,
     name: location.name,
-    address: location.address,
+    code: location.code,
+    addressLine1: location.addressLine1,
+    addressLine2: location.addressLine2,
+    city: location.city,
+    state: location.state,
+    postalCode: location.postalCode,
+    country: location.country,
     phone: location.phone,
-    isArchived: location.isArchived,
+    email: location.email,
+    timezone: location.timezone,
+    status: location.status,
     createdAt: location.createdAt.toISOString(),
     updatedAt: location.updatedAt.toISOString(),
   };

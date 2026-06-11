@@ -30,6 +30,14 @@ export const notesEnvSchema = coreEnvSchema;
 export const messagingEnvSchema = coreEnvSchema;
 export const notificationEnvSchema = coreEnvSchema;
 
+export const organizationEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
 export const enterpriseEnvSchema = coreEnvSchema.extend({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
@@ -122,6 +130,7 @@ export const gatewayServiceUrlsSchema = z.object({
   AI_NOTES_SERVICE_URL: z.string().url(),
   MARKETPLACE_SERVICE_URL: z.string().url(),
   ENTERPRISE_SERVICE_URL: z.string().url(),
+  ORGANIZATION_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({

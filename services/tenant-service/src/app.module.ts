@@ -7,6 +7,9 @@ import { StaffModule } from "@/staff/staff.module";
 import { BrandingModule } from "@/branding/branding.module";
 import { SubscriptionModule } from "@/subscription/subscription.module";
 import { BillingModule } from "@/billing/billing.module";
+import { LocalizationModule } from "@/localization/localization.module";
+import { TenantDomainsModule } from "@/tenant-domains/tenant-domains.module";
+import { TenantConfigModule } from "@/tenant-config/tenant-config.module";
 import { DatabaseModule } from "@/database/database.module";
 import { EventsModule } from "@/events/events.module";
 import { configureTenantMiddleware } from "@/middleware";
@@ -26,6 +29,9 @@ import { configureTenantMiddleware } from "@/middleware";
     BrandingModule,
     SubscriptionModule,
     BillingModule,
+    LocalizationModule,
+    TenantDomainsModule,
+    TenantConfigModule,
   ],
 })
 export class AppModule implements NestModule {

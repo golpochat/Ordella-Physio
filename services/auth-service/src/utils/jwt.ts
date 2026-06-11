@@ -13,47 +13,80 @@ import type { AuthTokenPayload } from "@/types/auth.types";
 
 const jwtConfig = createJwtConfigFromEnv();
 
-export function signAccessTokenForUser(user: AuthTokenPayload): string {
-  const payload = {
+export type AuthAccessClaims = AccessTokenPayload & {
+  jti?: string;
+  tv?: number;
+  permissions?: string[];
+  sessionId?: string;
+};
+
+export type AuthRefreshClaims = RefreshTokenPayload & {
+  jti?: string;
+  tv?: number;
+};
+
+export function buildAccessTokenClaims(user: AuthTokenPayload & { tokenVersion?: number; jti: string }) {
+  return {
     sub: user.userId,
     userId: user.userId,
     tenantId: user.tenantId,
     role: user.role as SecurityRole,
     email: user.email,
     type: TOKEN_TYPES.ACCESS,
-    ...(user.sessionId ? { sessionId: user.sessionId } : {}),
-  } as AccessTokenPayload;
+    jti: user.jti,
+    tv: user.tokenVersion ?? 0,
+    sessionId: user.jti,
+  } as AuthAccessClaims;
+}
 
+export function buildRefreshTokenClaims(user: AuthTokenPayload & { tokenVersion?: number; jti: string }) {
+  return {
+    sub: user.userId,
+    userId: user.userId,
+    tenantId: user.tenantId,
+    role: user.role as SecurityRole,
+    email: user.email,
+    tokenId: user.jti,
+    jti: user.jti,
+    tv: user.tokenVersion ?? 0,
+  };
+}
+
+export function signAccessTokenForUser(
+  user: AuthTokenPayload & { tokenVersion?: number; jti: string },
+  permissions?: string[],
+): string {
+  const payload = buildAccessTokenClaims(user);
+  if (permissions) {
+    payload.permissions = permissions;
+  }
   return signAccessToken(payload, authConfig.jwtExpiresIn, jwtConfig);
 }
 
-export function signRefreshTokenForUser(user: AuthTokenPayload): string {
+export function signRefreshTokenForUser(user: AuthTokenPayload & { tokenVersion?: number; jti: string }): string {
   return signRefreshToken(
-    {
-      sub: user.userId,
-      userId: user.userId,
-      tenantId: user.tenantId,
-      role: user.role as SecurityRole,
-      email: user.email,
-      tokenId: user.sessionId,
-    },
+    buildRefreshTokenClaims(user),
     authConfig.refreshTokenExpiresIn,
     jwtConfig,
   );
 }
 
-export function verifyAccessToken(token: string): AccessTokenPayload {
-  const payload = verifyToken<AccessTokenPayload>(token, jwtConfig);
+export function verifyAccessToken(token: string): AuthAccessClaims {
+  const payload = verifyToken<AuthAccessClaims>(token, jwtConfig);
   if (payload.type !== TOKEN_TYPES.ACCESS) {
     throw new Error("Invalid access token type");
   }
   return payload;
 }
 
-export function verifyRefreshToken(token: string): RefreshTokenPayload {
-  const payload = verifyToken<RefreshTokenPayload>(token, jwtConfig);
+export function verifyRefreshToken(token: string): AuthRefreshClaims {
+  const payload = verifyToken<AuthRefreshClaims>(token, jwtConfig);
   if (payload.type !== "refresh") {
     throw new Error("Invalid refresh token type");
   }
   return payload;
+}
+
+export function getTokenVersionFromPayload(payload: { tv?: number }): number {
+  return typeof payload.tv === "number" ? payload.tv : 0;
 }

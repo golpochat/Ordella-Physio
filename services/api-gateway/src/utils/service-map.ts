@@ -26,6 +26,7 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     AI_NOTES_SERVICE_URL: config.aiNotesServiceUrl,
     MARKETPLACE_SERVICE_URL: config.marketplaceServiceUrl,
     ENTERPRISE_SERVICE_URL: config.enterpriseServiceUrl,
+    ORGANIZATION_SERVICE_URL: config.organizationServiceUrl,
   };
 
   return map[envKey];

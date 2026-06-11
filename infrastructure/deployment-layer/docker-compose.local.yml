@@ -33,7 +33,7 @@ services:
       POSTGRES_USER: *postgres-user
       POSTGRES_PASSWORD: *postgres-password
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
@@ -110,9 +110,15 @@ services:
       PORT: 3052
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_tenant?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      AUTH_SERVICE_URL: http://auth-service:3051
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
     depends_on:
       postgres:
         condition: service_healthy
+      auth-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
     networks:
       - ordella-network
 
@@ -128,6 +134,7 @@ services:
       PORT: 3053
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_patient?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       postgres:
         condition: service_healthy
@@ -146,6 +153,7 @@ services:
       PORT: 3054
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_appointment?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       postgres:
         condition: service_healthy
@@ -164,6 +172,7 @@ services:
       PORT: 3055
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_notes?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       postgres:
         condition: service_healthy
@@ -208,6 +217,7 @@ services:
       PORT: 3057
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_payment?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       postgres:
         condition: service_healthy
@@ -226,6 +236,7 @@ services:
       PORT: 3058
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_communication?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       postgres:
         condition: service_healthy
@@ -268,6 +279,7 @@ services:
       PORT: 3061
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_messaging?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
       NATS_URL: nats://nats:4222
       REDIS_URL: redis://redis:6379
     depends_on:
@@ -324,6 +336,7 @@ services:
       PATIENT_SERVICE_URL: http://patient-service:3053
       APPOINTMENT_SERVICE_URL: http://appointment-service:3054
       NOTES_SERVICE_URL: http://notes-service:3055
+      TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       postgres:
         condition: service_healthy
@@ -392,6 +405,24 @@ services:
     networks:
       - ordella-network
 
+  organization-service:
+    build:
+      context: ../../
+      dockerfile: services/organization-service/Dockerfile
+    container_name: ordella_local_organization_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3066
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_organization?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-network
+
   event-bus-service:
     build:
       context: ../../
@@ -440,6 +471,7 @@ services:
       AI_NOTES_SERVICE_URL: http://ai-notes-service:3063
       MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
       ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
+      ORGANIZATION_SERVICE_URL: http://organization-service:3066
       CORS_ORIGIN: "*"
     ports:
       - "${API_GATEWAY_PORT:-3049}:3049"
@@ -458,6 +490,7 @@ services:
       - ai-notes-service
       - marketplace-service
       - enterprise-service
+      - organization-service
     networks:
       - ordella-network
 

@@ -110,34 +110,50 @@ docker compose -f docker-compose.local.yml restart <service-name>
 
 # 3. Database Commands
 
-## Run Prisma migrations for all services
+## Local Postgres (Windows note)
+
+Docker Postgres is published on host port **5433** (not 5432) so it does not clash with a native Windows PostgreSQL install.
+
+| Context | Connection |
+|---------|------------|
+| Inside Docker / `docker compose run` | `postgresql://physio:physio@postgres:5432/<db>?schema=public` |
+| From host (psql, Prisma CLI, GUI) | `postgresql://physio:physio@localhost:5433/<db>?schema=public` |
+
+Override the host port with `POSTGRES_HOST_PORT` in your shell or compose env.
+
+## Run Prisma migrations for all services (recommended)
+
+From the **repo root** (works on Windows, macOS, Linux):
+
+```bash
+pnpm db:migrate:local
+```
+
+Or directly:
+
+```bash
+node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs
+```
+
+This starts Postgres if needed, waits until it is ready, then runs `prisma migrate deploy` inside each service container.
+
+Manual loop (bash only):
 
 ```bash
 cd infrastructure/deployment-layer
-
-PRISMA_SERVICES=(
-  auth-service
-  tenant-service
-  patient-service
-  appointment-service
-  notes-service
-  billing-service
-  payment-service
-  communication-service
-  reporting-service
-  messaging-service
-  notification-service
-  ai-notes-service
-  marketplace-service
-  enterprise-service
-)
-
-for service in "${PRISMA_SERVICES[@]}"; do
-  echo "Migrating ${service}..."
-  docker compose -f docker-compose.local.yml run --rm --no-deps "${service}" \
-    sh -c "pnpm exec prisma migrate deploy"
-done
+./scripts/migrate-local-databases.sh
 ```
+
+## P3005 — database is not empty
+
+If migrate reports that the schema exists but `_prisma_migrations` is missing, either reset volumes (`docker compose down -v` — **destroys data**) or apply the missing SQL manually, for example:
+
+```bash
+docker exec -i ordella_local_postgres psql -U physio -d ordella_auth -c \
+  'ALTER TABLE users ADD COLUMN IF NOT EXISTS "isActive" BOOLEAN NOT NULL DEFAULT true;'
+```
+
+Then re-run `pnpm db:migrate:local`.
 
 ## Reset all databases (DANGER)
 

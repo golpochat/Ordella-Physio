@@ -6,7 +6,9 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
+  createTenantStatusMiddleware,
 } from "@ordella/middleware";
 import {
   createMetricsRegistry,
@@ -23,8 +25,16 @@ setDefaultMetricsRegistry(metricsRegistry);
 
 const BILLING_PUBLIC_PATHS = ["/billing/health", "/billing/webhook"];
 
+export const BillingServiceDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: BILLING_PUBLIC_PATHS,
+});
+
 export const BillingServiceTenantMiddleware = createTenantMiddleware({
   required: true,
+  skipPaths: BILLING_PUBLIC_PATHS,
+});
+
+export const BillingServiceTenantStatusMiddleware = createTenantStatusMiddleware({
   skipPaths: BILLING_PUBLIC_PATHS,
 });
 
@@ -64,7 +74,9 @@ export function configureBillingMiddleware(consumer: MiddlewareConsumer): void {
       BillingServiceRequestMetricsMiddleware,
       BillingServiceRequestTracingMiddleware,
       BillingServiceRateLimitMiddleware,
+      BillingServiceDomainResolverMiddleware,
       BillingServiceTenantMiddleware,
+      BillingServiceTenantStatusMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

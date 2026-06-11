@@ -55,6 +55,19 @@ export class AppointmentsRepository {
     });
   }
 
+  countActiveByLocation(tenantId: string, locationId: string) {
+    const now = new Date();
+
+    return this.database.appointment.count({
+      where: {
+        tenantId,
+        locationId,
+        status: { in: ["SCHEDULED", "CONFIRMED", "IN_PROGRESS"] },
+        endTime: { gte: now },
+      },
+    });
+  }
+
   update(tenantId: string, appointmentId: string, data: Prisma.AppointmentUpdateInput) {
     return this.forTenant(tenantId).update(appointmentId, data);
   }

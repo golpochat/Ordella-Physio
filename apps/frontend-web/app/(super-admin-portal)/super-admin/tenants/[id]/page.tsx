@@ -20,9 +20,16 @@ export default function SuperAdminTenantDetailPage({ params }: SuperAdminTenantD
         title={data?.name ?? "Tenant"}
         subtitle={data?.slug ?? "Review and manage tenant configuration."}
         action={
-          <Button asChild variant="ghost">
-            <Link href="/super-admin/tenants">&larr; Back to tenants</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {data ? (
+              <Button asChild className="btn-primary">
+                <Link href={`/super-admin/tenants/${params.id}/edit`}>Edit tenant</Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="ghost">
+              <Link href="/super-admin/tenants">&larr; Back to tenants</Link>
+            </Button>
+          </div>
         }
       />
 

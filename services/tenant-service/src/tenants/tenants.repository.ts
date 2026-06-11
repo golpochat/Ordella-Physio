@@ -18,6 +18,10 @@ export class TenantsRepository {
     return this.database.tenant.findUnique({ where: { slug } });
   }
 
+  findByCode(code: string): Promise<Tenant | null> {
+    return this.database.tenant.findUnique({ where: { code } });
+  }
+
   findMany(params?: { skip?: number; take?: number }): Promise<Tenant[]> {
     return this.database.tenant.findMany({
       skip: params?.skip,
@@ -31,6 +35,31 @@ export class TenantsRepository {
   }
 
   setActiveState(id: string, isActive: boolean): Promise<Tenant> {
-    return this.update(id, { isActive });
+    return this.setStatus(id, isActive ? "ACTIVE" : "SUSPENDED");
+  }
+
+  setStatus(id: string, status: "ACTIVE" | "SUSPENDED"): Promise<Tenant> {
+    return this.update(id, {
+      status,
+      isActive: status === "ACTIVE",
+    });
+  }
+
+  findByOrganizationId(organizationId: string): Promise<Tenant[]> {
+    return this.database.tenant.findMany({
+      where: { organizationId },
+      orderBy: { name: "asc" },
+    });
+  }
+
+  findUnassigned(): Promise<Tenant[]> {
+    return this.database.tenant.findMany({
+      where: { organizationId: null },
+      orderBy: { name: "asc" },
+    });
+  }
+
+  setOrganizationId(id: string, organizationId: string | null): Promise<Tenant> {
+    return this.update(id, { organizationId });
   }
 }

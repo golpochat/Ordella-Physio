@@ -8,13 +8,23 @@ export const staffRoleSchema = z.enum(["OWNER", "ADMIN", "THERAPIST", "STAFF"]);
 export const tenantRegionSchema = z.enum(["eu-west", "us-east", "apac"]);
 
 export const createTenantSchema = z.object({
-  name: nonEmptyString.min(2),
-  slug: slugString,
-  timezone: z.string().optional(),
-  currency: z.string().optional(),
+  name: nonEmptyString.min(3),
+  code: slugString.optional(),
+  slug: slugString.optional(),
+  ownerUserId: idSchema.optional(),
+  timezone: z.string().min(1).optional(),
+  currency: z.string().length(3).optional(),
   address: z.string().optional(),
   phone: phoneSchema.optional(),
   homeRegion: tenantRegionSchema.optional(),
+}).superRefine((value, ctx) => {
+  if (!value.code && !value.slug) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Tenant code is required.",
+      path: ["code"],
+    });
+  }
 });
 
 export const updateTenantSchema = z.object({

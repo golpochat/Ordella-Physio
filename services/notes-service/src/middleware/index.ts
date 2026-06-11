@@ -6,7 +6,9 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
+  createTenantStatusMiddleware,
 } from "@ordella/middleware";
 import {
   createMetricsRegistry,
@@ -21,8 +23,16 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "notes-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+export const NotesServiceDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: ["/notes/health"],
+});
+
 export const NotesServiceTenantMiddleware = createTenantMiddleware({
   required: true,
+  skipPaths: ["/notes/health"],
+});
+
+export const NotesServiceTenantStatusMiddleware = createTenantStatusMiddleware({
   skipPaths: ["/notes/health"],
 });
 
@@ -62,7 +72,9 @@ export function configureNotesMiddleware(consumer: MiddlewareConsumer): void {
       NotesServiceRequestMetricsMiddleware,
       NotesServiceRequestTracingMiddleware,
       NotesServiceRateLimitMiddleware,
+      NotesServiceDomainResolverMiddleware,
       NotesServiceTenantMiddleware,
+      NotesServiceTenantStatusMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

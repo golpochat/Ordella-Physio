@@ -13,3 +13,4 @@ CREATE DATABASE ordella_notification;
 CREATE DATABASE ordella_ai_notes;
 CREATE DATABASE ordella_marketplace;
 CREATE DATABASE ordella_enterprise;
+CREATE DATABASE ordella_organization;

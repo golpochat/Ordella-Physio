@@ -6,6 +6,8 @@ export type AuthTokenPayload = {
   role: SecurityRole;
   email: string;
   sessionId?: string;
+  jti?: string;
+  tokenVersion?: number;
 };
 
 export type AuthSessionUser = {

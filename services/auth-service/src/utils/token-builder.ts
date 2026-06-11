@@ -28,8 +28,11 @@ export class TokenBuilder {
     role: SecurityRole;
     email: string;
     sessionId: string;
+    jti?: string;
+    tokenVersion?: number;
   }): string {
     const permissions = getPermissionsForRole(input.role);
+    const jti = input.jti ?? input.sessionId;
     const payload = {
       sub: input.userId,
       userId: input.userId,
@@ -39,7 +42,9 @@ export class TokenBuilder {
       type: TOKEN_TYPES.ACCESS,
       permissions,
       sessionId: input.sessionId,
-    } as AccessTokenPayload;
+      jti,
+      tv: input.tokenVersion ?? 0,
+    } as AccessTokenPayload & { jti: string; tv: number };
 
     return signAccessToken(payload, authConfig.jwtExpiresIn, this.jwtConfig);
   }

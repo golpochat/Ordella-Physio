@@ -43,3 +43,6 @@ coverage
 
 # Misc
 *.tsbuildinfo
+
+# Local avatar uploads (auth-service)
+services/auth-service/uploads/

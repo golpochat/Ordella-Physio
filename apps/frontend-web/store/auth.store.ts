@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { clearTokens, getAccessToken, getRefreshToken, setTokens } from "@/lib/utils/authStorage";
 import type { PortalRole } from "@/lib/rbac";
 
 export type AuthUser = {
@@ -38,15 +39,50 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       ...initialState,
-      setSession: ({ accessToken, refreshToken, user }) =>
-        set({ accessToken, refreshToken, user, isAuthenticated: true }),
-      updateTokens: (accessToken, refreshToken) =>
+      setSession: ({ accessToken, refreshToken, user }) => {
+        setTokens(accessToken, refreshToken);
+        set({
+          accessToken,
+          refreshToken,
+          user,
+          isAuthenticated: true,
+        });
+      },
+      updateTokens: (accessToken, refreshToken) => {
+        const nextRefreshToken = refreshToken ?? useAuthStore.getState().refreshToken;
+        if (nextRefreshToken) {
+          setTokens(accessToken, nextRefreshToken);
+        } else {
+          setTokens(accessToken, getRefreshToken() ?? "");
+        }
+
         set((state) => ({
           accessToken,
           refreshToken: refreshToken ?? state.refreshToken,
-        })),
-      clearSession: () => set(initialState),
+        }));
+      },
+      clearSession: () => {
+        clearTokens();
+        set(initialState);
+      },
     }),
-    { name: "ordella-auth" },
+    {
+      name: "ordella-auth",
+      partialize: (state) => ({
+        refreshToken: state.refreshToken,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) {
+          return;
+        }
+
+        const accessToken = getAccessToken();
+        const refreshToken = state.refreshToken ?? getRefreshToken();
+        state.accessToken = accessToken;
+        state.refreshToken = refreshToken;
+      },
+    },
   ),
 );

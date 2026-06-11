@@ -17,8 +17,17 @@ export type RegisterPayload = {
   tenantId?: string;
 };
 
-export type ResetPasswordPayload = {
+export type RequestPasswordResetPayload = {
   email: string;
+};
+
+export type ConfirmPasswordResetPayload = {
+  token: string;
+  newPassword: string;
+};
+
+export type MessageResponse = {
+  message: string;
 };
 
 export type AuthTokensResponse = {
@@ -27,11 +36,65 @@ export type AuthTokensResponse = {
   user: AuthUser;
 };
 
+export type MfaRequiredResponse = {
+  mfaRequired: true;
+  userId: string;
+  tenantId: string;
+};
+
+export type LoginResponse = AuthTokensResponse | MfaRequiredResponse;
+
+export type MfaSetupResponse = {
+  qrCode: string;
+  secret: string;
+  message: string;
+};
+
+export type MfaChallengePayload = {
+  userId: string;
+  token: string;
+  tenantId: string;
+};
+
+export function isMfaRequiredResponse(response: LoginResponse): response is MfaRequiredResponse {
+  return "mfaRequired" in response && response.mfaRequired === true;
+}
+
 export const authClient = {
   login(payload: LoginPayload) {
-    return fetcher<AuthTokensResponse>(`${API_ROUTES.auth}/login`, {
+    return fetcher<LoginResponse>(`${API_ROUTES.auth}/login`, {
       method: "POST",
       body: JSON.stringify(payload),
+    });
+  },
+
+  setupMfa(accessToken: string) {
+    return fetcher<MfaSetupResponse>(`${API_ROUTES.auth}/mfa/setup`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  },
+
+  verifyMfa(accessToken: string, token: string) {
+    return fetcher<MessageResponse>(`${API_ROUTES.auth}/mfa/verify`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify({ token }),
+    });
+  },
+
+  disableMfa(accessToken: string) {
+    return fetcher<MessageResponse>(`${API_ROUTES.auth}/mfa/disable`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  },
+
+  completeMfaChallenge(payload: MfaChallengePayload) {
+    return fetcher<AuthTokensResponse>(`${API_ROUTES.auth}/mfa/challenge`, {
+      method: "POST",
+      headers: { [TENANT_HEADER]: payload.tenantId },
+      body: JSON.stringify({ userId: payload.userId, token: payload.token }),
     });
   },
 
@@ -42,10 +105,31 @@ export const authClient = {
     });
   },
 
-  resetPassword(payload: ResetPasswordPayload) {
-    return fetcher<void>(`${API_ROUTES.auth}/reset-password`, {
+  requestPasswordReset(payload: RequestPasswordResetPayload) {
+    return fetcher<MessageResponse>(`${API_ROUTES.auth}/password/request`, {
       method: "POST",
       body: JSON.stringify(payload),
+    });
+  },
+
+  confirmPasswordReset(payload: ConfirmPasswordResetPayload) {
+    return fetcher<MessageResponse>(`${API_ROUTES.auth}/password/reset`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  sendVerificationEmail(accessToken: string) {
+    return fetcher<MessageResponse>(`${API_ROUTES.auth}/verification/send`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  },
+
+  confirmEmailVerification(token: string) {
+    return fetcher<MessageResponse>(`${API_ROUTES.auth}/verification/confirm`, {
+      method: "GET",
+      params: { token },
     });
   },
 

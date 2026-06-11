@@ -1,0 +1,14 @@
+export const AUTH_AUDIT_ACTIONS = [
+  "LOGIN_SUCCESS",
+  "LOGIN_FAILED",
+  "MFA_SUCCESS",
+  "MFA_FAILED",
+  "PASSWORD_RESET_REQUEST",
+  "PASSWORD_RESET_SUCCESS",
+  "EMAIL_VERIFIED",
+  "TOKEN_REFRESH",
+  "TOKEN_REUSE_DETECTED",
+  "LOGOUT",
+] as const;
+
+export type AuthAuditAction = (typeof AUTH_AUDIT_ACTIONS)[number];

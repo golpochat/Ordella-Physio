@@ -5,7 +5,6 @@ import type { OrdellaRequest } from "@ordella/middleware";
 import { AuthService } from "@/auth/auth.service";
 import { loginSchema, type LoginDto } from "@/auth/dto/login.dto";
 import { registerSchema, type RegisterDto } from "@/auth/dto/register.dto";
-import { refreshTokenSchema, type RefreshTokenDto } from "@/auth/dto/refresh-token.dto";
 import { verifyEmailSchema, type VerifyEmailDto } from "@/auth/dto/verify-email.dto";
 import {
   forgotPasswordSchema,
@@ -14,7 +13,6 @@ import {
   type ResetPasswordDto,
 } from "@/auth/dto/reset-password.dto";
 import { JwtGuard } from "@/auth/guards/jwt.guard";
-import { RefreshGuard } from "@/auth/guards/refresh.guard";
 import { CurrentUser, TenantId, getRequestMetadata } from "@/utils/auth-helpers";
 import type { AuthenticatedRequestUser } from "@/utils/auth-helpers";
 
@@ -50,41 +48,39 @@ export class AuthController {
     });
   }
 
-  @Post("refresh")
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(RefreshGuard)
-  @UseZodValidation(refreshTokenSchema)
-  refresh(@TenantId() tenantId: string, @Body() dto: RefreshTokenDto, @Req() request: OrdellaRequest) {
-    const metadata = getRequestMetadata(request);
-    return this.authService.refresh(tenantId, dto, metadata);
-  }
-
-  @Post("logout")
-  @HttpCode(HttpStatus.OK)
-  @UseZodValidation(refreshTokenSchema)
-  logout(@TenantId() tenantId: string, @Body() dto: RefreshTokenDto) {
-    return this.authService.logout(tenantId, dto.refreshToken);
-  }
-
   @Post("verify-email")
   @HttpCode(HttpStatus.OK)
   @UseZodValidation(verifyEmailSchema)
-  verifyEmail(@TenantId() tenantId: string, @Body() dto: VerifyEmailDto) {
-    return this.authService.verifyEmail(tenantId, dto);
+  verifyEmail(@TenantId() tenantId: string, @Body() dto: VerifyEmailDto, @Req() request: OrdellaRequest) {
+    const metadata = getRequestMetadata(request);
+    return this.authService.verifyEmail(tenantId, dto, {
+      ipAddress: metadata.ipAddress,
+      userAgent: metadata.userAgent,
+    });
   }
 
   @Post("forgot-password")
   @HttpCode(HttpStatus.OK)
   @UseZodValidation(forgotPasswordSchema)
-  forgotPassword(@TenantId() tenantId: string, @Body() dto: ForgotPasswordDto) {
-    return this.authService.forgotPassword(tenantId, dto);
+  forgotPassword(@TenantId() tenantId: string, @Body() dto: ForgotPasswordDto, @Req() request: OrdellaRequest) {
+    const metadata = getRequestMetadata(request);
+    return this.authService.forgotPassword(tenantId, dto, {
+      correlationId: request.correlationId,
+      ipAddress: metadata.ipAddress,
+      userAgent: metadata.userAgent,
+    });
   }
 
   @Post("reset-password")
   @HttpCode(HttpStatus.OK)
   @UseZodValidation(resetPasswordSchema)
   resetPassword(@TenantId() tenantId: string, @Body() dto: ResetPasswordDto, @Req() request: OrdellaRequest) {
-    return this.authService.resetPassword(tenantId, dto, request.correlationId);
+    const metadata = getRequestMetadata(request);
+    return this.authService.resetPassword(tenantId, dto, {
+      correlationId: request.correlationId,
+      ipAddress: metadata.ipAddress,
+      userAgent: metadata.userAgent,
+    });
   }
 
   @Get("me")

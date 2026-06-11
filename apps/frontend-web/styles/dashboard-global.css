@@ -269,3 +269,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+.dashboard-portal .tenant-suspended-banner {
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+}

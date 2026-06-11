@@ -36,7 +36,7 @@ export function ClinicAppointmentCreateForm() {
   const loading = patientsQuery.isLoading || therapistsQuery.isLoading || locationsQuery.isLoading;
   const patients = patientsQuery.data ?? [];
   const therapists = therapistsQuery.data ?? [];
-  const locations = (locationsQuery.data ?? []).filter((location) => !location.isArchived);
+  const locations = (locationsQuery.data ?? []).filter((location) => location.status === "ACTIVE");
 
   useEffect(() => {
     if (!locationId && locations[0]) {

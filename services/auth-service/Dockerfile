@@ -14,4 +14,4 @@ RUN cp -r src/email/templates dist/services/auth-service/src/email/
 
 EXPOSE 3051
 
-CMD ["sh", "-c", "pnpm exec prisma db push --skip-generate && exec pnpm start"]
+CMD ["sh", "-c", "pnpm exec prisma migrate deploy && exec pnpm start"]

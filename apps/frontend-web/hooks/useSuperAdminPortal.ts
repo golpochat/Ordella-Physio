@@ -7,8 +7,10 @@ import {
   createSuperAdminPortalApi,
   normalizeTenantList,
   normalizeUserList,
+  normalizeOrganizationList,
 } from "@/lib/super-admin-portal-api";
 import type {
+  AuthAuditLogFilters,
   CreatePlatformRolePayload,
   CreatePlatformTenantPayload,
   CreatePlatformUserPayload,
@@ -16,9 +18,19 @@ import type {
   UpdatePlatformRolePayload,
   UpdatePlatformSettingsPayload,
   UpdatePlatformTenantPayload,
+  UpdatePlatformTenantBillingPayload,
+  UpdatePlatformTenantLocalizationPayload,
+  CreatePlatformTenantDomainPayload,
+  PlatformTenantConfigNamespace,
   UpdatePlatformUserPayload,
+  CreatePlatformOrganizationPayload,
+  UpdatePlatformOrganizationPayload,
+  OrganizationLinkedTenant,
+  OrganizationListFilters,
+  PlatformOrganizationConfigNamespace,
 } from "@/lib/super-admin-portal-types";
 import { useAuthStore } from "@/store/auth.store";
+import { useTenantStore } from "@/store/tenant.store";
 
 export function useSuperAdminPortalApi() {
   const api = useApi();
@@ -57,6 +69,141 @@ export function usePlatformTenant(id: string) {
   });
 }
 
+export function usePlatformTenantBilling(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "tenants", tenantId, "billing"],
+    queryFn: () => requireApi(portalApi).getTenantBillingSettings(tenantId),
+    enabled: Boolean(tenantId),
+  });
+}
+
+export function useUpdatePlatformTenantBilling(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdatePlatformTenantBillingPayload) =>
+      requireApi(portalApi).updateTenantBillingSettings(tenantId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "billing"] });
+    },
+  });
+}
+
+export function usePlatformTenantLocalization(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "tenants", tenantId, "localization"],
+    queryFn: () => requireApi(portalApi).getTenantLocalization(tenantId),
+    enabled: Boolean(tenantId),
+  });
+}
+
+export function useUpdatePlatformTenantLocalization(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdatePlatformTenantLocalizationPayload) =>
+      requireApi(portalApi).updateTenantLocalization(tenantId, payload),
+    onSuccess: (localization) => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "localization"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId] });
+      useTenantStore.getState().setTenantLocalization({
+        timezone: localization.timezone,
+        currency: localization.currency,
+        dateFormat: localization.dateFormat,
+        timeFormat: localization.timeFormat,
+        numberFormat: localization.numberFormat,
+      });
+    },
+  });
+}
+
+export function usePlatformTenantConfigNamespaces(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "tenants", tenantId, "config"],
+    queryFn: () => requireApi(portalApi).listTenantConfigNamespaces(tenantId),
+    enabled: Boolean(tenantId),
+  });
+}
+
+export function usePlatformTenantConfig(tenantId: string, namespace: PlatformTenantConfigNamespace) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "tenants", tenantId, "config", namespace],
+    queryFn: () => requireApi(portalApi).getTenantConfig(tenantId, namespace),
+    enabled: Boolean(tenantId) && Boolean(namespace),
+  });
+}
+
+export function useUpdatePlatformTenantConfig(tenantId: string, namespace: PlatformTenantConfigNamespace) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      requireApi(portalApi).updateTenantConfig(tenantId, namespace, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "config"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "config", namespace] });
+    },
+  });
+}
+
+export function usePlatformTenantDomains(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "tenants", tenantId, "domains"],
+    queryFn: () => requireApi(portalApi).listTenantDomains(tenantId),
+    enabled: Boolean(tenantId),
+  });
+}
+
+export function useCreatePlatformTenantDomain(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreatePlatformTenantDomainPayload) =>
+      requireApi(portalApi).createTenantDomain(tenantId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "domains"] });
+    },
+  });
+}
+
+export function useVerifyPlatformTenantDomain(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (domainId: string) => requireApi(portalApi).verifyTenantDomain(tenantId, domainId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "domains"] });
+    },
+  });
+}
+
+export function useDeletePlatformTenantDomain(tenantId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (domainId: string) => requireApi(portalApi).deleteTenantDomain(tenantId, domainId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", tenantId, "domains"] });
+    },
+  });
+}
+
 export function useCreatePlatformTenant() {
   const portalApi = useSuperAdminPortalApi();
   const queryClient = useQueryClient();
@@ -65,6 +212,190 @@ export function useCreatePlatformTenant() {
     mutationFn: (payload: CreatePlatformTenantPayload) =>
       requireApi(portalApi).createTenant(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] }),
+  });
+}
+
+export function usePlatformOrganizations(filters: OrganizationListFilters = {}) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "organizations", filters],
+    queryFn: async () =>
+      normalizeOrganizationList(await requireApi(portalApi).listOrganizations(filters)),
+  });
+}
+
+export function useCreatePlatformOrganization() {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreatePlatformOrganizationPayload) =>
+      requireApi(portalApi).createOrganization(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations"] });
+    },
+  });
+}
+
+export function usePlatformOrganization(id: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "organizations", id],
+    queryFn: () => requireApi(portalApi).getOrganization(id),
+    enabled: Boolean(id),
+  });
+}
+
+export function useUpdatePlatformOrganization(id: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdatePlatformOrganizationPayload) =>
+      requireApi(portalApi).updateOrganization(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations", id] });
+    },
+  });
+}
+
+export function useDeactivatePlatformOrganization(id: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(portalApi).deactivateOrganization(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations", id] });
+    },
+  });
+}
+
+export function useActivatePlatformOrganization(id: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(portalApi).activateOrganization(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations", id] });
+    },
+  });
+}
+
+function normalizeOrganizationTenantList(
+  response:
+    | { data: OrganizationLinkedTenant[] }
+    | OrganizationLinkedTenant[],
+) {
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  return response.data ?? [];
+}
+
+export function useOrganizationLinkedTenants(orgId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "organizations", orgId, "tenants"],
+    queryFn: async () =>
+      normalizeOrganizationTenantList(await requireApi(portalApi).listOrganizationTenants(orgId)),
+    enabled: Boolean(orgId),
+  });
+}
+
+export function useUnassignedOrganizationTenants(orgId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "organizations", orgId, "tenants", "unassigned"],
+    queryFn: async () =>
+      normalizeOrganizationTenantList(
+        await requireApi(portalApi).listUnassignedOrganizationTenants(orgId),
+      ),
+    enabled: Boolean(orgId),
+  });
+}
+
+export function useAssignOrganizationTenant(orgId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (tenantId: string) =>
+      requireApi(portalApi).assignOrganizationTenant(orgId, tenantId),
+    onSuccess: () => {
+      invalidateOrganizationTenantQueries(queryClient, orgId);
+    },
+  });
+}
+
+export function useRemoveOrganizationTenant(orgId: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (tenantId: string) =>
+      requireApi(portalApi).removeOrganizationTenant(orgId, tenantId),
+    onSuccess: () => {
+      invalidateOrganizationTenantQueries(queryClient, orgId);
+    },
+  });
+}
+
+function invalidateOrganizationTenantQueries(
+  queryClient: ReturnType<typeof useQueryClient>,
+  orgId: string,
+) {
+  queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations", orgId, "tenants"] });
+}
+
+export function usePlatformOrganizationConfigNamespaces(orgId: string) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "organizations", orgId, "config"],
+    queryFn: () => requireApi(portalApi).listOrganizationConfigNamespaces(orgId),
+    enabled: Boolean(orgId),
+  });
+}
+
+export function usePlatformOrganizationConfig(
+  orgId: string,
+  namespace: PlatformOrganizationConfigNamespace,
+) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "organizations", orgId, "config", namespace],
+    queryFn: () => requireApi(portalApi).getOrganizationConfig(orgId, namespace),
+    enabled: Boolean(orgId) && Boolean(namespace),
+  });
+}
+
+export function useUpdatePlatformOrganizationConfig(
+  orgId: string,
+  namespace: PlatformOrganizationConfigNamespace,
+) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      requireApi(portalApi).updateOrganizationConfig(orgId, namespace, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations", orgId, "config"] });
+      queryClient.invalidateQueries({
+        queryKey: ["super-admin", "organizations", orgId, "config", namespace],
+      });
+    },
   });
 }
 
@@ -99,8 +430,34 @@ export function useSetPlatformTenantActive(id: string) {
   return useMutation({
     mutationFn: (isActive: boolean) =>
       isActive
-        ? requireApi(portalApi).activateTenant(id)
-        : requireApi(portalApi).deactivateTenant(id),
+        ? requireApi(portalApi).reactivateTenant(id)
+        : requireApi(portalApi).suspendTenant(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", id] });
+    },
+  });
+}
+
+export function useSuspendPlatformTenant(id: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(portalApi).suspendTenant(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", id] });
+    },
+  });
+}
+
+export function useReactivatePlatformTenant(id: string) {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(portalApi).reactivateTenant(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] });
       queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants", id] });
@@ -297,5 +654,14 @@ export function useUpdatePlatformSettings() {
     mutationFn: (payload: UpdatePlatformSettingsPayload) =>
       requireApi(portalApi).updateSettings(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["super-admin", "settings"] }),
+  });
+}
+
+export function useAuthAuditLogs(filters: AuthAuditLogFilters) {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "auth-audit-logs", filters],
+    queryFn: () => requireApi(portalApi).listAuditLogs(filters),
   });
 }

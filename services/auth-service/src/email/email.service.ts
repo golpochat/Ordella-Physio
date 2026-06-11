@@ -21,14 +21,25 @@ export class EmailService {
     return Handlebars.compile(source);
   }
 
+  private buildFrontendUrl(path: string): string {
+    const base = (process.env.FRONTEND_URL ?? "http://localhost:3010").replace(/\/$/, "");
+    return `${base}${path}`;
+  }
+
   async sendVerificationEmail(payload: EmailPayload) {
-    const html = this.verifyTemplate({ token: payload.token });
+    const html = this.verifyTemplate({
+      token: payload.token,
+      verifyUrl: this.buildFrontendUrl(`/verify-email/${encodeURIComponent(payload.token)}`),
+    });
     this.logger.log(`Verification email queued for ${payload.email} (tenant: ${payload.tenantId})`);
     return this.dispatch({ ...payload, subject: "Verify your Ordella account", html });
   }
 
   async sendPasswordResetEmail(payload: EmailPayload) {
-    const html = this.resetTemplate({ token: payload.token });
+    const html = this.resetTemplate({
+      token: payload.token,
+      resetUrl: this.buildFrontendUrl(`/reset-password/${encodeURIComponent(payload.token)}`),
+    });
     this.logger.log(`Password reset email queued for ${payload.email} (tenant: ${payload.tenantId})`);
     return this.dispatch({ ...payload, subject: "Reset your Ordella password", html });
   }

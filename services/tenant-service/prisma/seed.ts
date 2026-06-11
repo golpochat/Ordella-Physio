@@ -15,10 +15,11 @@ async function main() {
   console.log(`Seeding tenant "${DEMO_TENANT_ID}"...`);
 
   await prisma.$executeRaw`
-    INSERT INTO tenants (id, name, slug, timezone, currency, address, phone, "isActive", "createdAt", "updatedAt")
+    INSERT INTO tenants (id, name, code, slug, timezone, currency, address, phone, status, "isActive", "createdAt", "updatedAt")
     VALUES (
       ${DEMO_TENANT_ID},
       'Demo Clinic',
+      ${DEMO_TENANT_ID},
       ${DEMO_TENANT_ID},
       'Europe/London',
       'GBP',
@@ -30,6 +31,8 @@ async function main() {
     )
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
+      code = EXCLUDED.code,
+      status = 'ACTIVE',
       "isActive" = true,
       "updatedAt" = NOW()
   `;
@@ -37,20 +40,46 @@ async function main() {
   console.log(`  ✓ tenant ${DEMO_TENANT_ID}`);
 
   await prisma.$executeRaw`
-    INSERT INTO locations (id, "tenantId", name, address, phone, "isArchived", "createdAt", "updatedAt")
+    INSERT INTO locations (
+      id,
+      "tenantId",
+      name,
+      code,
+      "addressLine1",
+      city,
+      "postalCode",
+      country,
+      phone,
+      timezone,
+      status,
+      "createdAt",
+      "updatedAt"
+    )
     VALUES (
       'dev_location_main',
       ${DEMO_TENANT_ID},
       'Main Clinic',
-      '1 Demo Street, London',
-      '+44 20 7946 0958',
-      false,
+      'main-clinic',
+      '1 Demo Street',
+      'London',
+      'SW1A 1AA',
+      'GB',
+      '+442079460958',
+      'Europe/London',
+      'ACTIVE'::"LocationStatus",
       NOW(),
       NOW()
     )
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
-      address = EXCLUDED.address,
+      code = EXCLUDED.code,
+      "addressLine1" = EXCLUDED."addressLine1",
+      city = EXCLUDED.city,
+      "postalCode" = EXCLUDED."postalCode",
+      country = EXCLUDED.country,
+      phone = EXCLUDED.phone,
+      timezone = EXCLUDED.timezone,
+      status = EXCLUDED.status,
       "updatedAt" = NOW()
   `;
 

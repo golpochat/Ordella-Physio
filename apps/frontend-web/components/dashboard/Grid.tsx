@@ -3,12 +3,17 @@ import { cn } from "@/lib/cn";
 
 export const DASHBOARD_GRID = {
   users: "1.5fr 1.5fr 1fr 1fr auto",
+  usersTable: "auto 1.2fr 1.5fr 1fr 1fr 1fr minmax(12rem, 1.4fr)",
   roles: "1.2fr 2fr 1fr 1.2fr auto",
   tenants: "1.5fr 1fr 1.5fr 1fr auto",
   system: "1fr auto",
   default: "1.5fr 1.5fr 1fr 1fr auto",
   list: "1fr auto",
   billing: "1.2fr 1fr 1fr auto",
+  audit: "1.2fr 1.2fr 1fr 1fr 1fr 1.5fr auto",
+  organizationsTable: "1.2fr 1fr 1.5fr 1fr 1fr minmax(10rem, 1.2fr)",
+  organizationTenantsTable: "1.2fr 1fr 1fr minmax(8rem, 1fr)",
+  locationsTable: "1.2fr 1fr 1.5fr 1fr 1fr 1fr minmax(10rem, 1.2fr)",
 } as const;
 
 export type DashboardGridKey = keyof typeof DASHBOARD_GRID;

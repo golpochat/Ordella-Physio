@@ -7,12 +7,12 @@ import type { VerifyEmailDto } from "@/auth/dto/verify-email.dto";
 import { LoginCommand } from "@/auth/commands/login.command";
 import { RegisterCommand } from "@/auth/commands/register.command";
 import { RefreshTokenCommand } from "@/auth/commands/refresh-token.command";
+import { PasswordService, type PasswordRequestMetadata } from "@/services/password.service";
+import type { VerificationMetadata } from "@/services/verification.service";
+import { VerificationService } from "@/services/verification.service";
 import { UsersService } from "@/users/users.service";
-import { TokensService } from "@/tokens/tokens.service";
-import { EmailService } from "@/email/email.service";
+import { TokenService } from "@/services/token.service";
 import { sanitizeUser } from "@/utils/auth-helpers";
-import { generateToken } from "@ordella/utils";
-import { VERIFY_TOKEN_PREFIX } from "@/constants";
 
 @Injectable()
 export class AuthService {
@@ -21,8 +21,9 @@ export class AuthService {
     private readonly loginCommand: LoginCommand,
     private readonly refreshTokenCommand: RefreshTokenCommand,
     private readonly usersService: UsersService,
-    private readonly tokensService: TokensService,
-    private readonly emailService: EmailService,
+    private readonly tokenService: TokenService,
+    private readonly passwordService: PasswordService,
+    private readonly verificationService: VerificationService,
   ) {}
 
   async register(
@@ -50,9 +51,12 @@ export class AuthService {
     return this.refreshTokenCommand.execute({ tenantId, dto, ...metadata });
   }
 
-  async logout(_tenantId: string, refreshToken: string) {
-    await this.tokensService.invalidateRefreshToken(refreshToken);
-    return { message: "Logged out successfully" };
+  async logout(
+    _tenantId: string,
+    refreshToken: string,
+    metadata?: { ipAddress?: string; userAgent?: string },
+  ) {
+    return this.tokenService.revokeToken(refreshToken, metadata);
   }
 
   async getMe(tenantId: string, userId: string) {
@@ -69,25 +73,15 @@ export class AuthService {
     };
   }
 
-  async verifyEmail(tenantId: string, dto: VerifyEmailDto) {
-    void tenantId;
-    void dto.token.replace(VERIFY_TOKEN_PREFIX, "");
-    return { message: "Email verification scaffold — wire token lookup before production" };
+  verifyEmail(_tenantId: string, dto: VerifyEmailDto, metadata?: VerificationMetadata) {
+    return this.verificationService.verifyEmail(dto.token, metadata);
   }
 
-  async forgotPassword(tenantId: string, dto: ForgotPasswordDto) {
-    const user = await this.usersService.findByEmail(tenantId, dto.email);
-    if (user) {
-      const token = generateToken(24);
-      await this.emailService.sendPasswordResetEmail({ tenantId, email: user.email, token });
-    }
-    return { message: "If the account exists, a reset link has been sent" };
+  forgotPassword(tenantId: string, dto: ForgotPasswordDto, metadata?: PasswordRequestMetadata) {
+    return this.passwordService.requestReset(tenantId, dto.email, metadata);
   }
 
-  async resetPassword(tenantId: string, dto: ResetPasswordDto, correlationId?: string) {
-    void tenantId;
-    void dto;
-    void correlationId;
-    return { message: "Password reset scaffold — wire token validation before production" };
+  resetPassword(_tenantId: string, dto: ResetPasswordDto, metadata?: PasswordRequestMetadata) {
+    return this.passwordService.resetPassword(dto.token, dto.newPassword, metadata);
   }
 }

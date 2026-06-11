@@ -1,4 +1,5 @@
 import type { SecurityRole } from "@ordella/security";
+import { PERMISSIONS, roleHasPermission } from "./auth/permissions";
 import { DASHBOARD_ROUTES } from "./constants";
 import { getPortalForRoles, mapAuthRoleToPortalRole } from "./auth/roleRedirect";
 
@@ -37,9 +38,27 @@ export function hasRole(userRoles: PortalRole[], required: PortalRole | PortalRo
   return requiredRoles.some((role) => userRoles.includes(role));
 }
 
-export function hasPermission(userPermissions: string[], permission: string | string[]): boolean {
+export function hasPermission(
+  userPermissions: string[],
+  permission: string | string[],
+  userRole?: string,
+): boolean {
   const required = Array.isArray(permission) ? permission : [permission];
-  return required.every((entry) => userPermissions.includes(entry));
+
+  if (required.every((entry) => userPermissions.includes(entry))) {
+    return true;
+  }
+
+  if (!userRole) {
+    return false;
+  }
+
+  return required.every((entry) => {
+    if (!(entry in PERMISSIONS)) {
+      return false;
+    }
+    return roleHasPermission(userRole, entry as keyof typeof PERMISSIONS);
+  });
 }
 
 export function canAccessRoute(pathname: string, roles: PortalRole[]): boolean {

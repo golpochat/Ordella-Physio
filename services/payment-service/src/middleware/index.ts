@@ -6,7 +6,9 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
+  createTenantStatusMiddleware,
 } from "@ordella/middleware";
 import {
   createMetricsRegistry,
@@ -21,8 +23,16 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "payment-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+export const PaymentServiceDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: ["/payments/health"],
+});
+
 export const PaymentServiceTenantMiddleware = createTenantMiddleware({
   required: true,
+  skipPaths: ["/payments/health"],
+});
+
+export const PaymentServiceTenantStatusMiddleware = createTenantStatusMiddleware({
   skipPaths: ["/payments/health"],
 });
 
@@ -62,7 +72,9 @@ export function configurePaymentMiddleware(consumer: MiddlewareConsumer): void {
       PaymentServiceRequestMetricsMiddleware,
       PaymentServiceRequestTracingMiddleware,
       PaymentServiceRateLimitMiddleware,
+      PaymentServiceDomainResolverMiddleware,
       PaymentServiceTenantMiddleware,
+      PaymentServiceTenantStatusMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

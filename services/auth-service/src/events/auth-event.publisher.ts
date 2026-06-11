@@ -3,6 +3,7 @@ import { createEventBus, type EventBus, toSubject } from "@ordella/event-bus";
 import { AUTH_EVENTS } from "@/constants";
 import type { UserLoggedInEvent } from "@/auth/events/user-logged-in.event";
 import type { UserPasswordResetEvent } from "@/auth/events/user-password-reset.event";
+import type { UserPasswordResetRequestedEvent } from "@/auth/events/user-password-reset-requested.event";
 import type { UserRegisteredEvent } from "@/auth/events/user-registered.event";
 
 @Injectable()
@@ -40,5 +41,9 @@ export class AuthEventPublisher implements OnModuleInit, OnModuleDestroy {
 
   async publishUserPasswordReset(event: UserPasswordResetEvent, correlationId?: string) {
     await this.publish(AUTH_EVENTS.USER_PASSWORD_RESET, event.tenantId, event, correlationId);
+  }
+
+  async publishUserPasswordResetRequested(event: UserPasswordResetRequestedEvent, correlationId?: string) {
+    await this.publish(AUTH_EVENTS.USER_PASSWORD_RESET_REQUESTED, event.tenantId, event, correlationId);
   }
 }

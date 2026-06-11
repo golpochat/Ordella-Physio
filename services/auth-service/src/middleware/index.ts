@@ -5,6 +5,7 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
 } from "@ordella/middleware";
 import {
@@ -17,9 +18,14 @@ import {
 import type { MiddlewareConsumer } from "@nestjs/common";
 import { RequestMethod } from "@nestjs/common";
 import { AuthJwtPreflightMiddleware } from "@/middleware/jwt-preflight.middleware";
+import { AuditContextMiddleware } from "@/middleware/audit.middleware";
 
 const metricsRegistry = createMetricsRegistry({ serviceName: "auth-service" });
 setDefaultMetricsRegistry(metricsRegistry);
+
+export const AuthDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: ["/auth/health"],
+});
 
 export const AuthTenantMiddleware = createTenantMiddleware({
   required: true,
@@ -45,17 +51,23 @@ export const AuthRateLimitMiddleware = createRateLimitMiddleware({
   skipPaths: ["/auth/health"],
 });
 
+export { requireRole, requireTenantMatch } from "@/middleware/role.middleware";
+export { requirePermission } from "@/middleware/permission.middleware";
+export { resolveRequestUser } from "@/middleware/request-user";
+
 export function configureAuthMiddleware(consumer: MiddlewareConsumer): void {
   consumer
     .apply(
       createHelmetMiddleware(),
       createCorsMiddleware({ origin: process.env.CORS_ORIGIN ?? "*", credentials: true }),
       CorrelationIdMiddleware,
+      AuditContextMiddleware,
       RequestLoggerMiddleware,
       AuthRequestLoggingMiddleware,
       AuthRequestMetricsMiddleware,
       AuthRequestTracingMiddleware,
       AuthRateLimitMiddleware,
+      AuthDomainResolverMiddleware,
       AuthJwtPreflightMiddleware,
       AuthTenantMiddleware,
       SanitizeMiddleware,

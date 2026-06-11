@@ -17,6 +17,10 @@ import { StaffModule } from "@/staff/staff.module";
 import { BrandingModule } from "@/branding/branding.module";
 import { SubscriptionModule } from "@/subscription/subscription.module";
 import { EventsModule } from "@/events/events.module";
+import { TenantService } from "@/tenants/services/tenant.service";
+import { TenantOrganizationService } from "@/tenants/services/tenant-organization.service";
+import { AuthUsersClient } from "@/integrations/auth-users.client";
+import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repository";
 
 @Module({
   imports: [
@@ -40,6 +44,10 @@ import { EventsModule } from "@/events/events.module";
     JwtStrategy,
     JwtGuard,
     TenantMatchGuard,
+    TenantService,
+    TenantOrganizationService,
+    AuthUsersClient,
+    TenantDomainRepository,
   ],
   exports: [TenantsService, TenantsRepository],
 })

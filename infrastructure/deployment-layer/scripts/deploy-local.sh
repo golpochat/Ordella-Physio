@@ -16,6 +16,10 @@ echo "Starting Ordella Physio local stack..."
 docker compose -f docker-compose.local.yml up -d --build
 
 echo ""
+echo "Running database migrations..."
+node "${SCRIPT_DIR}/migrate-local-databases.mjs"
+
+echo ""
 echo "Local stack is up."
 echo "  API Gateway:  http://localhost:${API_GATEWAY_PORT:-3049}"
 echo "  Frontend Web: http://localhost:${FRONTEND_WEB_PORT:-3010}"

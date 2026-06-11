@@ -1,3 +1,3 @@
-import type { UpdateTenantInput } from "@ordella/validation";
+import type { UpdateTenantPayload } from "@/models/Tenant";
 
-export type UpdateTenantDto = UpdateTenantInput;
+export type UpdateTenantDto = UpdateTenantPayload;

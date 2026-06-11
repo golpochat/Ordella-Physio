@@ -9,6 +9,11 @@ import type {
   ClinicPatientListResponse,
   ClinicProfile,
   ClinicStaffMember,
+  CreateClinicLocationPayload,
+  CreateClinicLocationResponse,
+  UpdateClinicLocationPayload,
+  UpdateClinicLocationResponse,
+  ClinicLocationStatusActionResponse,
   ClinicLocation,
   ClinicStripeInvoice,
   ClinicStripeSubscription,
@@ -17,8 +22,28 @@ import type {
   CreateClinicAppointmentPayload,
   CreateClinicPatientPayload,
   CreateClinicStaffPayload,
+  CreateClinicUserPayload,
+  CreateClinicUserResponse,
+  ClinicUser,
+  ClinicUserListFilters,
+  ClinicUserListResponse,
+  ClinicLocationListFilters,
+  ClinicLocationListResponse,
+  ClinicLocationConfigNamespacesResponse,
+  ClinicLocationConfigRecord,
+  ClinicLocationConfigNamespace,
+  UpdateClinicLocationConfigResponse,
+  UpdateClinicUserPayload,
+  UpdateClinicUserResponse,
+  ChangeClinicUserRolePayload,
+  ChangeClinicUserRoleResponse,
   UpdateClinicPatientPayload,
   UpdateClinicProfilePayload,
+  UpdateUserProfilePayload,
+  UpdateUserProfileResponse,
+  UploadAvatarResponse,
+  RemoveAvatarResponse,
+  UserProfile,
   UpdateClinicStaffRolePayload,
 } from "@/lib/clinic-portal-types";
 
@@ -85,8 +110,63 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       return api.post<ClinicAppointment>("appointment", "", payload);
     },
 
-    listLocations() {
-      return api.get<ClinicLocation[]>("tenant", `/${tenantId}/locations`);
+    listLocations(params?: ClinicLocationListFilters) {
+      return api.get<ClinicLocationListResponse>("tenant", `/${tenantId}/locations`, {
+        params,
+        unwrapData: false,
+      });
+    },
+
+    createLocation(payload: CreateClinicLocationPayload) {
+      return api.post<CreateClinicLocationResponse>("tenant", `/${tenantId}/locations`, payload);
+    },
+
+    getLocation(locationId: string) {
+      return api.get<ClinicLocation>("tenant", `/${tenantId}/locations/${locationId}`);
+    },
+
+    updateLocation(locationId: string, payload: UpdateClinicLocationPayload) {
+      return api.put<UpdateClinicLocationResponse>(
+        "tenant",
+        `/${tenantId}/locations/${locationId}`,
+        payload,
+      );
+    },
+
+    deactivateLocation(locationId: string) {
+      return api.post<ClinicLocationStatusActionResponse>(
+        "tenant",
+        `/${tenantId}/locations/${locationId}/deactivate`,
+      );
+    },
+
+    activateLocation(locationId: string) {
+      return api.post<ClinicLocationStatusActionResponse>(
+        "tenant",
+        `/${tenantId}/locations/${locationId}/activate`,
+      );
+    },
+
+    listLocationConfigNamespaces(locationId: string) {
+      return api.get<ClinicLocationConfigNamespacesResponse>(
+        "tenant",
+        `/${tenantId}/locations/${locationId}/config`,
+      );
+    },
+
+    getLocationConfig(locationId: string, namespace: ClinicLocationConfigNamespace) {
+      return api.get<ClinicLocationConfigRecord>(
+        "tenant",
+        `/${tenantId}/locations/${locationId}/config/${namespace}`,
+      );
+    },
+
+    updateLocationConfig(locationId: string, namespace: ClinicLocationConfigNamespace, data: unknown) {
+      return api.put<UpdateClinicLocationConfigResponse>(
+        "tenant",
+        `/${tenantId}/locations/${locationId}/config/${namespace}`,
+        { data },
+      );
     },
 
     listBilling() {
@@ -127,12 +207,65 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       return api.get<ClinicNote>("notes", `/${id}`);
     },
 
-    getProfile() {
-      return api.get<ClinicProfile>("auth", "/me");
+    listUsers(params?: ClinicUserListFilters) {
+      return api.get<ClinicUserListResponse>("auth", "/users", {
+        params,
+        unwrapData: false,
+      });
     },
 
-    updateProfile(payload: UpdateClinicProfilePayload) {
-      return api.patch<ClinicProfile>("auth", "/me", payload);
+    createUser(payload: CreateClinicUserPayload) {
+      return api.post<CreateClinicUserResponse>("auth", "/users", payload);
+    },
+
+    getUser(id: string) {
+      return api.get<ClinicUser>("auth", `/users/${id}`);
+    },
+
+    updateUser(id: string, payload: UpdateClinicUserPayload) {
+      return api.put<UpdateClinicUserResponse>("auth", `/users/${id}`, payload);
+    },
+
+    disableUser(id: string) {
+      return api.post<UpdateClinicUserResponse>("auth", `/users/${id}/disable`);
+    },
+
+    activateUser(id: string) {
+      return api.post<UpdateClinicUserResponse>("auth", `/users/${id}/activate`);
+    },
+
+    resetUserPassword(id: string, password: string) {
+      return api.post<{ message: string }>("auth", `/users/${id}/reset-password`, { password });
+    },
+
+    changeUserRole(id: string, payload: ChangeClinicUserRolePayload) {
+      return api.post<ChangeClinicUserRoleResponse>("auth", `/users/${id}/change-role`, payload);
+    },
+
+    changePassword(payload: {
+      currentPassword: string;
+      newPassword: string;
+      confirmPassword: string;
+    }) {
+      return api.post<{ message: string }>("auth", "/users/change-password", payload);
+    },
+
+    getProfile() {
+      return api.get<UserProfile>("auth", "/users/me");
+    },
+
+    updateProfile(payload: UpdateUserProfilePayload) {
+      return api.put<UpdateUserProfileResponse>("auth", "/users/me", payload);
+    },
+
+    uploadAvatar(file: File) {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      return api.postForm<UploadAvatarResponse>("auth", "/users/me/avatar", formData);
+    },
+
+    removeAvatar() {
+      return api.delete<RemoveAvatarResponse>("auth", "/users/me/avatar");
     },
   };
 }
@@ -145,4 +278,37 @@ export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[]
 
 export function normalizeStaffList(response: ClinicStaffMember[] | undefined): ClinicStaffMember[] {
   return response ?? [];
+}
+
+export function normalizeUserList(
+  response: ClinicUser[] | ClinicUserListResponse | { data: ClinicUser[] } | undefined,
+): ClinicUser[] {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  return response.data ?? [];
+}
+
+export function normalizeUserListResponse(
+  response: ClinicUserListResponse | ClinicUser[] | undefined,
+): ClinicUserListResponse {
+  if (!response) {
+    return {
+      data: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+    };
+  }
+
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      pagination: {
+        page: 1,
+        limit: response.length,
+        total: response.length,
+        totalPages: response.length > 0 ? 1 : 0,
+      },
+    };
+  }
+
+  return response;
 }

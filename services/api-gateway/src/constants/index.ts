@@ -41,7 +41,8 @@ export type ServiceEnvKey =
   | "NOTIFICATION_SERVICE_URL"
   | "AI_NOTES_SERVICE_URL"
   | "MARKETPLACE_SERVICE_URL"
-  | "ENTERPRISE_SERVICE_URL";
+  | "ENTERPRISE_SERVICE_URL"
+  | "ORGANIZATION_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -134,6 +135,12 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     envKey: "ENTERPRISE_SERVICE_URL",
     healthPath: "/enterprise/health",
     defaultUrl: "http://enterprise-service:3065",
+  },
+  {
+    name: "organization",
+    envKey: "ORGANIZATION_SERVICE_URL",
+    healthPath: "/organizations/health",
+    defaultUrl: "http://organization-service:3066",
   },
 ];
 

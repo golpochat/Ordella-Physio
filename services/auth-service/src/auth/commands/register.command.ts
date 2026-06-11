@@ -6,6 +6,7 @@ import { EmailService } from "@/email/email.service";
 import { AuthEventPublisher } from "@/events/auth-event.publisher";
 import { createUserRegisteredEvent } from "@/auth/events/user-registered.event";
 import { DEFAULT_USER_ROLE } from "@/constants";
+import { generateEmailVerificationToken } from "@/utils/token";
 
 export type RegisterCommandInput = {
   tenantId: string;
@@ -45,10 +46,16 @@ export class RegisterCommand {
       role,
     });
 
+    const verificationToken = generateEmailVerificationToken({
+      userId: user.id,
+      tenantId: user.tenantId,
+      email: user.email,
+    });
+
     await this.emailService.sendVerificationEmail({
       tenantId: input.tenantId,
       email: user.email,
-      token: user.verificationToken ?? "",
+      token: verificationToken,
     });
 
     await this.eventPublisher.publishUserRegistered(

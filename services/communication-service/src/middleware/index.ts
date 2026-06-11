@@ -6,7 +6,9 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
+  createTenantStatusMiddleware,
 } from "@ordella/middleware";
 import {
   createMetricsRegistry,
@@ -21,8 +23,16 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "communication-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+export const CommunicationServiceDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: ["/communication/health"],
+});
+
 export const CommunicationServiceTenantMiddleware = createTenantMiddleware({
   required: true,
+  skipPaths: ["/communication/health"],
+});
+
+export const CommunicationServiceTenantStatusMiddleware = createTenantStatusMiddleware({
   skipPaths: ["/communication/health"],
 });
 
@@ -62,7 +72,9 @@ export function configureCommunicationMiddleware(consumer: MiddlewareConsumer): 
       CommunicationServiceRequestMetricsMiddleware,
       CommunicationServiceRequestTracingMiddleware,
       CommunicationServiceRateLimitMiddleware,
+      CommunicationServiceDomainResolverMiddleware,
       CommunicationServiceTenantMiddleware,
+      CommunicationServiceTenantStatusMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

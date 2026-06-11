@@ -21,40 +21,160 @@ enum SubscriptionPlan {
   ENTERPRISE
 }
 
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum NumberFormat {
+  EU
+  US
+}
+
+enum DomainType {
+  PRIMARY
+  CUSTOM
+}
+
 model Tenant {
   id                   String              @id @default(cuid())
   name                 String
+  code                 String              @unique
   slug                 String              @unique
+  ownerUserId          String?
   timezone             String              @default("UTC")
   currency             String              @default("GBP")
   address              String?
   phone                String?
   stripeCustomerId     String?             @unique
   homeRegion           String              @default("eu-west")
+  status               TenantStatus        @default(ACTIVE)
   isActive             Boolean             @default(true)
+  organizationId       String?
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
   locations    Location[]
   staff        Staff[]
-  branding     TenantBranding?
-  subscription TenantSubscription?
+  branding        TenantBranding?
+  subscription    TenantSubscription?
+  billingSettings TenantBillingSettings?
+  localization    TenantLocalization?
+  domains         TenantDomain[]
+  configs         TenantConfig[]
 
+  @@index([ownerUserId])
+  @@index([organizationId])
   @@map("tenants")
 }
 
-model Location {
-  id         String   @id @default(cuid())
-  tenantId   String
-  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  name       String
-  address    String?
-  phone      String?
-  isArchived Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model TenantConfig {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  namespace       String
+  data            Json
+  updatedByUserId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([tenantId, namespace])
+  @@index([tenantId])
+  @@map("tenant_configs")
+}
+
+model TenantDomain {
+  id                 String     @id @default(cuid())
+  tenantId           String
+  tenant             Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  domain             String     @unique
+  type               DomainType
+  verificationToken  String
+  verified           Boolean    @default(false)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
   @@index([tenantId])
+  @@map("tenant_domains")
+}
+
+model TenantLocalization {
+  id           String       @id @default(cuid())
+  tenantId     String       @unique
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  timezone     String       @default("UTC")
+  currency     String       @default("USD")
+  dateFormat   String       @default("YYYY-MM-DD")
+  timeFormat   String       @default("HH:mm")
+  numberFormat NumberFormat @default(US)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@map("tenant_localization")
+}
+
+model TenantBillingSettings {
+  id                  String   @id @default(cuid())
+  tenantId            String   @unique
+  tenant              Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  billingEmail        String
+  billingContactName  String
+  billingAddressLine1 String
+  billingAddressLine2 String?
+  billingCity         String
+  billingPostcode     String
+  billingCountry      String
+  taxNumber           String?
+  invoicePrefix       String?
+  defaultCurrency     String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("tenant_billing_settings")
+}
+
+enum LocationStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Location {
+  id            String         @id @default(cuid())
+  tenantId      String
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name          String
+  code          String
+  addressLine1  String
+  addressLine2  String?
+  city          String
+  state         String?
+  postalCode    String
+  country       String
+  phone         String?
+  email         String?
+  timezone      String
+  status        LocationStatus @default(ACTIVE)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  configs       LocationConfig[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
   @@map("locations")
+}
+
+model LocationConfig {
+  id              String   @id @default(cuid())
+  locationId      String
+  location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  namespace       String
+  data            Json
+  updatedByUserId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([locationId, namespace])
+  @@index([locationId])
+  @@map("location_configs")
 }
 
 model Staff {

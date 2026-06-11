@@ -131,6 +131,14 @@ export class AppointmentsController {
     return this.appointmentsService.updateBlockedSlot(tenantId, id, dto);
   }
 
+  @Get("internal/locations/:locationId/has-active")
+  hasActiveAppointmentsByLocation(
+    @Query("tenantId") tenantId: string,
+    @Param("locationId") locationId: string,
+  ) {
+    return this.appointmentsService.hasActiveAppointmentsForLocation(tenantId, locationId);
+  }
+
   @Get(":id")
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("appointment.read")

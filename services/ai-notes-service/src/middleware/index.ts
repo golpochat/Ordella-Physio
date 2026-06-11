@@ -6,7 +6,9 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
+  createTenantStatusMiddleware,
 } from "@ordella/middleware";
 import {
   createMetricsRegistry,
@@ -21,8 +23,16 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "ai-notes-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+export const AiNotesDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: ["/ai/health"],
+});
+
 export const AiNotesTenantMiddleware = createTenantMiddleware({
   required: true,
+  skipPaths: ["/ai/health"],
+});
+
+export const AiNotesTenantStatusMiddleware = createTenantStatusMiddleware({
   skipPaths: ["/ai/health"],
 });
 
@@ -62,7 +72,9 @@ export function configureAiNotesMiddleware(consumer: MiddlewareConsumer): void {
       AiNotesRequestMetricsMiddleware,
       AiNotesRequestTracingMiddleware,
       AiNotesRateLimitMiddleware,
+      AiNotesDomainResolverMiddleware,
       AiNotesTenantMiddleware,
+      AiNotesTenantStatusMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

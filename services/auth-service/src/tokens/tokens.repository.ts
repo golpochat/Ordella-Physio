@@ -9,11 +9,22 @@ export class TokensRepository {
     userId: string;
     sessionId: string;
     tokenHash: string;
+    jti: string;
     expiresAt: Date;
     deviceInfo?: string;
     ipAddress?: string;
   }) {
-    return this.db.refreshToken.create({ data });
+    return this.db.refreshToken.create({
+      data: {
+        userId: data.userId,
+        sessionId: data.sessionId,
+        tokenHash: data.tokenHash,
+        jti: data.jti,
+        expiresAt: data.expiresAt,
+        deviceInfo: data.deviceInfo,
+        ipAddress: data.ipAddress,
+      },
+    });
   }
 
   findByTokenHash(tokenHash: string) {
@@ -23,10 +34,23 @@ export class TokensRepository {
     });
   }
 
-  revokeByTokenHash(tokenHash: string) {
+  revokeByTokenHash(tokenHash: string, replacedByTokenId?: string) {
     return this.db.refreshToken.update({
       where: { tokenHash },
-      data: { revokedAt: new Date() },
+      data: {
+        revokedAt: new Date(),
+        ...(replacedByTokenId ? { replacedByTokenId } : {}),
+      },
+    });
+  }
+
+  revokeById(id: string, replacedByTokenId?: string) {
+    return this.db.refreshToken.update({
+      where: { id },
+      data: {
+        revokedAt: new Date(),
+        ...(replacedByTokenId ? { replacedByTokenId } : {}),
+      },
     });
   }
 
@@ -35,9 +59,5 @@ export class TokensRepository {
       where: { userId, revokedAt: null },
       data: { revokedAt: new Date() },
     });
-  }
-
-  deleteById(id: string) {
-    return this.db.refreshToken.delete({ where: { id } });
   }
 }

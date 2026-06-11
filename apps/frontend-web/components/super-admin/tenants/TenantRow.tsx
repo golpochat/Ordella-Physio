@@ -18,7 +18,7 @@ export function TenantRow({ tenant }: TenantRowProps) {
       <p className="dashboard-cell-primary">{name}</p>
       <p className="dashboard-cell-muted">{slug}</p>
       <p className="dashboard-cell-muted">{locale}</p>
-      <TenantStatusBadge isActive={tenant?.isActive} />
+      <TenantStatusBadge status={tenant?.status} isActive={tenant?.isActive} />
       {tenantId ? (
         <Link href={`/super-admin/tenants/${tenantId}`} className="dashboard-link">
           Manage tenant

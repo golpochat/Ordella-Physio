@@ -24,13 +24,19 @@ model User {
   passwordHash      String
   firstName         String?
   lastName          String?
+  phone             String?
+  avatarUrl         String?
   role              Role      @default(STAFF)
   isActive          Boolean   @default(true)
   emailVerified     Boolean   @default(false)
   verificationToken String?
+  mfaEnabled        Boolean   @default(false)
+  mfaSecret         String?
+  tokenVersion      Int       @default(0)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   refreshTokens     RefreshToken[]
+  auditLogs         AuditLog[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -38,17 +44,40 @@ model User {
 }
 
 model RefreshToken {
-  id           String   @id @default(cuid())
-  sessionId    String   @unique @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash    String   @unique
-  expiresAt    DateTime
-  deviceInfo   String?
-  ipAddress    String?
-  revokedAt    DateTime?
-  createdAt    DateTime @default(now())
+  id                String        @id @default(cuid())
+  sessionId         String        @unique @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash         String        @unique
+  jti               String?
+  expiresAt         DateTime
+  deviceInfo        String?
+  ipAddress         String?
+  revokedAt         DateTime?
+  replacedByTokenId String?
+  replacedByToken   RefreshToken? @relation("RefreshTokenRotation", fields: [replacedByTokenId], references: [id], onDelete: SetNull)
+  replacedTokens    RefreshToken[] @relation("RefreshTokenRotation")
+  createdAt         DateTime      @default(now())
 
   @@index([userId])
+  @@index([jti])
   @@map("refresh_tokens")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tenantId  String?
+  action    String
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([tenantId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

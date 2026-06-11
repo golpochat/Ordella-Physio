@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
-import { PlatformTenantCreateForm } from "@/components/super-admin-portal/tenant-create-form";
+import { TenantCreateForm } from "@/components/tenants/TenantCreateForm";
 
 export default function SuperAdminTenantCreatePage() {
   return (
@@ -15,7 +15,7 @@ export default function SuperAdminTenantCreatePage() {
           </Button>
         }
       />
-      <PlatformTenantCreateForm />
+      <TenantCreateForm />
     </>
   );
 }

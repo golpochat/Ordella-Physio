@@ -69,6 +69,15 @@ export class AppointmentsService {
     return appointment ? toAppointmentResponse(appointment) : null;
   }
 
+  async hasActiveAppointmentsForLocation(tenantId: string, locationId: string) {
+    const count = await this.appointmentsRepository.countActiveByLocation(tenantId, locationId);
+
+    return {
+      hasActive: count > 0,
+      count,
+    };
+  }
+
   update(tenantId: string, appointmentId: string, dto: UpdateAppointmentDto, correlationId?: string) {
     return this.updateAppointmentCommand.execute({ tenantId, appointmentId, dto, correlationId });
   }

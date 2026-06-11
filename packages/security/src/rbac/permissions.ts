@@ -25,6 +25,8 @@ export const PERMISSIONS = {
   ENTERPRISE_READ: "enterprise.read",
   ENTERPRISE_WRITE: "enterprise.write",
   ENTERPRISE_MANAGE: "enterprise.manage",
+  ORGANIZATION_MANAGE: "organization.manage",
+  LOCATION_MANAGE: "location.manage",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

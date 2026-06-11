@@ -1,3 +1,84 @@
+export type ClinicUserListFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  status?: "ACTIVE" | "DISABLED";
+  sortBy?: "createdAt" | "firstName" | "lastName" | "email" | "role";
+  sortOrder?: "asc" | "desc";
+};
+
+export type ClinicUserListResponse = {
+  data: ClinicUser[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export type ClinicUser = {
+  id: string;
+  tenantId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  avatarUrl?: string;
+  role: string;
+  status: "ACTIVE" | "DISABLED";
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateClinicUserPayload = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role: string;
+  password: string;
+};
+
+export type CreateClinicUserResponse = {
+  user: ClinicUser;
+  message: string;
+};
+
+export type UpdateClinicUserPayload = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string | null;
+  role?: string;
+  status?: "ACTIVE" | "DISABLED";
+};
+
+export type UpdateClinicUserResponse = {
+  user: ClinicUser;
+  message: string;
+};
+
+export type ChangePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export type PasswordMessageResponse = {
+  message: string;
+};
+
+export type ChangeClinicUserRolePayload = {
+  role: string;
+};
+
+export type ChangeClinicUserRoleResponse = {
+  user: ClinicUser;
+  message: string;
+};
+
 export type ClinicStaffMember = {
   id: string;
   tenantId: string;
@@ -86,19 +167,45 @@ export type ClinicNoteListResponse = {
   meta: { page: number; limit: number; total: number; totalPages: number };
 };
 
-export type ClinicProfile = {
+export type UserProfile = {
   id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
   tenantId: string;
-  role?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  avatarUrl?: string;
+  role: string;
+  status: "ACTIVE" | "DISABLED";
+  createdAt: string;
+  updatedAt: string;
 };
 
-export type UpdateClinicProfilePayload = {
+export type ClinicProfile = UserProfile;
+
+export type UpdateUserProfilePayload = {
   firstName?: string;
   lastName?: string;
-  email?: string;
+  phone?: string | null;
+  avatarUrl?: string | null;
+};
+
+export type UpdateClinicProfilePayload = UpdateUserProfilePayload;
+
+export type UpdateUserProfileResponse = {
+  user: UserProfile;
+  message: string;
+};
+
+export type UploadAvatarResponse = {
+  avatarUrl: string;
+  user: UserProfile;
+  message: string;
+};
+
+export type RemoveAvatarResponse = {
+  user: UserProfile;
+  message: string;
 };
 
 export type CreateClinicPatientPayload = {
@@ -135,11 +242,141 @@ export type ClinicLocation = {
   id: string;
   tenantId: string;
   name: string;
-  address: string | null;
+  code: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  city: string;
+  state: string | null;
+  postalCode: string;
+  country: string;
   phone: string | null;
-  isArchived: boolean;
+  email: string | null;
+  timezone: string;
+  status: "ACTIVE" | "INACTIVE";
   createdAt: string;
   updatedAt: string;
+};
+
+export type CreateClinicLocationPayload = {
+  name: string;
+  code: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state?: string;
+  postalCode: string;
+  country: string;
+  phone?: string;
+  email?: string;
+  timezone: string;
+};
+
+export type CreateClinicLocationResponse = {
+  location: ClinicLocation;
+  message: string;
+};
+
+export type UpdateClinicLocationPayload = {
+  name?: string;
+  code?: string;
+  addressLine1?: string;
+  addressLine2?: string | null;
+  city?: string;
+  state?: string | null;
+  postalCode?: string;
+  country?: string;
+  phone?: string | null;
+  email?: string | null;
+  timezone?: string;
+  status?: "ACTIVE" | "INACTIVE";
+};
+
+export type UpdateClinicLocationResponse = {
+  location: ClinicLocation;
+  message: string;
+};
+
+export type ClinicLocationStatusActionResponse = {
+  location: ClinicLocation;
+  message: string;
+};
+
+export type ClinicLocationListFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "ACTIVE" | "INACTIVE";
+  sortBy?: "createdAt" | "name" | "code" | "city" | "status";
+  sortOrder?: "asc" | "desc";
+};
+
+export type ClinicLocationListResponse = {
+  data: ClinicLocation[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export type ClinicLocationConfigNamespace =
+  | "branding"
+  | "operations"
+  | "features"
+  | "integrations";
+
+export type ClinicLocationOpeningHoursEntry = {
+  day: string;
+  open: string;
+  close: string;
+};
+
+export type ClinicLocationBrandingConfig = {
+  primaryColor: string;
+  logoUrl?: string | null;
+  darkMode: boolean;
+};
+
+export type ClinicLocationOperationsConfig = {
+  openingHours: ClinicLocationOpeningHoursEntry[];
+  maxDailyAppointments: number;
+  allowWalkIns: boolean;
+};
+
+export type ClinicLocationFeaturesConfig = {
+  enableKioskCheckIn: boolean;
+  enableQueueManagement: boolean;
+  enableInventoryTracking: boolean;
+};
+
+export type ClinicLocationIntegrationsConfig = {
+  posDeviceId?: string | null;
+  printerIp?: string | null;
+  iotGatewayUrl?: string | null;
+};
+
+export type ClinicLocationConfigRecord = {
+  namespace: ClinicLocationConfigNamespace;
+  data: Record<string, unknown>;
+  updatedAt: string | null;
+  updatedByUserId: string | null;
+  isDefault: boolean;
+};
+
+export type ClinicLocationConfigNamespaceSummary = {
+  namespace: ClinicLocationConfigNamespace;
+  updatedAt: string | null;
+  isDefault: boolean;
+};
+
+export type ClinicLocationConfigNamespacesResponse = {
+  namespaces: ClinicLocationConfigNamespaceSummary[];
+};
+
+export type UpdateClinicLocationConfigResponse = {
+  config: ClinicLocationConfigRecord;
+  message: string;
 };
 
 export type CreateClinicAppointmentPayload = {

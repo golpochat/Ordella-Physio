@@ -1,5 +1,6 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import type { AuthenticatedTenantUser } from "@/utils/tenant-helpers";
+import { tenantMismatchError } from "@/utils/tenant-errors";
 
 @Injectable()
 export class TenantMatchGuard implements CanActivate {
@@ -25,7 +26,7 @@ export class TenantMatchGuard implements CanActivate {
     }
 
     if (user.tenantId !== routeTenantId) {
-      throw new ForbiddenException("Tenant access denied");
+      throw tenantMismatchError();
     }
 
     return true;

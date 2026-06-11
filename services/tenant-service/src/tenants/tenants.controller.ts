@@ -5,39 +5,42 @@ import {
   Get,
   Param,
   Patch,
+  Put,
   Post,
   Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
 import {
-  createLocationSchema,
   createStaffSchema,
-  createTenantSchema,
-  updateLocationSchema,
   updateStaffRoleSchema,
   updateTenantSchema,
   UseZodValidation,
 } from "@ordella/validation";
-import { RequireRoles, RoleGuard, TenantGuard } from "@ordella/security";
+import { PERMISSIONS, PermissionGuard, RequirePermissions, RequireRoles, RoleGuard, TenantGuard } from "@ordella/security";
 import type { OrdellaRequest } from "@ordella/middleware";
 import { TenantsService } from "@/tenants/tenants.service";
+import { TenantService } from "@/tenants/services/tenant.service";
+import { TenantOrganizationService } from "@/tenants/services/tenant-organization.service";
+import type { CreateTenantPayload, UpdateTenantPayload } from "@/models/Tenant";
 import { JwtGuard } from "@/tenants/guards/jwt.guard";
 import { TenantMatchGuard } from "@/tenants/guards/tenant-match.guard";
 import { CurrentUser } from "@/tenants/guards/current-user.decorator";
-import type { CreateTenantDto } from "@/tenants/dto/create-tenant.dto";
 import type { UpdateTenantDto } from "@/tenants/dto/update-tenant.dto";
-import type { CreateLocationDto } from "@/tenants/dto/create-location.dto";
-import type { UpdateLocationDto } from "@/tenants/dto/update-location.dto";
 import type { CreateStaffDto } from "@/tenants/dto/create-staff.dto";
 import type { UpdateStaffRoleDto } from "@/tenants/dto/update-staff-role.dto";
 import type { UpdateBrandingDto } from "@/branding/dto/update-branding.dto";
 import type { UpdatePlanDto } from "@/subscription/dto/update-plan.dto";
 import type { AuthenticatedTenantUser } from "@/utils/tenant-helpers";
+import { tenantNotFoundError } from "@/utils/tenant-errors";
 
 @Controller("tenants")
 export class TenantsController {
-  constructor(private readonly tenantsService: TenantsService) {}
+  constructor(
+    private readonly tenantsService: TenantsService,
+    private readonly tenantService: TenantService,
+    private readonly tenantOrganizationService: TenantOrganizationService,
+  ) {}
 
   @Get("health")
   health() {
@@ -45,11 +48,14 @@ export class TenantsController {
   }
 
   @Post()
-  @UseGuards(JwtGuard, RoleGuard)
-  @RequireRoles("SYSTEM", "OWNER", "ADMIN")
-  @UseZodValidation(createTenantSchema)
-  create(@Body() dto: CreateTenantDto, @Req() request: OrdellaRequest) {
-    return this.tenantsService.create(dto, request.correlationId);
+  @UseGuards(JwtGuard, PermissionGuard)
+  @RequirePermissions(PERMISSIONS.TENANT_MANAGE)
+  create(
+    @Body() dto: CreateTenantPayload,
+    @CurrentUser() user: AuthenticatedTenantUser,
+    @Req() request: OrdellaRequest,
+  ) {
+    return this.tenantService.createTenant(dto, user, request.correlationId);
   }
 
   @Get("directory")
@@ -81,10 +87,80 @@ export class TenantsController {
     return this.tenantsService.getHomeRegion(id);
   }
 
+  @Get("internal/status/:id")
+  async resolveTenantStatus(@Param("id") id: string) {
+    const status = await this.tenantsService.getTenantStatus(id);
+    if (!status) {
+      throw tenantNotFoundError();
+    }
+
+    return status;
+  }
+
+  @Get("internal/organization-tenants/:organizationId")
+  listOrganizationTenants(@Param("organizationId") organizationId: string) {
+    return this.tenantOrganizationService.listByOrganizationId(organizationId);
+  }
+
+  @Get("internal/unassigned-tenants")
+  listUnassignedTenants() {
+    return this.tenantOrganizationService.listUnassigned();
+  }
+
+  @Get("internal/organization-tenant/:tenantId")
+  async getOrganizationTenant(@Param("tenantId") tenantId: string) {
+    const tenant = await this.tenantOrganizationService.getTenantForOrganizationLink(tenantId);
+    if (!tenant) {
+      throw tenantNotFoundError();
+    }
+
+    return tenant;
+  }
+
+  @Patch("internal/organization-tenant/:tenantId")
+  setTenantOrganization(
+    @Param("tenantId") tenantId: string,
+    @Body() body: { organizationId: string | null },
+  ) {
+    return this.tenantOrganizationService.setOrganizationId(tenantId, body.organizationId ?? null);
+  }
+
   @Get(":id")
   @UseGuards(JwtGuard, TenantMatchGuard)
   findById(@Param("id") id: string) {
     return this.tenantsService.findById(id);
+  }
+
+  @Post(":id/suspend")
+  @UseGuards(JwtGuard, TenantMatchGuard, PermissionGuard)
+  @RequirePermissions(PERMISSIONS.TENANT_MANAGE)
+  suspendTenant(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthenticatedTenantUser,
+  ) {
+    return this.tenantService.suspendTenant(id, user);
+  }
+
+  @Post(":id/reactivate")
+  @UseGuards(JwtGuard, TenantMatchGuard, PermissionGuard)
+  @RequirePermissions(PERMISSIONS.TENANT_MANAGE)
+  reactivateTenant(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthenticatedTenantUser,
+  ) {
+    return this.tenantService.reactivateTenant(id, user);
+  }
+
+  @Put(":id")
+  @UseGuards(JwtGuard, TenantMatchGuard, PermissionGuard)
+  @RequirePermissions(PERMISSIONS.TENANT_MANAGE)
+  updateTenant(
+    @Param("id") id: string,
+    @Body() dto: UpdateTenantPayload,
+    @CurrentUser() user: AuthenticatedTenantUser,
+    @Req() request: OrdellaRequest,
+  ) {
+    return this.tenantService.updateTenant(id, dto, user, request.correlationId);
   }
 
   @Patch(":id")
@@ -111,43 +187,6 @@ export class TenantsController {
   @RequireRoles("OWNER", "ADMIN")
   deactivate(@Param("id") id: string) {
     return this.tenantsService.deactivate(id);
-  }
-
-  @Post(":tenantId/locations")
-  @UseGuards(JwtGuard, TenantMatchGuard, RoleGuard, TenantGuard)
-  @RequireRoles("OWNER", "ADMIN")
-  @UseZodValidation(createLocationSchema)
-  addLocation(
-    @Param("tenantId") tenantId: string,
-    @Body() dto: CreateLocationDto,
-    @Req() request: OrdellaRequest,
-  ) {
-    return this.tenantsService.addLocation(tenantId, dto, request.correlationId);
-  }
-
-  @Get(":tenantId/locations")
-  @UseGuards(JwtGuard, TenantMatchGuard, TenantGuard)
-  listLocations(@Param("tenantId") tenantId: string) {
-    return this.tenantsService.listLocations(tenantId);
-  }
-
-  @Patch(":tenantId/locations/:locationId")
-  @UseGuards(JwtGuard, TenantMatchGuard, RoleGuard, TenantGuard)
-  @RequireRoles("OWNER", "ADMIN")
-  @UseZodValidation(updateLocationSchema)
-  updateLocation(
-    @Param("tenantId") tenantId: string,
-    @Param("locationId") locationId: string,
-    @Body() dto: UpdateLocationDto,
-  ) {
-    return this.tenantsService.updateLocation(tenantId, locationId, dto);
-  }
-
-  @Delete(":tenantId/locations/:locationId")
-  @UseGuards(JwtGuard, TenantMatchGuard, RoleGuard, TenantGuard)
-  @RequireRoles("OWNER", "ADMIN")
-  archiveLocation(@Param("tenantId") tenantId: string, @Param("locationId") locationId: string) {
-    return this.tenantsService.archiveLocation(tenantId, locationId);
   }
 
   @Post(":tenantId/staff")

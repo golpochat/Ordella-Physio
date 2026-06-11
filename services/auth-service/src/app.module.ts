@@ -6,9 +6,10 @@ import { DatabaseModule } from "@/database/database.module";
 import { EventsModule } from "@/events/events.module";
 import { configureAuthMiddleware } from "@/middleware";
 import { AuthJwtPreflightMiddleware } from "@/middleware/jwt-preflight.middleware";
+import { AuditContextMiddleware } from "@/middleware/audit.middleware";
 
 @Module({
-  providers: [AuthJwtPreflightMiddleware],
+  providers: [AuthJwtPreflightMiddleware, AuditContextMiddleware],
   imports: [
     SecurityGuardsModule,
     ConfigModule.forRoot({

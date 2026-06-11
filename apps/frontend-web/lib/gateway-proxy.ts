@@ -17,6 +17,7 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   ai: GATEWAY_PATHS.ai,
   marketplace: GATEWAY_PATHS.marketplace,
   enterprise: GATEWAY_PATHS.enterprise,
+  organization: GATEWAY_PATHS.organization,
 };
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
@@ -34,6 +35,7 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   ai: "/api/ai",
   marketplace: "/api/marketplace",
   enterprise: "/api/enterprise",
+  organization: "/api/organization",
 };
 
 const PROXY_STRIP_REQUEST_HEADERS = [

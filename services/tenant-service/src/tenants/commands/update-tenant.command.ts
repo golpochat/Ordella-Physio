@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import type { UpdateTenantDto } from "@/tenants/dto/update-tenant.dto";
+import type { Prisma } from "@/generated/prisma";
 import { TenantsRepository } from "@/tenants/tenants.repository";
 import { TenantEventPublisher } from "@/events/tenant-event.publisher";
 import { toTenantResponse } from "@/tenants/tenants.mapper";
 
 export type UpdateTenantCommandInput = {
   tenantId: string;
-  dto: UpdateTenantDto;
+  dto: Prisma.TenantUpdateInput;
   correlationId?: string;
 };
 

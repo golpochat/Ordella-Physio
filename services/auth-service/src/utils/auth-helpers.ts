@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import type { OrdellaRequest } from "@ordella/middleware";
+import type { AuditRequestContext } from "@/middleware/audit.middleware";
 import type { SecurityRole } from "@ordella/security";
 
 export type AuthenticatedRequestUser = {
@@ -27,6 +28,7 @@ export function sanitizeUser(user: {
   email: string;
   role: string;
   emailVerified: boolean;
+  mfaEnabled?: boolean;
   firstName?: string | null;
   lastName?: string | null;
   createdAt: Date;
@@ -38,6 +40,7 @@ export function sanitizeUser(user: {
     email: user.email,
     role: user.role,
     emailVerified: user.emailVerified,
+    mfaEnabled: user.mfaEnabled ?? false,
     firstName: user.firstName ?? undefined,
     lastName: user.lastName ?? undefined,
     createdAt: user.createdAt.toISOString(),
@@ -45,10 +48,10 @@ export function sanitizeUser(user: {
   };
 }
 
-export function getRequestMetadata(request: OrdellaRequest) {
+export function getRequestMetadata(request: OrdellaRequest & { auditContext?: AuditRequestContext }) {
   return {
-    ipAddress: request.ip,
-    userAgent: request.headers["user-agent"],
+    ipAddress: request.auditContext?.ipAddress ?? request.ip,
+    userAgent: request.auditContext?.userAgent ?? request.headers["user-agent"],
     correlationId: request.correlationId,
   };
 }

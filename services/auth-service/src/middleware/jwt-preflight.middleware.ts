@@ -5,7 +5,16 @@ import { verifyToken, type AccessTokenPayload } from "@ordella/security";
 import type { NextFunction, Response } from "express";
 import { TENANT_HEADER, USER_ROLE_HEADER } from "@ordella/middleware";
 
-const AUTH_PUBLIC_PATHS = ["/auth/health", "/auth/login", "/auth/register", "/auth/refresh"];
+const AUTH_PUBLIC_PATHS = [
+  "/auth/health",
+  "/auth/login",
+  "/auth/register",
+  "/auth/refresh",
+  "/auth/password",
+  "/auth/verification",
+  "/auth/mfa/challenge",
+  "/auth/internal",
+];
 
 function shouldSkip(path: string): boolean {
   return AUTH_PUBLIC_PATHS.some((skipPath) => path === skipPath || path.startsWith(`${skipPath}/`));

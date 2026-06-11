@@ -68,4 +68,35 @@ export class UsersService {
     });
     return toUserRecord(user);
   }
+
+  async updateMfaSecret(tenantId: string, userId: string, encryptedSecret: string): Promise<UserRecord> {
+    const user = await this.usersRepository.updateUser(tenantId, userId, {
+      mfaSecret: encryptedSecret,
+      mfaEnabled: false,
+    });
+    return toUserRecord(user);
+  }
+
+  async enableMfa(tenantId: string, userId: string): Promise<UserRecord> {
+    const user = await this.usersRepository.updateUser(tenantId, userId, {
+      mfaEnabled: true,
+    });
+    return toUserRecord(user);
+  }
+
+  async disableMfa(tenantId: string, userId: string): Promise<UserRecord> {
+    const user = await this.usersRepository.updateUser(tenantId, userId, {
+      mfaEnabled: false,
+      mfaSecret: null,
+    });
+    return toUserRecord(user);
+  }
+
+  async incrementTokenVersion(tenantId: string, userId: string): Promise<UserRecord> {
+    const user = await this.getById(tenantId, userId);
+    const updated = await this.usersRepository.updateUser(tenantId, userId, {
+      tokenVersion: (user.tokenVersion ?? 0) + 1,
+    });
+    return toUserRecord(updated);
+  }
 }

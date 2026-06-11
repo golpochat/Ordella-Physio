@@ -8,16 +8,30 @@ import {
   createClinicPortalApi,
   normalizeList,
   normalizeStaffList,
+  normalizeUserListResponse,
 } from "@/lib/clinic-portal-api";
 import type {
   CancelClinicSubscriptionPayload,
+  CreateClinicLocationPayload,
+  UpdateClinicLocationPayload,
+  ClinicLocationListFilters,
+  ClinicLocationConfigNamespace,
   CreateClinicAppointmentPayload,
   CreateClinicPatientPayload,
   CreateClinicSubscriptionPayload,
   CreateClinicStaffPayload,
+  CreateClinicUserPayload,
+  UpdateClinicUserPayload,
+  ChangePasswordPayload,
+  ChangeClinicUserRolePayload,
   UpdateClinicPatientPayload,
   UpdateClinicProfilePayload,
   UpdateClinicStaffRolePayload,
+  UserProfile,
+  UpdateUserProfileResponse,
+  UploadAvatarResponse,
+  RemoveAvatarResponse,
+  ClinicUserListFilters,
 } from "@/lib/clinic-portal-types";
 import { useAuthStore } from "@/store/auth.store";
 
@@ -207,9 +221,144 @@ export function useClinicLocations() {
   const { tenantId } = useClinicContext();
 
   return useQuery({
-    queryKey: ["clinic", "locations", tenantId],
-    queryFn: async () => normalizeList(await requireApi(clinicApi).listLocations()),
+    queryKey: ["clinic", "locations", tenantId, "active"],
+    queryFn: async () => {
+      const response = await requireApi(clinicApi).listLocations({
+        status: "ACTIVE",
+        limit: 100,
+        page: 1,
+      });
+      return response.data ?? [];
+    },
     enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useClinicLocationsList(filters: ClinicLocationListFilters = {}) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "locations", tenantId, "list", filters],
+    queryFn: () => requireApi(clinicApi).listLocations(filters),
+    enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useCreateClinicLocation() {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateClinicLocationPayload) =>
+      requireApi(clinicApi).createLocation(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clinic", "locations"] }),
+  });
+}
+
+export function useClinicLocation(locationId: string) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "locations", tenantId, locationId],
+    queryFn: () => requireApi(clinicApi).getLocation(locationId),
+    enabled: Boolean(tenantId && clinicApi && locationId),
+  });
+}
+
+export function useUpdateClinicLocation(locationId: string) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateClinicLocationPayload) =>
+      requireApi(clinicApi).updateLocation(locationId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "locations"] });
+      if (tenantId) {
+        queryClient.invalidateQueries({ queryKey: ["clinic", "locations", tenantId, locationId] });
+      }
+    },
+  });
+}
+
+export function useDeactivateClinicLocation(locationId: string) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(clinicApi).deactivateLocation(locationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "locations"] });
+      if (tenantId) {
+        queryClient.invalidateQueries({ queryKey: ["clinic", "locations", tenantId, locationId] });
+      }
+    },
+  });
+}
+
+export function useActivateClinicLocation(locationId: string) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(clinicApi).activateLocation(locationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "locations"] });
+      if (tenantId) {
+        queryClient.invalidateQueries({ queryKey: ["clinic", "locations", tenantId, locationId] });
+      }
+    },
+  });
+}
+
+export function useClinicLocationConfigNamespaces(locationId: string) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "locations", tenantId, locationId, "config", "namespaces"],
+    queryFn: () => requireApi(clinicApi).listLocationConfigNamespaces(locationId),
+    enabled: Boolean(tenantId && clinicApi && locationId),
+  });
+}
+
+export function useClinicLocationConfig(
+  locationId: string,
+  namespace: ClinicLocationConfigNamespace,
+) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "locations", tenantId, locationId, "config", namespace],
+    queryFn: () => requireApi(clinicApi).getLocationConfig(locationId, namespace),
+    enabled: Boolean(tenantId && clinicApi && locationId && namespace),
+  });
+}
+
+export function useUpdateClinicLocationConfig(
+  locationId: string,
+  namespace: ClinicLocationConfigNamespace,
+) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: unknown) =>
+      requireApi(clinicApi).updateLocationConfig(locationId, namespace, data),
+    onSuccess: () => {
+      if (tenantId) {
+        queryClient.invalidateQueries({
+          queryKey: ["clinic", "locations", tenantId, locationId, "config"],
+        });
+      }
+    },
   });
 }
 
@@ -318,17 +467,128 @@ export function useClinicNote(id: string) {
 }
 
 export function useClinicProfile() {
+  const api = useApi();
+
+  return useQuery({
+    queryKey: ["user", "me"],
+    queryFn: () => api.get<UserProfile>("auth", "/users/me"),
+  });
+}
+
+export function useMyProfile() {
+  return useClinicProfile();
+}
+
+export function useClinicUsers(filters: ClinicUserListFilters = {}) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "users", tenantId, filters],
+    queryFn: async () => normalizeUserListResponse(await requireApi(clinicApi).listUsers(filters)),
+    enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useCreateClinicUser() {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: (payload: CreateClinicUserPayload) => requireApi(clinicApi).createUser(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", tenantId] });
+    },
+  });
+}
+
+export function useClinicUser(userId: string) {
   const clinicApi = useClinicPortalApi();
 
   return useQuery({
-    queryKey: ["clinic", "profile"],
-    queryFn: () => requireApi(clinicApi).getProfile(),
-    enabled: Boolean(clinicApi),
+    queryKey: ["clinic", "users", userId],
+    queryFn: () => requireApi(clinicApi).getUser(userId),
+    enabled: Boolean(userId && clinicApi),
+  });
+}
+
+export function useUpdateClinicUser(userId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: (payload: UpdateClinicUserPayload) => requireApi(clinicApi).updateUser(userId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", userId] });
+    },
+  });
+}
+
+export function useDisableClinicUser(userId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: () => requireApi(clinicApi).disableUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", userId] });
+    },
+  });
+}
+
+export function useChangeClinicUserRole(userId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: (payload: ChangeClinicUserRolePayload) =>
+      requireApi(clinicApi).changeUserRole(userId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", userId] });
+    },
+  });
+}
+
+export function useAdminResetClinicUserPassword(userId: string) {
+  const clinicApi = useClinicPortalApi();
+
+  return useMutation({
+    mutationFn: (password: string) => requireApi(clinicApi).resetUserPassword(userId, password),
+  });
+}
+
+export function useChangePassword() {
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: (payload: ChangePasswordPayload) =>
+      api.post<{ message: string }>("auth", "/users/change-password", payload),
+  });
+}
+
+export function useActivateClinicUser(userId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+  const { tenantId } = useClinicContext();
+
+  return useMutation({
+    mutationFn: () => requireApi(clinicApi).activateUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["clinic", "users", userId] });
+    },
   });
 }
 
 export function useUpdateClinicProfile() {
-  const clinicApi = useClinicPortalApi();
+  const api = useApi();
   const queryClient = useQueryClient();
   const setSession = useAuthStore((state) => state.setSession);
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -336,21 +596,54 @@ export function useUpdateClinicProfile() {
   const user = useAuthStore((state) => state.user);
 
   return useMutation({
-    mutationFn: (payload: UpdateClinicProfilePayload) => requireApi(clinicApi).updateProfile(payload),
-    onSuccess: (profile) => {
-      queryClient.invalidateQueries({ queryKey: ["clinic", "profile"] });
+    mutationFn: (payload: UpdateClinicProfilePayload) =>
+      api.put<UpdateUserProfileResponse>("auth", "/users/me", payload),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
       if (user && accessToken && refreshToken) {
         setSession({
           accessToken,
           refreshToken,
           user: {
             ...user,
-            email: profile.email ?? user.email,
-            firstName: profile.firstName ?? user.firstName,
-            lastName: profile.lastName ?? user.lastName,
+            email: response.user.email ?? user.email,
+            firstName: response.user.firstName ?? user.firstName,
+            lastName: response.user.lastName ?? user.lastName,
           },
         });
       }
+    },
+  });
+}
+
+export function useUpdateMyProfile() {
+  return useUpdateClinicProfile();
+}
+
+export function useUploadAvatar() {
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      return api.postForm<UploadAvatarResponse>("auth", "/users/me/avatar", formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
+    },
+  });
+}
+
+export function useRemoveAvatar() {
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => api.delete<RemoveAvatarResponse>("auth", "/users/me/avatar"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
     },
   });
 }

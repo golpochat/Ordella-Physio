@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import type { Prisma } from "@/generated/prisma";
 import { CreateTenantCommand } from "@/tenants/commands/create-tenant.command";
 import { UpdateTenantCommand } from "@/tenants/commands/update-tenant.command";
 import { AddLocationCommand } from "@/tenants/commands/add-location.command";
@@ -56,6 +57,7 @@ export class TenantsService {
         tenants.map((tenant) => ({
           id: tenant.id,
           name: tenant.name,
+          code: tenant.code ?? tenant.slug,
           slug: tenant.slug,
         })),
       );
@@ -83,8 +85,25 @@ export class TenantsService {
     };
   }
 
+  async getTenantStatus(tenantId: string) {
+    const tenant = await this.tenantsRepository.findById(tenantId);
+    if (!tenant) {
+      return null;
+    }
+
+    return {
+      id: tenant.id,
+      status: tenant.status,
+      isActive: tenant.isActive,
+    };
+  }
+
   update(tenantId: string, dto: UpdateTenantDto, correlationId?: string) {
-    return this.updateTenantCommand.execute({ tenantId, dto, correlationId });
+    return this.updateTenantCommand.execute({
+      tenantId,
+      dto: dto as Prisma.TenantUpdateInput,
+      correlationId,
+    });
   }
 
   activate(tenantId: string) {
@@ -100,7 +119,10 @@ export class TenantsService {
   }
 
   listLocations(tenantId: string) {
-    return this.locationsService.listLocations(tenantId);
+    return this.locationsService.listLocations(
+      { page: 1, limit: 200, status: "ACTIVE" },
+      { userId: "", tenantId, role: "OWNER" },
+    );
   }
 
   updateLocation(tenantId: string, locationId: string, dto: UpdateLocationDto) {

@@ -1,5 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-import { attemptTokenRefresh, handleApiAuthError } from "@/lib/session-manager";
+import {
+  attemptTokenRefresh,
+  getApiErrorCode,
+  handleApiAuthError,
+  redirectToForbidden,
+} from "@/lib/session-manager";
+import { useUiStore } from "@/store/ui.store";
 import { API_ROUTES, AUTHORIZATION_HEADER, CORRELATION_ID_HEADER, TENANT_HEADER } from "./constants";
 import { isSystemRole, isSystemUser, mapAuthRoleToPortalRole } from "./auth/roleRedirect";
 
@@ -28,6 +34,8 @@ export type ApiClientOptions = Omit<RequestInit, "body"> & {
   params?: Record<string, string | number | boolean | undefined>;
   context?: ApiClientContext;
   jsonBody?: unknown;
+  formData?: FormData;
+  unwrapData?: boolean;
   _retried?: boolean;
 };
 
@@ -53,7 +61,7 @@ function buildServiceUrl(
 
 export function createApiClient(getContext: () => ApiClientContext) {
   async function request<T>(options: ApiClientOptions): Promise<T> {
-    const { service, path = "", params, context, headers, jsonBody, ...init } = options;
+    const { service, path = "", params, context, headers, jsonBody, formData, unwrapData, ...init } = options;
     const session = { ...getContext(), ...context };
     const correlationId = session.correlationId ?? uuidv4();
 
@@ -66,9 +74,9 @@ export function createApiClient(getContext: () => ApiClientContext) {
 
     const response = await fetch(buildServiceUrl(service, path, params), {
       ...init,
-      body: jsonBody !== undefined ? JSON.stringify(jsonBody) : undefined,
+      body: formData ?? (jsonBody !== undefined ? JSON.stringify(jsonBody) : undefined),
       headers: {
-        "Content-Type": "application/json",
+        ...(formData ? {} : { "Content-Type": "application/json" }),
         [CORRELATION_ID_HEADER]: correlationId,
         ...(includeTenantHeader ? { [TENANT_HEADER]: session.tenantId! } : {}),
         ...(session.accessToken ? { [AUTHORIZATION_HEADER]: `Bearer ${session.accessToken}` } : {}),
@@ -85,7 +93,15 @@ export function createApiClient(getContext: () => ApiClientContext) {
           return request<T>({ ...options, _retried: true });
         }
 
-        await handleApiAuthError(response.status);
+        await handleApiAuthError(response.status, payload);
+      }
+
+      if (response.status === 403) {
+        if (getApiErrorCode(payload) === "TENANT_SUSPENDED") {
+          useUiStore.getState().setTenantSuspended(true);
+        } else {
+          redirectToForbidden();
+        }
       }
 
       throw new ApiError(
@@ -95,7 +111,12 @@ export function createApiClient(getContext: () => ApiClientContext) {
       );
     }
 
-    if (payload && typeof payload === "object" && "data" in (payload as Record<string, unknown>)) {
+    if (
+      unwrapData !== false &&
+      payload &&
+      typeof payload === "object" &&
+      "data" in (payload as Record<string, unknown>)
+    ) {
       return (payload as { data: T }).data;
     }
 
@@ -107,6 +128,12 @@ export function createApiClient(getContext: () => ApiClientContext) {
       request<T>({ ...options, service, path, method: "GET" }),
     post: <T>(service: keyof typeof API_ROUTES, path?: string, jsonBody?: unknown, options?: Omit<ApiClientOptions, "service" | "path" | "jsonBody" | "method">) =>
       request<T>({ ...options, service, path, jsonBody, method: "POST" }),
+    postForm: <T>(
+      service: keyof typeof API_ROUTES,
+      path?: string,
+      formData?: FormData,
+      options?: Omit<ApiClientOptions, "service" | "path" | "formData" | "method">,
+    ) => request<T>({ ...options, service, path, formData, method: "POST" }),
     put: <T>(service: keyof typeof API_ROUTES, path?: string, jsonBody?: unknown, options?: Omit<ApiClientOptions, "service" | "path" | "jsonBody" | "method">) =>
       request<T>({ ...options, service, path, jsonBody, method: "PUT" }),
     patch: <T>(

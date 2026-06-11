@@ -1,3 +1,1 @@
-import type { CreateLocationInput } from "@ordella/validation";
-
-export type CreateLocationDto = CreateLocationInput;
+export type { CreateLocationPayload as CreateLocationDto } from "@/models/Location";

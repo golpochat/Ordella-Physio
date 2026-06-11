@@ -1,6 +1,7 @@
 import { ApiError } from "./api-client";
 import { resolveAuthErrorMessage } from "./auth-error-messages";
 import { TENANT_HEADER } from "./constants";
+import { redirectToForbidden } from "./session-manager";
 import { getDefaultTenantId } from "./tenant-config";
 
 export type FetcherOptions = RequestInit & {
@@ -41,6 +42,10 @@ export async function fetcher<T>(path: string, options: FetcherOptions = {}): Pr
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 403) {
+      redirectToForbidden();
+    }
+
     throw new ApiError(
       extractErrorMessage(payload, "Request failed"),
       response.status,

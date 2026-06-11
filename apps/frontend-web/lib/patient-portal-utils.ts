@@ -1,27 +1,25 @@
 import type { PatientAppointment } from "@/lib/patient-portal-types";
+import {
+  formatCurrency as formatTenantCurrency,
+  formatDate as formatTenantDate,
+  formatDateTime as formatTenantDateTime,
+  formatTime as formatTenantTime,
+} from "@/lib/formatting";
 
 export function formatPatientDate(value: string): string {
-  return new Date(value).toLocaleDateString(undefined, {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  return formatTenantDate(value);
 }
 
 export function formatPatientTime(value: string): string {
-  return new Date(value).toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return formatTenantTime(value);
 }
 
 export function formatPatientDateTime(value: string): string {
-  return `${formatPatientDate(value)} at ${formatPatientTime(value)}`;
+  return formatTenantDateTime(value);
 }
 
-export function formatCurrency(amount: number, currency = "USD"): string {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(amount);
+export function formatCurrency(amount: number, currency?: string): string {
+  return formatTenantCurrency(amount, currency);
 }
 
 export function splitAppointments(appointments: PatientAppointment[]) {

@@ -14,6 +14,7 @@ import {
   type PortalNavConfig,
 } from "@/lib/portal-navigation";
 import { getPrimaryPortalRole } from "@/lib/nav-roles";
+import { TenantSuspendedBanner } from "@/components/tenants/TenantSuspendedBanner";
 import { useUiStore } from "@/store/ui.store";
 import { cn } from "@/lib/cn";
 
@@ -102,6 +103,7 @@ export function PortalNavigationShell({
               profileHref={config.profileHref}
             />
             <main className="dashboard-content">
+              <TenantSuspendedBanner />
               <div className="dashboard-page">{children}</div>
             </main>
           </div>

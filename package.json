@@ -9,7 +9,8 @@
     "test": "turbo run test --parallel",
     "test:cov": "turbo run test:cov",
     "test:watch": "turbo run test:watch",
-    "clean": "turbo run clean && rimraf node_modules"
+    "clean": "turbo run clean && rimraf node_modules",
+    "db:migrate:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

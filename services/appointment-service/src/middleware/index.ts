@@ -6,7 +6,9 @@ import {
   createCorsMiddleware,
   createHelmetMiddleware,
   createRateLimitMiddleware,
+  createDomainResolverMiddleware,
   createTenantMiddleware,
+  createTenantStatusMiddleware,
 } from "@ordella/middleware";
 import {
   createMetricsRegistry,
@@ -21,14 +23,24 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "appointment-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+const APPOINTMENT_PUBLIC_PATHS = ["/appointments/health", "/appointments/internal"];
+
+export const AppointmentServiceDomainResolverMiddleware = createDomainResolverMiddleware({
+  skipPaths: APPOINTMENT_PUBLIC_PATHS,
+});
+
 export const AppointmentServiceTenantMiddleware = createTenantMiddleware({
   required: true,
-  skipPaths: ["/appointments/health"],
+  skipPaths: APPOINTMENT_PUBLIC_PATHS,
+});
+
+export const AppointmentServiceTenantStatusMiddleware = createTenantStatusMiddleware({
+  skipPaths: APPOINTMENT_PUBLIC_PATHS,
 });
 
 export const AppointmentServiceAuthContextMiddleware = createAuthContextMiddleware({
   required: false,
-  skipPaths: ["/appointments/health"],
+  skipPaths: APPOINTMENT_PUBLIC_PATHS,
 });
 
 export const AppointmentServiceRequestLoggingMiddleware = createRequestLoggingMiddleware({
@@ -47,7 +59,7 @@ export const AppointmentServiceRateLimitMiddleware = createRateLimitMiddleware({
   windowMs: 60_000,
   maxRequestsPerIp: 100,
   maxRequestsPerTenant: 200,
-  skipPaths: ["/appointments/health"],
+  skipPaths: ["/appointments/health", "/appointments/internal"],
 });
 
 export function configureAppointmentMiddleware(consumer: MiddlewareConsumer): void {
@@ -62,7 +74,9 @@ export function configureAppointmentMiddleware(consumer: MiddlewareConsumer): vo
       AppointmentServiceRequestMetricsMiddleware,
       AppointmentServiceRequestTracingMiddleware,
       AppointmentServiceRateLimitMiddleware,
+      AppointmentServiceDomainResolverMiddleware,
       AppointmentServiceTenantMiddleware,
+      AppointmentServiceTenantStatusMiddleware,
       SanitizeMiddleware,
     )
     .forRoutes({ path: "*", method: RequestMethod.ALL });

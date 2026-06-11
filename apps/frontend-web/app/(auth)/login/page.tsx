@@ -12,12 +12,18 @@ const LOGIN_REASON_MESSAGES: Record<string, string> = {
   "session-expired": "Your session expired. Please sign in again.",
   unauthorized: "You do not have access to that page. Please sign in with the correct account.",
   "missing-tenant": "Tenant context is missing. Select your clinic and sign in again.",
+  "token-reuse-detected": "Your session was compromised. Please log in again.",
+};
+
+const LOGIN_SUCCESS_MESSAGES: Record<string, string> = {
+  "password-reset-success": "Your password has been reset successfully.",
 };
 
 export default function LoginPage() {
   const { login } = useAuth();
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
+  const message = searchParams.get("message");
   const [tenantId] = useState(getDefaultTenantId() ?? "");
 
   return (
@@ -30,6 +36,9 @@ export default function LoginPage() {
         <CardBody>
           {reason && LOGIN_REASON_MESSAGES[reason] ? (
             <p className="auth-form-error">{LOGIN_REASON_MESSAGES[reason]}</p>
+          ) : null}
+          {message && LOGIN_SUCCESS_MESSAGES[message] ? (
+            <p className="auth-form-success">{LOGIN_SUCCESS_MESSAGES[message]}</p>
           ) : null}
 
           <LoginForm
@@ -48,8 +57,8 @@ export default function LoginPage() {
               <Link href="/register" className="text-primary hover:underline">
                 Create account
               </Link>
-              <Link href="/reset-password" className="text-primary hover:underline">
-                Reset password
+              <Link href="/forgot-password" className="text-primary hover:underline">
+                Forgot password
               </Link>
             </div>
           </div>
