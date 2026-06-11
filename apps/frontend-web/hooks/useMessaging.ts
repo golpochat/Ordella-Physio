@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useApi } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
+import { shouldUseTenantScopedApi } from "@/lib/auth/portal-scope";
 import { createMessagingApi } from "@/lib/messaging-api";
 import type { CreateConversationPayload, MessagingMessage } from "@/lib/messaging-types";
 import { useAuthStore } from "@/store/auth.store";
@@ -19,17 +20,26 @@ export function useMessagingApi() {
 export function useMessagingContext() {
   const user = useAuthStore((state) => state.user);
   const { tenantId } = useTenant();
-  return { user, tenantId, userId: user?.id ?? null, role: user?.role ?? "STAFF" };
+  const tenantScoped = shouldUseTenantScopedApi(user?.role);
+  return { user, tenantId, userId: user?.id ?? null, role: user?.role ?? "STAFF", tenantScoped };
+}
+
+function canQueryMessaging(
+  tenantId: string | null | undefined,
+  userId: string | null,
+  tenantScoped: boolean,
+) {
+  return tenantScoped && Boolean(tenantId && userId);
 }
 
 export function useUnreadMessageCount() {
   const messagingApi = useMessagingApi();
-  const { tenantId, userId } = useMessagingContext();
+  const { tenantId, userId, tenantScoped } = useMessagingContext();
 
   return useQuery({
     queryKey: ["messaging", "unread-count", tenantId, userId],
     queryFn: () => messagingApi.unreadCount(),
-    enabled: Boolean(tenantId && userId),
+    enabled: canQueryMessaging(tenantId, userId, tenantScoped),
     refetchInterval: POLL_INTERVAL_MS,
     select: (response) => response.count,
   });
@@ -37,31 +47,31 @@ export function useUnreadMessageCount() {
 
 export function useConversations() {
   const messagingApi = useMessagingApi();
-  const { tenantId, userId } = useMessagingContext();
+  const { tenantId, userId, tenantScoped } = useMessagingContext();
 
   return useQuery({
     queryKey: ["messaging", "conversations", tenantId, userId],
     queryFn: () => messagingApi.listConversations(),
-    enabled: Boolean(tenantId && userId),
+    enabled: canQueryMessaging(tenantId, userId, tenantScoped),
     refetchInterval: POLL_INTERVAL_MS,
   });
 }
 
 export function useConversation(conversationId: string | null) {
   const messagingApi = useMessagingApi();
-  const { tenantId, userId } = useMessagingContext();
+  const { tenantId, userId, tenantScoped } = useMessagingContext();
 
   return useQuery({
     queryKey: ["messaging", "conversation", tenantId, userId, conversationId],
     queryFn: () => messagingApi.getConversation(conversationId!),
-    enabled: Boolean(tenantId && userId && conversationId),
+    enabled: canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
     refetchInterval: POLL_INTERVAL_MS,
   });
 }
 
 export function useConversationMessages(conversationId: string | null) {
   const messagingApi = useMessagingApi();
-  const { tenantId, userId } = useMessagingContext();
+  const { tenantId, userId, tenantScoped } = useMessagingContext();
   const queryClient = useQueryClient();
 
   const query = useQuery({
@@ -90,7 +100,7 @@ export function useConversationMessages(conversationId: string | null) {
 
       return { items: merged, typingUsers: response.typingUsers };
     },
-    enabled: Boolean(tenantId && userId && conversationId),
+    enabled: canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
     refetchInterval: POLL_INTERVAL_MS,
   });
 

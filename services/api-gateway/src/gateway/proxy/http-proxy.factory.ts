@@ -22,9 +22,13 @@ export function createProxyController(
   class ServiceProxyController {
     constructor(private readonly proxyService: ProxyService) {}
 
-    @All("*")
     @All()
-    forward(@Req() request: GatewayRequest, @Res() response: Response) {
+    forwardRoot(@Req() request: GatewayRequest, @Res() response: Response) {
+      return this.proxyService.forward(request, response, serviceEnvKey, request.user);
+    }
+
+    @All("*")
+    forwardWildcard(@Req() request: GatewayRequest, @Res() response: Response) {
       return this.proxyService.forward(request, response, serviceEnvKey, request.user);
     }
   }

@@ -4,7 +4,8 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { authClient, type AuthTokensResponse, type LoginPayload, type RegisterPayload } from "@/lib/auth-client";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { getDefaultDashboardForRoles, resolveUserRoles } from "@/lib/rbac";
+import { resolveUserRoles } from "@/lib/rbac";
+import { getPortalForRole, isSystemUser, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
 import { syncTenantFromSession } from "@/lib/session-manager";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { useAuthStore } from "@/store/auth.store";
@@ -12,11 +13,13 @@ import { useTenantStore } from "@/store/tenant.store";
 
 function normalizeAuthResponse(response: AuthTokensResponse): AuthTokensResponse {
   const roles = resolveUserRoles(response.user);
+  const primaryRole = roles[0] ?? mapAuthRoleToPortalRole(response.user.role);
 
   return {
     ...response,
     user: {
       ...response.user,
+      role: primaryRole,
       roles,
       permissions: response.user.permissions ?? [],
     },
@@ -32,18 +35,25 @@ export function useAuth() {
   const applySession = useCallback(
     (response: AuthTokensResponse, tenantName?: string) => {
       const normalized = normalizeAuthResponse(response);
+
       setSession(normalized);
-      setTenant(buildTenantStateFromUser(normalized.user, tenantName));
+
+      if (isSystemUser(normalized.user.roles)) {
+        clearTenant();
+      } else {
+        setTenant(buildTenantStateFromUser(normalized.user, tenantName));
+      }
+
       return normalized;
     },
-    [setSession, setTenant],
+    [clearTenant, setSession, setTenant],
   );
 
   const login = useCallback(
     async (payload: LoginPayload) => {
       try {
         const response = applySession(await authClient.login(payload), payload.tenantId);
-        router.push(getDefaultDashboardForRoles(response.user.roles));
+        router.push(getPortalForRole(response.user.role));
       } catch (error) {
         throw new Error(getApiErrorMessage(error, "Unable to sign in. Check your credentials and tenant."));
       }
@@ -55,7 +65,7 @@ export function useAuth() {
     async (payload: RegisterPayload) => {
       try {
         const response = applySession(await authClient.register(payload), payload.tenantId);
-        router.push(getDefaultDashboardForRoles(response.user.roles));
+        router.push(getPortalForRole(response.user.role));
       } catch (error) {
         throw new Error(getApiErrorMessage(error, "Unable to create account. Please try again."));
       }
@@ -64,13 +74,19 @@ export function useAuth() {
   );
 
   const logout = useCallback(async () => {
-    if (accessToken) {
-      await authClient.logout(accessToken).catch(() => undefined);
+    if (accessToken && refreshToken) {
+      await authClient
+        .logout({
+          accessToken,
+          refreshToken,
+          tenantId: user?.tenantId ?? tenant?.id,
+        })
+        .catch(() => undefined);
     }
     clearSession();
     clearTenant();
     router.push("/login");
-  }, [accessToken, clearSession, clearTenant, router]);
+  }, [accessToken, clearSession, clearTenant, refreshToken, router, tenant?.id, user?.tenantId]);
 
   const refresh = useCallback(async () => {
     if (!refreshToken) {

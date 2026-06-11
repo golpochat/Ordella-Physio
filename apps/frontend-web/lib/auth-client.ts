@@ -1,5 +1,6 @@
-import { API_ROUTES } from "./constants";
+import { API_ROUTES, TENANT_HEADER } from "./constants";
 import { fetcher } from "./fetcher";
+import { getDefaultTenantId } from "./tenant-config";
 import type { AuthUser } from "@/store/auth.store";
 
 export type LoginPayload = {
@@ -55,10 +56,15 @@ export const authClient = {
     });
   },
 
-  logout(accessToken: string) {
+  logout(payload: { accessToken: string; refreshToken: string; tenantId?: string }) {
+    const tenantId = payload.tenantId ?? getDefaultTenantId();
     return fetcher<void>(`${API_ROUTES.auth}/logout`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: {
+        Authorization: `Bearer ${payload.accessToken}`,
+        ...(tenantId ? { [TENANT_HEADER]: tenantId } : {}),
+      },
+      body: JSON.stringify({ refreshToken: payload.refreshToken }),
     });
   },
 

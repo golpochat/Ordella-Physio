@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { canAccessRoute, resolveUserRoles, type PortalRole } from "@/lib/rbac";
+import { getPortalForRole, isSystemRole } from "@/lib/auth/roleRedirect";
 import { getStoredAuthUser, getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { getResolvedTenantId } from "@/lib/session-manager";
 import { useAuthStore } from "@/store/auth.store";
@@ -31,7 +32,8 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const roles = user ? resolveUserRoles(user) : [];
 
   const tenantId = hydrated ? getResolvedTenantId() : user?.tenantId ?? null;
-  const requiresTenant = !roles.includes("SYSTEM");
+  const systemUser = isSystemRole(user?.role) || roles.includes("SYSTEM");
+  const requiresTenant = !systemUser;
   const hasTenant = !requiresTenant || Boolean(tenantId);
 
   const hasAccess =
@@ -52,9 +54,9 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     }
 
     if (!hasAccess) {
-      router.replace("/login");
+      router.replace(getPortalForRole(roles[0] ?? user.role));
     }
-  }, [authenticated, hasAccess, hydrated, router, user]);
+  }, [authenticated, hasAccess, hydrated, roles, router, user]);
 
   if (!hydrated || !user || !hasAccess) {
     return (

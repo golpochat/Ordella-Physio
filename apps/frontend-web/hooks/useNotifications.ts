@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useApi } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
+import { shouldUseTenantScopedApi } from "@/lib/auth/portal-scope";
 import { createNotificationApi } from "@/lib/notification-api";
 import type { AppNotification } from "@/lib/notification-types";
 import { useAuthStore } from "@/store/auth.store";
@@ -19,7 +20,16 @@ export function useNotificationApi() {
 export function useNotificationContext() {
   const user = useAuthStore((state) => state.user);
   const { tenantId } = useTenant();
-  return { user, tenantId, userId: user?.id ?? null };
+  const tenantScoped = shouldUseTenantScopedApi(user?.role);
+  return { user, tenantId, userId: user?.id ?? null, tenantScoped };
+}
+
+function canQueryNotifications(
+  tenantId: string | null | undefined,
+  userId: string | null,
+  tenantScoped: boolean,
+) {
+  return tenantScoped && Boolean(tenantId && userId);
 }
 
 function notificationQueryKey(tenantId: string | null | undefined, userId: string | null) {
@@ -28,12 +38,12 @@ function notificationQueryKey(tenantId: string | null | undefined, userId: strin
 
 export function useUnreadNotificationCount() {
   const notificationApi = useNotificationApi();
-  const { tenantId, userId } = useNotificationContext();
+  const { tenantId, userId, tenantScoped } = useNotificationContext();
 
   return useQuery({
     queryKey: ["notifications", "unread-count", tenantId, userId],
     queryFn: () => notificationApi.unreadCount(),
-    enabled: Boolean(tenantId && userId),
+    enabled: canQueryNotifications(tenantId, userId, tenantScoped),
     refetchInterval: POLL_INTERVAL_MS,
     select: (response) => response.count,
   });
@@ -41,7 +51,7 @@ export function useUnreadNotificationCount() {
 
 export function useNotifications(options?: { unreadOnly?: boolean; limit?: number }) {
   const notificationApi = useNotificationApi();
-  const { tenantId, userId } = useNotificationContext();
+  const { tenantId, userId, tenantScoped } = useNotificationContext();
   const queryClient = useQueryClient();
 
   return useQuery({
@@ -72,7 +82,7 @@ export function useNotifications(options?: { unreadOnly?: boolean; limit?: numbe
         (left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
       );
     },
-    enabled: Boolean(tenantId && userId),
+    enabled: canQueryNotifications(tenantId, userId, tenantScoped),
     refetchInterval: POLL_INTERVAL_MS,
   });
 }

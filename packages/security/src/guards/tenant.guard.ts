@@ -34,6 +34,14 @@ export class TenantGuard implements CanActivate {
       throw new UnauthorizedException("Authentication required");
     }
 
+    if (user.role === "SYSTEM") {
+      const tenantId = request.tenantId ?? getHeaderTenantId(request);
+      if (tenantId) {
+        request.tenantId = tenantId;
+      }
+      return true;
+    }
+
     const tenantId = request.tenantId ?? getHeaderTenantId(request);
 
     if (!tenantId) {

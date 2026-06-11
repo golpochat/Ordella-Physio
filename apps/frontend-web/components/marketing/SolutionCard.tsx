@@ -1,0 +1,20 @@
+import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { marketingCardClass, marketingHeading } from "@/lib/marketing-ui";
+
+export type SolutionCardProps = {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  className?: string;
+};
+
+export function SolutionCard({ icon, title, description, className }: SolutionCardProps) {
+  return (
+    <div className={cn(marketingCardClass, "fade-in", className)}>
+      <div className="mb-md text-3xl text-brand-primary">{icon}</div>
+      <h3 className={cn("mb-sm", marketingHeading.h4)}>{title}</h3>
+      <p className={marketingHeading.body}>{description}</p>
+    </div>
+  );
+}

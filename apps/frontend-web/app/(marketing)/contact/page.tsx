@@ -1,61 +1,70 @@
-import type { Metadata } from "next";
-import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ContactForm } from "@/components/marketing/contact-form";
-import { SectionHeading } from "@/components/marketing/section-heading";
+import { ExperimentCta } from "@/components/marketing/ExperimentCta";
+import { ContactDetail } from "@/components/marketing/ContactDetail";
+import { ContactForm } from "@/components/marketing/ContactForm";
+import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
+import { ScrollReveal } from "@/components/marketing/scroll-reveal";
+import { cn } from "@/lib/cn";
+import { marketingButtonPrimaryClass, marketingHeading } from "@/lib/marketing-ui";
+import { generateSEO, pageUrl } from "../seo";
 
-export const metadata: Metadata = {
-  title: "Contact — Ordella Physio",
-  description: "Get in touch with the Ordella Physio team for support, sales, or general inquiries.",
-};
+export const metadata = generateSEO({
+  title: "Contact",
+  description: "Get in touch with the Ordella Physio team.",
+  url: pageUrl("/contact"),
+});
+
+const SUPPORT_EMAIL = "support@ordella.com";
 
 export default function ContactPage() {
   return (
-    <section className="py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-6">
-        <SectionHeading
-          centered
-          eyebrow="Contact"
-          title="We'd love to hear from you"
-          description="Reach out for demos, support, or partnership inquiries."
-        />
+    <div className="bg-background pb-2xl pt-2xl">
+      <MarketingPageHero
+        title="Get in touch"
+        description="Have questions about Ordella Physio? Our team is here to help."
+      />
 
-        <div className="mx-auto mt-12 grid max-w-4xl gap-8 lg:grid-cols-5">
-          <Card className="lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Send us a message</CardTitle>
-              <CardDescription>
-                This form is a placeholder and does not submit data yet.
-              </CardDescription>
-            </CardHeader>
-            <CardBody>
-              <ContactForm />
-            </CardBody>
-          </Card>
+      <section className="marketing-container grid grid-cols-1 gap-2xl md:grid-cols-2">
+        <ContactForm />
 
-          <div className="space-y-6 lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Support</CardTitle>
-                <CardDescription>For existing customers</CardDescription>
-              </CardHeader>
-              <CardBody>
-                <p className="text-sm text-muted-foreground">Email us at</p>
-                <p className="font-medium">support@ordella-physio.com</p>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Sales</CardTitle>
-                <CardDescription>For demos and enterprise plans</CardDescription>
-              </CardHeader>
-              <CardBody>
-                <p className="text-sm text-muted-foreground">Email us at</p>
-                <p className="font-medium">sales@ordella-physio.com</p>
-              </CardBody>
-            </Card>
+        <div className="space-y-xl">
+          <ContactDetail icon="📧" label="Email" value={SUPPORT_EMAIL} />
+          <ContactDetail icon="📍" label="Location" value="Dublin, Ireland" />
+          <ContactDetail icon="⏰" label="Hours" value="Mon–Fri, 9:00–17:00" />
+
+          <div
+            className="flex h-64 items-center justify-center rounded-lg bg-brand-light shadow-soft"
+            role="img"
+            aria-label="Office location — Dublin, Ireland"
+          >
+            <p className={`text-sm font-medium ${marketingHeading.body}`}>Dublin, Ireland</p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="marketing-container mt-2xl py-2xl text-center">
+        <ScrollReveal>
+          <h2 className={cn("mb-md", marketingHeading.h2)}>Prefer to talk directly?</h2>
+          <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>
+            Reach out and we&apos;ll help you understand how Ordella Physio fits your clinic.
+          </p>
+          <ExperimentCta
+            experimentId="contact_cta"
+            location="contact_page"
+            variantA={{
+              href: `mailto:${SUPPORT_EMAIL}`,
+              label: "Email us",
+              children: "Email Us",
+              buttonClassName: marketingButtonPrimaryClass,
+            }}
+            variantB={{
+              href: "#contact-form",
+              label: "Send a message",
+              children: "Send a Message",
+              buttonClassName: marketingButtonPrimaryClass,
+            }}
+          />
+        </ScrollReveal>
+      </section>
+    </div>
   );
 }

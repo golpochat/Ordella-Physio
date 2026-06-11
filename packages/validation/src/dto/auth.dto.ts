@@ -2,7 +2,14 @@ import { z } from "zod";
 import { emailSchema } from "../zod/base-schemas";
 import { nonEmptyString } from "../zod/string-schemas";
 
-export const userRoleSchema = z.enum(["OWNER", "ADMIN", "THERAPIST", "STAFF"]);
+export const userRoleSchema = z.enum([
+  "OWNER",
+  "ADMIN",
+  "THERAPIST",
+  "STAFF",
+  "PATIENT",
+  "PHARMACY",
+]);
 
 export const registerSchema = z.object({
   email: emailSchema,

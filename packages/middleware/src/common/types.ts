@@ -4,14 +4,16 @@ export type AuthRole = "OWNER" | "ADMIN" | "STAFF" | "SYSTEM" | "THERAPIST";
 
 export interface AuthContext {
   userId: string;
-  tenantId: string;
+  tenantId?: string | null;
   role: AuthRole;
   email?: string;
+  isSystem?: boolean;
 }
 
 export interface OrdellaRequest extends Request {
   correlationId?: string;
   tenantId?: string;
+  isSystem?: boolean;
   startTime?: number;
   authContext?: AuthContext;
   rawBody?: Buffer;
@@ -22,6 +24,7 @@ declare global {
     interface Request {
       correlationId?: string;
       tenantId?: string;
+      isSystem?: boolean;
       startTime?: number;
       authContext?: AuthContext;
       rawBody?: Buffer;

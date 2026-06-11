@@ -24,7 +24,7 @@ export function ClinicPortalShell({ children }: { children: React.ReactNode }) {
 
   return (
     <ProtectedRoute>
-      <RoleGuard allowedRoles={["ADMIN"]}>
+      <RoleGuard allowedRoles={["CLINIC_ADMIN"]}>
         <div className="flex min-h-screen">
           <aside
             className={cn(

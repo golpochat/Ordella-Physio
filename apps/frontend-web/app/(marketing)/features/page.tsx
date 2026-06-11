@@ -1,41 +1,89 @@
-import type { Metadata } from "next";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CtaSection } from "@/components/marketing/cta-section";
-import { FeatureIcon } from "@/components/marketing/feature-icon";
-import { SectionHeading } from "@/components/marketing/section-heading";
-import { CORE_FEATURES } from "@/lib/marketing-content";
+import { CTASection } from "@/components/marketing/CTASection";
+import { FeatureCard } from "@/components/marketing/FeatureCard";
+import { FeatureSection } from "@/components/marketing/FeatureSection";
+import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
+import { generateSEO, pageUrl } from "../seo";
 
-export const metadata: Metadata = {
-  title: "Features — Ordella Physio",
-  description: "Explore the core features of Ordella Physio for physiotherapy clinic management.",
-};
+export const metadata = generateSEO({
+  title: "Features",
+  description: "Powerful tools for therapists, staff, and clinic owners.",
+  url: pageUrl("/features"),
+});
 
 export default function FeaturesPage() {
   return (
-    <>
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            centered
-            eyebrow="Features"
-            title="Powerful tools for every role"
-            description="Ordella Physio is built around the workflows that matter most to physiotherapy clinics."
-          />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {CORE_FEATURES.map((feature) => (
-              <Card key={feature.title}>
-                <CardHeader>
-                  <FeatureIcon icon={feature.icon} />
-                  <CardTitle className="mt-4">{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+    <div className="bg-background">
+      <MarketingPageHero
+        title="Powerful tools for every role"
+        description="Ordella Physio is built around the workflows that matter most to physiotherapy clinics."
+        className="mb-0"
+      />
 
-      <CtaSection />
-    </>
+      <FeatureSection
+        title="Clinical workflows"
+        subtitle="Everything clinicians need to deliver exceptional patient care with clarity and efficiency."
+      >
+        <FeatureCard
+          icon="🗓️"
+          title="Appointments"
+          description="Smart scheduling, calendar sync, reminders, and therapist availability management."
+        />
+        <FeatureCard
+          icon="📋"
+          title="Clinical Notes"
+          description="Structured templates, SOAP notes, audit trails, and secure documentation."
+        />
+        <FeatureCard
+          icon="🧑‍⚕️"
+          title="Patient Profiles"
+          description="Full patient history, treatment plans, progress tracking, and attachments."
+        />
+      </FeatureSection>
+
+      <FeatureSection
+        className="bg-muted/40"
+        title="Operations & revenue"
+        subtitle="Tools that streamline your clinic's daily operations and financial performance."
+      >
+        <FeatureCard
+          icon="💶"
+          title="Billing & Invoicing"
+          description="Generate invoices, track payments, manage insurance, and automate revenue workflows."
+        />
+        <FeatureCard
+          icon="📊"
+          title="Analytics"
+          description="Real-time dashboards for appointments, revenue, therapist performance, and clinic KPIs."
+        />
+        <FeatureCard
+          icon="📨"
+          title="Messaging"
+          description="Secure communication between staff, therapists, and patients."
+        />
+      </FeatureSection>
+
+      <FeatureSection
+        title="Platform capabilities"
+        subtitle="A modern, scalable platform designed for multi-location clinics and growing teams."
+      >
+        <FeatureCard
+          icon="🏢"
+          title="Multi-tenant architecture"
+          description="Each clinic operates in its own secure environment with isolated data."
+        />
+        <FeatureCard
+          icon="🔐"
+          title="Role-based access"
+          description="Fine-grained permissions for admins, therapists, staff, and patients."
+        />
+        <FeatureCard
+          icon="⚡"
+          title="Fast & reliable"
+          description="Optimized performance, global infrastructure, and enterprise-grade security."
+        />
+      </FeatureSection>
+
+      <CTASection />
+    </div>
   );
 }

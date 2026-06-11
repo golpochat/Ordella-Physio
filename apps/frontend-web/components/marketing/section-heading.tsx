@@ -1,3 +1,6 @@
+import { cn } from "@/lib/cn";
+import { marketingHeading } from "@/lib/marketing-ui";
+
 export type SectionHeadingProps = {
   eyebrow?: string;
   title: string;
@@ -9,10 +12,14 @@ export function SectionHeading({ eyebrow, title, description, centered = false }
   return (
     <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       {eyebrow ? (
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-primary">{eyebrow}</p>
+        <p className="mb-sm text-sm font-semibold uppercase tracking-wide text-brand-primary">
+          {eyebrow}
+        </p>
       ) : null}
-      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
-      {description ? <p className="mt-4 text-lg text-muted-foreground">{description}</p> : null}
+      <h2 className={marketingHeading.h2}>{title}</h2>
+      {description ? (
+        <p className={cn("mt-md", marketingHeading.subtitle)}>{description}</p>
+      ) : null}
     </div>
   );
 }

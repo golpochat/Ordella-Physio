@@ -3,24 +3,21 @@
 import { useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { createApiClient } from "@/lib/api-client";
+import { getApiClientContext } from "@/lib/api-session";
 import { createAiNotesApi } from "@/lib/ai-notes-api";
 import type { AiGenerateNoteRequest } from "@/lib/ai-notes-types";
 import { AUTHORIZATION_HEADER, TENANT_HEADER } from "@/lib/constants";
+import { isSystemUser } from "@/lib/auth/roleRedirect";
+import { resolveUserRoles } from "@/lib/rbac";
 import { useAuthStore } from "@/store/auth.store";
 
 function useAiNotesApi() {
   const accessToken = useAuthStore((s) => s.accessToken);
-  const tenantId = useAuthStore((s) => s.user?.tenantId);
+  const user = useAuthStore((s) => s.user);
 
   return useMemo(
-    () =>
-      createAiNotesApi(
-        createApiClient(() => ({
-          accessToken,
-          tenantId,
-        })),
-      ),
-    [accessToken, tenantId],
+    () => createAiNotesApi(createApiClient(() => getApiClientContext())),
+    [accessToken, user?.role, user?.roles, user?.tenantId],
   );
 }
 
@@ -56,8 +53,10 @@ export function useAiAcceptOutput() {
 
 export function useAiTranscribeNote() {
   const api = useAiNotesApi();
-  const accessToken = useAuthStore((s) => s.accessToken);
-  const tenantId = useAuthStore((s) => s.user?.tenantId);
+  const session = useAuthStore((s) => ({
+    accessToken: s.accessToken,
+    user: s.user,
+  }));
 
   return useMutation({
     mutationFn: ({
@@ -69,9 +68,18 @@ export function useAiTranscribeNote() {
       audio: Blob;
       filename: string;
     }) => {
+      const roles = session.user ? resolveUserRoles(session.user) : [];
+      const tenantId = isSystemUser(roles) ? null : session.user?.tenantId;
       const headers: Record<string, string> = {};
-      if (accessToken) headers[AUTHORIZATION_HEADER] = `Bearer ${accessToken}`;
-      if (tenantId) headers[TENANT_HEADER] = tenantId;
+
+      if (session.accessToken) {
+        headers[AUTHORIZATION_HEADER] = `Bearer ${session.accessToken}`;
+      }
+
+      if (tenantId) {
+        headers[TENANT_HEADER] = tenantId;
+      }
+
       return api.transcribeAndGenerate(payload, audio, filename, headers);
     },
   });

@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { SecurityGuardsModule } from "@ordella/security";
 import { NotesModule } from "@/notes/notes.module";
 import { SoapNotesModule } from "@/soap-notes/soap-notes.module";
 import { AttachmentsModule } from "@/attachments/attachments.module";
@@ -9,6 +10,7 @@ import { configureNotesMiddleware } from "@/middleware";
 
 @Module({
   imports: [
+    SecurityGuardsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [".env", ".env.local"],

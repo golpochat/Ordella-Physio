@@ -13,7 +13,7 @@ type TenantListResponse = {
 
 export async function fetchTenantDirectory(): Promise<TenantDirectoryEntry[]> {
   try {
-    const response = await fetch(`${API_ROUTES.tenant}?limit=100`);
+    const response = await fetch(`${API_ROUTES.tenant}/directory?limit=100`);
     if (!response.ok) {
       return buildFallbackTenants();
     }

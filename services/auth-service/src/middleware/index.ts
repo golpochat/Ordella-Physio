@@ -16,6 +16,7 @@ import {
 } from "@ordella/observability";
 import type { MiddlewareConsumer } from "@nestjs/common";
 import { RequestMethod } from "@nestjs/common";
+import { AuthJwtPreflightMiddleware } from "@/middleware/jwt-preflight.middleware";
 
 const metricsRegistry = createMetricsRegistry({ serviceName: "auth-service" });
 setDefaultMetricsRegistry(metricsRegistry);
@@ -55,6 +56,7 @@ export function configureAuthMiddleware(consumer: MiddlewareConsumer): void {
       AuthRequestMetricsMiddleware,
       AuthRequestTracingMiddleware,
       AuthRateLimitMiddleware,
+      AuthJwtPreflightMiddleware,
       AuthTenantMiddleware,
       SanitizeMiddleware,
     )

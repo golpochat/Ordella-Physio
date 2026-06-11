@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 export default function SuperAdminMarketplaceProviderPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const providersQuery = useMarketplaceProviders();
+  const providersQuery = useMarketplaceProviders({ platformCatalog: true });
 
   if (providersQuery.isLoading) {
     return <PageLoading rows={4} />;

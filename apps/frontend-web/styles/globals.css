@@ -1,29 +1,55 @@
+@import "./tokens.css";
+@import "./brand-tokens.css";
+@import "./a11y.css";
+@import "./animations.css";
+@import "./micro.css";
+@import "./motion.css";
+@import "./navbar.css";
+@import "./hero.css";
+@import "./product.css";
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 173 58% 39%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 243 75% 59%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 173 40% 94%;
-    --accent-foreground: 173 58% 25%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 243 75% 96%;
+    --accent-foreground: 243 75% 40%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 173 58% 39%;
-    --radius: 0.75rem;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 243 75% 59%;
+    --radius: 0.625rem;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -39,19 +65,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 6%;
     --popover-foreground: 210 40% 98%;
-    --primary: 173 58% 45%;
+    --primary: 243 75% 65%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 173 30% 15%;
-    --accent-foreground: 173 58% 70%;
+    --accent: 243 40% 18%;
+    --accent-foreground: 243 75% 75%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 173 58% 45%;
+    --ring: 243 75% 65%;
   }
 
   [data-tenant-theme="admin"] {
@@ -60,12 +86,12 @@
   }
 
   [data-tenant-theme="clinic"] {
-    --primary: 173 58% 39%;
+    --primary: 243 75% 59%;
     --primary-foreground: 0 0% 100%;
   }
 
   [data-tenant-theme="therapist"] {
-    --primary: 221 83% 53%;
+    --primary: 243 75% 59%;
     --primary-foreground: 0 0% 100%;
   }
 
@@ -78,7 +104,182 @@
     @apply border-border;
   }
 
+  html,
   body {
-    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .marketing-container {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-10 lg:px-20;
+  }
+
+  .marketing-card {
+    @apply rounded-lg bg-card p-xl shadow-soft transition-all duration-200 hover:-translate-y-1 hover:shadow-medium;
+  }
+
+  .marketing-section-hero {
+    @apply py-3xl;
+  }
+
+  .marketing-section-major {
+    @apply py-2xl;
+  }
+
+  .marketing-section-sub {
+    @apply py-xl;
+  }
+
+  .marketing-grid {
+    @apply grid grid-cols-4 gap-4 md:grid-cols-8 md:gap-5 lg:grid-cols-12 lg:gap-6;
+  }
+
+  .text-display-xl {
+    @apply text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl;
+  }
+
+  .text-display-l {
+    @apply text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl;
+  }
+
+  .text-display-m {
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl;
+  }
+
+  .text-heading-l {
+    @apply text-2xl font-semibold tracking-tight sm:text-[28px];
+  }
+
+  .text-heading-m {
+    @apply text-xl font-semibold sm:text-[22px];
+  }
+
+  .text-heading-s {
+    @apply text-lg font-semibold;
+  }
+
+  .nav-link-underline {
+    @apply relative text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground;
+  }
+
+  .nav-link-underline::after {
+    content: "";
+    @apply absolute -bottom-1 left-0 h-0.5 w-0 bg-primary transition-all duration-200;
+  }
+
+  .nav-link-underline:hover::after,
+  .nav-link-underline[data-active="true"]::after {
+    @apply w-full;
+  }
+
+  .nav-link-underline[data-active="true"] {
+    @apply text-primary;
+  }
+
+  .btn-brand-glow {
+    @apply transition-all duration-200 hover:shadow-lg hover:shadow-primary/25;
+  }
+
+  .card-lift {
+    @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-medium;
+  }
+
+  .product-mockup {
+    min-height: 20rem;
+    aspect-ratio: 16 / 10;
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 20rem;
+  }
+
+  @media (min-width: 640px) {
+    .product-mockup {
+      min-height: 24rem;
+      contain-intrinsic-size: auto 24rem;
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  .animate-stagger > * {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+  .animate-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+  .animate-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+  .animate-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+  .animate-stagger > *:nth-child(5) { animation-delay: 0.5s; }
+  .animate-stagger > *:nth-child(6) { animation-delay: 0.6s; }
+
+  .mobile-menu-enter {
+    animation: slideDown var(--transition-brand) ease-out forwards;
+  }
+}
+
+@layer utilities {
+  .shadow-brand-soft {
+    box-shadow: var(--shadow-brand-soft);
+  }
+
+  .shadow-brand-medium {
+    box-shadow: var(--shadow-brand-medium);
+  }
+
+  .bg-brand-gradient {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(99, 102, 241, 0.04) 50%, var(--brand-light) 100%);
+  }
+
+  .bg-brand-gradient-hero {
+    background: linear-gradient(180deg, rgba(165, 180, 252, 0.2) 0%, var(--brand-light) 60%);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

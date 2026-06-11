@@ -10,7 +10,7 @@ export class StaffRepository {
   private forTenant(tenantId: string) {
     return new TenantRepository<Staff, Prisma.StaffCreateInput, Prisma.StaffUpdateInput>(
       this.database.staff as never,
-      { tenantId },
+      { tenantId, includeDeleted: true },
     );
   }
 

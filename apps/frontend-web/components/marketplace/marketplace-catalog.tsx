@@ -13,8 +13,8 @@ export function MarketplaceCatalog({
   detailBasePath,
   showTenantStatus = true,
 }: MarketplaceCatalogProps) {
-  const providersQuery = useMarketplaceProviders();
-  const integrationsQuery = useTenantIntegrations();
+  const providersQuery = useMarketplaceProviders({ platformCatalog: !showTenantStatus });
+  const integrationsQuery = useTenantIntegrations({ enabled: showTenantStatus });
 
   const isLoading = providersQuery.isLoading || (showTenantStatus && integrationsQuery.isLoading);
   const isError = providersQuery.isError || (showTenantStatus && integrationsQuery.isError);

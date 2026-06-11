@@ -3,22 +3,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { createApiClient } from "@/lib/api-client";
+import { getApiClientContext } from "@/lib/api-session";
 import { createEnterpriseApi } from "@/lib/enterprise-api";
 import { useAuthStore } from "@/store/auth.store";
+import { useTenantStore } from "@/store/tenant.store";
 
 function useEnterpriseApi() {
   const accessToken = useAuthStore((s) => s.accessToken);
-  const tenantId = useAuthStore((s) => s.user?.tenantId);
+  const userRole = useAuthStore((s) => s.user?.role);
+  const userRoles = useAuthStore((s) => s.user?.roles);
+  const tenantId = useTenantStore((s) => s.tenant?.id) ?? useAuthStore((s) => s.user?.tenantId);
 
   return useMemo(
-    () =>
-      createEnterpriseApi(
-        createApiClient(() => ({
-          accessToken,
-          tenantId,
-        })),
-      ),
-    [accessToken, tenantId],
+    () => createEnterpriseApi(createApiClient(() => getApiClientContext())),
+    [accessToken, tenantId, userRole, userRoles],
   );
 }
 

@@ -1,4 +1,11 @@
-export type SecurityRole = "OWNER" | "ADMIN" | "THERAPIST" | "STAFF" | "SYSTEM";
+export type SecurityRole =
+  | "OWNER"
+  | "ADMIN"
+  | "THERAPIST"
+  | "STAFF"
+  | "SYSTEM"
+  | "PATIENT"
+  | "PHARMACY";
 
 export const ROLES = {
   OWNER: "OWNER",
@@ -6,6 +13,8 @@ export const ROLES = {
   THERAPIST: "THERAPIST",
   STAFF: "STAFF",
   SYSTEM: "SYSTEM",
+  PATIENT: "PATIENT",
+  PHARMACY: "PHARMACY",
 } as const satisfies Record<string, SecurityRole>;
 
 export const ROLE_HIERARCHY: Record<SecurityRole, number> = {
@@ -13,7 +22,9 @@ export const ROLE_HIERARCHY: Record<SecurityRole, number> = {
   OWNER: 90,
   ADMIN: 80,
   THERAPIST: 60,
+  PHARMACY: 50,
   STAFF: 40,
+  PATIENT: 20,
 };
 
 export function isSecurityRole(value: unknown): value is SecurityRole {

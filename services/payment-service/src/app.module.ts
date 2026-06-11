@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { SecurityGuardsModule } from "@ordella/security";
 import { PaymentIntentsModule } from "@/payment-intents/payment-intents.module";
 import { RefundsModule } from "@/refunds/refunds.module";
 import { PayoutsModule } from "@/payouts/payouts.module";
@@ -10,6 +11,7 @@ import { configurePaymentMiddleware } from "@/middleware";
 
 @Module({
   imports: [
+    SecurityGuardsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [".env", ".env.local"],

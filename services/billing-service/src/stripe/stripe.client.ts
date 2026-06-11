@@ -13,7 +13,7 @@ export class StripeClient {
       if (!secretKey) {
         throw new Error("STRIPE_SECRET_KEY is not configured");
       }
-      this.stripe = new Stripe(secretKey, { apiVersion: "2024-11-20.acacia" });
+      this.stripe = new Stripe(secretKey);
     }
     return this.stripe;
   }

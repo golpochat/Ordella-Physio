@@ -1,77 +1,114 @@
-import type { Metadata } from "next";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import { CtaSection } from "@/components/marketing/cta-section";
-import { SectionHeading } from "@/components/marketing/section-heading";
-import { TEAM_PLACEHOLDERS } from "@/lib/marketing-content";
+import { Button } from "@/components/ui/button";
+import { CtaLink } from "@/components/marketing/CtaLink";
+import { AboutSection } from "@/components/marketing/AboutSection";
+import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
+import { ScrollReveal } from "@/components/marketing/scroll-reveal";
+import { marketingButtonPrimaryClass, marketingHeading } from "@/lib/marketing-ui";
+import { cn } from "@/lib/cn";
+import { TeamCard } from "@/components/marketing/TeamCard";
+import { TimelineItem } from "@/components/marketing/TimelineItem";
+import { ValueCard } from "@/components/marketing/ValueCard";
+import { generateSEO, pageUrl } from "../seo";
 
-export const metadata: Metadata = {
-  title: "About — Ordella Physio",
-  description: "Learn about Ordella Physio's mission to modernize physiotherapy practice management.",
-};
+export const metadata = generateSEO({
+  title: "About",
+  description: "Learn about the mission, values, and team behind Ordella Physio.",
+  url: pageUrl("/about"),
+});
 
 export default function AboutPage() {
   return (
-    <>
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            centered
-            eyebrow="About us"
-            title="Empowering clinics to focus on patient care"
-            description="Our mission is to reduce administrative burden so physiotherapists can spend more time helping patients recover and thrive."
+    <div className="bg-background pb-2xl pt-2xl">
+      <MarketingPageHero
+        title="Our story"
+        description="Ordella Physio was created to bring clarity, efficiency, and modern technology to physiotherapy clinics everywhere."
+      />
+
+      <AboutSection
+        title="Our mission"
+        subtitle="To empower physiotherapy clinics with a unified, intelligent platform that simplifies operations and elevates patient care."
+      >
+        <p className="max-w-3xl text-brand-gray">
+          We believe clinics deserve software that works the way they do — intuitive, reliable, and
+          built around real workflows. Ordella Physio brings together appointments, notes, billing,
+          communication, and analytics into one seamless experience.
+        </p>
+      </AboutSection>
+
+      <AboutSection
+        className="bg-muted/40"
+        title="Our values"
+        subtitle="The principles that guide how we build, support, and innovate."
+      >
+        <div className="grid grid-cols-1 gap-xl md:grid-cols-3">
+          <ValueCard
+            icon="✨"
+            title="Clarity"
+            description="We design for simplicity, transparency, and ease of use."
+          />
+          <ValueCard
+            icon="🤝"
+            title="Trust"
+            description="We prioritize security, reliability, and long-term relationships."
+          />
+          <ValueCard
+            icon="🚀"
+            title="Innovation"
+            description="We continuously improve and evolve to meet clinic needs."
           />
         </div>
-      </section>
+      </AboutSection>
 
-      <section className="bg-muted/30 py-16 sm:py-20">
-        <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-2xl font-bold">Our story</h2>
-          <div className="mt-6 space-y-4 text-muted-foreground">
-            <p>
-              Ordella Physio was founded by clinicians and engineers who experienced firsthand the
-              frustration of fragmented clinic software. Spreadsheets for scheduling, separate tools
-              for billing, and paper notes that never synced — it was clear the industry deserved
-              better.
-            </p>
-            <p>
-              We set out to build a platform that treats the clinic as a whole: every role, every
-              workflow, every patient interaction connected in one secure, tenant-aware system.
-              Today, Ordella Physio serves practices of all sizes with role-based dashboards,
-              real-time analytics, and a patient portal patients actually want to use.
-            </p>
-            <p>
-              This is placeholder content for the company story. A full narrative with founding
-              details, milestones, and vision will be added in a future content pass.
-            </p>
-          </div>
+      <AboutSection title="Our journey">
+        <div className="max-w-2xl space-y-xl">
+          <TimelineItem
+            year="2023"
+            title="The idea"
+            description="We identified the need for a unified, modern clinic platform."
+          />
+          <TimelineItem
+            year="2024"
+            title="Product development"
+            description="We built the core modules: appointments, notes, patients, and billing."
+          />
+          <TimelineItem
+            year="2025"
+            title="Launch"
+            description="Ordella Physio launched with multi-tenant architecture and role-based access."
+          />
+          <TimelineItem
+            year="2026"
+            title="Growth"
+            description="Clinics across Europe adopted the platform, driving rapid expansion."
+          />
         </div>
-      </section>
+      </AboutSection>
 
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading centered title="Meet the team" description="The people behind Ordella Physio." />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {TEAM_PLACEHOLDERS.map((member) => (
-              <Card key={member.name}>
-                <CardHeader>
-                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-muted text-2xl font-semibold text-muted-foreground">
-                    {member.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                  <CardTitle>{member.name}</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <p className="text-sm text-muted-foreground">{member.role}</p>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
+      <AboutSection
+        className="bg-muted/40"
+        title="Meet the team"
+        subtitle="A small, focused team dedicated to building the future of clinic software."
+      >
+        <div className="grid grid-cols-1 gap-xl md:grid-cols-3">
+          <TeamCard name="Sujan" role="Founder & Lead Engineer" />
+          <TeamCard name="Coming Soon" role="Product & Design" />
+          <TeamCard name="Coming Soon" role="Customer Success" />
         </div>
-      </section>
+      </AboutSection>
 
-      <CtaSection />
-    </>
+      <section className="marketing-container mt-2xl py-2xl text-center">
+        <ScrollReveal>
+          <h2 className={cn("mb-md", marketingHeading.h2)}>Ready to join the journey?</h2>
+          <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>
+            Let&apos;s modernize your clinic with a platform built for the future.
+          </p>
+          <Button asChild size="lg" className={marketingButtonPrimaryClass}>
+            <CtaLink href="/contact" location="about" label="Get started">
+              Get Started
+            </CtaLink>
+          </Button>
+        </ScrollReveal>
+      </section>
+    </div>
   );
 }

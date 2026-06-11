@@ -3,6 +3,10 @@ import type { AuthUser } from "@/store/auth.store";
 import type { TenantState } from "@/store/tenant.store";
 
 function resolvePortalType(role: PortalRole): TenantState["portalType"] {
+  if (role === "SYSTEM") {
+    return "admin";
+  }
+
   if (role === "PATIENT") {
     return "patient";
   }
@@ -11,8 +15,12 @@ function resolvePortalType(role: PortalRole): TenantState["portalType"] {
     return "therapist";
   }
 
-  if (role === "SYSTEM" || role === "OWNER") {
+  if (role === "OWNER" || role === "ADMIN") {
     return "admin";
+  }
+
+  if (role === "CLINIC_ADMIN") {
+    return "clinic";
   }
 
   return "clinic";

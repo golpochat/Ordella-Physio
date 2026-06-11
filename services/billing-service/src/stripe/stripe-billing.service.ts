@@ -115,7 +115,10 @@ export class StripeBillingService {
   }
 
   async listStripeInvoices(tenantId: string) {
-    const account = await this.requireAccount(tenantId);
+    const account = await this.repository.findAccountByTenantId(tenantId);
+    if (!account) {
+      return [];
+    }
     const stripe = this.stripeClient.getClient();
     const invoices = await stripe.invoices.list({
       customer: account.stripeCustomerId,

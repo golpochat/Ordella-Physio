@@ -4,7 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { Reflector } from "@nestjs/core";
 import { GlobalExceptionFilter, HttpExceptionFilter } from "@ordella/errors";
-import { RoleGuard, PermissionGuard } from "@ordella/security";
+import { PermissionGuard, RoleGuard, SecurityGuardsModule } from "@ordella/security";
 import { SanitizePipe } from "@ordella/validation";
 import { APPOINTMENT_ROUTES } from "@/routes/appointment.routes";
 import { AUTH_ROUTES } from "@/routes/auth.routes";
@@ -37,6 +37,10 @@ const proxyControllers = [
     skipTenant: true,
   }),
   createProxyController("/tenants/internal", "TENANT_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/tenants/directory", "TENANT_SERVICE_URL", {
     public: true,
     skipTenant: true,
   }),
@@ -75,6 +79,7 @@ const proxyControllers = [
 
 @Module({
   imports: [
+    SecurityGuardsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [".env", ".env.local"],
@@ -84,14 +89,11 @@ const proxyControllers = [
   ],
   controllers: [GatewayController, ...proxyControllers],
   providers: [
-    Reflector,
     GatewayService,
     RegionRoutingService,
     RegionRoutingMiddleware,
     ...gatewayMiddlewareProviders,
     JwtAuthGuard,
-    RoleGuard,
-    PermissionGuard,
     SanitizePipe,
     {
       provide: APP_GUARD,

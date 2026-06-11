@@ -12,6 +12,7 @@ export default defineConfig({
   treeshake: true,
   platform: "node",
   external: [
+    "@ordella/security",
     "@nestjs/common",
     "express",
     "helmet",

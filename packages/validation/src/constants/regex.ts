@@ -8,4 +8,7 @@ export const UUID_REGEX =
 
 export const CUID_REGEX = /^c[a-z0-9]{24,}$/i;
 
+/** Local Docker seed user/entity ids (e.g. dev_user_therapist). */
+export const DEV_SEED_ID_REGEX = /^dev_[a-z0-9_]+$/i;
+
 export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

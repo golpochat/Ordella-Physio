@@ -21,18 +21,8 @@ export function PlatformHomeOverview() {
   const billingQuery = usePlatformBilling();
   const healthQuery = usePlatformSystemHealth();
 
-  const isLoading =
-    tenantsQuery.isLoading ||
-    usersQuery.isLoading ||
-    rolesQuery.isLoading ||
-    billingQuery.isLoading ||
-    healthQuery.isLoading;
-  const isError =
-    tenantsQuery.isError ||
-    usersQuery.isError ||
-    rolesQuery.isError ||
-    billingQuery.isError ||
-    healthQuery.isError;
+  const isLoading = tenantsQuery.isLoading || usersQuery.isLoading;
+  const isError = tenantsQuery.isError || usersQuery.isError;
 
   if (isLoading) {
     return <PageLoading rows={5} />;

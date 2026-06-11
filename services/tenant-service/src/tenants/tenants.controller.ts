@@ -46,18 +46,33 @@ export class TenantsController {
 
   @Post()
   @UseGuards(JwtGuard, RoleGuard)
-  @RequireRoles("OWNER", "ADMIN")
+  @RequireRoles("SYSTEM", "OWNER", "ADMIN")
   @UseZodValidation(createTenantSchema)
   create(@Body() dto: CreateTenantDto, @Req() request: OrdellaRequest) {
     return this.tenantsService.create(dto, request.correlationId);
   }
 
+  @Get("directory")
+  directory(@Query("limit") limit?: string) {
+    const parsedLimit = limit ? Number(limit) : 100;
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 200) : 100;
+
+    return this.tenantsService.findDirectory({ limit: safeLimit });
+  }
+
   @Get()
   @UseGuards(JwtGuard)
   findAll(@Query("page") page?: string, @Query("limit") limit?: string) {
+    const parsedPage = page ? Number(page) : 1;
+    const parsedLimit = limit ? Number(limit) : 20;
+    const safePage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 200) : 20;
+
     return this.tenantsService.findAll({
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
+      page: safePage,
+      limit: safeLimit,
     });
   }
 
@@ -74,7 +89,7 @@ export class TenantsController {
 
   @Patch(":id")
   @UseGuards(JwtGuard, TenantMatchGuard, RoleGuard, TenantGuard)
-  @RequireRoles("OWNER", "ADMIN")
+  @RequireRoles("SYSTEM", "OWNER", "ADMIN")
   @UseZodValidation(updateTenantSchema)
   update(
     @Param("id") id: string,

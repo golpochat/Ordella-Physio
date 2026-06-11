@@ -1,0 +1,113 @@
+/* Smooth transitions within marketing site */
+.marketing-site,
+.marketing-site * {
+  transition: all 0.25s ease;
+}
+
+/* Button hover lift */
+.btn-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Underline animation for links */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0%;
+  height: 2px;
+  background: var(--brand-primary);
+  transition: width 0.25s ease;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Card hover tilt */
+.card-tilt {
+  transform: perspective(800px) translateZ(0);
+}
+
+.card-tilt:hover {
+  transform: perspective(800px) translateZ(12px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Ripple effect (CSS-only) */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple:active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple-effect 0.5s ease-out;
+}
+
+@keyframes ripple-effect {
+  to {
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+  }
+}
+
+/* Soft hover scale */
+.scale-soft:hover {
+  transform: scale(1.03);
+}
+
+.btn-lift.scale-soft:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* Focus ring */
+.focus-ring:focus {
+  outline: 3px solid var(--brand-primary);
+  outline-offset: 3px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-hover:hover {
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-site,
+  .marketing-site * {
+    transition: none;
+  }
+
+  .btn-lift:hover,
+  .btn-lift.scale-soft:hover,
+  .card-tilt:hover,
+  .scale-soft:hover {
+    transform: none;
+  }
+
+  .link-underline::after {
+    transition: none;
+  }
+
+  .ripple:active::after {
+    animation: none;
+  }
+}

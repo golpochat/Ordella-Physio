@@ -146,6 +146,7 @@ export const PUBLIC_PATHS = [
   "/payments/webhook",
   "/billing/webhook",
   "/tenants/internal",
+  "/tenants/directory",
 ];
 
 export const SKIP_TENANT_PATHS = [
@@ -157,6 +158,7 @@ export const SKIP_TENANT_PATHS = [
   "/payments/webhook",
   "/billing/webhook",
   "/tenants/internal",
+  "/tenants/directory",
 ];
 
 export const PUBLIC_JWT_PATHS = [
@@ -168,6 +170,7 @@ export const PUBLIC_JWT_PATHS = [
   "/payments/webhook",
   "/billing/webhook",
   "/tenants/internal",
+  "/tenants/directory",
 ];
 
 export const GATEWAY_SERVICE_NAME = "api-gateway";

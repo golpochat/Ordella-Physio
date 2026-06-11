@@ -85,7 +85,8 @@ export class ProxyService {
     user?: GatewayUser,
   ): Promise<void> {
     const baseUrl = getServiceUrl(serviceEnvKey);
-    const targetUrl = `${baseUrl}${request.originalUrl}`;
+    const requestPath = request.originalUrl.split("?")[0] ?? request.path;
+    const targetUrl = `${baseUrl}${requestPath}`;
     const config = gatewayConfig;
 
     try {
@@ -137,9 +138,13 @@ export class ProxyService {
       headers[key] = Array.isArray(value) ? value.join(",") : value;
     }
 
-    const tenantHeader = request.headers[TENANT_HEADER] ?? request.headers[TENANT_HEADER.toLowerCase()];
-    if (typeof tenantHeader === "string") {
-      headers[TENANT_HEADER] = tenantHeader;
+    if (user?.role !== "SYSTEM") {
+      const tenantHeader = request.headers[TENANT_HEADER] ?? request.headers[TENANT_HEADER.toLowerCase()];
+      if (typeof tenantHeader === "string") {
+        headers[TENANT_HEADER] = tenantHeader;
+      }
+    } else {
+      delete headers[TENANT_HEADER];
     }
 
     const correlationId =
@@ -158,7 +163,12 @@ export class ProxyService {
       return;
     }
 
-    headers[TENANT_HEADER] = user.tenantId;
+    if (user.role !== "SYSTEM") {
+      headers[TENANT_HEADER] = user.tenantId;
+    } else {
+      delete headers[TENANT_HEADER];
+    }
+
     headers[USER_ID_HEADER] = user.userId;
     headers[USER_ROLE_HEADER] = user.role;
     headers[USER_ROLES_HEADER] = user.roles.join(",");

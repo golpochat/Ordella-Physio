@@ -13,6 +13,8 @@ enum Role {
   THERAPIST
   STAFF
   SYSTEM
+  PATIENT
+  PHARMACY
 }
 
 model User {

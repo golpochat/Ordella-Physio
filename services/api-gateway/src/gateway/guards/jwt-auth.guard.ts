@@ -69,7 +69,9 @@ export class JwtAuthGuard implements CanActivate {
       email: payload.email,
     };
 
-    if (!request.headers["x-tenant-id"] && payload.tenantId) {
+    if (role === "SYSTEM") {
+      delete request.headers["x-tenant-id"];
+    } else if (!request.headers["x-tenant-id"] && payload.tenantId) {
       request.headers["x-tenant-id"] = payload.tenantId;
     }
 

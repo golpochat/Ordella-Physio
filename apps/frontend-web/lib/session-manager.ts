@@ -2,6 +2,7 @@ import { authClient } from "@/lib/auth-client";
 import { ApiError } from "@/lib/api-client";
 import { PUBLIC_ROUTES } from "@/lib/constants";
 import { resolveUserRoles } from "@/lib/rbac";
+import { isSystemUser } from "@/lib/auth/roleRedirect";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
@@ -21,6 +22,13 @@ export function getResolvedTenantId(): string | null {
 
 export function syncTenantFromSession(): void {
   const user = useAuthStore.getState().user;
+  const roles = user ? resolveUserRoles(user) : [];
+
+  if (isSystemUser(roles)) {
+    useTenantStore.getState().clearTenant();
+    return;
+  }
+
   if (!user?.tenantId) {
     return;
   }
@@ -90,19 +98,16 @@ export async function attemptTokenRefresh(): Promise<boolean> {
 }
 
 export async function handleApiAuthError(status: number): Promise<void> {
-  if (status !== 401 && status !== 403) {
+  if (status !== 401) {
     return;
   }
 
-  if (status === 401) {
-    const refreshed = await attemptTokenRefresh();
-    if (refreshed) {
-      return;
-    }
+  const refreshed = await attemptTokenRefresh();
+  if (refreshed) {
+    return;
   }
 
-  const reason =
-    status === 403 ? "unauthorized" : getResolvedTenantId() ? "session-expired" : "missing-tenant";
+  const reason = getResolvedTenantId() ? "session-expired" : "missing-tenant";
   redirectToLogin(reason);
 }
 
@@ -117,7 +122,7 @@ export async function validateStoredSession(): Promise<boolean> {
 
   const tenantId = getResolvedTenantId();
   const roles = resolveUserRoles(useAuthStore.getState().user ?? {});
-  if (!tenantId && !roles.includes("SYSTEM")) {
+  if (!tenantId && !isSystemUser(roles)) {
     redirectToLogin("missing-tenant");
     return false;
   }
@@ -133,8 +138,8 @@ export async function validateStoredSession(): Promise<boolean> {
       }
     }
 
-    if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
-      redirectToLogin(error.status === 403 ? "unauthorized" : "session-expired");
+    if (error instanceof ApiError && error.status === 401) {
+      redirectToLogin("session-expired");
       return false;
     }
 

@@ -76,8 +76,8 @@ export const PRICING_TIERS: PricingTier[] = [
     id: "starter",
     name: "Starter",
     description: "For solo practitioners getting started with digital clinic management.",
-    monthlyPrice: "$49",
-    yearlyPrice: "$39",
+    monthlyPrice: "€49",
+    yearlyPrice: "€39",
     yearlySavingsLabel: "Save 20% billed yearly",
     features: [
       "Up to 2 therapists",
@@ -93,8 +93,8 @@ export const PRICING_TIERS: PricingTier[] = [
     id: "pro",
     name: "Pro",
     description: "For growing clinics that need advanced workflows and reporting.",
-    monthlyPrice: "$99",
-    yearlyPrice: "$79",
+    monthlyPrice: "€99",
+    yearlyPrice: "€79",
     yearlySavingsLabel: "Save 20% billed yearly",
     features: [
       "Up to 10 therapists",
@@ -223,15 +223,60 @@ export const SOLUTIONS: SolutionItem[] = [
     description: "Focus on patient care with intuitive scheduling, notes, and caseload management.",
   },
   {
+    title: "For Staff",
+    audience: "Front Desk & Coordinators",
+    description: "Coordinate check-ins, scheduling, and billing with a workspace built for daily operations.",
+  },
+  {
     title: "For Patients",
     audience: "Patients",
     description: "Book appointments, view invoices, and access care notes from a simple portal.",
   },
+];
+
+export const WHY_ORDELLA = [
   {
-    title: "For Admins",
-    audience: "Platform Admins",
-    description: "Oversee tenants, monitor system health, and manage organization-wide settings.",
+    title: "Tenant-aware by design",
+    description: "Every clinic runs in an isolated, secure environment with dedicated data and branding.",
   },
+  {
+    title: "Role-based from day one",
+    description: "Admins, therapists, staff, and patients each get a purpose-built workspace.",
+  },
+  {
+    title: "Built for physiotherapy",
+    description: "Workflows reflect real clinic operations — not generic healthcare software.",
+  },
+];
+
+export const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "Create your clinic",
+    description: "Sign up, configure your tenant, and invite your team in minutes.",
+  },
+  {
+    step: "02",
+    title: "Connect your workflows",
+    description: "Set up scheduling, billing, notes, and patient communication in one place.",
+  },
+  {
+    step: "03",
+    title: "Deliver better care",
+    description: "Spend less time on admin and more time with patients.",
+  },
+];
+
+export const BRAND_VALUES = [
+  { title: "Precision", description: "Every workflow is intentional, reliable, and built for clinical accuracy." },
+  { title: "Trust", description: "Tenant isolation, role-based access, and transparent data handling." },
+  { title: "Care", description: "Technology that supports clinicians and improves the patient experience." },
+];
+
+export const COMPANY_TIMELINE = [
+  { year: "2024", title: "Founded", description: "Ordella Physio was created by clinicians and engineers frustrated with fragmented clinic software." },
+  { year: "2025", title: "Multi-tenant launch", description: "Released role-based portals for clinics, therapists, staff, and patients." },
+  { year: "2026", title: "European expansion", description: "Launched with Euro-first billing, GDPR-ready architecture, and enterprise features." },
 ];
 
 export const FAQ_ITEMS: FaqItem[] = [
@@ -290,6 +335,30 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: "How tailored workspaces improve efficiency for every member of your clinic.",
     date: "2026-03-10",
     author: "James Chen",
+    category: "Product",
+  },
+  {
+    slug: "gdpr-ready-clinic-software",
+    title: "GDPR-Ready Clinic Software: What to Look For",
+    excerpt: "Key compliance considerations when choosing a practice management platform in Europe.",
+    date: "2026-04-02",
+    author: "Nina Okonkwo",
+    category: "Compliance",
+  },
+  {
+    slug: "reduce-no-shows",
+    title: "How Automated Reminders Reduce No-Shows",
+    excerpt: "Clinics using Ordella Physio cut missed appointments with smart scheduling and notifications.",
+    date: "2026-04-18",
+    author: "Tom Bradley",
+    category: "Best Practices",
+  },
+  {
+    slug: "billing-made-simple",
+    title: "Billing Made Simple for Physiotherapy Clinics",
+    excerpt: "From invoicing to Stripe subscriptions — a unified billing workflow for growing practices.",
+    date: "2026-05-05",
+    author: "Priya Sharma",
     category: "Product",
   },
 ];

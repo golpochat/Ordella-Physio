@@ -14,4 +14,4 @@ RUN cp -r src/generated dist/services/tenant-service/src/
 
 EXPOSE 3052
 
-CMD ["sh", "-c", "pnpm exec prisma db push --skip-generate && exec pnpm start"]
+CMD ["sh", "-c", "pnpm exec prisma db push --skip-generate --accept-data-loss && exec pnpm start"]

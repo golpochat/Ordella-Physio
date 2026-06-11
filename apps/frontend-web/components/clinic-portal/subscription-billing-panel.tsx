@@ -100,7 +100,7 @@ export function ClinicSubscriptionBillingPanel() {
                     <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
                   <Button
-                    variant={currentPlan === plan.id ? "secondary" : "default"}
+                    variant={currentPlan === plan.id ? "secondary" : "primary"}
                     disabled={createSubscription.isPending || currentPlan === plan.id}
                     onClick={() => void handleChangePlan(plan.id)}
                   >

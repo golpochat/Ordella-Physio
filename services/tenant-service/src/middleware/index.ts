@@ -21,7 +21,12 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "tenant-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
-const TENANT_PUBLIC_PATHS = ["/tenants/health", "/tenants", "/tenants/internal/billing-sync"];
+const TENANT_PUBLIC_PATHS = [
+  "/tenants/health",
+  "/tenants/directory",
+  "/tenants",
+  "/tenants/internal/billing-sync",
+];
 
 export const TenantServiceTenantMiddleware = createTenantMiddleware({
   required: false,

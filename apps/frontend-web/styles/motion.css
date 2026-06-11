@@ -1,0 +1,60 @@
+/* Motion Tokens */
+:root {
+  --motion-duration-fast: 0.25s;
+  --motion-duration-medium: 0.45s;
+  --motion-duration-slow: 0.7s;
+
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page Fade */
+.page-fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--motion-duration-medium) var(--motion-ease-out),
+    transform var(--motion-duration-medium) var(--motion-ease-out);
+}
+
+.page-fade-exit {
+  opacity: 1;
+}
+
+.page-fade-exit-active {
+  opacity: 0;
+  transition: opacity var(--motion-duration-medium) var(--motion-ease-out);
+}
+
+/* Scroll Progress Bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--brand-primary);
+  width: 0%;
+  z-index: 9999;
+  transition: width 0.1s linear;
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-fade-enter,
+  .page-fade-enter-active,
+  .page-fade-exit,
+  .page-fade-exit-active {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .scroll-progress {
+    transition: none;
+  }
+}

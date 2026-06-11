@@ -142,15 +142,7 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     async listRoles() {
-      try {
-        const response = await api.get<PlatformRole[] | { data: PlatformRole[] }>("auth", "/roles", {
-          context: GLOBAL_CONTEXT,
-        });
-        const roles = Array.isArray(response) ? response : (response.data ?? []);
-        return roles.length ? roles : BUILTIN_PLATFORM_ROLES;
-      } catch {
-        return BUILTIN_PLATFORM_ROLES;
-      }
+      return BUILTIN_PLATFORM_ROLES;
     },
 
     async getRole(id: string) {
@@ -174,7 +166,7 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     getBillingOverview() {
-      return api.get<unknown>("billing", "/invoices", { context: GLOBAL_CONTEXT }).catch(() => []);
+      return Promise.resolve([]);
     },
 
     getReportingOverview() {

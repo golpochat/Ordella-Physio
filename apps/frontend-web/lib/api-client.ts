@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { attemptTokenRefresh, handleApiAuthError } from "@/lib/session-manager";
 import { API_ROUTES, AUTHORIZATION_HEADER, CORRELATION_ID_HEADER, TENANT_HEADER } from "./constants";
+import { isSystemRole, isSystemUser, mapAuthRoleToPortalRole } from "./auth/roleRedirect";
 
 export class ApiError extends Error {
   constructor(
@@ -17,6 +18,8 @@ export type ApiClientContext = {
   accessToken?: string | null;
   tenantId?: string | null;
   correlationId?: string | null;
+  role?: string | null;
+  roles?: string[] | null;
 };
 
 export type ApiClientOptions = Omit<RequestInit, "body"> & {
@@ -54,13 +57,20 @@ export function createApiClient(getContext: () => ApiClientContext) {
     const session = { ...getContext(), ...context };
     const correlationId = session.correlationId ?? uuidv4();
 
+    const roles =
+      session.roles?.map((role) => mapAuthRoleToPortalRole(role)) ??
+      (session.role ? [mapAuthRoleToPortalRole(session.role)] : []);
+    const systemUser =
+      isSystemRole(session.role ?? undefined) || (roles.length > 0 && isSystemUser(roles));
+    const includeTenantHeader = Boolean(session.tenantId) && !systemUser;
+
     const response = await fetch(buildServiceUrl(service, path, params), {
       ...init,
       body: jsonBody !== undefined ? JSON.stringify(jsonBody) : undefined,
       headers: {
         "Content-Type": "application/json",
         [CORRELATION_ID_HEADER]: correlationId,
-        ...(session.tenantId ? { [TENANT_HEADER]: session.tenantId } : {}),
+        ...(includeTenantHeader ? { [TENANT_HEADER]: session.tenantId! } : {}),
         ...(session.accessToken ? { [AUTHORIZATION_HEADER]: `Bearer ${session.accessToken}` } : {}),
         ...headers,
       },
@@ -69,12 +79,10 @@ export function createApiClient(getContext: () => ApiClientContext) {
     const payload = await response.json().catch(() => null);
 
     if (!response.ok) {
-      if ((response.status === 401 || response.status === 403) && !options._retried) {
-        if (response.status === 401) {
-          const refreshed = await attemptTokenRefresh();
-          if (refreshed) {
-            return request<T>({ ...options, _retried: true });
-          }
+      if (response.status === 401 && !options._retried) {
+        const refreshed = await attemptTokenRefresh();
+        if (refreshed) {
+          return request<T>({ ...options, _retried: true });
         }
 
         await handleApiAuthError(response.status);

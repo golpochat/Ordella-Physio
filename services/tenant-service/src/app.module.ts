@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { SecurityGuardsModule } from "@ordella/security";
 import { TenantsModule } from "@/tenants/tenants.module";
 import { LocationsModule } from "@/locations/locations.module";
 import { StaffModule } from "@/staff/staff.module";
@@ -12,6 +13,7 @@ import { configureTenantMiddleware } from "@/middleware";
 
 @Module({
   imports: [
+    SecurityGuardsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [".env", ".env.local"],

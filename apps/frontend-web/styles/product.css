@@ -1,0 +1,183 @@
+/* Marketing product page — scoped to avoid portal bleed */
+.marketing-site .product-page {
+  padding-top: var(--space-3xl);
+  padding-bottom: var(--space-3xl);
+}
+
+.marketing-site .product-section {
+  padding-top: var(--space-3xl);
+  padding-bottom: var(--space-3xl);
+}
+
+.marketing-site .product-title {
+  margin-bottom: var(--space-xl);
+  font-family: var(--font-display);
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  text-align: center;
+  color: var(--brand-dark);
+}
+
+.marketing-site .product-subtitle {
+  max-width: 720px;
+  margin: 0 auto var(--space-2xl);
+  font-size: var(--font-size-lg);
+  line-height: var(--leading-relaxed);
+  text-align: center;
+  color: var(--brand-gray);
+}
+
+.marketing-site .product-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+}
+
+.marketing-site .product-module {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2xl);
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.marketing-site .product-module.reverse .product-module-text {
+  order: 2;
+}
+
+.marketing-site .product-module.reverse .product-module-image {
+  order: 1;
+}
+
+.marketing-site .product-module-text h3 {
+  margin-bottom: var(--space-md);
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--brand-dark);
+}
+
+.marketing-site .product-module-text p {
+  font-size: var(--font-size-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--brand-gray);
+}
+
+.marketing-site .product-module-image {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: productFadeUp 0.8s ease forwards;
+}
+
+.marketing-site .product-module-image .product-mockup {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-medium);
+}
+
+.marketing-site .product-hero {
+  padding-bottom: var(--space-3xl);
+  text-align: center;
+}
+
+.marketing-site .product-hero-title {
+  margin-bottom: var(--space-lg);
+  font-family: var(--font-display);
+  font-size: var(--font-size-5xl);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--brand-dark);
+}
+
+.marketing-site .product-hero-subtitle {
+  max-width: 720px;
+  margin: 0 auto var(--space-2xl);
+  font-size: var(--font-size-xl);
+  line-height: var(--leading-relaxed);
+  color: var(--brand-gray);
+}
+
+.marketing-site .product-hero-image {
+  margin: 0 auto;
+  max-width: 56rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: productFadeUp 0.8s ease forwards;
+  animation-delay: 0.15s;
+}
+
+.marketing-site .product-hero-image .product-mockup {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-medium);
+}
+
+.marketing-site .product-cta {
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-3xl);
+  text-align: center;
+}
+
+.marketing-site .product-cta-title {
+  margin-bottom: var(--space-md);
+  font-family: var(--font-display);
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  color: var(--brand-dark);
+}
+
+.marketing-site .product-cta-subtitle {
+  max-width: 36rem;
+  margin: 0 auto var(--space-xl);
+  font-size: var(--font-size-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--brand-gray);
+}
+
+@keyframes productFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .marketing-site .product-hero-title {
+    font-size: var(--font-size-4xl);
+  }
+
+  .marketing-site .product-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .marketing-site .product-module {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .marketing-site .product-module.reverse .product-module-text,
+  .marketing-site .product-module.reverse .product-module-image {
+    order: unset;
+  }
+
+  .marketing-site .product-module-image {
+    margin-top: var(--space-xl);
+  }
+
+  .marketing-site .product-hero-image {
+    margin-top: var(--space-xl);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-site .product-module-image,
+  .marketing-site .product-hero-image {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

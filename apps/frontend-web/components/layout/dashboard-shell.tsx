@@ -8,13 +8,16 @@ import { Topbar } from "@/components/layout/topbar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { DASHBOARD_NAV_LINKS, getDashboardTitle } from "@/lib/dashboard-nav";
 import { resolveUserRoles } from "@/lib/rbac";
+import { getPortalForRole } from "@/lib/auth/roleRedirect";
 import { getStoredAuthUser } from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
 import { useUiStore } from "@/store/ui.store";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const storeUser = useAuthStore((state) => state.user);
   const collapsed = useUiStore((state) => state.sidebarCollapsed);
   const [hydrated, setHydrated] = useState(false);
@@ -25,6 +28,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   const user = storeUser ?? (hydrated ? getStoredAuthUser() : null);
   const roles = user ? resolveUserRoles(user) : [];
+
+  useEffect(() => {
+    if (!hydrated || !roles.includes("SYSTEM")) {
+      return;
+    }
+
+    router.replace(getPortalForRole("SYSTEM"));
+  }, [hydrated, roles, router]);
   const primaryRole = roles[0] ?? "Guest";
   const dashboardTitle = getDashboardTitle(pathname);
 

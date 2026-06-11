@@ -48,6 +48,19 @@ export class TenantsService {
       .then((tenants) => tenants.map(toTenantResponse));
   }
 
+  findDirectory(params?: { limit?: number }) {
+    const limit = params?.limit ?? 100;
+    return this.tenantsRepository
+      .findMany({ skip: 0, take: limit })
+      .then((tenants) =>
+        tenants.map((tenant) => ({
+          id: tenant.id,
+          name: tenant.name,
+          slug: tenant.slug,
+        })),
+      );
+  }
+
   findById(tenantId: string) {
     return this.tenantsRepository.findById(tenantId).then((tenant) => {
       if (!tenant) {

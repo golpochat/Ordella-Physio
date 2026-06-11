@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BLOG_POSTS } from "@/lib/marketing-content";
+import { generateSEO, pageUrl } from "../../seo";
 
 type BlogPostPageProps = {
   params: { slug: string };
@@ -17,13 +18,18 @@ export function generateMetadata({ params }: BlogPostPageProps): Metadata {
   const post = BLOG_POSTS.find((entry) => entry.slug === params.slug);
 
   if (!post) {
-    return { title: "Post not found — Ordella Physio" };
+    return generateSEO({
+      title: "Post not found",
+      description: "The requested blog post could not be found.",
+      url: pageUrl("/blog"),
+    });
   }
 
-  return {
-    title: `${post.title} — Ordella Physio Blog`,
+  return generateSEO({
+    title: post.title,
     description: post.excerpt,
-  };
+    url: pageUrl(`/blog/${post.slug}`),
+  });
 }
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {

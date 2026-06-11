@@ -1,1 +1,8 @@
-export { CUID_REGEX, EMAIL_REGEX, PHONE_REGEX, SLUG_REGEX, UUID_REGEX } from "./regex";
+export {
+  CUID_REGEX,
+  DEV_SEED_ID_REGEX,
+  EMAIL_REGEX,
+  PHONE_REGEX,
+  SLUG_REGEX,
+  UUID_REGEX,
+} from "./regex";

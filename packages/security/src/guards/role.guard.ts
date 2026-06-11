@@ -16,7 +16,11 @@ export const RequireRoles = (...roles: SecurityRole[]) => SetMetadata(ROLES_KEY,
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  private readonly reflector: Reflector;
+
+  constructor(reflector?: Reflector) {
+    this.reflector = reflector ?? new Reflector();
+  }
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<SecurityRole[]>(ROLES_KEY, [
@@ -33,6 +37,10 @@ export class RoleGuard implements CanActivate {
 
     if (!user) {
       throw new UnauthorizedException("Authentication required");
+    }
+
+    if (user.role === "SYSTEM") {
+      return true;
     }
 
     const allowed = requiredRoles.some(

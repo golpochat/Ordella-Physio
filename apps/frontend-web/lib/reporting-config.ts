@@ -45,7 +45,7 @@ export function getReportingMode(roles: PortalRole[]): PortalReportingMode {
   if (roles.includes("SYSTEM")) {
     return "full";
   }
-  if (roles.includes("ADMIN") || roles.includes("OWNER")) {
+  if (roles.includes("ADMIN") || roles.includes("OWNER") || roles.includes("CLINIC_ADMIN")) {
     return "full";
   }
   if (roles.includes("THERAPIST")) {
@@ -64,7 +64,7 @@ export function getReportTypeOptions(roles: PortalRole[]): ReportTypeOption[] {
   if (roles.includes("SYSTEM")) {
     return SUPER_ADMIN_REPORTS;
   }
-  if (roles.includes("ADMIN") || roles.includes("OWNER")) {
+  if (roles.includes("ADMIN") || roles.includes("OWNER") || roles.includes("CLINIC_ADMIN")) {
     return ALL_CLINIC_REPORTS;
   }
   if (roles.includes("THERAPIST")) {

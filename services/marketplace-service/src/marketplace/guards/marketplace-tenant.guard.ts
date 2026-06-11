@@ -23,13 +23,16 @@ export class MarketplaceTenantGuard implements CanActivate {
     const user = request.user;
     if (!user) throw new UnauthorizedException("Authentication required");
 
-    const tenantId = request.tenantId ?? getHeaderTenantId(request);
-    if (!tenantId) throw new BadRequestException(`Missing required header: ${TENANT_HEADER}`);
-
     if (user.role === "SYSTEM") {
-      request.tenantId = tenantId;
+      const tenantId = request.tenantId ?? getHeaderTenantId(request);
+      if (tenantId) {
+        request.tenantId = tenantId;
+      }
       return true;
     }
+
+    const tenantId = request.tenantId ?? getHeaderTenantId(request);
+    if (!tenantId) throw new BadRequestException(`Missing required header: ${TENANT_HEADER}`);
 
     if (!rbacService.enforceTenantIsolation(user, tenantId)) {
       throw new ForbiddenException("Tenant mismatch");

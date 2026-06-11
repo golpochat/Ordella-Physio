@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { PageLoading } from "@/components/patient-portal/page-state";
+import { SystemRouteEnforcer } from "@/components/navigation/system-route-enforcer";
 import { isPublicPath, syncTenantFromSession, validateStoredSession } from "@/lib/session-manager";
 import { getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
@@ -43,5 +44,10 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <SystemRouteEnforcer />
+      {children}
+    </>
+  );
 }

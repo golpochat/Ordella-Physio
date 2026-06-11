@@ -18,6 +18,14 @@ export class UsersRepository {
     });
   }
 
+  findMany(params?: { skip?: number; take?: number }) {
+    return this.db.user.findMany({
+      skip: params?.skip,
+      take: params?.take,
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   createUser(data: {
     tenantId: string;
     email: string;

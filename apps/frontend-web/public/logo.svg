@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
-  <rect width="120" height="120" rx="24" fill="#0F766E"/>
-  <path d="M36 78V42H48L60 58L72 42H84V78H72V56L60 72L48 56V78H36Z" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 40" fill="none" role="img" aria-label="Ordella Physio">
+  <circle cx="20" cy="20" r="14" stroke="#4F46E5" stroke-width="3" fill="none"/>
+  <path d="M8 20C8 13.3726 13.3726 8 20 8" stroke="#6366F1" stroke-width="3" stroke-linecap="round"/>
+  <path d="M32 20C32 26.6274 26.6274 32 20 32" stroke="#A5B4FC" stroke-width="3" stroke-linecap="round"/>
+  <text x="44" y="27" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#0F172A" letter-spacing="-0.18">Ordella Physio</text>
 </svg>

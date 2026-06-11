@@ -1,69 +1,110 @@
-import type { Metadata } from "next";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CtaSection } from "@/components/marketing/cta-section";
-import { ScreenshotPlaceholder } from "@/components/marketing/screenshot-placeholder";
-import { SectionHeading } from "@/components/marketing/section-heading";
-import { PRODUCT_MODULES } from "@/lib/marketing-content";
+import { CtaLink } from "@/components/marketing/CtaLink";
+import { ProductHero } from "@/components/marketing/product/ProductHero";
+import { ProductModule } from "@/components/marketing/product/ProductModule";
+import { ProductSection } from "@/components/marketing/product/ProductSection";
+import { ScrollReveal } from "@/components/marketing/scroll-reveal";
+import { generateSEO, pageUrl, softwareApplicationJsonLd, withJsonLd } from "../seo";
 
-export const metadata: Metadata = {
-  title: "Product — Ordella Physio",
-  description: "Overview of the Ordella Physio platform and its core modules.",
-};
+export const metadata = withJsonLd(
+  generateSEO({
+    title: "Product",
+    description: "Explore the full Ordella Physio platform — built for modern clinics.",
+    url: pageUrl("/product"),
+  }),
+  softwareApplicationJsonLd,
+);
 
 export default function ProductPage() {
   return (
-    <>
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            centered
-            eyebrow="Product"
-            title="One platform for your entire clinic"
-            description="Ordella Physio unifies appointments, patient records, clinical documentation, billing, and communication in a tenant-aware, role-based system."
-          />
-          <div className="mx-auto mt-12 max-w-4xl">
-            <ScreenshotPlaceholder label="Platform overview screenshot placeholder" />
-          </div>
-        </div>
-      </section>
+    <div className="product-page bg-background">
+      <ProductHero />
 
-      <section className="bg-muted/30 py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            centered
-            title="Core modules"
-            description="Every module is designed to work together — no data silos, no duplicate entry."
-          />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PRODUCT_MODULES.map((module) => (
-              <Card key={module.name}>
-                <CardHeader>
-                  <CardTitle>{module.name}</CardTitle>
-                  <CardDescription>{module.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ProductSection
+        title="Core modules"
+        subtitle="Every module is designed to work together with no data silos or duplicate entry."
+      >
+        <ProductModule
+          variant="calendar"
+          title="Appointments"
+          description="Scheduling, calendar sync, therapist availability, and automated reminders."
+        />
+        <ProductModule
+          reverse
+          variant="portal"
+          title="Patients"
+          description="Profiles, intake forms, treatment plans, and care history."
+        />
+        <ProductModule
+          variant="dashboard"
+          title="Clinical Notes"
+          description="Structured documentation, templates, audit trails, and secure storage."
+        />
+      </ProductSection>
 
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            centered
-            title="See it in action"
-            description="Screenshots and demos will be added here."
-          />
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <ScreenshotPlaceholder label="Appointments module screenshot" />
-            <ScreenshotPlaceholder label="Billing module screenshot" />
-            <ScreenshotPlaceholder label="Clinical notes screenshot" />
-            <ScreenshotPlaceholder label="Patient portal screenshot" />
-          </div>
-        </div>
-      </section>
+      <ProductSection
+        className="bg-muted/40"
+        title="Built around real clinic workflows"
+        subtitle="Ordella Physio adapts to the way physiotherapy clinics actually operate."
+      >
+        <ProductModule
+          variant="dashboard"
+          title="End-to-end workflow"
+          description="From booking to discharge, every step is connected and automated."
+        />
+        <ProductModule
+          reverse
+          variant="billing"
+          title="Performance insights"
+          description="Track therapist performance, patient outcomes, and clinic KPIs."
+        />
+        <ProductModule
+          variant="portal"
+          title="Communication"
+          description="Secure messaging between therapists, staff, and patients."
+        />
+      </ProductSection>
 
-      <CtaSection />
-    </>
+      <ProductSection
+        title="Platform capabilities"
+        subtitle="A modern, scalable platform designed for multi-location clinics."
+      >
+        <ProductModule
+          variant="dashboard"
+          title="Multi-tenant architecture"
+          description="Each clinic operates in its own secure environment with isolated data."
+        />
+        <ProductModule
+          reverse
+          variant="portal"
+          title="Role-based access"
+          description="Fine-grained permissions for admins, therapists, staff, and patients."
+        />
+        <ProductModule
+          variant="billing"
+          title="Fast & reliable"
+          description="Optimized performance, global infrastructure, and enterprise-grade security."
+        />
+      </ProductSection>
+
+      <section className="product-cta marketing-container" aria-labelledby="product-cta-title">
+        <ScrollReveal>
+          <h2 id="product-cta-title" className="product-cta-title">
+            Ready to modernize your clinic?
+          </h2>
+          <p className="product-cta-subtitle">
+            Start your journey with Ordella Physio and experience a unified, intelligent clinic
+            platform.
+          </p>
+          <CtaLink
+            href="/contact"
+            location="product"
+            label="Get started"
+            className="hero-cta-primary ripple btn-lift"
+          >
+            Get Started
+          </CtaLink>
+        </ScrollReveal>
+      </section>
+    </div>
   );
 }

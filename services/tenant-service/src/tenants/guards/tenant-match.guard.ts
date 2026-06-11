@@ -12,6 +12,10 @@ export class TenantMatchGuard implements CanActivate {
     const routeTenantId = request.params.tenantId ?? request.params.id;
     const user = request.user;
 
+    if (user?.role === "SYSTEM") {
+      return true;
+    }
+
     if (!routeTenantId || !user?.tenantId) {
       return true;
     }

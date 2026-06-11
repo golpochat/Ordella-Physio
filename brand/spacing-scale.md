@@ -1,0 +1,10 @@
+# Spacing Scale
+
+--space-2xs: 4px
+--space-xs: 8px
+--space-sm: 12px
+--space-md: 16px
+--space-lg: 24px
+--space-xl: 32px
+--space-2xl: 48px
+--space-3xl: 64px

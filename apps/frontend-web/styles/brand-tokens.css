@@ -1,0 +1,39 @@
+:root {
+  /* Brand colors */
+  --brand-primary: #4f46e5;
+  --brand-primary-light: #6366f1;
+  --brand-primary-soft: #a5b4fc;
+  --brand-dark: #0f172a;
+  --brand-gray: #4a5568;
+  --brand-light: #f7f7f7;
+  --brand-white: #ffffff;
+
+  /* Semantic */
+  --brand-success: #10b981;
+  --brand-warning: #f59e0b;
+  --brand-error: #ef4444;
+  --brand-info: #3b82f6;
+
+  /* Typography */
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Aliases — brand tokens map to global design tokens */
+  --radius-brand-sm: var(--radius-sm);
+  --radius-brand-md: var(--radius-md);
+  --radius-brand-lg: var(--radius-lg);
+  --shadow-brand-soft: var(--shadow-soft);
+  --shadow-brand-medium: var(--shadow-medium);
+
+  /* Grid */
+  --grid-margin-desktop: 80px;
+  --grid-gutter-desktop: 24px;
+  --grid-margin-tablet: 40px;
+  --grid-gutter-tablet: 20px;
+  --grid-margin-mobile: 20px;
+  --grid-gutter-mobile: 16px;
+
+  /* Transitions */
+  --transition-brand: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-brand-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}

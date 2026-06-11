@@ -34,15 +34,18 @@ export class MessagingTenantGuard implements CanActivate {
       throw new UnauthorizedException("Authentication required");
     }
 
+    if (user.role === "SYSTEM") {
+      const tenantId = request.tenantId ?? getHeaderTenantId(request);
+      if (tenantId) {
+        request.tenantId = tenantId;
+      }
+      return true;
+    }
+
     const tenantId = request.tenantId ?? getHeaderTenantId(request);
 
     if (!tenantId) {
       throw new BadRequestException(`Missing required header: ${TENANT_HEADER}`);
-    }
-
-    if (user.role === "SYSTEM") {
-      request.tenantId = tenantId;
-      return true;
     }
 
     if (!rbacService.enforceTenantIsolation(user, tenantId)) {
