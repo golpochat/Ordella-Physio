@@ -21,6 +21,8 @@ export const API_ROUTES = {
   enterprise: "/api/enterprise",
   organization: "/api/organization",
   terminal: "/api/terminal",
+  userRole: "/api/user-role",
+  staffMember: "/api/staff",
 } as const;
 
 export const GATEWAY_PATHS = {
@@ -40,6 +42,8 @@ export const GATEWAY_PATHS = {
   enterprise: "/enterprise",
   organization: "/organizations",
   terminal: "/terminals",
+  userRole: "/roles",
+  staffMember: "/staff",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;

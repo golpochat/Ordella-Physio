@@ -30,6 +30,8 @@ const PRISMA_SERVICES = [
   "enterprise-service",
   "organization-service",
   "terminal-service",
+  "user-role-service",
+  "staff-service",
 ];
 
 function run(command, args, options = {}) {

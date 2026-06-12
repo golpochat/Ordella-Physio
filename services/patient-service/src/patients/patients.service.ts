@@ -4,13 +4,26 @@ import { UpdatePatientCommand } from "@/patients/commands/update-patient.command
 import { DeletePatientCommand } from "@/patients/commands/delete-patient.command";
 import { PatientsRepository } from "@/patients/patients.repository";
 import { MedicalRecordsService } from "@/medical-records/medical-records.service";
-import type { CreatePatientDto } from "@/patients/dto/create-patient.dto";
-import type { UpdatePatientDto } from "@/patients/dto/update-patient.dto";
-import type { SearchPatientDto } from "@/patients/dto/search-patient.dto";
+import { AppointmentServiceClient } from "@/integrations/appointment-service.client";
+import { PatientInsuranceRepository } from "@/repositories/patient-insurance.repository";
+import {
+  invalidPatientFilterError,
+  invalidPatientPaginationError,
+  patientAlreadyActiveError,
+  patientAlreadyInactiveError,
+  patientHasActiveAppointmentsError,
+  patientNotFoundError,
+  patientTenantMismatchError,
+} from "@/utils/patient-errors";
 import type { UpdateMedicalRecordDto } from "@/medical-records/dto/update-medical-record.dto";
-import { buildPatientSearchWhere, resolvePagination } from "@/utils/search-helpers";
+import { buildPatientListOrderBy, buildPatientListWhere } from "@/utils/search-helpers";
+import { parseListPatientsQuery } from "@/validators/patient.validator";
 import { fetchPatientNotesPlaceholder } from "@/utils/patient-helpers";
-import { toPatientListResponse, toPatientResponse } from "@/patients/patients.mapper";
+import {
+  toPatientInsuranceResponse,
+  toPatientListResponse,
+  toPatientResponse,
+} from "@/patients/patients.mapper";
 
 @Injectable()
 export class PatientsService {
@@ -19,28 +32,41 @@ export class PatientsService {
     private readonly updatePatientCommand: UpdatePatientCommand,
     private readonly deletePatientCommand: DeletePatientCommand,
     private readonly patientsRepository: PatientsRepository,
+    private readonly patientInsuranceRepository: PatientInsuranceRepository,
     private readonly medicalRecordsService: MedicalRecordsService,
+    private readonly appointmentServiceClient: AppointmentServiceClient,
   ) {}
 
-  create(tenantId: string, dto: CreatePatientDto, correlationId?: string) {
-    return this.createPatientCommand.execute({ tenantId, dto, correlationId });
+  create(tenantId: string, payload: unknown, correlationId?: string) {
+    return this.createPatientCommand.execute({ tenantId, payload, correlationId });
   }
 
-  async search(tenantId: string, query: SearchPatientDto) {
-    const where = buildPatientSearchWhere(tenantId, query);
-    const { page, limit, skip } = resolvePagination(query);
+  async listPatients(tenantId: string, query: unknown) {
+    const parsed = parseListPatientsQuery(query);
+    if (!parsed.valid) {
+      if (parsed.error === "INVALID_PAGINATION") {
+        throw invalidPatientPaginationError();
+      }
+      throw invalidPatientFilterError();
+    }
+
+    const { page, limit, sortBy, sortOrder, ...filters } = parsed.payload;
+    const where = buildPatientListWhere(tenantId, filters);
+    const skip = (page - 1) * limit;
+    const orderBy = buildPatientListOrderBy(sortBy, sortOrder);
+
     const [patients, total] = await Promise.all([
-      this.patientsRepository.search(tenantId, where, { skip, take: limit }),
+      this.patientsRepository.search(tenantId, where, { skip, take: limit, orderBy }),
       this.patientsRepository.count(tenantId, where),
     ]);
 
     return {
       data: toPatientListResponse(patients),
-      meta: {
+      pagination: {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages: total > 0 ? Math.ceil(total / limit) : 0,
       },
     };
   }
@@ -48,14 +74,69 @@ export class PatientsService {
   async findById(tenantId: string, patientId: string) {
     const patient = await this.patientsRepository.findById(tenantId, patientId);
     if (!patient) {
-      return null;
+      throw patientNotFoundError();
     }
 
-    return toPatientResponse(patient);
+    const insurance = await this.patientInsuranceRepository.findByPatientId(patientId);
+
+    return {
+      patient: toPatientResponse(patient),
+      insurance: insurance ? toPatientInsuranceResponse(insurance) : null,
+    };
   }
 
-  update(tenantId: string, patientId: string, dto: UpdatePatientDto, correlationId?: string) {
-    return this.updatePatientCommand.execute({ tenantId, patientId, dto, correlationId });
+  update(tenantId: string, patientId: string, payload: unknown, correlationId?: string) {
+    return this.updatePatientCommand.execute({ tenantId, patientId, payload, correlationId });
+  }
+
+  async deactivatePatient(tenantId: string, patientId: string) {
+    const existing = await this.patientsRepository.findByIdGlobal(patientId);
+    if (!existing) {
+      throw patientNotFoundError();
+    }
+
+    if (existing.tenantId !== tenantId) {
+      throw patientTenantMismatchError();
+    }
+
+    if (existing.status === "INACTIVE") {
+      throw patientAlreadyInactiveError();
+    }
+
+    const hasActiveAppointments =
+      await this.appointmentServiceClient.hasActiveAppointmentsForPatient(tenantId, patientId);
+    if (hasActiveAppointments) {
+      throw patientHasActiveAppointmentsError();
+    }
+
+    const updated = await this.patientsRepository.setStatus(tenantId, patientId, "INACTIVE");
+
+    return {
+      patient: toPatientResponse(updated),
+      message: "Patient deactivated successfully.",
+    };
+  }
+
+  async activatePatient(tenantId: string, patientId: string) {
+    const existing = await this.patientsRepository.findByIdGlobal(patientId);
+    if (!existing) {
+      throw patientNotFoundError();
+    }
+
+    if (existing.tenantId !== tenantId) {
+      throw patientTenantMismatchError();
+    }
+
+    if (existing.status === "ACTIVE") {
+      throw patientAlreadyActiveError();
+    }
+
+    const updated = await this.patientsRepository.setStatus(tenantId, patientId, "ACTIVE");
+
+    return {
+      patient: toPatientResponse(updated),
+      message: "Patient activated successfully.",
+    };
   }
 
   delete(tenantId: string, patientId: string, correlationId?: string) {

@@ -57,6 +57,7 @@
         "@ordella/config-eslint": "workspace:*",
         "@ordella/config-typescript": "workspace:*",
         "@types/express": "^5.0.0",
+        "@types/multer": "^1.4.12",
         "@types/jest": "^29.5.14",
         "@types/node": "^22.10.2",
         "@types/passport-jwt": "^4.0.1",

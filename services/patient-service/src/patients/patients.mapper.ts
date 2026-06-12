@@ -1,25 +1,28 @@
-import type { MedicalRecord, Patient } from "@/generated/prisma";
+import type { MedicalRecord, Patient, PatientInsurance } from "@/generated/prisma";
+import type { PatientInsuranceRecord } from "@/models/PatientInsurance";
+import type { PatientRecord } from "@/models/Patient";
 
-export type PatientResponse = {
-  id: string;
-  tenantId: string;
-  firstName: string;
-  lastName: string;
-  email: string | null;
-  phone: string | null;
-  dateOfBirth: string | null;
-  gender: string;
+export type PatientResponse = PatientRecord & {
   address: string | null;
-  emergencyContactName: string | null;
-  emergencyContactPhone: string | null;
-  notes: string | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type PatientDetailResponse = PatientResponse & {
   medicalRecord?: ReturnType<typeof toMedicalRecordResponse>;
+  insurance?: PatientInsuranceRecord | null;
 };
+
+export function toPatientInsuranceResponse(insurance: PatientInsurance): PatientInsuranceRecord {
+  return {
+    id: insurance.id,
+    patientId: insurance.patientId,
+    providerName: insurance.providerName,
+    policyNumber: insurance.policyNumber,
+    expiryDate: insurance.expiryDate.toISOString().slice(0, 10),
+    notes: insurance.notes,
+    createdAt: insurance.createdAt.toISOString(),
+    updatedAt: insurance.updatedAt.toISOString(),
+  };
+}
 
 export function toPatientResponse(patient: Patient): PatientResponse {
   return {
@@ -31,10 +34,18 @@ export function toPatientResponse(patient: Patient): PatientResponse {
     phone: patient.phone,
     dateOfBirth: patient.dateOfBirth?.toISOString().slice(0, 10) ?? null,
     gender: patient.gender,
-    address: patient.address,
+    bloodGroup: patient.bloodGroup,
+    addressLine1: patient.addressLine1,
+    addressLine2: patient.addressLine2,
+    city: patient.city,
+    state: patient.state,
+    postalCode: patient.postalCode,
+    country: patient.country,
     emergencyContactName: patient.emergencyContactName,
     emergencyContactPhone: patient.emergencyContactPhone,
+    status: patient.status,
     notes: patient.notes,
+    address: patient.address,
     createdAt: patient.createdAt.toISOString(),
     updatedAt: patient.updatedAt.toISOString(),
   };

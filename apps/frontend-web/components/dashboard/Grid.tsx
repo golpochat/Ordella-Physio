@@ -15,6 +15,15 @@ export const DASHBOARD_GRID = {
   organizationTenantsTable: "1.2fr 1fr 1fr minmax(8rem, 1fr)",
   locationsTable: "1.2fr 1fr 1.5fr 1fr 1fr 1fr minmax(10rem, 1.2fr)",
   terminalsTable: "1.2fr 1fr 0.8fr 1fr 1fr 0.8fr 1fr 1fr minmax(10rem, 1.2fr)",
+  rolesTable: "1.2fr 1fr 0.8fr 0.8fr 1fr minmax(10rem, 1.2fr)",
+  staffTable:
+    "1.2fr 1.2fr 1fr 0.9fr 1fr 1.2fr 0.8fr 1fr minmax(10rem, 1.2fr)",
+  patientTable:
+    "1.2fr 1fr 1.2fr 0.8fr 1fr 0.8fr 1fr minmax(10rem, 1.2fr)",
+  patientNotesTable:
+    "1.2fr 0.9fr 1fr 1fr minmax(10rem, 1.2fr)",
+  patientAttachmentsTable:
+    "1.2fr 0.8fr 0.7fr 1fr 1fr minmax(10rem, 1.2fr)",
 } as const;
 
 export type DashboardGridKey = keyof typeof DASHBOARD_GRID;

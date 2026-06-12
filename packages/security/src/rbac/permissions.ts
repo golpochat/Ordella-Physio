@@ -1,6 +1,9 @@
 export const PERMISSIONS = {
   PATIENT_READ: "patient.read",
   PATIENT_WRITE: "patient.write",
+  PATIENT_MANAGE: "patient.manage",
+  PATIENT_NOTES: "patient.notes",
+  PATIENT_ATTACHMENTS: "patient.attachments",
   APPOINTMENT_READ: "appointment.read",
   APPOINTMENT_WRITE: "appointment.write",
   NOTES_READ: "notes.read",
@@ -28,6 +31,7 @@ export const PERMISSIONS = {
   ORGANIZATION_MANAGE: "organization.manage",
   LOCATION_MANAGE: "location.manage",
   TERMINAL_MANAGE: "terminal.manage",
+  ROLE_MANAGE: "role.manage",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

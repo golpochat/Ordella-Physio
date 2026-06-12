@@ -92,8 +92,9 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
       return api.get<PharmacyPatientListResponse | PharmacyPatient[]>("patient", "", { params });
     },
 
-    getPatient(id: string) {
-      return api.get<PharmacyPatient>("patient", `/${id}`);
+    async getPatient(id: string) {
+      const response = await api.get<{ patient: PharmacyPatient }>("patient", `/${id}`);
+      return response.patient;
     },
 
     listAppointments(params?: { page?: number; limit?: number }) {

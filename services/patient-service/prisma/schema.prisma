@@ -1,56 +1,265 @@
 generator client {
+
   provider = "prisma-client-js"
+
   output   = "../src/generated/prisma"
+
 }
+
+
 
 datasource db {
+
   provider = "postgresql"
+
   url      = env("DATABASE_URL")
+
 }
+
+
 
 enum Gender {
+
   MALE
+
   FEMALE
+
   OTHER
+
   UNKNOWN
+
 }
+
+
+
+enum PatientStatus {
+
+  ACTIVE
+
+  INACTIVE
+
+}
+
+
+
+enum PatientNoteType {
+
+  GENERAL
+
+  DIAGNOSIS
+
+  TREATMENT
+
+  FOLLOW_UP
+
+  PHYSIOTHERAPY
+
+  NURSING
+
+}
+
+
 
 model Patient {
-  id                   String         @id @default(cuid())
-  tenantId             String
-  firstName            String
-  lastName             String
-  email                String?
-  phone                String?
-  dateOfBirth          DateTime?      @db.Date
-  gender               Gender         @default(UNKNOWN)
-  address              String?
-  emergencyContactName String?
+
+  id                    String            @id @default(cuid())
+
+  tenantId              String
+
+  firstName             String
+
+  lastName              String
+
+  email                 String?
+
+  phone                 String?
+
+  dateOfBirth           DateTime?         @db.Date
+
+  gender                Gender            @default(UNKNOWN)
+
+  bloodGroup            String?
+
+  address               String?
+
+  addressLine1          String?
+
+  addressLine2          String?
+
+  city                  String?
+
+  state                 String?
+
+  postalCode            String?
+
+  country               String?
+
+  emergencyContactName  String?
+
   emergencyContactPhone String?
-  notes                String?
-  deletedAt            DateTime?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  medicalRecord        MedicalRecord?
+
+  status                PatientStatus     @default(ACTIVE)
+
+  notes                 String?
+
+  deletedAt             DateTime?
+
+  createdAt             DateTime          @default(now())
+
+  updatedAt             DateTime          @updatedAt
+
+  medicalRecord         MedicalRecord?
+
+  insurance             PatientInsurance?
+
+  patientNotes          PatientNote[]
+
+  patientAttachments    PatientAttachment[]
+
+
 
   @@unique([tenantId, email])
+
   @@index([tenantId])
+
   @@index([tenantId, lastName, firstName])
+
   @@map("patients")
+
 }
+
+
+
+model PatientInsurance {
+
+  id           String   @id @default(cuid())
+
+  patientId    String   @unique
+
+  patient      Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  providerName String
+
+  policyNumber String
+
+  expiryDate   DateTime @db.Date
+
+  notes        String?
+
+  createdAt    DateTime @default(now())
+
+  updatedAt    DateTime @updatedAt
+
+
+
+  @@map("patient_insurances")
+
+}
+
+
 
 model MedicalRecord {
+
   id          String   @id @default(cuid())
+
   patientId   String   @unique
+
   patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
   tenantId    String
+
   allergies   String?
+
   medications String?
+
   conditions  String?
+
   notes       String?
+
   createdAt   DateTime @default(now())
+
   updatedAt   DateTime @updatedAt
 
+
+
   @@index([tenantId])
+
   @@map("medical_records")
+
 }
+
+
+
+model PatientNote {
+
+  id          String          @id @default(cuid())
+
+  tenantId    String
+
+  patientId   String
+
+  patient     Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  staffId     String
+
+  noteType    PatientNoteType
+
+  title       String
+
+  content     String          @db.Text
+
+  attachments Json?
+
+  createdAt   DateTime        @default(now())
+
+  updatedAt   DateTime        @updatedAt
+
+
+
+  @@index([tenantId])
+
+  @@index([patientId])
+
+  @@index([staffId])
+
+  @@map("patient_notes")
+
+}
+
+
+
+model PatientAttachment {
+
+  id                 String   @id @default(cuid())
+
+  tenantId           String
+
+  patientId          String
+
+  patient            Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  uploadedByStaffId  String
+
+  fileName           String
+
+  fileType           String
+
+  fileSize           Int
+
+  storagePath        String
+
+  description        String?
+
+  createdAt          DateTime @default(now())
+
+
+
+  @@index([tenantId])
+
+  @@index([patientId])
+
+  @@map("patient_attachments")
+
+}
+
+

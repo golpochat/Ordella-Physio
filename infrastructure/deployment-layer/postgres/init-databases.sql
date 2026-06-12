@@ -15,3 +15,5 @@ CREATE DATABASE ordella_marketplace;
 CREATE DATABASE ordella_enterprise;
 CREATE DATABASE ordella_organization;
 CREATE DATABASE ordella_terminal;
+CREATE DATABASE ordella_user_role;
+CREATE DATABASE ordella_staff;

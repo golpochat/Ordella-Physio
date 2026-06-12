@@ -130,11 +130,30 @@ exports.Prisma.PatientScalarFieldEnum = {
   phone: 'phone',
   dateOfBirth: 'dateOfBirth',
   gender: 'gender',
+  bloodGroup: 'bloodGroup',
   address: 'address',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
   emergencyContactName: 'emergencyContactName',
   emergencyContactPhone: 'emergencyContactPhone',
+  status: 'status',
   notes: 'notes',
   deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientInsuranceScalarFieldEnum = {
+  id: 'id',
+  patientId: 'patientId',
+  providerName: 'providerName',
+  policyNumber: 'policyNumber',
+  expiryDate: 'expiryDate',
+  notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -151,9 +170,40 @@ exports.Prisma.MedicalRecordScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PatientNoteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  patientId: 'patientId',
+  staffId: 'staffId',
+  noteType: 'noteType',
+  title: 'title',
+  content: 'content',
+  attachments: 'attachments',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientAttachmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  patientId: 'patientId',
+  uploadedByStaffId: 'uploadedByStaffId',
+  fileName: 'fileName',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  storagePath: 'storagePath',
+  description: 'description',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -165,6 +215,12 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
 exports.Gender = exports.$Enums.Gender = {
   MALE: 'MALE',
   FEMALE: 'FEMALE',
@@ -172,9 +228,26 @@ exports.Gender = exports.$Enums.Gender = {
   UNKNOWN: 'UNKNOWN'
 };
 
+exports.PatientStatus = exports.$Enums.PatientStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+};
+
+exports.PatientNoteType = exports.$Enums.PatientNoteType = {
+  GENERAL: 'GENERAL',
+  DIAGNOSIS: 'DIAGNOSIS',
+  TREATMENT: 'TREATMENT',
+  FOLLOW_UP: 'FOLLOW_UP',
+  PHYSIOTHERAPY: 'PHYSIOTHERAPY',
+  NURSING: 'NURSING'
+};
+
 exports.Prisma.ModelName = {
   Patient: 'Patient',
-  MedicalRecord: 'MedicalRecord'
+  PatientInsurance: 'PatientInsurance',
+  MedicalRecord: 'MedicalRecord',
+  PatientNote: 'PatientNote',
+  PatientAttachment: 'PatientAttachment'
 };
 
 /**

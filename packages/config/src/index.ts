@@ -18,6 +18,8 @@ export { marketplaceConfig, type MarketplaceConfig } from "./services/marketplac
 export { enterpriseConfig, type EnterpriseConfig } from "./services/enterprise";
 export { organizationConfig, type OrganizationConfig } from "./services/organization";
 export { terminalConfig, type TerminalConfig } from "./services/terminal";
+export { userRoleConfig, type UserRoleConfig } from "./services/user-role";
+export { staffConfig, type StaffConfig } from "./services/staff";
 export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
 export { gatewayConfig, type GatewayConfig } from "./services/gateway";
 export * from "./regions/constants";

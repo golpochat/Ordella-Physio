@@ -88,6 +88,21 @@ export type ClinicStaffMember = {
   updatedAt: string;
 };
 
+export type ClinicPatientGender = "MALE" | "FEMALE" | "OTHER";
+
+export type ClinicPatientStatus = "ACTIVE" | "INACTIVE";
+
+export type ClinicPatientInsurance = {
+  id: string;
+  patientId: string;
+  providerName: string;
+  policyNumber: string;
+  expiryDate: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ClinicPatient = {
   id: string;
   tenantId: string;
@@ -97,17 +112,159 @@ export type ClinicPatient = {
   phone: string | null;
   dateOfBirth: string | null;
   gender: string;
+  bloodGroup: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+  country: string | null;
   address: string | null;
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
+  status: ClinicPatientStatus;
   notes: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
+export type ClinicPatientListFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  gender?: "MALE" | "FEMALE" | "OTHER";
+  status?: ClinicPatientStatus;
+  dobStart?: string;
+  dobEnd?: string;
+  sortBy?:
+    | "createdAt"
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "phone"
+    | "gender"
+    | "status"
+    | "dateOfBirth"
+    | "updatedAt";
+  sortOrder?: "asc" | "desc";
+};
+
 export type ClinicPatientListResponse = {
   data: ClinicPatient[];
-  meta: { page: number; limit: number; total: number; totalPages: number };
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export type ClinicPatientStatusActionResponse = {
+  patient: ClinicPatient;
+  message: string;
+};
+
+export const CLINIC_PATIENT_NOTE_TYPES = [
+  "GENERAL",
+  "DIAGNOSIS",
+  "TREATMENT",
+  "FOLLOW_UP",
+  "PHYSIOTHERAPY",
+  "NURSING",
+] as const;
+
+export type ClinicPatientNoteType = (typeof CLINIC_PATIENT_NOTE_TYPES)[number];
+
+export type ClinicPatientNoteAttachment = {
+  name: string;
+  url?: string;
+  mimeType?: string;
+};
+
+export type ClinicPatientNote = {
+  id: string;
+  tenantId: string;
+  patientId: string;
+  staffId: string;
+  noteType: ClinicPatientNoteType;
+  title: string;
+  content: string;
+  attachments: ClinicPatientNoteAttachment[] | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ClinicPatientNoteListFilters = {
+  page?: number;
+  limit?: number;
+  noteType?: ClinicPatientNoteType;
+  staffId?: string;
+  createdFrom?: string;
+  createdTo?: string;
+};
+
+export type ClinicPatientNoteListResponse = {
+  data: ClinicPatientNote[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export type ClinicPatientNoteDetailResponse = {
+  note: ClinicPatientNote;
+};
+
+export type CreateClinicPatientNotePayload = {
+  noteType: ClinicPatientNoteType;
+  title: string;
+  content: string;
+  attachments?: ClinicPatientNoteAttachment[];
+};
+
+export type UpdateClinicPatientNotePayload = {
+  noteType?: ClinicPatientNoteType;
+  title?: string;
+  content?: string;
+  attachments?: ClinicPatientNoteAttachment[];
+};
+
+export type ClinicPatientNoteSaveResponse = {
+  note: ClinicPatientNote;
+  message: string;
+};
+
+export type ClinicPatientAttachment = {
+  id: string;
+  tenantId: string;
+  patientId: string;
+  uploadedByStaffId: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  storagePath: string;
+  description: string | null;
+  createdAt: string;
+  downloadUrl: string;
+};
+
+export type ClinicPatientAttachmentListResponse = {
+  data: ClinicPatientAttachment[];
+};
+
+export type ClinicPatientAttachmentDetailResponse = {
+  attachment: ClinicPatientAttachment;
+};
+
+export type ClinicPatientAttachmentUploadResponse = {
+  attachment: ClinicPatientAttachment;
+  message: string;
+};
+
+export type ClinicPatientAttachmentDeleteResponse = {
+  message: string;
 };
 
 export type ClinicAppointment = {
@@ -208,20 +365,67 @@ export type RemoveAvatarResponse = {
   message: string;
 };
 
+export type CreateClinicPatientInsurancePayload = {
+  providerName: string;
+  policyNumber: string;
+  expiryDate: string;
+  notes?: string;
+};
+
 export type CreateClinicPatientPayload = {
   firstName: string;
   lastName: string;
   email?: string;
-  phone?: string;
-  dateOfBirth?: string;
-  gender?: "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY";
-  address?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  notes?: string;
+  phone: string;
+  dateOfBirth: string;
+  gender: ClinicPatientGender;
+  bloodGroup?: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  insurance?: CreateClinicPatientInsurancePayload;
 };
 
-export type UpdateClinicPatientPayload = Partial<CreateClinicPatientPayload>;
+export type CreateClinicPatientResponse = {
+  patient: ClinicPatient;
+  insurance: ClinicPatientInsurance | null;
+  message: string;
+};
+
+export type ClinicPatientDetailResponse = {
+  patient: ClinicPatient;
+  insurance: ClinicPatientInsurance | null;
+};
+
+export type UpdateClinicPatientPayload = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  gender?: ClinicPatientGender;
+  bloodGroup?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  insurance?: CreateClinicPatientInsurancePayload;
+};
+
+export type UpdateClinicPatientResponse = {
+  patient: ClinicPatient;
+  insurance: ClinicPatientInsurance | null;
+  message: string;
+};
 
 export type CreateClinicStaffPayload = {
   userId: string;

@@ -21,6 +21,8 @@ import { MARKETPLACE_ROUTES } from "@/routes/marketplace.routes";
 import { ENTERPRISE_ROUTES } from "@/routes/enterprise.routes";
 import { ORGANIZATION_ROUTES } from "@/routes/organization.routes";
 import { TERMINAL_ROUTES } from "@/routes/terminal.routes";
+import { USER_ROLE_ROUTES } from "@/routes/user-role.routes";
+import { STAFF_ROUTES } from "@/routes/staff.routes";
 import { TENANT_ROUTES } from "@/routes/tenant.routes";
 import { configureGatewayMiddleware, gatewayMiddlewareProviders } from "./middleware";
 import { GatewayController } from "./gateway.controller";
@@ -79,6 +81,12 @@ const proxyControllers = [
   createProxyController(ENTERPRISE_ROUTES.base, "ENTERPRISE_SERVICE_URL"),
   createProxyController(ORGANIZATION_ROUTES.base, "ORGANIZATION_SERVICE_URL"),
   createProxyController(TERMINAL_ROUTES.base, "TERMINAL_SERVICE_URL"),
+  createProxyController(USER_ROLE_ROUTES.base, "USER_ROLE_SERVICE_URL"),
+  createProxyController("/roles/internal", "USER_ROLE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(STAFF_ROUTES.base, "STAFF_SERVICE_URL"),
 ];
 
 @Module({

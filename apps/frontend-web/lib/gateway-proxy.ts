@@ -19,6 +19,8 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   enterprise: GATEWAY_PATHS.enterprise,
   organization: GATEWAY_PATHS.organization,
   terminal: GATEWAY_PATHS.terminal,
+  userRole: GATEWAY_PATHS.userRole,
+  staffMember: GATEWAY_PATHS.staffMember,
 };
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
@@ -38,6 +40,8 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   enterprise: "/api/enterprise",
   organization: "/api/organization",
   terminal: "/api/terminal",
+  userRole: "/api/user-role",
+  staffMember: "/api/staff",
 };
 
 const PROXY_STRIP_REQUEST_HEADERS = [

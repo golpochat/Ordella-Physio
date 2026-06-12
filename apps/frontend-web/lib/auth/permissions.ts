@@ -8,6 +8,9 @@ export const PERMISSIONS = {
   "inventory.manage": ["SYSTEM", "ADMIN", "PHARMACY"],
   "patient.view": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PHARMACY"],
   "patient.edit": ["SYSTEM", "ADMIN", "THERAPIST"],
+  "patient.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "patient.notes": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
+  "patient.attachments": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
   "notes.read": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PATIENT"],
   "notes.write": ["SYSTEM", "ADMIN", "THERAPIST"],
   "messaging.read": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PATIENT", "PHARMACY"],
@@ -17,6 +20,7 @@ export const PERMISSIONS = {
   "organization.manage": ["SYSTEM"],
   "location.manage": ["SYSTEM", "OWNER", "ADMIN"],
   "terminal.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "role.manage": ["SYSTEM", "OWNER", "ADMIN"],
 } as const satisfies Record<string, SecurityRole[]>;
 
 export type AuthPermission = keyof typeof PERMISSIONS;

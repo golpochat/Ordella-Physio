@@ -102,11 +102,30 @@ exports.Prisma.PatientScalarFieldEnum = {
   phone: 'phone',
   dateOfBirth: 'dateOfBirth',
   gender: 'gender',
+  bloodGroup: 'bloodGroup',
   address: 'address',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
   emergencyContactName: 'emergencyContactName',
   emergencyContactPhone: 'emergencyContactPhone',
+  status: 'status',
   notes: 'notes',
   deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientInsuranceScalarFieldEnum = {
+  id: 'id',
+  patientId: 'patientId',
+  providerName: 'providerName',
+  policyNumber: 'policyNumber',
+  expiryDate: 'expiryDate',
+  notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -123,9 +142,40 @@ exports.Prisma.MedicalRecordScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PatientNoteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  patientId: 'patientId',
+  staffId: 'staffId',
+  noteType: 'noteType',
+  title: 'title',
+  content: 'content',
+  attachments: 'attachments',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientAttachmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  patientId: 'patientId',
+  uploadedByStaffId: 'uploadedByStaffId',
+  fileName: 'fileName',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  storagePath: 'storagePath',
+  description: 'description',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -137,6 +187,12 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
 exports.Gender = exports.$Enums.Gender = {
   MALE: 'MALE',
   FEMALE: 'FEMALE',
@@ -144,9 +200,26 @@ exports.Gender = exports.$Enums.Gender = {
   UNKNOWN: 'UNKNOWN'
 };
 
+exports.PatientStatus = exports.$Enums.PatientStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+};
+
+exports.PatientNoteType = exports.$Enums.PatientNoteType = {
+  GENERAL: 'GENERAL',
+  DIAGNOSIS: 'DIAGNOSIS',
+  TREATMENT: 'TREATMENT',
+  FOLLOW_UP: 'FOLLOW_UP',
+  PHYSIOTHERAPY: 'PHYSIOTHERAPY',
+  NURSING: 'NURSING'
+};
+
 exports.Prisma.ModelName = {
   Patient: 'Patient',
-  MedicalRecord: 'MedicalRecord'
+  PatientInsurance: 'PatientInsurance',
+  MedicalRecord: 'MedicalRecord',
+  PatientNote: 'PatientNote',
+  PatientAttachment: 'PatientAttachment'
 };
 /**
  * Create the Client
@@ -196,13 +269,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Gender {\n  MALE\n  FEMALE\n  OTHER\n  UNKNOWN\n}\n\nmodel Patient {\n  id                    String         @id @default(cuid())\n  tenantId              String\n  firstName             String\n  lastName              String\n  email                 String?\n  phone                 String?\n  dateOfBirth           DateTime?      @db.Date\n  gender                Gender         @default(UNKNOWN)\n  address               String?\n  emergencyContactName  String?\n  emergencyContactPhone String?\n  notes                 String?\n  deletedAt             DateTime?\n  createdAt             DateTime       @default(now())\n  updatedAt             DateTime       @updatedAt\n  medicalRecord         MedicalRecord?\n\n  @@unique([tenantId, email])\n  @@index([tenantId])\n  @@index([tenantId, lastName, firstName])\n  @@map(\"patients\")\n}\n\nmodel MedicalRecord {\n  id          String   @id @default(cuid())\n  patientId   String   @unique\n  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)\n  tenantId    String\n  allergies   String?\n  medications String?\n  conditions  String?\n  notes       String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  @@index([tenantId])\n  @@map(\"medical_records\")\n}\n",
-  "inlineSchemaHash": "a19a9113e0ca11228425575ade990e4ef1966c577c4ea6d070c26fa43859d172",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n\n  output = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n\n  url = env(\"DATABASE_URL\")\n}\n\nenum Gender {\n  MALE\n\n  FEMALE\n\n  OTHER\n\n  UNKNOWN\n}\n\nenum PatientStatus {\n  ACTIVE\n\n  INACTIVE\n}\n\nenum PatientNoteType {\n  GENERAL\n\n  DIAGNOSIS\n\n  TREATMENT\n\n  FOLLOW_UP\n\n  PHYSIOTHERAPY\n\n  NURSING\n}\n\nmodel Patient {\n  id String @id @default(cuid())\n\n  tenantId String\n\n  firstName String\n\n  lastName String\n\n  email String?\n\n  phone String?\n\n  dateOfBirth DateTime? @db.Date\n\n  gender Gender @default(UNKNOWN)\n\n  bloodGroup String?\n\n  address String?\n\n  addressLine1 String?\n\n  addressLine2 String?\n\n  city String?\n\n  state String?\n\n  postalCode String?\n\n  country String?\n\n  emergencyContactName String?\n\n  emergencyContactPhone String?\n\n  status PatientStatus @default(ACTIVE)\n\n  notes String?\n\n  deletedAt DateTime?\n\n  createdAt DateTime @default(now())\n\n  updatedAt DateTime @updatedAt\n\n  medicalRecord MedicalRecord?\n\n  insurance PatientInsurance?\n\n  patientNotes PatientNote[]\n\n  patientAttachments PatientAttachment[]\n\n  @@unique([tenantId, email])\n  @@index([tenantId])\n  @@index([tenantId, lastName, firstName])\n  @@map(\"patients\")\n}\n\nmodel PatientInsurance {\n  id String @id @default(cuid())\n\n  patientId String @unique\n\n  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)\n\n  providerName String\n\n  policyNumber String\n\n  expiryDate DateTime @db.Date\n\n  notes String?\n\n  createdAt DateTime @default(now())\n\n  updatedAt DateTime @updatedAt\n\n  @@map(\"patient_insurances\")\n}\n\nmodel MedicalRecord {\n  id String @id @default(cuid())\n\n  patientId String @unique\n\n  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)\n\n  tenantId String\n\n  allergies String?\n\n  medications String?\n\n  conditions String?\n\n  notes String?\n\n  createdAt DateTime @default(now())\n\n  updatedAt DateTime @updatedAt\n\n  @@index([tenantId])\n  @@map(\"medical_records\")\n}\n\nmodel PatientNote {\n  id String @id @default(cuid())\n\n  tenantId String\n\n  patientId String\n\n  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)\n\n  staffId String\n\n  noteType PatientNoteType\n\n  title String\n\n  content String @db.Text\n\n  attachments Json?\n\n  createdAt DateTime @default(now())\n\n  updatedAt DateTime @updatedAt\n\n  @@index([tenantId])\n  @@index([patientId])\n  @@index([staffId])\n  @@map(\"patient_notes\")\n}\n\nmodel PatientAttachment {\n  id String @id @default(cuid())\n\n  tenantId String\n\n  patientId String\n\n  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)\n\n  uploadedByStaffId String\n\n  fileName String\n\n  fileType String\n\n  fileSize Int\n\n  storagePath String\n\n  description String?\n\n  createdAt DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([patientId])\n  @@map(\"patient_attachments\")\n}\n",
+  "inlineSchemaHash": "5348c597ce62b43b37ebc32db782fc60d0b526006e2eab366ee0930c5ae508d3",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Patient\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"gender\",\"kind\":\"enum\",\"type\":\"Gender\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"medicalRecord\",\"kind\":\"object\",\"type\":\"MedicalRecord\",\"relationName\":\"MedicalRecordToPatient\"}],\"dbName\":\"patients\"},\"MedicalRecord\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patient\",\"kind\":\"object\",\"type\":\"Patient\",\"relationName\":\"MedicalRecordToPatient\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"allergies\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"medications\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"conditions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"medical_records\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Patient\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"gender\",\"kind\":\"enum\",\"type\":\"Gender\"},{\"name\":\"bloodGroup\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressLine1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressLine2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PatientStatus\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"medicalRecord\",\"kind\":\"object\",\"type\":\"MedicalRecord\",\"relationName\":\"MedicalRecordToPatient\"},{\"name\":\"insurance\",\"kind\":\"object\",\"type\":\"PatientInsurance\",\"relationName\":\"PatientToPatientInsurance\"},{\"name\":\"patientNotes\",\"kind\":\"object\",\"type\":\"PatientNote\",\"relationName\":\"PatientToPatientNote\"},{\"name\":\"patientAttachments\",\"kind\":\"object\",\"type\":\"PatientAttachment\",\"relationName\":\"PatientToPatientAttachment\"}],\"dbName\":\"patients\"},\"PatientInsurance\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patient\",\"kind\":\"object\",\"type\":\"Patient\",\"relationName\":\"PatientToPatientInsurance\"},{\"name\":\"providerName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"policyNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiryDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"patient_insurances\"},\"MedicalRecord\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patient\",\"kind\":\"object\",\"type\":\"Patient\",\"relationName\":\"MedicalRecordToPatient\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"allergies\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"medications\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"conditions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"medical_records\"},\"PatientNote\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patient\",\"kind\":\"object\",\"type\":\"Patient\",\"relationName\":\"PatientToPatientNote\"},{\"name\":\"staffId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"noteType\",\"kind\":\"enum\",\"type\":\"PatientNoteType\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"attachments\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"patient_notes\"},\"PatientAttachment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"patient\",\"kind\":\"object\",\"type\":\"Patient\",\"relationName\":\"PatientToPatientAttachment\"},{\"name\":\"uploadedByStaffId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileSize\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"storagePath\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"patient_attachments\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

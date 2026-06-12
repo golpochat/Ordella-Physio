@@ -36,8 +36,9 @@ export function createStaffPortalApi(api: StaffApiClient) {
       return api.get<StaffPatientListResponse | StaffPatient[]>("patient", "", { params });
     },
 
-    getPatient(id: string) {
-      return api.get<StaffPatient>("patient", `/${id}`);
+    async getPatient(id: string) {
+      const response = await api.get<{ patient: StaffPatient }>("patient", `/${id}`);
+      return response.patient;
     },
 
     listBilling() {

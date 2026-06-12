@@ -528,6 +528,22 @@
   text-align: center;
 }
 
+.dashboard-portal .staff-config-blocked-dates-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  list-style: none;
+  margin: var(--space-sm) 0 0;
+  padding: 0;
+}
+
+.dashboard-portal .staff-config-blocked-dates-item {
+  align-items: center;
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: space-between;
+}
+
 :is(.super-admin-portal, .sa-surface) .tenant-domains-page {
   display: flex;
   flex-direction: column;

@@ -32,8 +32,9 @@ export function createTherapistPortalApi(api: TherapistApiClient) {
       return api.get<TherapistPatientListResponse | TherapistPatient[]>("patient", "", { params });
     },
 
-    getPatient(id: string) {
-      return api.get<TherapistPatient>("patient", `/${id}`);
+    async getPatient(id: string) {
+      const response = await api.get<{ patient: TherapistPatient }>("patient", `/${id}`);
+      return response.patient;
     },
 
     listNotes(params?: { therapistId?: string; patientId?: string; page?: number; limit?: number }) {

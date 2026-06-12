@@ -1,16 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { PatientAggregate } from "@ordella/domain";
 import { randomString } from "@ordella/utils";
-import type { CreatePatientDto } from "@/patients/dto/create-patient.dto";
 import { PatientsRepository } from "@/patients/patients.repository";
+import { PatientInsuranceRepository } from "@/repositories/patient-insurance.repository";
 import { MedicalRecordsRepository } from "@/medical-records/medical-records.repository";
 import { PatientEventPublisher } from "@/events/patient-event.publisher";
 import { mapGenderToPrisma } from "@/utils/patient-helpers";
-import { toPatientResponse } from "@/patients/patients.mapper";
+import { toPatientInsuranceResponse, toPatientResponse } from "@/patients/patients.mapper";
+import { validateCreatePatient } from "@/validators/patient.validator";
+import {
+  patientEmailExistsError,
+  patientValidationError,
+} from "@/utils/patient-errors";
 
 export type CreatePatientCommandInput = {
   tenantId: string;
-  dto: CreatePatientDto;
+  payload: unknown;
   correlationId?: string;
 };
 
@@ -18,42 +23,80 @@ export type CreatePatientCommandInput = {
 export class CreatePatientCommand {
   constructor(
     private readonly patientsRepository: PatientsRepository,
+    private readonly patientInsuranceRepository: PatientInsuranceRepository,
     private readonly medicalRecordsRepository: MedicalRecordsRepository,
     private readonly eventPublisher: PatientEventPublisher,
   ) {}
 
   async execute(input: CreatePatientCommandInput) {
+    const validation = validateCreatePatient(input.payload);
+    if (!validation.valid) {
+      throw patientValidationError(validation.fields);
+    }
+
+    const normalized = validation.payload;
+
+    if (normalized.email) {
+      const existing = await this.patientsRepository.findByTenantAndEmail(
+        input.tenantId,
+        normalized.email,
+      );
+      if (existing) {
+        throw patientEmailExistsError();
+      }
+    }
+
     const patientId = randomString(24);
     const aggregateResult = PatientAggregate.create({
       id: patientId,
       tenantId: input.tenantId,
-      firstName: input.dto.firstName,
-      lastName: input.dto.lastName,
-      email: input.dto.email,
-      phone: input.dto.phone,
-      dateOfBirth: input.dto.dateOfBirth ? new Date(input.dto.dateOfBirth) : undefined,
+      firstName: normalized.firstName,
+      lastName: normalized.lastName,
+      email: normalized.email,
+      phone: normalized.phone,
+      dateOfBirth: new Date(normalized.dateOfBirth),
       correlationId: input.correlationId,
     });
 
     if (aggregateResult.isFailure) {
-      throw new Error(String(aggregateResult.error));
+      throw patientValidationError([
+        { field: "payload", message: String(aggregateResult.error) },
+      ]);
     }
 
     const patient = await this.patientsRepository.create(input.tenantId, {
       id: patientId,
-      firstName: input.dto.firstName,
-      lastName: input.dto.lastName,
-      email: input.dto.email,
-      phone: input.dto.phone,
-      dateOfBirth: input.dto.dateOfBirth ? new Date(input.dto.dateOfBirth) : undefined,
-      gender: mapGenderToPrisma(input.dto.gender),
-      address: input.dto.address,
-      emergencyContactName: input.dto.emergencyContactName,
-      emergencyContactPhone: input.dto.emergencyContactPhone,
-      notes: input.dto.notes,
+      firstName: normalized.firstName,
+      lastName: normalized.lastName,
+      email: normalized.email,
+      phone: normalized.phone,
+      dateOfBirth: new Date(normalized.dateOfBirth),
+      gender: mapGenderToPrisma(normalized.gender),
+      bloodGroup: normalized.bloodGroup,
+      addressLine1: normalized.addressLine1,
+      addressLine2: normalized.addressLine2,
+      city: normalized.city,
+      state: normalized.state,
+      postalCode: normalized.postalCode,
+      country: normalized.country,
+      emergencyContactName: normalized.emergencyContactName,
+      emergencyContactPhone: normalized.emergencyContactPhone,
+      status: "ACTIVE",
     });
 
     await this.medicalRecordsRepository.createForPatient(input.tenantId, patient.id);
+
+    let insurance = null;
+    if (normalized.insurance) {
+      const createdInsurance = await this.patientInsuranceRepository.create({
+        patient: { connect: { id: patient.id } },
+        providerName: normalized.insurance.providerName,
+        policyNumber: normalized.insurance.policyNumber,
+        expiryDate: new Date(normalized.insurance.expiryDate),
+        notes: normalized.insurance.notes,
+      });
+      insurance = toPatientInsuranceResponse(createdInsurance);
+    }
 
     await this.eventPublisher.publishPatientCreated(
       {
@@ -66,6 +109,10 @@ export class CreatePatientCommand {
       input.correlationId,
     );
 
-    return toPatientResponse(patient);
+    return {
+      patient: toPatientResponse(patient),
+      insurance,
+      message: "Patient created successfully.",
+    };
   }
 }

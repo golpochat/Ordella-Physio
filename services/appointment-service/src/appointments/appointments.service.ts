@@ -78,6 +78,24 @@ export class AppointmentsService {
     };
   }
 
+  async hasActiveAppointmentsForStaff(tenantId: string, staffId: string) {
+    const count = await this.appointmentsRepository.countActiveByTherapist(tenantId, staffId);
+
+    return {
+      hasActive: count > 0,
+      count,
+    };
+  }
+
+  async hasActiveAppointmentsForPatient(tenantId: string, patientId: string) {
+    const count = await this.appointmentsRepository.countActiveByPatient(tenantId, patientId);
+
+    return {
+      hasActive: count > 0,
+      count,
+    };
+  }
+
   update(tenantId: string, appointmentId: string, dto: UpdateAppointmentDto, correlationId?: string) {
     return this.updateAppointmentCommand.execute({ tenantId, appointmentId, dto, correlationId });
   }

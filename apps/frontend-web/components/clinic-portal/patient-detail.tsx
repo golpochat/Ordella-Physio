@@ -2,121 +2,100 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input, Label } from "@/components/ui/input";
-import { useDeleteClinicPatient, useUpdateClinicPatient } from "@/hooks/useClinicPortal";
-import type { ClinicPatient } from "@/lib/clinic-portal-types";
+import { PatientStatusBadge } from "@/components/patients/PatientStatusBadge";
+import { useDeleteClinicPatient } from "@/hooks/useClinicPortal";
+import type { ClinicPatientDetailResponse } from "@/lib/clinic-portal-types";
 import { formatPortalDate, getPatientDisplayName } from "@/lib/clinic-portal-utils";
 
-export function ClinicPatientDetail({ patient }: { patient: ClinicPatient }) {
+export function ClinicPatientDetail({ detail }: { detail: ClinicPatientDetailResponse }) {
   const router = useRouter();
-  const updatePatient = useUpdateClinicPatient(patient.id);
   const deletePatient = useDeleteClinicPatient();
-  const [firstName, setFirstName] = useState(patient.firstName);
-  const [lastName, setLastName] = useState(patient.lastName);
-  const [email, setEmail] = useState(patient.email ?? "");
-  const [phone, setPhone] = useState(patient.phone ?? "");
-  const [address, setAddress] = useState(patient.address ?? "");
-  const [notes, setNotes] = useState(patient.notes ?? "");
+  const { patient, insurance } = detail;
 
-  useEffect(() => {
-    setFirstName(patient.firstName);
-    setLastName(patient.lastName);
-    setEmail(patient.email ?? "");
-    setPhone(patient.phone ?? "");
-    setAddress(patient.address ?? "");
-    setNotes(patient.notes ?? "");
-  }, [patient]);
+  const addressParts = [
+    patient.addressLine1,
+    patient.addressLine2,
+    patient.city,
+    patient.state,
+    patient.postalCode,
+    patient.country,
+  ].filter(Boolean);
 
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>{getPatientDisplayName(patient)}</CardTitle>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>{getPatientDisplayName(patient)}</CardTitle>
+              <PatientStatusBadge status={patient.status} />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline">
+                <Link href={`/clinic/patients/${patient.id}/notes`}>Medical notes</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href={`/clinic/patients/${patient.id}/attachments`}>Attachments</Link>
+              </Button>
+              <Button asChild>
+                <Link href={`/clinic/patients/${patient.id}/edit`}>Edit</Link>
+              </Button>
+            </div>
+          </div>
         </CardHeader>
-        <CardBody>
-          <form
-            className="space-y-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              updatePatient.mutate(
-                {
-                  firstName,
-                  lastName,
-                  email: email || undefined,
-                  phone: phone || undefined,
-                  address: address || undefined,
-                  notes: notes || undefined,
-                },
-                {
-                  onSuccess: () => toast.success("Patient updated"),
-                  onError: () => toast.error("Failed to update patient"),
-                },
-              );
-            }}
-          >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First name</Label>
-                <Input
-                  id="firstName"
-                  value={firstName}
-                  onChange={(event) => setFirstName(event.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last name</Label>
-                <Input
-                  id="lastName"
-                  value={lastName}
-                  onChange={(event) => setLastName(event.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  value={address}
-                  onChange={(event) => setAddress(event.target.value)}
-                />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Input id="notes" value={notes} onChange={(event) => setNotes(event.target.value)} />
-              </div>
+        <CardBody className="grid gap-4 text-sm sm:grid-cols-2">
+          <div>
+            <p className="font-medium">Email</p>
+            <p className="text-muted-foreground">{patient.email ?? "—"}</p>
+          </div>
+          <div>
+            <p className="font-medium">Phone</p>
+            <p className="text-muted-foreground">{patient.phone ?? "—"}</p>
+          </div>
+          <div>
+            <p className="font-medium">Date of birth</p>
+            <p className="text-muted-foreground">
+              {patient.dateOfBirth ? formatPortalDate(patient.dateOfBirth) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="font-medium">Gender</p>
+            <p className="text-muted-foreground">{patient.gender}</p>
+          </div>
+          <div>
+            <p className="font-medium">Blood group</p>
+            <p className="text-muted-foreground">{patient.bloodGroup ?? "—"}</p>
+          </div>
+          <div>
+            <p className="font-medium">Status</p>
+            <PatientStatusBadge status={patient.status} />
+          </div>
+          <div className="sm:col-span-2">
+            <p className="font-medium">Address</p>
+            <p className="text-muted-foreground">
+              {addressParts.length > 0 ? addressParts.join(", ") : patient.address ?? "—"}
+            </p>
+          </div>
+          <div>
+            <p className="font-medium">Emergency contact</p>
+            <p className="text-muted-foreground">
+              {patient.emergencyContactName
+                ? `${patient.emergencyContactName} (${patient.emergencyContactPhone ?? "—"})`
+                : "—"}
+            </p>
+          </div>
+          {insurance ? (
+            <div className="sm:col-span-2">
+              <p className="font-medium">Insurance</p>
+              <p className="text-muted-foreground">
+                {insurance.providerName} — {insurance.policyNumber} (expires{" "}
+                {formatPortalDate(insurance.expiryDate)})
+              </p>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {patient.dateOfBirth ? (
-                <p>Date of birth: {formatPortalDate(patient.dateOfBirth)}</p>
-              ) : null}
-              <p>Gender: {patient.gender}</p>
-            </div>
-            <Button type="submit" disabled={updatePatient.isPending}>
-              {updatePatient.isPending ? "Saving..." : "Save changes"}
-            </Button>
-          </form>
+          ) : null}
         </CardBody>
       </Card>
 

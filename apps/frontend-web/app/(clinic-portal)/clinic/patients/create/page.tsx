@@ -1,14 +1,5 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ClinicPatientCreateForm } from "@/components/clinic-portal/patient-create-form";
+import { redirect } from "next/navigation";
 
-export default function ClinicPatientCreatePage() {
-  return (
-    <>
-      <Button asChild variant="ghost">
-        <Link href="/clinic/patients">&larr; Back to patients</Link>
-      </Button>
-      <ClinicPatientCreateForm />
-    </>
-  );
+export default function ClinicPatientCreateRedirectPage() {
+  redirect("/clinic/patients/new");
 }

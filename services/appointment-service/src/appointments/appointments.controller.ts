@@ -139,6 +139,22 @@ export class AppointmentsController {
     return this.appointmentsService.hasActiveAppointmentsForLocation(tenantId, locationId);
   }
 
+  @Get("internal/staff/:staffId/has-active")
+  hasActiveAppointmentsByStaff(
+    @Query("tenantId") tenantId: string,
+    @Param("staffId") staffId: string,
+  ) {
+    return this.appointmentsService.hasActiveAppointmentsForStaff(tenantId, staffId);
+  }
+
+  @Get("internal/patients/:patientId/has-active")
+  hasActiveAppointmentsByPatient(
+    @Query("tenantId") tenantId: string,
+    @Param("patientId") patientId: string,
+  ) {
+    return this.appointmentsService.hasActiveAppointmentsForPatient(tenantId, patientId);
+  }
+
   @Get(":id")
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("appointment.read")

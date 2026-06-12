@@ -28,6 +28,8 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     ENTERPRISE_SERVICE_URL: config.enterpriseServiceUrl,
     ORGANIZATION_SERVICE_URL: config.organizationServiceUrl,
     TERMINAL_SERVICE_URL: config.terminalServiceUrl,
+    USER_ROLE_SERVICE_URL: config.userRoleServiceUrl,
+    STAFF_SERVICE_URL: config.staffServiceUrl,
   };
 
   return map[envKey];

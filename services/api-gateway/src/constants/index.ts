@@ -43,7 +43,9 @@ export type ServiceEnvKey =
   | "MARKETPLACE_SERVICE_URL"
   | "ENTERPRISE_SERVICE_URL"
   | "ORGANIZATION_SERVICE_URL"
-  | "TERMINAL_SERVICE_URL";
+  | "TERMINAL_SERVICE_URL"
+  | "USER_ROLE_SERVICE_URL"
+  | "STAFF_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -148,6 +150,18 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     envKey: "TERMINAL_SERVICE_URL",
     healthPath: "/terminals/health",
     defaultUrl: "http://terminal-service:3067",
+  },
+  {
+    name: "user-role",
+    envKey: "USER_ROLE_SERVICE_URL",
+    healthPath: "/roles/health",
+    defaultUrl: "http://user-role-service:3068",
+  },
+  {
+    name: "staff",
+    envKey: "STAFF_SERVICE_URL",
+    healthPath: "/staff/health",
+    defaultUrl: "http://staff-service:3069",
   },
 ];
 

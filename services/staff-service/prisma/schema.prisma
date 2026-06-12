@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StaffType {
+  DOCTOR
+  NURSE
+  ADMIN
+  RECEPTIONIST
+  TECHNICIAN
+  OTHER
+}
+
+enum StaffStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Staff {
+  id        String      @id @default(cuid())
+  tenantId  String
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  staffType StaffType
+  roleId    String
+  status    StaffStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  locations StaffLocation[]
+  configs   StaffConfig[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@map("staff_members")
+}
+
+model StaffLocation {
+  id         String @id @default(cuid())
+  staffId    String
+  locationId String
+  staff      Staff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, locationId])
+  @@index([staffId])
+  @@map("staff_locations")
+}
+
+model StaffConfig {
+  id              String   @id @default(cuid())
+  staffId         String
+  staff           Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  namespace       String
+  data            Json
+  updatedByUserId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([staffId, namespace])
+  @@index([staffId])
+  @@map("staff_configs")
+}

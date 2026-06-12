@@ -8,6 +8,11 @@ import { UpdatePatientCommand } from "@/patients/commands/update-patient.command
 import { DeletePatientCommand } from "@/patients/commands/delete-patient.command";
 import { JwtStrategy } from "@/patients/strategies/jwt.strategy";
 import { JwtGuard } from "@/patients/guards/jwt.guard";
+import { PatientListGuard } from "@/patients/guards/patient-list.guard";
+import { PatientManageGuard } from "@/patients/guards/patient-manage.guard";
+import { PatientUpdateManageGuard } from "@/patients/guards/patient-update-manage.guard";
+import { AppointmentServiceClient } from "@/integrations/appointment-service.client";
+import { PatientInsuranceRepository } from "@/repositories/patient-insurance.repository";
 import { MedicalRecordsModule } from "@/medical-records/medical-records.module";
 import { EventsModule } from "@/events/events.module";
 
@@ -17,11 +22,16 @@ import { EventsModule } from "@/events/events.module";
   providers: [
     PatientsService,
     PatientsRepository,
+    PatientInsuranceRepository,
+    AppointmentServiceClient,
     CreatePatientCommand,
     UpdatePatientCommand,
     DeletePatientCommand,
     JwtStrategy,
     JwtGuard,
+    PatientListGuard,
+    PatientManageGuard,
+    PatientUpdateManageGuard,
   ],
   exports: [PatientsService, PatientsRepository],
 })

@@ -444,6 +444,51 @@ services:
     networks:
       - ordella-network
 
+  user-role-service:
+    build:
+      context: ../../
+      dockerfile: services/user-role-service/Dockerfile
+    container_name: ordella_local_user_role_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3068
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_user_role?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-network
+
+  staff-service:
+    build:
+      context: ../../
+      dockerfile: services/staff-service/Dockerfile
+    container_name: ordella_local_staff_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3069
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_staff?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      USER_ROLE_SERVICE_URL: http://user-role-service:3068
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+    depends_on:
+      postgres:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      user-role-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+    networks:
+      - ordella-network
+
   event-bus-service:
     build:
       context: ../../
@@ -494,6 +539,8 @@ services:
       ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
       TERMINAL_SERVICE_URL: http://terminal-service:3067
+      USER_ROLE_SERVICE_URL: http://user-role-service:3068
+      STAFF_SERVICE_URL: http://staff-service:3069
       CORS_ORIGIN: "*"
     ports:
       - "${API_GATEWAY_PORT:-3049}:3049"
@@ -514,6 +561,8 @@ services:
       - enterprise-service
       - organization-service
       - terminal-service
+      - user-role-service
+      - staff-service
     networks:
       - ordella-network
 

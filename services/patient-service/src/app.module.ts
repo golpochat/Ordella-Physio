@@ -3,6 +3,8 @@ import { ConfigModule } from "@nestjs/config";
 import { SecurityGuardsModule } from "@ordella/security";
 import { PatientsModule } from "@/patients/patients.module";
 import { MedicalRecordsModule } from "@/medical-records/medical-records.module";
+import { PatientNotesModule } from "@/patient-notes/patient-notes.module";
+import { PatientAttachmentsModule } from "@/patient-attachments/patient-attachments.module";
 import { DatabaseModule } from "@/database/database.module";
 import { EventsModule } from "@/events/events.module";
 import { configurePatientMiddleware } from "@/middleware";
@@ -18,6 +20,8 @@ import { configurePatientMiddleware } from "@/middleware";
     EventsModule,
     PatientsModule,
     MedicalRecordsModule,
+    PatientNotesModule,
+    PatientAttachmentsModule,
   ],
 })
 export class AppModule implements NestModule {

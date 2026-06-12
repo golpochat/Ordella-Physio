@@ -1,19 +1,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ClinicStaffCreateForm } from "@/components/clinic-portal/staff-create-form";
+import { StaffCreateForm } from "@/components/staff/StaffCreateForm";
+import { WithPermission } from "@/lib/auth/withPermission";
 
 export default function ClinicStaffCreatePage() {
   return (
-    <>
+    <WithPermission permission="user.manage">
       <Button asChild variant="ghost">
         <Link href="/clinic/staff">&larr; Back to staff</Link>
       </Button>
-      <ClinicStaffCreateForm
-        defaultRole="STAFF"
-        title="Add staff member"
-        description="Link an existing user as clinic staff."
-        successRedirect="/clinic/staff"
-      />
-    </>
+      <StaffCreateForm />
+    </WithPermission>
   );
 }

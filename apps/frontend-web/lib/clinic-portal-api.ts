@@ -6,7 +6,20 @@ import type {
   ClinicNote,
   ClinicNoteListResponse,
   ClinicPatient,
+  ClinicPatientDetailResponse,
+  ClinicPatientListFilters,
   ClinicPatientListResponse,
+  ClinicPatientStatusActionResponse,
+  ClinicPatientNoteListFilters,
+  ClinicPatientNoteListResponse,
+  ClinicPatientNoteDetailResponse,
+  ClinicPatientNoteSaveResponse,
+  ClinicPatientAttachmentListResponse,
+  ClinicPatientAttachmentDetailResponse,
+  ClinicPatientAttachmentUploadResponse,
+  ClinicPatientAttachmentDeleteResponse,
+  CreateClinicPatientNotePayload,
+  UpdateClinicPatientNotePayload,
   ClinicProfile,
   ClinicStaffMember,
   CreateClinicLocationPayload,
@@ -21,6 +34,7 @@ import type {
   CreateClinicSubscriptionPayload,
   CreateClinicAppointmentPayload,
   CreateClinicPatientPayload,
+  CreateClinicPatientResponse,
   CreateClinicStaffPayload,
   CreateClinicUserPayload,
   CreateClinicUserResponse,
@@ -38,6 +52,7 @@ import type {
   ChangeClinicUserRolePayload,
   ChangeClinicUserRoleResponse,
   UpdateClinicPatientPayload,
+  UpdateClinicPatientResponse,
   UpdateClinicProfilePayload,
   UpdateUserProfilePayload,
   UpdateUserProfileResponse,
@@ -76,24 +91,87 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       });
     },
 
-    listPatients(params?: { page?: number; limit?: number; name?: string }) {
+    listPatients(params?: ClinicPatientListFilters) {
       return api.get<ClinicPatientListResponse | ClinicPatient[]>("patient", "", { params });
     },
 
     getPatient(id: string) {
-      return api.get<ClinicPatient>("patient", `/${id}`);
+      return api.get<ClinicPatientDetailResponse>("patient", `/${id}`);
     },
 
     createPatient(payload: CreateClinicPatientPayload) {
-      return api.post<ClinicPatient>("patient", "", payload);
+      return api.post<CreateClinicPatientResponse>("patient", "", payload);
     },
 
     updatePatient(id: string, payload: UpdateClinicPatientPayload) {
-      return api.patch<ClinicPatient>("patient", `/${id}`, payload);
+      return api.put<UpdateClinicPatientResponse>("patient", `/${id}`, payload);
+    },
+
+    deactivatePatient(id: string) {
+      return api.post<ClinicPatientStatusActionResponse>("patient", `/${id}/deactivate`);
+    },
+
+    activatePatient(id: string) {
+      return api.post<ClinicPatientStatusActionResponse>("patient", `/${id}/activate`);
     },
 
     deletePatient(id: string) {
       return api.delete<void>("patient", `/${id}`);
+    },
+
+    listPatientNotes(patientId: string, params?: ClinicPatientNoteListFilters) {
+      return api.get<ClinicPatientNoteListResponse>("patient", `/${patientId}/notes`, { params });
+    },
+
+    getPatientNote(patientId: string, noteId: string) {
+      return api.get<ClinicPatientNoteDetailResponse>("patient", `/${patientId}/notes/${noteId}`);
+    },
+
+    createPatientNote(patientId: string, payload: CreateClinicPatientNotePayload) {
+      return api.post<ClinicPatientNoteSaveResponse>("patient", `/${patientId}/notes`, payload);
+    },
+
+    updatePatientNote(
+      patientId: string,
+      noteId: string,
+      payload: UpdateClinicPatientNotePayload,
+    ) {
+      return api.put<ClinicPatientNoteSaveResponse>(
+        "patient",
+        `/${patientId}/notes/${noteId}`,
+        payload,
+      );
+    },
+
+    listPatientAttachments(patientId: string) {
+      return api.get<ClinicPatientAttachmentListResponse>("patient", `/${patientId}/attachments`);
+    },
+
+    getPatientAttachment(patientId: string, attachmentId: string) {
+      return api.get<ClinicPatientAttachmentDetailResponse>(
+        "patient",
+        `/${patientId}/attachments/${attachmentId}`,
+      );
+    },
+
+    uploadPatientAttachment(patientId: string, file: File, description?: string) {
+      const formData = new FormData();
+      formData.append("file", file);
+      if (description?.trim()) {
+        formData.append("description", description.trim());
+      }
+      return api.postForm<ClinicPatientAttachmentUploadResponse>(
+        "patient",
+        `/${patientId}/attachments`,
+        formData,
+      );
+    },
+
+    deletePatientAttachment(patientId: string, attachmentId: string) {
+      return api.delete<ClinicPatientAttachmentDeleteResponse>(
+        "patient",
+        `/${patientId}/attachments/${attachmentId}`,
+      );
     },
 
     listAppointments(params?: { page?: number; limit?: number }) {
@@ -274,6 +352,46 @@ export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[]
   if (!response) return [];
   if (Array.isArray(response)) return response;
   return response.data ?? [];
+}
+
+export function normalizePatientListResponse(
+  response: ClinicPatientListResponse | ClinicPatient[] | undefined,
+): ClinicPatientListResponse {
+  if (!response) {
+    return {
+      data: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+    };
+  }
+
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      pagination: {
+        page: 1,
+        limit: response.length,
+        total: response.length,
+        totalPages: response.length > 0 ? 1 : 0,
+      },
+    };
+  }
+
+  if ("pagination" in response && response.pagination) {
+    return response;
+  }
+
+  const legacyMeta = (response as { meta?: ClinicPatientListResponse["pagination"] }).meta;
+  if (legacyMeta) {
+    return {
+      data: response.data ?? [],
+      pagination: legacyMeta,
+    };
+  }
+
+  return {
+    data: response.data ?? [],
+    pagination: { page: 1, limit: 20, total: response.data?.length ?? 0, totalPages: 0 },
+  };
 }
 
 export function normalizeStaffList(response: ClinicStaffMember[] | undefined): ClinicStaffMember[] {

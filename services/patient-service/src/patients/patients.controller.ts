@@ -6,25 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
-import {
-  createPatientSchema,
-  searchPatientSchema,
-  updateMedicalRecordSchema,
-  updatePatientSchema,
-  UseZodValidation,
-} from "@ordella/validation";
+import { updateMedicalRecordSchema, UseZodValidation } from "@ordella/validation";
 import { PermissionGuard, RequirePermissions, TenantGuard } from "@ordella/security";
+import { PatientListGuard } from "@/patients/guards/patient-list.guard";
+import { PatientManageGuard } from "@/patients/guards/patient-manage.guard";
+import { PatientUpdateManageGuard } from "@/patients/guards/patient-update-manage.guard";
 import type { OrdellaRequest } from "@ordella/middleware";
 import { PatientsService } from "@/patients/patients.service";
 import { JwtGuard } from "@/patients/guards/jwt.guard";
 import { TenantId } from "@/patients/guards/tenant-id.decorator";
-import type { CreatePatientDto } from "@/patients/dto/create-patient.dto";
-import type { UpdatePatientDto } from "@/patients/dto/update-patient.dto";
-import type { SearchPatientDto } from "@/patients/dto/search-patient.dto";
 import type { UpdateMedicalRecordDto } from "@/medical-records/dto/update-medical-record.dto";
 
 @Controller("patients")
@@ -37,23 +32,19 @@ export class PatientsController {
   }
 
   @Post()
-  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
-  @RequirePermissions("patient.write")
-  @UseZodValidation(createPatientSchema)
+  @UseGuards(JwtGuard, TenantGuard, PatientManageGuard)
   create(
     @TenantId() tenantId: string,
-    @Body() dto: CreatePatientDto,
+    @Body() payload: unknown,
     @Req() request: OrdellaRequest,
   ) {
-    return this.patientsService.create(tenantId, dto, request.correlationId);
+    return this.patientsService.create(tenantId, payload, request.correlationId);
   }
 
   @Get()
-  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
-  @RequirePermissions("patient.read")
-  @UseZodValidation(searchPatientSchema, "query")
-  search(@TenantId() tenantId: string, @Query() query: SearchPatientDto) {
-    return this.patientsService.search(tenantId, query);
+  @UseGuards(JwtGuard, TenantGuard, PatientListGuard)
+  listPatients(@TenantId() tenantId: string, @Query() query: Record<string, unknown>) {
+    return this.patientsService.listPatients(tenantId, query);
   }
 
   @Get(":id")
@@ -63,17 +54,27 @@ export class PatientsController {
     return this.patientsService.findById(tenantId, id);
   }
 
-  @Patch(":id")
-  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
-  @RequirePermissions("patient.write")
-  @UseZodValidation(updatePatientSchema)
+  @Post(":id/deactivate")
+  @UseGuards(JwtGuard, TenantGuard, PatientManageGuard)
+  deactivate(@TenantId() tenantId: string, @Param("id") id: string) {
+    return this.patientsService.deactivatePatient(tenantId, id);
+  }
+
+  @Post(":id/activate")
+  @UseGuards(JwtGuard, TenantGuard, PatientManageGuard)
+  activate(@TenantId() tenantId: string, @Param("id") id: string) {
+    return this.patientsService.activatePatient(tenantId, id);
+  }
+
+  @Put(":id")
+  @UseGuards(JwtGuard, TenantGuard, PatientUpdateManageGuard)
   update(
     @TenantId() tenantId: string,
     @Param("id") id: string,
-    @Body() dto: UpdatePatientDto,
+    @Body() payload: unknown,
     @Req() request: OrdellaRequest,
   ) {
-    return this.patientsService.update(tenantId, id, dto, request.correlationId);
+    return this.patientsService.update(tenantId, id, payload, request.correlationId);
   }
 
   @Delete(":id")

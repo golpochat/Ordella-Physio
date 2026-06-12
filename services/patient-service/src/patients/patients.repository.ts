@@ -18,14 +18,38 @@ export class PatientsRepository {
     return this.forTenant(tenantId).create(data as Prisma.PatientCreateInput);
   }
 
+  findByTenantAndEmail(tenantId: string, email: string) {
+    return this.database.patient.findFirst({
+      where: {
+        tenantId,
+        email,
+        ...buildSoftDeleteFilter(),
+      },
+    });
+  }
+
   findById(tenantId: string, patientId: string) {
     return this.forTenant(tenantId).findById(patientId);
+  }
+
+  findByIdGlobal(patientId: string) {
+    return this.database.patient.findFirst({
+      where: {
+        id: patientId,
+        ...buildSoftDeleteFilter(),
+      },
+      include: { insurance: true },
+    });
   }
 
   search(
     tenantId: string,
     where: Prisma.PatientWhereInput,
-    options: { skip: number; take: number },
+    options: {
+      skip: number;
+      take: number;
+      orderBy?: Prisma.PatientOrderByWithRelationInput | Prisma.PatientOrderByWithRelationInput[];
+    },
   ) {
     return this.database.patient.findMany({
       where: {
@@ -35,7 +59,7 @@ export class PatientsRepository {
       },
       skip: options.skip,
       take: options.take,
-      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      orderBy: options.orderBy ?? [{ lastName: "asc" }, { firstName: "asc" }],
     });
   }
 
@@ -55,5 +79,12 @@ export class PatientsRepository {
 
   softDelete(tenantId: string, patientId: string) {
     return this.forTenant(tenantId).softDelete(patientId);
+  }
+
+  setStatus(tenantId: string, patientId: string, status: "ACTIVE" | "INACTIVE") {
+    return this.database.patient.update({
+      where: { id: patientId, tenantId },
+      data: { status },
+    });
   }
 }

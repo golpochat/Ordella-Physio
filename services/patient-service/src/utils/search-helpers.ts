@@ -1,46 +1,60 @@
 import type { Prisma } from "@/generated/prisma";
-import type { SearchPatientDto } from "@/patients/dto/search-patient.dto";
+import type { ListPatientSortField } from "@/models/Patient";
+import type { ListPatientsQuery } from "@/validators/patient.validator";
 
-export function buildPatientSearchWhere(
+export function buildPatientListWhere(
   tenantId: string,
-  query: SearchPatientDto,
+  query: Pick<
+    ListPatientsQuery,
+    "search" | "gender" | "status" | "dobStart" | "dobEnd"
+  >,
 ): Prisma.PatientWhereInput {
   const where: Prisma.PatientWhereInput = {
     tenantId,
     deletedAt: null,
   };
 
-  if (query.name) {
-    const terms = query.name.trim().split(/\s+/);
-    where.AND = terms.map((term) => ({
-      OR: [
-        { firstName: { contains: term, mode: "insensitive" } },
-        { lastName: { contains: term, mode: "insensitive" } },
-      ],
-    }));
+  if (query.search) {
+    const term = query.search.trim();
+    where.OR = [
+      { firstName: { contains: term, mode: "insensitive" } },
+      { lastName: { contains: term, mode: "insensitive" } },
+      { email: { contains: term, mode: "insensitive" } },
+      { phone: { contains: term, mode: "insensitive" } },
+    ];
   }
 
-  if (query.email) {
-    where.email = { equals: query.email, mode: "insensitive" };
+  if (query.gender) {
+    where.gender = query.gender;
   }
 
-  if (query.phone) {
-    where.phone = query.phone;
+  if (query.status) {
+    where.status = query.status;
   }
 
-  if (query.dateOfBirth) {
-    where.dateOfBirth = new Date(query.dateOfBirth);
+  if (query.dobStart || query.dobEnd) {
+    const range: Prisma.DateTimeNullableFilter = {};
+    if (query.dobStart) {
+      const start = new Date(`${query.dobStart}T00:00:00.000Z`);
+      range.gte = start;
+    }
+    if (query.dobEnd) {
+      const end = new Date(`${query.dobEnd}T23:59:59.999Z`);
+      range.lte = end;
+    }
+    where.dateOfBirth = range;
   }
 
   return where;
 }
 
-export function resolvePagination(query: SearchPatientDto) {
-  const page = query.page ?? 1;
-  const limit = query.limit ?? 20;
-  return {
-    page,
-    limit,
-    skip: (page - 1) * limit,
-  };
+export function buildPatientListOrderBy(
+  sortBy: ListPatientSortField,
+  sortOrder: "asc" | "desc",
+): Prisma.PatientOrderByWithRelationInput | Prisma.PatientOrderByWithRelationInput[] {
+  if (sortBy === "lastName" || sortBy === "firstName") {
+    return [{ lastName: sortOrder }, { firstName: sortOrder }];
+  }
+
+  return { [sortBy]: sortOrder };
 }

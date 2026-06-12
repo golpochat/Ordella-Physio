@@ -1,17 +1,54 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ClinicPatientDetail } from "@/components/clinic-portal/patient-detail";
+import { PatientStatusActions } from "@/components/patients/PatientStatusActions";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import { useClinicPatient } from "@/hooks/useClinicPortal";
+import { WithPermission } from "@/lib/auth/withPermission";
+import { parsePatientFetchErrors } from "@/lib/clinic-patient-api-errors";
+import type { ClinicPatient, ClinicPatientDetailResponse } from "@/lib/clinic-portal-types";
+import { ApiError } from "@/lib/api-client";
 
 type ClinicPatientDetailPageProps = {
   params: { id: string };
 };
 
 export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailPageProps) {
-  const { data, isLoading, isError, refetch } = useClinicPatient(params.id);
+  const router = useRouter();
+  const { data, isLoading, isError, error, refetch } = useClinicPatient(params.id);
+  const [patient, setPatient] = useState<ClinicPatient | null>(null);
+
+  useEffect(() => {
+    if (data?.patient) {
+      setPatient(data.patient);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (isLoading || !isError) {
+      return;
+    }
+
+    const parsed = parsePatientFetchErrors(error);
+
+    if (parsed.forbidden || parsed.tenantMismatch) {
+      router.replace("/forbidden");
+      return;
+    }
+
+    if (parsed.notFound) {
+      toast.error(parsed.message ?? "Patient does not exist.");
+      router.replace("/clinic/patients");
+    }
+  }, [error, isError, isLoading, router]);
+
+  const detail: ClinicPatientDetailResponse | null =
+    patient && data ? { ...data, patient } : data ?? null;
 
   return (
     <>
@@ -20,9 +57,18 @@ export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailP
       </Button>
 
       {isLoading ? <PageLoading rows={2} /> : null}
-      {isError ? <PageError onRetry={() => void refetch()} /> : null}
-      {!isLoading && !isError && data ? <ClinicPatientDetail patient={data} /> : null}
-      {!isLoading && !isError && !data ? <PageError message="Patient not found." /> : null}
+      {isError && !(error instanceof ApiError) ? (
+        <PageError onRetry={() => void refetch()} />
+      ) : null}
+      {!isLoading && !isError && detail ? (
+        <div className="space-y-4">
+          <ClinicPatientDetail detail={detail} />
+          <WithPermission permission="patient.manage">
+            <PatientStatusActions patient={detail.patient} onStatusChange={setPatient} />
+          </WithPermission>
+        </div>
+      ) : null}
+      {!isLoading && !isError && !detail ? <PageError message="Patient not found." /> : null}
     </>
   );
 }
