@@ -17,12 +17,18 @@ import { REPORTING_ROUTES } from "@/routes/reporting.routes";
 import { MESSAGING_ROUTES } from "@/routes/messaging.routes";
 import { NOTIFICATION_ROUTES } from "@/routes/notification.routes";
 import { AI_NOTES_ROUTES } from "@/routes/ai-notes.routes";
+import { AI_SERVICE_ROUTES } from "@/routes/ai-service.routes";
 import { MARKETPLACE_ROUTES } from "@/routes/marketplace.routes";
 import { ENTERPRISE_ROUTES } from "@/routes/enterprise.routes";
 import { ORGANIZATION_ROUTES } from "@/routes/organization.routes";
 import { TERMINAL_ROUTES } from "@/routes/terminal.routes";
 import { USER_ROLE_ROUTES } from "@/routes/user-role.routes";
 import { STAFF_ROUTES } from "@/routes/staff.routes";
+import { AUDIT_ROUTES } from "@/routes/audit.routes";
+import { FILE_STORAGE_ROUTES } from "@/routes/file-storage.routes";
+import { NOTIFICATION_PROVIDER_ROUTES } from "@/routes/notification-provider.routes";
+import { SEARCH_INDEX_ROUTES } from "@/routes/search-index.routes";
+import { SUBSCRIPTION_BILLING_ROUTES } from "@/routes/subscription-billing.routes";
 import { TENANT_ROUTES } from "@/routes/tenant.routes";
 import { configureGatewayMiddleware, gatewayMiddlewareProviders } from "./middleware";
 import { GatewayController } from "./gateway.controller";
@@ -60,6 +66,17 @@ const proxyControllers = [
   createProxyController(REPORTING_ROUTES.base, "REPORTING_SERVICE_URL"),
   createProxyController(MESSAGING_ROUTES.base, "MESSAGING_SERVICE_URL"),
   createProxyController(NOTIFICATION_ROUTES.base, "NOTIFICATION_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.text, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.json, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.embed, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.providers, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.insights, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.agent, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.copilot, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.health, "AI_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
   createProxyController(AI_NOTES_ROUTES.base, "AI_NOTES_SERVICE_URL"),
   createProxyController("/marketplace/oauth", "MARKETPLACE_SERVICE_URL", {
     public: true,
@@ -87,6 +104,35 @@ const proxyControllers = [
     skipTenant: true,
   }),
   createProxyController(STAFF_ROUTES.base, "STAFF_SERVICE_URL"),
+  createProxyController("/audit-logs/internal", "AUDIT_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AUDIT_ROUTES.base, "AUDIT_SERVICE_URL"),
+  createProxyController(FILE_STORAGE_ROUTES.access, "FILE_STORAGE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/files/internal", "FILE_STORAGE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(FILE_STORAGE_ROUTES.base, "FILE_STORAGE_SERVICE_URL"),
+  createProxyController("/notification-providers/internal", "NOTIFICATION_PROVIDER_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(NOTIFICATION_PROVIDER_ROUTES.base, "NOTIFICATION_PROVIDER_SERVICE_URL"),
+  createProxyController(SEARCH_INDEX_ROUTES.base, "SEARCH_INDEX_SERVICE_URL"),
+  createProxyController(SUBSCRIPTION_BILLING_ROUTES.webhook, "SUBSCRIPTION_BILLING_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/subscription-billing/internal", "SUBSCRIPTION_BILLING_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(SUBSCRIPTION_BILLING_ROUTES.base, "SUBSCRIPTION_BILLING_SERVICE_URL"),
 ];
 
 @Module({

@@ -23,7 +23,7 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "billing-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
-const BILLING_PUBLIC_PATHS = ["/billing/health", "/billing/webhook"];
+const BILLING_PUBLIC_PATHS = ["/billing/health", "/billing/webhook", "/billing/internal"];
 
 export const BillingServiceDomainResolverMiddleware = createDomainResolverMiddleware({
   skipPaths: BILLING_PUBLIC_PATHS,

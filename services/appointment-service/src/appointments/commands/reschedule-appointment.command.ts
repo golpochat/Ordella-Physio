@@ -35,7 +35,7 @@ export class RescheduleAppointmentCommand {
       tenantId: existing.tenantId,
       patientId: existing.patientId,
       therapistId: existing.therapistId,
-      locationId: existing.locationId,
+      locationId: existing.locationId ?? "",
       startTime: existing.startTime,
       endTime: existing.endTime,
       type: existing.type,

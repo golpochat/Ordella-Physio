@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { AIWorkflowSuggestions } from "@/components/ai/AIWorkflowSuggestions";
+import { CopilotEntityProvider } from "@/components/ai/CopilotEntityContext";
+import { PatientAIInsights } from "@/components/ai/PatientAIInsights";
 import { ClinicPatientDetail } from "@/components/clinic-portal/patient-detail";
 import { PatientStatusActions } from "@/components/patients/PatientStatusActions";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
@@ -61,12 +64,20 @@ export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailP
         <PageError onRetry={() => void refetch()} />
       ) : null}
       {!isLoading && !isError && detail ? (
+        <CopilotEntityProvider entityType="patient" entityId={detail.patient.id}>
         <div className="space-y-4">
           <ClinicPatientDetail detail={detail} />
+          <PatientAIInsights patientId={detail.patient.id} />
+          <AIWorkflowSuggestions
+            entityType="patient"
+            entityId={detail.patient.id}
+            patientId={detail.patient.id}
+          />
           <WithPermission permission="patient.manage">
             <PatientStatusActions patient={detail.patient} onStatusChange={setPatient} />
           </WithPermission>
         </div>
+        </CopilotEntityProvider>
       ) : null}
       {!isLoading && !isError && !detail ? <PageError message="Patient not found." /> : null}
     </>

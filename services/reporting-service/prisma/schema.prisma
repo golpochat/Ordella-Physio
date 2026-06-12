@@ -112,3 +112,59 @@ model ReportRequest {
   @@index([tenantId, createdAt])
   @@map("report_requests")
 }
+
+enum SavedReportType {
+  APPOINTMENT
+  REVENUE
+  PATIENT
+}
+
+enum ScheduledReportFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum ScheduledReportStatus {
+  ACTIVE
+  PAUSED
+}
+
+model SavedReport {
+  id               String           @id @default(cuid())
+  tenantId         String
+  name             String
+  type             SavedReportType
+  config           Json
+  createdByUserId  String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  scheduledReports ScheduledReport[]
+
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("saved_reports")
+}
+
+model ScheduledReport {
+  id              String                   @id @default(cuid())
+  tenantId        String
+  savedReportId   String
+  savedReport     SavedReport              @relation(fields: [savedReportId], references: [id], onDelete: Cascade)
+  frequency       ScheduledReportFrequency
+  timeOfDay       String
+  dayOfWeek       Int?
+  dayOfMonth      Int?
+  recipients      String[]
+  lastRunAt       DateTime?
+  nextRunAt       DateTime?
+  status          ScheduledReportStatus    @default(ACTIVE)
+  createdByUserId String
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  @@index([tenantId])
+  @@index([savedReportId])
+  @@index([nextRunAt])
+  @@map("scheduled_reports")
+}

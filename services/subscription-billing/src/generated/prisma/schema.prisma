@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+}
+
+enum UsageMetric {
+  PATIENT_COUNT
+  APPOINTMENT_COUNT
+  STORAGE_MB
+  SMS_SENT
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  UNCOLLECTIBLE
+  VOID
+}
+
+enum DunningStatus {
+  ACTIVE
+  RESOLVED
+  CANCELED
+}
+
+model Plan {
+  id                   String   @id @default(cuid())
+  name                 String
+  description          String   @default("")
+  priceMonthly         Int      @default(0)
+  priceYearly          Int      @default(0)
+  currency             String   @default("EUR")
+  stripeProductId      String?
+  stripePriceMonthlyId String?
+  stripePriceYearlyId  String?
+  limits               Json     @default("{}")
+  trialDays            Int      @default(0)
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  subscriptions TenantSubscription[]
+  featureFlags  FeatureFlag[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("plans")
+}
+
+model TenantSubscription {
+  id                       String             @id @default(cuid())
+  tenantId                 String
+  planId                   String
+  stripeCustomerId         String?
+  stripeSubscriptionId     String?
+  stripeSubscriptionItemId String?
+  status                   SubscriptionStatus @default(INCOMPLETE)
+  trialEndsAt              DateTime?
+  currentPeriodStart       DateTime?
+  currentPeriodEnd         DateTime?
+  cancelAtPeriodEnd        Boolean            @default(false)
+  scheduledPlanId          String?
+  scheduledChangeAt        DateTime?
+  billingCycle             String             @default("monthly")
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  plan     Plan                  @relation(fields: [planId], references: [id])
+  invoices SubscriptionInvoice[]
+  dunning  DunningRecord?
+
+  @@unique([tenantId])
+  @@index([tenantId])
+  @@index([stripeSubscriptionId])
+  @@map("tenant_subscriptions")
+}
+
+model UsageRecord {
+  id                  String      @id @default(cuid())
+  tenantId            String
+  metric              UsageMetric
+  quantity            Int         @default(0)
+  periodStart         DateTime
+  periodEnd           DateTime
+  stripeUsageRecordId String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@unique([tenantId, metric, periodStart])
+  @@index([tenantId])
+  @@index([metric])
+  @@index([periodStart])
+  @@map("usage_records")
+}
+
+model FeatureFlag {
+  id         String   @id @default(cuid())
+  planId     String
+  featureKey String
+  enabled    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, featureKey])
+  @@index([planId])
+  @@map("feature_flags")
+}
+
+model SubscriptionInvoice {
+  id               String        @id @default(cuid())
+  tenantId         String
+  stripeInvoiceId  String        @unique
+  amountDue        Int           @default(0)
+  amountPaid       Int           @default(0)
+  currency         String        @default("EUR")
+  status           InvoiceStatus @default(OPEN)
+  periodStart      DateTime?
+  periodEnd        DateTime?
+  hostedInvoiceUrl String?
+  invoicePdf       String?
+  paidAt           DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  subscription TenantSubscription @relation(fields: [tenantId], references: [tenantId])
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("subscription_invoices")
+}
+
+model DunningRecord {
+  id           String        @id @default(cuid())
+  tenantId     String        @unique
+  attemptCount Int           @default(0)
+  nextRetryAt  DateTime?
+  lastFailedAt DateTime?
+  status       DunningStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  subscription TenantSubscription @relation(fields: [tenantId], references: [tenantId])
+
+  @@index([status])
+  @@index([nextRetryAt])
+  @@map("dunning_records")
+}

@@ -272,7 +272,7 @@ export type ClinicAppointment = {
   tenantId: string;
   patientId: string;
   therapistId: string;
-  locationId: string;
+  locationId: string | null;
   startTime: string;
   endTime: string;
   status: string;
@@ -283,27 +283,173 @@ export type ClinicAppointment = {
   updatedAt: string;
 };
 
+export type ClinicAppointmentListItem = ClinicAppointment & {
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  staff: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  location: {
+    id: string;
+    name: string;
+  } | null;
+  appointmentType: string;
+};
+
 export type ClinicAppointmentListResponse = {
-  data: ClinicAppointment[];
-  meta: { page: number; limit: number; total: number; totalPages: number };
+  data: ClinicAppointmentListItem[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+};
+
+export type ClinicAppointmentListFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  staffId?: string;
+  patientId?: string;
+  locationId?: string;
+  appointmentType?: ClinicAppointmentType;
+  status?: "SCHEDULED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+  dateStart?: string;
+  dateEnd?: string;
+  sortBy?: "startTime" | "endTime" | "createdAt" | "status" | "type";
+  sortOrder?: "asc" | "desc";
+};
+
+export type ClinicInvoiceItem = {
+  id: string;
+  invoiceId: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  taxRate: number;
+  discountAmount: number;
+  lineTotal: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type ClinicInvoice = {
   id: string;
   tenantId: string;
   patientId: string;
+  staffId: string | null;
   appointmentId: string | null;
   invoiceNumber: string;
   status: string;
   subtotal: number;
   tax: number;
   discount: number;
+  taxTotal?: number;
+  discountTotal?: number;
   total: number;
   currency: string;
   dueDate: string | null;
   notes: string | null;
+  issuedAt?: string | null;
+  paidAt?: string | null;
+  paymentReference?: string | null;
+  items?: ClinicInvoiceItem[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type CreateClinicInvoiceItemPayload = {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  taxRate: number;
+  discountAmount?: number;
+};
+
+export type CreateClinicInvoicePayload = {
+  patientId: string;
+  staffId?: string;
+  appointmentId?: string;
+  notes?: string;
+  items: CreateClinicInvoiceItemPayload[];
+};
+
+export type CreateClinicInvoiceResponse = {
+  invoice: ClinicInvoice;
+  items: ClinicInvoiceItem[];
+  message: string;
+};
+
+export type UpdateClinicInvoiceItemPayload = {
+  id?: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  taxRate: number;
+  discountAmount?: number;
+};
+
+export type UpdateClinicInvoicePayload = {
+  patientId?: string;
+  staffId?: string | null;
+  appointmentId?: string | null;
+  notes?: string;
+  status?: "DRAFT" | "ISSUED";
+  items?: UpdateClinicInvoiceItemPayload[];
+};
+
+export type UpdateClinicInvoiceResponse = {
+  invoice: ClinicInvoice;
+  items: ClinicInvoiceItem[];
+  message: string;
+};
+
+export type MarkClinicInvoicePaidPayload = {
+  paymentReference?: string;
+};
+
+export type ClinicInvoiceStatusActionResponse = {
+  invoice: ClinicInvoice;
+  message: string;
+};
+
+export type ClinicInvoiceListItem = ClinicInvoice & {
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  staff: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  } | null;
+};
+
+export type ClinicInvoiceListFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  patientId?: string;
+  staffId?: string;
+  status?: "DRAFT" | "ISSUED" | "PAID" | "VOID" | "VOIDED";
+  dateStart?: string;
+  dateEnd?: string;
+  minTotal?: number;
+  maxTotal?: number;
+  sortBy?: "createdAt" | "invoiceNumber" | "status" | "subtotal" | "total";
+  sortOrder?: "asc" | "desc";
+};
+
+export type ClinicInvoiceListResponse = {
+  data: ClinicInvoiceListItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 export type ClinicNote = {
@@ -583,14 +729,113 @@ export type UpdateClinicLocationConfigResponse = {
   message: string;
 };
 
+export type ClinicAppointmentType = "IN_PERSON" | "TELEMEDICINE";
+
 export type CreateClinicAppointmentPayload = {
   patientId: string;
-  therapistId: string;
-  locationId: string;
+  staffId: string;
+  locationId?: string;
+  appointmentType: ClinicAppointmentType;
   startTime: string;
   endTime: string;
-  type: string;
   notes?: string;
+};
+
+export type CreateClinicAppointmentResponse = {
+  appointment: ClinicAppointment;
+  message: string;
+};
+
+export type UpdateClinicAppointmentPayload = {
+  patientId?: string;
+  staffId?: string;
+  locationId?: string | null;
+  appointmentType?: ClinicAppointmentType;
+  startTime?: string;
+  endTime?: string;
+  notes?: string | null;
+};
+
+export type UpdateClinicAppointmentResponse = {
+  appointment: ClinicAppointment;
+  message: string;
+};
+
+export type ClinicAppointmentStatus =
+  | "SCHEDULED"
+  | "CONFIRMED"
+  | "IN_PROGRESS"
+  | "CANCELLED"
+  | "COMPLETED"
+  | "NO_SHOW";
+
+export type ClinicAppointmentStatusActionResponse = {
+  appointment: ClinicAppointment;
+  message: string;
+};
+
+export type ClinicAppointmentCalendarView = "day" | "week" | "month";
+
+export type ClinicAppointmentCalendarFilters = {
+  view?: ClinicAppointmentCalendarView;
+  date?: string;
+  staffId?: string;
+  locationId?: string;
+  appointmentType?: ClinicAppointmentType;
+  status?: ClinicAppointmentStatus;
+};
+
+export type ClinicAppointmentCalendarEvent = {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  appointmentType: string;
+  status: string;
+  staffId: string;
+  patientId: string;
+  locationId: string | null;
+};
+
+export type ClinicAppointmentCalendarResponse = {
+  data: ClinicAppointmentCalendarEvent[];
+};
+
+export type ClinicAppointmentReminderChannel = "EMAIL" | "SMS" | "PUSH";
+
+export type ClinicAppointmentReminderStatus = "SCHEDULED" | "SENT" | "CANCELLED" | "FAILED";
+
+export type ClinicAppointmentReminder = {
+  id: string;
+  tenantId: string;
+  appointmentId: string;
+  patientId: string;
+  staffId: string | null;
+  channel: ClinicAppointmentReminderChannel;
+  offsetMinutes: number;
+  status: ClinicAppointmentReminderStatus;
+  lastError: string | null;
+  scheduledFor: string;
+  sentAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateClinicAppointmentReminderPayload = {
+  channel: ClinicAppointmentReminderChannel;
+  offsetMinutes: number;
+  staffId?: string;
+};
+
+export type UpdateClinicAppointmentReminderPayload = {
+  channel?: ClinicAppointmentReminderChannel;
+  offsetMinutes?: number;
+  status?: "CANCELLED";
+};
+
+export type ClinicAppointmentReminderSaveResponse = {
+  reminder: ClinicAppointmentReminder;
+  message: string;
 };
 
 export type ClinicSubscriptionPlan = "STARTER" | "PROFESSIONAL" | "ENTERPRISE";

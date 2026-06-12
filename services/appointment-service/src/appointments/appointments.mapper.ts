@@ -5,7 +5,7 @@ export type AppointmentResponse = {
   tenantId: string;
   patientId: string;
   therapistId: string;
-  locationId: string;
+  locationId: string | null;
   startTime: string;
   endTime: string;
   status: string;
@@ -34,6 +34,39 @@ export function toAppointmentResponse(appointment: Appointment): AppointmentResp
   };
 }
 
+export type AppointmentListItemResponse = AppointmentResponse & {
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  staff: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  location: {
+    id: string;
+    name: string;
+  } | null;
+  appointmentType: string;
+};
+
 export function toAppointmentListResponse(appointments: Appointment[]) {
   return appointments.map(toAppointmentResponse);
+}
+
+export function toAppointmentListItemResponse(
+  appointment: Appointment,
+  patient: { id: string; firstName: string; lastName: string },
+  staff: { id: string; firstName: string; lastName: string },
+  location: { id: string; name: string } | null,
+): AppointmentListItemResponse {
+  return {
+    ...toAppointmentResponse(appointment),
+    patient,
+    staff,
+    location,
+    appointmentType: appointment.type,
+  };
 }

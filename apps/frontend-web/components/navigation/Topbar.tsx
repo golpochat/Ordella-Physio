@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dropdown } from "@/components/ui/dropdown";
 import { MessagingLauncher } from "@/components/messaging/messaging-launcher";
 import { NotificationLauncher } from "@/components/notifications/notification-launcher";
+import { GlobalSearchBar } from "@/components/search/GlobalSearchBar";
 import { useAuth } from "@/hooks/useAuth";
 import { useUiStore } from "@/store/ui.store";
 import { useTheme } from "next-themes";
@@ -71,12 +72,9 @@ export function Topbar({
 
       <div className="topbar-right">
         {showSearch ? (
-          <input
-            type="search"
-            className="topbar-search input hidden lg:block"
-            placeholder="Search..."
-            aria-label="Search dashboard"
-          />
+          <div className="hidden lg:block">
+            <GlobalSearchBar />
+          </div>
         ) : null}
         <NotificationLauncher />
         <MessagingLauncher />

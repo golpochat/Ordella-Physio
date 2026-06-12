@@ -23,12 +23,24 @@ export class AppointmentsRepository {
     return this.forTenant(tenantId).findById(appointmentId);
   }
 
-  list(tenantId: string, where: Prisma.AppointmentWhereInput, options: { skip: number; take: number }) {
+  findByIdGlobal(appointmentId: string) {
+    return this.database.appointment.findUnique({ where: { id: appointmentId } });
+  }
+
+  list(
+    tenantId: string,
+    where: Prisma.AppointmentWhereInput,
+    options: {
+      skip: number;
+      take: number;
+      orderBy?: Prisma.AppointmentOrderByWithRelationInput;
+    },
+  ) {
     return this.database.appointment.findMany({
       where: { ...where, tenantId },
       skip: options.skip,
       take: options.take,
-      orderBy: { startTime: "asc" },
+      orderBy: options.orderBy ?? { startTime: "desc" },
     });
   }
 
@@ -47,6 +59,25 @@ export class AppointmentsRepository {
       where: {
         tenantId,
         therapistId,
+        status: { not: "CANCELLED" },
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+        startTime: { lt: endTime },
+        endTime: { gt: startTime },
+      },
+    });
+  }
+
+  findPatientOverlapping(
+    tenantId: string,
+    patientId: string,
+    startTime: Date,
+    endTime: Date,
+    excludeId?: string,
+  ) {
+    return this.database.appointment.findMany({
+      where: {
+        tenantId,
+        patientId,
         status: { not: "CANCELLED" },
         ...(excludeId ? { id: { not: excludeId } } : {}),
         startTime: { lt: endTime },
@@ -96,5 +127,24 @@ export class AppointmentsRepository {
 
   update(tenantId: string, appointmentId: string, data: Prisma.AppointmentUpdateInput) {
     return this.forTenant(tenantId).update(appointmentId, data);
+  }
+
+  listInRange(
+    tenantId: string,
+    rangeStart: Date,
+    rangeEnd: Date,
+    where: Prisma.AppointmentWhereInput = {},
+    take = 1000,
+  ) {
+    return this.database.appointment.findMany({
+      where: {
+        ...where,
+        tenantId,
+        startTime: { lt: rangeEnd },
+        endTime: { gt: rangeStart },
+      },
+      orderBy: { startTime: "asc" },
+      take,
+    });
   }
 }

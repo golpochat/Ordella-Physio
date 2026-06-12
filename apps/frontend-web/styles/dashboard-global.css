@@ -371,3 +371,546 @@
   font-family: var(--font-mono, monospace);
   font-size: 0.875rem;
 }
+
+.dashboard-portal .appointment-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.dashboard-portal .appointment-calendar-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: space-between;
+}
+
+.dashboard-portal .appointment-calendar-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.dashboard-portal .appointment-calendar-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dashboard-portal .appointment-calendar-empty {
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--brand-gray);
+  margin: 0;
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.dashboard-portal .appointment-calendar-body {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: auto;
+}
+
+.dashboard-portal .appointment-calendar-timed-layout {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  min-width: 48rem;
+}
+
+.dashboard-portal .appointment-calendar-week-layout {
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+}
+
+.dashboard-portal .appointment-calendar-week-columns {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.dashboard-portal .appointment-calendar-time-column {
+  border-right: 1px solid var(--border-light);
+}
+
+.dashboard-portal .appointment-calendar-hour-label {
+  border-bottom: 1px solid var(--border-light);
+  color: var(--brand-gray);
+  font-size: 0.75rem;
+  height: 3rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.dashboard-portal .appointment-calendar-grid-column {
+  min-height: calc(3rem + 15 * 3rem);
+  position: relative;
+}
+
+.dashboard-portal .appointment-calendar-day-header {
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-height: 3rem;
+  padding: 0.5rem;
+}
+
+.dashboard-portal .appointment-calendar-day-header-spacer {
+  border-right: 1px solid var(--border-light);
+}
+
+.dashboard-portal .appointment-calendar-day-name {
+  color: var(--brand-gray);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.dashboard-portal .appointment-calendar-day-number {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dashboard-portal .appointment-calendar-day-body {
+  inset: 3rem 0 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.dashboard-portal .appointment-calendar-hour-grid {
+  margin-top: 3rem;
+}
+
+.dashboard-portal .appointment-calendar-hour-row {
+  border-bottom: 1px solid var(--border-light);
+  height: 3rem;
+}
+
+.dashboard-portal .appointment-calendar-timed-event {
+  border-radius: var(--radius-sm);
+  color: #fff;
+  display: block;
+  font-size: 0.75rem;
+  height: var(--appointment-event-height);
+  left: 0.25rem;
+  overflow: hidden;
+  padding: 0.25rem 0.375rem;
+  pointer-events: auto;
+  position: absolute;
+  right: 0.25rem;
+  text-decoration: none;
+  top: var(--appointment-event-top);
+}
+
+.dashboard-portal .appointment-calendar-event-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-portal .appointment-calendar-event-in-person {
+  background: #2563eb;
+}
+
+.dashboard-portal .appointment-calendar-event-telemedicine {
+  background: #7c3aed;
+}
+
+.dashboard-portal .appointment-calendar-event-cancelled {
+  background: #dc2626;
+}
+
+.dashboard-portal .appointment-calendar-event-completed {
+  background: #16a34a;
+}
+
+.dashboard-portal .appointment-calendar-event-no-show {
+  background: #ea580c;
+}
+
+.dashboard-portal .appointment-calendar-month {
+  min-width: 48rem;
+}
+
+.dashboard-portal .appointment-calendar-month-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.dashboard-portal .appointment-calendar-month-weekday {
+  border-bottom: 1px solid var(--border-light);
+  color: var(--brand-gray);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem;
+  text-transform: uppercase;
+}
+
+.dashboard-portal .appointment-calendar-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.dashboard-portal .appointment-calendar-month-cell {
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 6.5rem;
+  padding: 0.375rem;
+}
+
+.dashboard-portal .appointment-calendar-month-cell-muted {
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--brand-gray);
+}
+
+.dashboard-portal .appointment-calendar-month-day {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.dashboard-portal .appointment-calendar-month-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dashboard-portal .appointment-calendar-event {
+  border-radius: var(--radius-sm);
+  color: #fff;
+  display: block;
+  font-size: 0.6875rem;
+  overflow: hidden;
+  padding: 0.125rem 0.375rem;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-portal .appointment-calendar-month-more {
+  color: var(--brand-gray);
+  font-size: 0.6875rem;
+}
+
+.dashboard-portal .appointment-calendar-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.dashboard-portal .appointment-calendar-skeleton-month {
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dashboard-portal .appointment-calendar-skeleton-block,
+.dashboard-portal .appointment-calendar-skeleton-row {
+  height: 5rem;
+  width: 100%;
+}
+
+.dashboard-portal .appointment-reminder-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.dashboard-portal .appointment-reminder-skeleton-row {
+  height: 3.5rem;
+  width: 100%;
+}
+
+.dashboard-portal .appointment-reminder-offset-row {
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: minmax(0, 1fr) 8rem;
+}
+
+.dashboard-portal .dashboard-cell-danger {
+  color: var(--destructive, #dc2626);
+}
+
+.dashboard-portal .form-field-error {
+  color: var(--destructive, #dc2626);
+  font-size: 0.8125rem;
+  margin: 0.25rem 0 0;
+}
+
+.dashboard-portal .dashboard-range-summary {
+  font-size: 0.875rem;
+  color: var(--brand-gray);
+}
+
+.dashboard-portal .report-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.dashboard-portal .dashboard-widget-grid {
+  display: grid;
+  gap: var(--section-spacing);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-portal .dashboard-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-md);
+  color: var(--brand-dark);
+}
+
+.dashboard-portal .dashboard-empty-state {
+  font-size: 0.875rem;
+  color: var(--brand-gray);
+  margin: 0;
+}
+
+.dashboard-portal .dashboard-table-wrap {
+  overflow-x: auto;
+}
+
+.dashboard-portal .dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.dashboard-portal .dashboard-table th,
+.dashboard-portal .dashboard-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  text-align: left;
+}
+
+.dashboard-portal .dashboard-table th {
+  font-weight: 600;
+  color: var(--brand-gray);
+}
+
+.dashboard-portal .dashboard-skeleton {
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: dashboard-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+.dashboard-portal .dashboard-skeleton-chart {
+  height: 16rem;
+}
+
+.dashboard-portal .dashboard-skeleton-table {
+  height: 12rem;
+}
+
+@keyframes dashboard-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard-portal .dashboard-widget-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Audit log UI */
+.dashboard-portal .audit-log-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.dashboard-portal .audit-log-filters-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.dashboard-portal .audit-log-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.dashboard-portal .audit-log-filters-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.dashboard-portal .audit-log-row-clickable {
+  cursor: pointer;
+}
+
+.dashboard-portal .audit-log-row-clickable:hover,
+.dashboard-portal .audit-log-row-selected {
+  background: color-mix(in srgb, var(--brand-primary, #2563eb) 8%, transparent);
+}
+
+.dashboard-portal .audit-log-metadata-summary {
+  cursor: pointer;
+  color: var(--brand-primary, #2563eb);
+}
+
+.dashboard-portal .audit-log-metadata-body {
+  margin-top: var(--space-xs);
+  max-height: 12rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.8125rem;
+}
+
+.dashboard-portal .audit-log-pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: space-between;
+  margin-top: var(--space-lg);
+}
+
+.dashboard-portal .audit-log-pagination-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.dashboard-portal .audit-log-user-agent {
+  overflow-wrap: anywhere;
+}
+
+.dashboard-portal .audit-action-create,
+.dashboard-portal .audit-action-badge.audit-action-create {
+  color: #15803d;
+}
+
+.dashboard-portal .audit-action-update,
+.dashboard-portal .audit-action-badge.audit-action-update {
+  color: #1d4ed8;
+}
+
+.dashboard-portal .audit-action-delete,
+.dashboard-portal .audit-action-badge.audit-action-delete {
+  color: #b91c1c;
+}
+
+.dashboard-portal .audit-action-status-change,
+.dashboard-portal .audit-action-badge.audit-action-status-change {
+  color: #7e22ce;
+}
+
+.dashboard-portal .audit-action-export,
+.dashboard-portal .audit-action-badge.audit-action-export {
+  color: #c2410c;
+}
+
+.dashboard-portal .audit-action-login,
+.dashboard-portal .audit-action-badge.audit-action-login {
+  color: #0f766e;
+}
+
+.dashboard-portal .audit-action-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.dashboard-portal .audit-log-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  border: 0;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.dashboard-portal .audit-log-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: min(28rem, 100vw);
+  height: 100vh;
+  border-left: 1px solid var(--border-light);
+  background: var(--surface-elevated, #fff);
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12);
+}
+
+.dashboard-portal .audit-log-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dashboard-portal .audit-log-sidebar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.dashboard-portal .audit-log-sidebar-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  overflow: auto;
+}
+
+.dashboard-portal .audit-log-sidebar-field dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brand-gray);
+}
+
+.dashboard-portal .audit-log-sidebar-field dd {
+  margin-top: var(--space-xs);
+}
+
+.dashboard-portal .audit-log-sidebar-primary {
+  font-weight: 500;
+}
+
+.dashboard-portal .audit-log-sidebar-muted {
+  font-size: 0.875rem;
+  color: var(--brand-gray);
+}
+
+.dashboard-portal .audit-log-sidebar-link {
+  display: inline-block;
+  margin-top: var(--space-xs);
+  color: var(--brand-primary, #2563eb);
+  font-size: 0.875rem;
+  text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+  .dashboard-portal .audit-log-filters-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-portal .audit-log-filters-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

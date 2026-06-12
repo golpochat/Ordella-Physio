@@ -13,6 +13,16 @@ const repoRoot = join(__dirname, "../../..");
 const deployDir = join(__dirname, "..");
 const composeFile = "docker-compose.local.yml";
 
+/** Compose service name -> repo folder under services/ (when they differ). */
+const SERVICE_DIR_OVERRIDES = {
+  "ai-service": "ai",
+  "audit-service": "audit",
+  "file-storage-service": "file-storage",
+  "notification-provider-service": "notification-provider",
+  "search-index-service": "search-index",
+  "subscription-billing-service": "subscription-billing",
+};
+
 const PRISMA_SERVICES = [
   "auth-service",
   "tenant-service",
@@ -26,12 +36,18 @@ const PRISMA_SERVICES = [
   "messaging-service",
   "notification-service",
   "ai-notes-service",
+  "ai-service",
   "marketplace-service",
   "enterprise-service",
   "organization-service",
   "terminal-service",
   "user-role-service",
   "staff-service",
+  "audit-service",
+  "file-storage-service",
+  "notification-provider-service",
+  "search-index-service",
+  "subscription-billing-service",
 ];
 
 function run(command, args, options = {}) {
@@ -62,11 +78,15 @@ function runInService(service, commandArgs) {
   ]);
 }
 
+function resolveServiceDir(service) {
+  return SERVICE_DIR_OVERRIDES[service] ?? service;
+}
+
 function listMigrationNames(service) {
   const migrationsDir = join(
     repoRoot,
     "services",
-    service,
+    resolveServiceDir(service),
     "prisma",
     "migrations",
   );
@@ -83,6 +103,44 @@ function listMigrationNames(service) {
     });
   } catch {
     return [];
+  }
+}
+
+/** Databases added after the initial postgres volume was created. */
+const ENSURE_DATABASES = [
+  "ordella_ai",
+  "ordella_audit",
+  "ordella_file_storage",
+  "ordella_notification_provider",
+  "ordella_search_index",
+  "ordella_subscription_billing",
+];
+
+function ensureDatabasesExist() {
+  for (const database of ENSURE_DATABASES) {
+    const result = run(
+      "docker",
+      [
+        "compose",
+        "-f",
+        composeFile,
+        "exec",
+        "-T",
+        "postgres",
+        "psql",
+        "-U",
+        "physio",
+        "-d",
+        "postgres",
+        "-c",
+        `CREATE DATABASE ${database}`,
+      ],
+      { silent: true },
+    );
+
+    if (result.code === 0) {
+      console.log(`  ensured database ${database}`);
+    }
   }
 }
 
@@ -184,6 +242,9 @@ if (ensurePostgresRunning() !== 0) {
   console.error(`  docker compose -f ${composeFile} up -d`);
   process.exit(1);
 }
+
+console.log("\nEnsuring databases exist...");
+ensureDatabasesExist();
 
 let failed = 0;
 

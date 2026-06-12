@@ -23,22 +23,24 @@ import { RequestMethod } from "@nestjs/common";
 const metricsRegistry = createMetricsRegistry({ serviceName: "patient-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
+const PATIENT_PUBLIC_PATHS = ["/patients/health", "/patients/internal/"];
+
 export const PatientServiceDomainResolverMiddleware = createDomainResolverMiddleware({
-  skipPaths: ["/patients/health"],
+  skipPaths: PATIENT_PUBLIC_PATHS,
 });
 
 export const PatientServiceTenantMiddleware = createTenantMiddleware({
   required: true,
-  skipPaths: ["/patients/health"],
+  skipPaths: PATIENT_PUBLIC_PATHS,
 });
 
 export const PatientServiceTenantStatusMiddleware = createTenantStatusMiddleware({
-  skipPaths: ["/patients/health"],
+  skipPaths: PATIENT_PUBLIC_PATHS,
 });
 
 export const PatientServiceAuthContextMiddleware = createAuthContextMiddleware({
   required: false,
-  skipPaths: ["/patients/health"],
+  skipPaths: PATIENT_PUBLIC_PATHS,
 });
 
 export const PatientServiceRequestLoggingMiddleware = createRequestLoggingMiddleware({

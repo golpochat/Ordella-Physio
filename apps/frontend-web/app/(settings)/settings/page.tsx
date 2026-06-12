@@ -14,6 +14,31 @@ export default function SettingsPage() {
           { href: "/settings/profile", title: "Profile", description: "Personal account settings" },
           { href: "/settings/clinic", title: "Clinic", description: "Clinic preferences and branding" },
           { href: "/settings/billing", title: "Billing", description: "Payment and invoice settings" },
+          {
+            href: "/settings/notifications/providers",
+            title: "Notification providers",
+            description: "Email, SMS, and push delivery configuration",
+          },
+          {
+            href: "/settings/notifications/logs",
+            title: "Delivery logs",
+            description: "Delivery history, retries, and provider health",
+          },
+          {
+            href: "/settings/search",
+            title: "Search",
+            description: "Ranking rules, synonyms, stopwords, and reindex",
+          },
+          {
+            href: "/settings/search/analytics",
+            title: "Search analytics",
+            description: "Query volume, zero-result queries, and index hits",
+          },
+          {
+            href: "/settings/ai",
+            title: "AI",
+            description: "Provider configuration, routing priority, and test prompts",
+          },
         ].map((item) => (
           <Card key={item.href}>
             <CardHeader>

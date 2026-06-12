@@ -35,6 +35,8 @@ export class AddInvoiceItemCommand {
       description: input.dto.description,
       quantity: input.dto.quantity,
       unitPrice: input.dto.unitPrice,
+      taxRate: 0,
+      discountAmount: 0,
       total: lineTotal,
     });
 

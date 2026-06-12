@@ -106,7 +106,7 @@ export class CreateAppointmentCommand {
         appointmentId: appointment.id,
         patientId: appointment.patientId,
         therapistId: appointment.therapistId,
-        locationId: appointment.locationId,
+        locationId: appointment.locationId ?? "",
         startTime: appointment.startTime.toISOString(),
         endTime: appointment.endTime.toISOString(),
         createdAt: appointment.createdAt.toISOString(),

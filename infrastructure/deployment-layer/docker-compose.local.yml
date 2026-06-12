@@ -154,6 +154,8 @@ services:
       DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_appointment?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
       TENANT_SERVICE_URL: http://tenant-service:3052
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      STAFF_SERVICE_URL: http://staff-service:3069
     depends_on:
       postgres:
         condition: service_healthy
@@ -257,12 +259,24 @@ services:
       JWT_ACCESS_SECRET: *jwt-secret
       NATS_URL: nats://nats:4222
       REDIS_URL: redis://redis:6379
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      BILLING_SERVICE_URL: http://billing-service:3056
+      STAFF_SERVICE_URL: http://staff-service:3069
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       nats:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+      billing-service:
+        condition: service_started
+      staff-service:
         condition: service_started
     networks:
       - ordella-network
@@ -345,6 +359,184 @@ services:
       appointment-service:
         condition: service_started
       notes-service:
+        condition: service_started
+    networks:
+      - ordella-network
+
+  ai-service:
+    build:
+      context: ../../
+      dockerfile: services/ai/Dockerfile
+    container_name: ordella_local_ai_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3075
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_ai?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      CORS_ORIGIN: "*"
+      AI_ENCRYPTION_KEY: ${AI_ENCRYPTION_KEY:-change-me-local-ai-encryption-key-32chars}
+      DEFAULT_AI_PROVIDER: ${DEFAULT_AI_PROVIDER:-LOCAL}
+      DEFAULT_AI_MODEL: ${DEFAULT_AI_MODEL:-local-llm-v1}
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      BILLING_SERVICE_URL: http://billing-service:3056
+      NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
+    depends_on:
+      postgres:
+        condition: service_healthy
+      patient-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+      billing-service:
+        condition: service_started
+      notification-provider-service:
+        condition: service_started
+    networks:
+      - ordella-network
+
+  audit-service:
+    build:
+      context: ../../
+      dockerfile: services/audit/Dockerfile
+    container_name: ordella_local_audit_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3070
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_audit?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      CORS_ORIGIN: "*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-network
+
+  file-storage-service:
+    build:
+      context: ../../
+      dockerfile: services/file-storage/Dockerfile
+    container_name: ordella_local_file_storage_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3071
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_file_storage?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      CORS_ORIGIN: "*"
+      STORAGE_DEFAULT_PROVIDER: LOCAL
+      STORAGE_FAILOVER_PROVIDERS: S3,GCS,LOCAL
+      STORAGE_LOCAL_BASE_PATH: /app/uploads/files
+      FILE_STORAGE_PUBLIC_BASE_URL: http://localhost:3049/files
+      AUDIT_SERVICE_URL: http://audit-service:3070
+    depends_on:
+      postgres:
+        condition: service_healthy
+      audit-service:
+        condition: service_started
+    networks:
+      - ordella-network
+
+  notification-provider-service:
+    build:
+      context: ../../
+      dockerfile: services/notification-provider/Dockerfile
+    container_name: ordella_local_notification_provider_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3072
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_notification_provider?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      CORS_ORIGIN: "*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ordella-network
+
+  search-index-service:
+    build:
+      context: ../../
+      dockerfile: services/search-index/Dockerfile
+    container_name: ordella_local_search_index_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3073
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_search_index?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      CORS_ORIGIN: "*"
+      DEFAULT_SEARCH_PROVIDER: LOCAL
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      BILLING_SERVICE_URL: http://billing-service:3056
+      STAFF_SERVICE_URL: http://staff-service:3069
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      NATS_URL: nats://nats:4222
+      DEFAULT_EMBEDDING_MODEL: LOCAL_MINILM
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+      billing-service:
+        condition: service_started
+      staff-service:
+        condition: service_started
+      tenant-service:
+        condition: service_started
+    networks:
+      - ordella-network
+
+  subscription-billing-service:
+    build:
+      context: ../../
+      dockerfile: services/subscription-billing/Dockerfile
+    container_name: ordella_local_subscription_billing_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: 3074
+      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_subscription_billing?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      CORS_ORIGIN: "*"
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_local_dev_stripe_secret_key}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_local_dev_stripe_webhook_secret}
+      FRONTEND_URL: http://localhost:3010
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      STAFF_SERVICE_URL: http://staff-service:3069
+      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
+      NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
+      DEFAULT_TRIAL_DAYS: 14
+    depends_on:
+      postgres:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+      staff-service:
+        condition: service_started
+      file-storage-service:
+        condition: service_started
+      notification-provider-service:
         condition: service_started
     networks:
       - ordella-network
@@ -535,12 +727,18 @@ services:
       MESSAGING_SERVICE_URL: http://messaging-service:3061
       NOTIFICATION_SERVICE_URL: http://notification-service:3062
       AI_NOTES_SERVICE_URL: http://ai-notes-service:3063
+      AI_SERVICE_URL: http://ai-service:3075
       MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
       ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
       TERMINAL_SERVICE_URL: http://terminal-service:3067
       USER_ROLE_SERVICE_URL: http://user-role-service:3068
       STAFF_SERVICE_URL: http://staff-service:3069
+      AUDIT_SERVICE_URL: http://audit-service:3070
+      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
+      NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
+      SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
+      SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
       CORS_ORIGIN: "*"
     ports:
       - "${API_GATEWAY_PORT:-3049}:3049"
@@ -557,12 +755,18 @@ services:
       - messaging-service
       - notification-service
       - ai-notes-service
+      - ai-service
       - marketplace-service
       - enterprise-service
       - organization-service
       - terminal-service
       - user-role-service
       - staff-service
+      - audit-service
+      - file-storage-service
+      - notification-provider-service
+      - search-index-service
+      - subscription-billing-service
     networks:
       - ordella-network
 

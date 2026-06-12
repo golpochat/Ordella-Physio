@@ -27,12 +27,25 @@ enum DayOfWeek {
   SUN
 }
 
+enum ReminderChannel {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum ReminderStatus {
+  SCHEDULED
+  SENT
+  CANCELLED
+  FAILED
+}
+
 model Appointment {
   id          String            @id @default(cuid())
   tenantId    String
   patientId   String
   therapistId String
-  locationId  String
+  locationId  String?
   startTime   DateTime
   endTime     DateTime
   status      AppointmentStatus @default(SCHEDULED)
@@ -46,6 +59,27 @@ model Appointment {
   @@index([tenantId, therapistId, startTime])
   @@index([tenantId, patientId])
   @@map("appointments")
+}
+
+model AppointmentReminder {
+  id            String          @id @default(cuid())
+  tenantId      String
+  appointmentId String
+  patientId     String
+  staffId       String?
+  channel       ReminderChannel
+  offsetMinutes Int
+  status        ReminderStatus  @default(SCHEDULED)
+  lastError     String?
+  scheduledFor  DateTime
+  sentAt        DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([appointmentId])
+  @@index([tenantId])
+  @@index([scheduledFor])
+  @@map("appointment_reminders")
 }
 
 model Availability {

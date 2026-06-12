@@ -1,5 +1,8 @@
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { AppointmentStatusBadge } from "@/components/appointments/AppointmentStatusBadge";
+import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { IfHasPermission } from "@/lib/auth/withPermission";
 import type { ClinicAppointment } from "@/lib/clinic-portal-types";
 import { formatPortalDateTime } from "@/lib/clinic-portal-utils";
 
@@ -7,9 +10,24 @@ export function ClinicAppointmentDetail({ appointment }: { appointment: ClinicAp
   return (
     <Card>
       <CardHeader>
-        <div className="flex flex-wrap items-center gap-2">
-          <CardTitle>{appointment.type}</CardTitle>
-          <Badge>{appointment.status}</Badge>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <CardTitle>{appointment.type}</CardTitle>
+            <AppointmentStatusBadge status={appointment.status} />
+          </div>
+          <div className="user-list-actions">
+            <IfHasPermission permission="audit.view">
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/clinic/appointments/${appointment.id}/audit`}>View audit log</Link>
+              </Button>
+            </IfHasPermission>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/clinic/appointments/${appointment.id}/reminders`}>Reminders</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/clinic/appointments/${appointment.id}/edit`}>Edit appointment</Link>
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardBody className="space-y-4 text-sm">

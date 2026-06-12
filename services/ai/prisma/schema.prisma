@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AIProviderType {
+  OPENAI
+  AZURE_OPENAI
+  ANTHROPIC
+  LOCAL
+}
+
+model AIProviderConfig {
+  id        String         @id @default(cuid())
+  tenantId  String
+  provider  AIProviderType
+  modelName String
+  apiKey    String
+  baseUrl   String?
+  isActive  Boolean        @default(true)
+  priority  Int            @default(0)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([tenantId])
+  @@index([provider])
+  @@index([tenantId, isActive, priority])
+  @@map("ai_provider_configs")
+}
+
+model AIRequestLog {
+  id           String   @id @default(cuid())
+  tenantId     String
+  provider     String
+  modelName    String
+  prompt       String   @db.Text
+  response     String   @db.Text
+  tokensInput  Int      @default(0)
+  tokensOutput Int      @default(0)
+  latencyMs    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([provider])
+  @@index([createdAt])
+  @@map("ai_request_logs")
+}
+
+model AIMemory {
+  id         String   @id @default(cuid())
+  tenantId   String
+  memoryKey  String
+  value      Json
+  entityType String?
+  entityId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([tenantId, memoryKey])
+  @@index([tenantId, entityType, entityId])
+  @@map("ai_memories")
+}
+
+model AIWorkflowRun {
+  id        String   @id @default(cuid())
+  tenantId  String
+  trigger   String
+  status    String
+  steps     Json
+  result    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, trigger])
+  @@index([createdAt])
+  @@map("ai_workflow_runs")
+}
+
+model AIStreamSession {
+  id        String   @id @default(cuid())
+  tenantId  String
+  sessionId String   @unique
+  task      String
+  context   Json
+  status    String
+  chunks    Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@map("ai_stream_sessions")
+}

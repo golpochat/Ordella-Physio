@@ -23,6 +23,11 @@ export const API_ROUTES = {
   terminal: "/api/terminal",
   userRole: "/api/user-role",
   staffMember: "/api/staff",
+  audit: "/api/audit",
+  files: "/api/files",
+  notificationProviders: "/api/notification-providers",
+  searchIndex: "/api/search-index",
+  subscriptionBilling: "/api/subscription-billing",
 } as const;
 
 export const GATEWAY_PATHS = {
@@ -44,6 +49,11 @@ export const GATEWAY_PATHS = {
   terminal: "/terminals",
   userRole: "/roles",
   staffMember: "/staff",
+  audit: "/audit-logs",
+  files: "/files",
+  notificationProviders: "/notification-providers",
+  searchIndex: "/search-index",
+  subscriptionBilling: "/subscription-billing",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;

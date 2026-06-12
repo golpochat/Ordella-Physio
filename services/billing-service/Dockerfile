@@ -15,4 +15,4 @@ RUN cp -r src/generated dist/services/billing-service/src/
 
 EXPOSE 3056
 
-CMD ["sh", "-c", "pnpm exec prisma db push --skip-generate && exec pnpm start"]
+CMD ["sh", "-c", "pnpm exec prisma migrate deploy && exec pnpm start"]

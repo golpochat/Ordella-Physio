@@ -55,6 +55,63 @@ export const userRoleEnvSchema = coreEnvSchema.extend({
   { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
 );
 
+export const auditEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
+export const fileStorageEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
+export const notificationProviderEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
+export const subscriptionBillingEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  STRIPE_SECRET_KEY: z.string().min(1).optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
+  FRONTEND_URL: z.string().url().default("http://localhost:3010"),
+  TENANT_SERVICE_URL: z.string().url().default("http://localhost:3052"),
+  DEFAULT_TRIAL_DAYS: z.coerce.number().int().nonnegative().default(14),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
+export const aiServiceEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  AI_ENCRYPTION_KEY: z.string().min(32).default("change-me-local-ai-encryption-key-32chars"),
+  DEFAULT_AI_PROVIDER: z.enum(["OPENAI", "AZURE_OPENAI", "ANTHROPIC", "LOCAL"]).default("LOCAL"),
+  DEFAULT_AI_MODEL: z.string().default("local-llm-v1"),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
+export const searchIndexEnvSchema = coreEnvSchema.extend({
+  JWT_SECRET: z.string().min(32).optional(),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  DEFAULT_SEARCH_PROVIDER: z.enum(["LOCAL", "MEILISEARCH", "ELASTICSEARCH"]).default("LOCAL"),
+}).refine(
+  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
+  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
+);
+
 export const staffEnvSchema = coreEnvSchema.extend({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
@@ -162,6 +219,12 @@ export const gatewayServiceUrlsSchema = z.object({
   TERMINAL_SERVICE_URL: z.string().url(),
   USER_ROLE_SERVICE_URL: z.string().url(),
   STAFF_SERVICE_URL: z.string().url(),
+  AUDIT_SERVICE_URL: z.string().url(),
+  FILE_STORAGE_SERVICE_URL: z.string().url(),
+  NOTIFICATION_PROVIDER_SERVICE_URL: z.string().url(),
+  SEARCH_INDEX_SERVICE_URL: z.string().url(),
+  SUBSCRIPTION_BILLING_SERVICE_URL: z.string().url(),
+  AI_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({

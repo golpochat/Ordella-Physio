@@ -2,16 +2,16 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
 import {
-  cancelAppointmentSchema,
-  createAppointmentSchema,
   createAvailabilitySchema,
   createBlockedSlotSchema,
   listAppointmentsSchema,
@@ -25,11 +25,12 @@ import { PermissionGuard, RequirePermissions, TenantGuard } from "@ordella/secur
 import type { OrdellaRequest } from "@ordella/middleware";
 import { AppointmentsService } from "@/appointments/appointments.service";
 import { JwtGuard } from "@/appointments/guards/jwt.guard";
+import { AppointmentManageGuard } from "@/guards/appointment-manage.guard";
 import { TenantId } from "@/appointments/guards/tenant-id.decorator";
-import type { CreateAppointmentDto } from "@/appointments/dto/create-appointment.dto";
+import type { AuthenticatedAppointmentUser } from "@/appointments/strategies/jwt.strategy";
+import { CurrentUser } from "@/guards/current-user.decorator";
 import type { UpdateAppointmentDto } from "@/appointments/dto/update-appointment.dto";
 import type { RescheduleAppointmentDto } from "@/appointments/dto/reschedule-appointment.dto";
-import type { CancelAppointmentDto } from "@/appointments/dto/cancel-appointment.dto";
 import type { ListAppointmentsDto } from "@/appointments/dto/list-appointments.dto";
 import type { CreateAvailabilityDto } from "@/availability/dto/create-availability.dto";
 import type { UpdateAvailabilityDto } from "@/availability/dto/update-availability.dto";
@@ -46,23 +47,22 @@ export class AppointmentsController {
   }
 
   @Post()
-  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
-  @RequirePermissions("appointment.write")
-  @UseZodValidation(createAppointmentSchema)
+  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
   create(
     @TenantId() tenantId: string,
-    @Body() dto: CreateAppointmentDto,
-    @Req() request: OrdellaRequest,
+    @Body() payload: unknown,
+    @CurrentUser() user: AuthenticatedAppointmentUser,
   ) {
-    return this.appointmentsService.create(tenantId, dto, request.correlationId);
+    return this.appointmentsService.create(tenantId, payload, user);
   }
 
   @Get()
-  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
-  @RequirePermissions("appointment.read")
-  @UseZodValidation(listAppointmentsSchema, "query")
-  list(@TenantId() tenantId: string, @Query() query: ListAppointmentsDto) {
-    return this.appointmentsService.list(tenantId, query);
+  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
+  list(
+    @Query() query: Record<string, string | string[] | undefined>,
+    @CurrentUser() user: AuthenticatedAppointmentUser,
+  ) {
+    return this.appointmentsService.listAppointments(query, user);
   }
 
   @Get("calendar/:therapistId")
@@ -131,6 +131,15 @@ export class AppointmentsController {
     return this.appointmentsService.updateBlockedSlot(tenantId, id, dto);
   }
 
+  @Get("internal/metrics")
+  getAppointmentMetrics(
+    @Query("tenantId") tenantId: string,
+    @Query("start") start: string,
+    @Query("end") end: string,
+  ) {
+    return this.appointmentsService.getAppointmentMetrics(tenantId, start, end);
+  }
+
   @Get("internal/locations/:locationId/has-active")
   hasActiveAppointmentsByLocation(
     @Query("tenantId") tenantId: string,
@@ -155,6 +164,47 @@ export class AppointmentsController {
     return this.appointmentsService.hasActiveAppointmentsForPatient(tenantId, patientId);
   }
 
+  @Get("internal/patients/:patientId/history")
+  getPatientAppointmentHistory(
+    @Query("tenantId") tenantId: string,
+    @Param("patientId") patientId: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.appointmentsService.getPatientAppointmentHistory(
+      tenantId,
+      patientId,
+      limit ? Number(limit) : 10,
+    );
+  }
+
+  @Get("internal/:appointmentId")
+  async getAppointmentInternal(
+    @Query("tenantId") tenantId: string,
+    @Param("appointmentId") appointmentId: string,
+  ) {
+    const appointment = await this.appointmentsService.getAppointmentInternal(
+      tenantId,
+      appointmentId,
+    );
+
+    if (!appointment) {
+      throw new NotFoundException();
+    }
+
+    return appointment;
+  }
+
+  @Get(":id/ai-context")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("ai.use")
+  async getAiContext(@TenantId() tenantId: string, @Param("id") id: string) {
+    const context = await this.appointmentsService.getAiContext(tenantId, id);
+    if (!context) {
+      throw new NotFoundException();
+    }
+    return context;
+  }
+
   @Get(":id")
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("appointment.read")
@@ -162,17 +212,28 @@ export class AppointmentsController {
     return this.appointmentsService.findById(tenantId, id);
   }
 
+  @Put(":id")
+  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
+  update(
+    @TenantId() tenantId: string,
+    @Param("id") id: string,
+    @Body() payload: unknown,
+    @CurrentUser() user: AuthenticatedAppointmentUser,
+  ) {
+    return this.appointmentsService.update(tenantId, id, payload, user);
+  }
+
   @Patch(":id")
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("appointment.write")
   @UseZodValidation(updateAppointmentSchema)
-  update(
+  patch(
     @TenantId() tenantId: string,
     @Param("id") id: string,
     @Body() dto: UpdateAppointmentDto,
     @Req() request: OrdellaRequest,
   ) {
-    return this.appointmentsService.update(tenantId, id, dto, request.correlationId);
+    return this.appointmentsService.patch(tenantId, id, dto, request.correlationId);
   }
 
   @Post(":id/reschedule")
@@ -189,15 +250,20 @@ export class AppointmentsController {
   }
 
   @Post(":id/cancel")
-  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
-  @RequirePermissions("appointment.write")
-  @UseZodValidation(cancelAppointmentSchema)
-  cancel(
-    @TenantId() tenantId: string,
-    @Param("id") id: string,
-    @Body() dto: CancelAppointmentDto,
-    @Req() request: OrdellaRequest,
-  ) {
-    return this.appointmentsService.cancel(tenantId, id, dto, request.correlationId);
+  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
+  cancel(@Param("id") id: string, @CurrentUser() user: AuthenticatedAppointmentUser) {
+    return this.appointmentsService.cancelAppointment(id, user);
+  }
+
+  @Post(":id/complete")
+  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
+  complete(@Param("id") id: string, @CurrentUser() user: AuthenticatedAppointmentUser) {
+    return this.appointmentsService.completeAppointment(id, user);
+  }
+
+  @Post(":id/no-show")
+  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
+  markNoShow(@Param("id") id: string, @CurrentUser() user: AuthenticatedAppointmentUser) {
+    return this.appointmentsService.markNoShow(id, user);
   }
 }

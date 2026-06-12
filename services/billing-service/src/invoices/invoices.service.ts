@@ -8,7 +8,11 @@ import type { CreateInvoiceDto } from "@/invoices/dto/create-invoice.dto";
 import type { UpdateInvoiceDto } from "@/invoices/dto/update-invoice.dto";
 import type { CreateInvoiceItemDto } from "@/invoices/dto/create-invoice-item.dto";
 import type { UpdateInvoiceItemDto } from "@/invoices/dto/update-invoice-item.dto";
-import { toInvoiceListResponse, toInvoiceResponse } from "@/invoices/invoices.mapper";
+import { toInvoiceResponse } from "@/invoices/invoices.mapper";
+import { InvoiceListService } from "@/services/invoice-list.service";
+import { InvoiceStatusService } from "@/services/invoice-status.service";
+import type { MarkInvoicePaidDto } from "@/invoices/dto/mark-invoice-paid.dto";
+import type { AuditActorContext } from "@ordella/shared";
 
 @Injectable()
 export class InvoicesService {
@@ -18,10 +22,12 @@ export class InvoicesService {
     private readonly addInvoiceItemCommand: AddInvoiceItemCommand,
     private readonly updateInvoiceItemCommand: UpdateInvoiceItemCommand,
     private readonly invoicesRepository: InvoicesRepository,
+    private readonly invoiceListService: InvoiceListService,
+    private readonly invoiceStatusService: InvoiceStatusService,
   ) {}
 
-  create(tenantId: string, dto: CreateInvoiceDto, correlationId?: string) {
-    return this.createInvoiceCommand.execute({ tenantId, dto, correlationId });
+  create(tenantId: string, dto: CreateInvoiceDto, correlationId?: string, actor?: AuditActorContext) {
+    return this.createInvoiceCommand.execute({ tenantId, dto, correlationId, actor });
   }
 
   async findById(tenantId: string, invoiceId: string) {
@@ -29,15 +35,38 @@ export class InvoicesService {
     return invoice ? toInvoiceResponse(invoice) : null;
   }
 
-  async list(tenantId: string, patientId?: string) {
-    const invoices = await this.invoicesRepository.list(tenantId, {
-      ...(patientId ? { patientId } : {}),
-    });
-    return toInvoiceListResponse(invoices);
+  async getAiContext(tenantId: string, invoiceId: string) {
+    const invoice = await this.findById(tenantId, invoiceId);
+    if (!invoice) {
+      return null;
+    }
+
+    const related = invoice.patientId
+      ? await this.invoiceListService.listInvoices(tenantId, {
+          patientId: invoice.patientId,
+          limit: "5",
+        })
+      : { data: [] };
+
+    return {
+      invoice,
+      lineItems: invoice.items ?? [],
+      paymentHistory: related.data ?? [],
+    };
   }
 
-  update(tenantId: string, invoiceId: string, dto: UpdateInvoiceDto, correlationId?: string) {
-    return this.updateInvoiceCommand.execute({ tenantId, invoiceId, dto, correlationId });
+  list(tenantId: string, query: Record<string, string | string[] | undefined> = {}) {
+    return this.invoiceListService.listInvoices(tenantId, query);
+  }
+
+  update(
+    tenantId: string,
+    invoiceId: string,
+    dto: UpdateInvoiceDto,
+    correlationId?: string,
+    actor?: AuditActorContext,
+  ) {
+    return this.updateInvoiceCommand.execute({ tenantId, invoiceId, dto, correlationId, actor });
   }
 
   addItem(
@@ -63,5 +92,33 @@ export class InvoicesService {
       dto,
       correlationId,
     });
+  }
+
+  issueInvoice(
+    tenantId: string,
+    invoiceId: string,
+    correlationId?: string,
+    actor?: AuditActorContext,
+  ) {
+    return this.invoiceStatusService.issueInvoice(tenantId, invoiceId, correlationId, actor);
+  }
+
+  markInvoicePaid(
+    tenantId: string,
+    invoiceId: string,
+    dto: MarkInvoicePaidDto,
+    correlationId?: string,
+    actor?: AuditActorContext,
+  ) {
+    return this.invoiceStatusService.markInvoicePaid(tenantId, invoiceId, dto, correlationId, actor);
+  }
+
+  voidInvoice(
+    tenantId: string,
+    invoiceId: string,
+    correlationId?: string,
+    actor?: AuditActorContext,
+  ) {
+    return this.invoiceStatusService.voidInvoice(tenantId, invoiceId, correlationId, actor);
   }
 }

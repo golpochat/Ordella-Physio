@@ -95,4 +95,49 @@ export class NotificationsController {
     const user = request.user as AuthenticatedNotificationUser;
     return this.notificationsService.unregisterDeviceToken(user, query);
   }
+
+  @Post("outbound")
+  @UseGuards(JwtGuard, NotificationTenantGuard, PermissionGuard)
+  @RequirePermissions("notification.send")
+  sendOutbound(
+    @TenantId() tenantId: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    const channel = String(body.channel ?? "").toUpperCase() as
+      | "EMAIL"
+      | "SMS"
+      | "PUSH"
+      | "WHATSAPP"
+      | "VIBER";
+    const to = String(body.to ?? "").trim();
+
+    return this.notificationsService.sendOutboundNotification(tenantId, {
+      channel,
+      to,
+      templateId: body.templateId ? String(body.templateId) : undefined,
+      message: body.message ? String(body.message) : undefined,
+      subject: body.subject ? String(body.subject) : undefined,
+      title: body.title ? String(body.title) : undefined,
+      variables: body.variables as Record<string, string> | undefined,
+      metadata: body.metadata as Record<string, unknown> | undefined,
+    });
+  }
+
+  @Post("outbound/appointment-reminder")
+  @UseGuards(JwtGuard, NotificationTenantGuard, PermissionGuard)
+  @RequirePermissions("notification.send")
+  sendAppointmentReminder(
+    @TenantId() tenantId: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.notificationsService.sendAppointmentReminder({
+      tenantId,
+      channel: String(body.channel ?? "SMS").toUpperCase() as "EMAIL" | "SMS" | "PUSH",
+      to: String(body.to ?? ""),
+      patientName: String(body.patientName ?? ""),
+      time: String(body.time ?? ""),
+      location: String(body.location ?? ""),
+      appointmentId: String(body.appointmentId ?? ""),
+    });
+  }
 }

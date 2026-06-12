@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StorageProvider {
+  LOCAL
+  S3
+  GCS
+  AZURE
+}
+
+enum FileVariant {
+  ORIGINAL
+  THUMB_SMALL
+  THUMB_MEDIUM
+}
+
+model FileObject {
+  id                    String          @id @default(cuid())
+  tenantId              String
+  ownerUserId           String
+  entityType            String?
+  entityId              String?
+  filename              String
+  mimeType              String
+  sizeBytes             Int
+  storageProvider       StorageProvider
+  storageKey            String
+  checksum              String?
+  isPublic              Boolean         @default(false)
+  isDeleted             Boolean         @default(false)
+  deletedAt             DateTime?
+  deletedByUserId       String?
+  expiresAt             DateTime?
+  parentFileId          String?
+  variant               FileVariant     @default(ORIGINAL)
+  version               Int             @default(1)
+  previousVersionFileId String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  parentFile      FileObject?  @relation("FileVariants", fields: [parentFileId], references: [id], onDelete: SetNull)
+  variants        FileObject[] @relation("FileVariants")
+  previousVersion FileObject?  @relation("FileVersions", fields: [previousVersionFileId], references: [id], onDelete: SetNull)
+  nextVersions    FileObject[] @relation("FileVersions")
+
+  @@index([tenantId])
+  @@index([entityType, entityId])
+  @@index([storageKey])
+  @@index([ownerUserId])
+  @@index([isDeleted, deletedAt])
+  @@index([expiresAt])
+  @@index([parentFileId])
+  @@index([previousVersionFileId])
+  @@index([variant])
+  @@map("file_objects")
+}

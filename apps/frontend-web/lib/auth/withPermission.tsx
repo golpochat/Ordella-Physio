@@ -76,3 +76,76 @@ export function withPermission<P extends object>(
     );
   };
 }
+
+export function IfHasPermission({
+  children,
+  permission,
+}: {
+  children: ReactNode;
+  permission: AuthPermission;
+}) {
+  const storeUser = useAuthStore((state) => state.user);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const user = storeUser ?? (hydrated ? getStoredAuthUser() : null);
+  if (!hydrated || !userHasPermission(user, permission)) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
+export function WithAllPermissions({
+  children,
+  permissions,
+  fallback,
+}: {
+  children: ReactNode;
+  permissions: AuthPermission[];
+  fallback?: ReactNode;
+}) {
+  const router = useRouter();
+  const storeUser = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const user = storeUser ?? (hydrated ? getStoredAuthUser() : null);
+  const authenticated = isAuthenticated || (hydrated ? getStoredIsAuthenticated() : false);
+  const allowed =
+    authenticated && permissions.every((permission) => userHasPermission(user, permission));
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    if (!authenticated || !user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (!allowed) {
+      router.replace("/forbidden");
+    }
+  }, [allowed, authenticated, hydrated, permissions, router, user]);
+
+  if (!hydrated || !user || !allowed) {
+    return (
+      fallback ?? (
+        <div className="auth-mfa-loading">
+          <Loader2 className="h-5 w-5 animate-spin" />
+        </div>
+      )
+    );
+  }
+
+  return <>{children}</>;
+}

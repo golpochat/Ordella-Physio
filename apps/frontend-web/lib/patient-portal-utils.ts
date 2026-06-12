@@ -1,4 +1,7 @@
-import type { PatientAppointment } from "@/lib/patient-portal-types";
+type SplittableAppointment = {
+  startTime: string;
+  status: string;
+};
 import {
   formatCurrency as formatTenantCurrency,
   formatDate as formatTenantDate,
@@ -22,7 +25,7 @@ export function formatCurrency(amount: number, currency?: string): string {
   return formatTenantCurrency(amount, currency);
 }
 
-export function splitAppointments(appointments: PatientAppointment[]) {
+export function splitAppointments<T extends SplittableAppointment>(appointments: T[]) {
   const now = Date.now();
   const upcoming = appointments
     .filter((item) => new Date(item.startTime).getTime() >= now && item.status !== "CANCELLED")

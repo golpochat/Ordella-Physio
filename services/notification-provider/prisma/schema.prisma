@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  WHATSAPP
+  VIBER
+}
+
+enum NotificationProviderName {
+  SENDGRID
+  TWILIO
+  FIREBASE
+  VIBER
+  NONE
+}
+
+enum DeliveryStatus {
+  SUCCESS
+  FAILED
+}
+
+model ProviderConfig {
+  id                String                   @id @default(cuid())
+  tenantId          String
+  channel           NotificationChannel
+  provider          NotificationProviderName
+  credentials       Json
+  isActive          Boolean                  @default(true)
+  priority          Int                      @default(1)
+  isHealthy         Boolean                  @default(true)
+  lastHealthCheckAt DateTime?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, channel])
+  @@map("provider_configs")
+}
+
+model DeliveryLog {
+  id              String                   @id @default(cuid())
+  tenantId        String
+  channel         NotificationChannel
+  provider        NotificationProviderName
+  status          DeliveryStatus
+  errorMessage    String?
+  requestPayload  Json
+  responsePayload Json?
+  retryCount      Int                      @default(0)
+  nextAttemptAt   DateTime?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  @@index([tenantId])
+  @@index([channel])
+  @@index([provider])
+  @@index([status])
+  @@index([nextAttemptAt])
+  @@index([tenantId, createdAt])
+  @@map("delivery_logs")
+}
+

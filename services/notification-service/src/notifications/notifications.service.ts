@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import type { Prisma } from "@/generated/prisma";
 import type {
   ListNotificationsInput,
@@ -6,8 +6,7 @@ import type {
   RegisterDeviceTokenInput,
   UnregisterDeviceTokenInput,
 } from "@ordella/validation";
-import { EmailDeliveryService } from "@/delivery/email-delivery.service";
-import { PushDeliveryService } from "@/delivery/push-delivery.service";
+import { NotificationProviderHttpClient, type OutboundNotificationPayload } from "@ordella/shared";
 import { NotificationEventPublisher } from "@/events/notification-event.publisher";
 import { NotificationsRepository } from "@/notifications/notifications.repository";
 import { toNotificationResponse } from "@/notifications/notifications.mapper";
@@ -15,15 +14,99 @@ import type { AuthenticatedNotificationUser } from "@/utils/notification-helpers
 
 @Injectable()
 export class NotificationsService {
+  private readonly logger = new Logger(NotificationsService.name);
+  private readonly notificationProviderClient = new NotificationProviderHttpClient();
+
   constructor(
     private readonly repository: NotificationsRepository,
     private readonly events: NotificationEventPublisher,
-    private readonly emailDelivery: EmailDeliveryService,
-    private readonly pushDelivery: PushDeliveryService,
   ) {}
 
   private includeGlobal(user: AuthenticatedNotificationUser) {
     return user.role === "SYSTEM";
+  }
+
+  private queueOutbound(tenantId: string, payload: OutboundNotificationPayload) {
+    void this.notificationProviderClient.queueDelivery(tenantId, payload).catch((error) => {
+      this.logger.warn(
+        `Failed to queue outbound ${payload.channel} notification`,
+        error instanceof Error ? error.message : error,
+      );
+    });
+  }
+
+  async sendOutboundNotification(tenantId: string, payload: OutboundNotificationPayload) {
+    return this.notificationProviderClient.queueDelivery(tenantId, payload);
+  }
+
+  async sendAppointmentReminder(input: {
+    tenantId: string;
+    channel: OutboundNotificationPayload["channel"];
+    to: string;
+    patientName: string;
+    time: string;
+    location: string;
+    appointmentId: string;
+  }) {
+    return this.sendOutboundNotification(input.tenantId, {
+      channel: input.channel,
+      to: input.to,
+      templateId: "APPOINTMENT_REMINDER",
+      variables: {
+        name: input.patientName,
+        time: input.time,
+        location: input.location,
+      },
+      metadata: {
+        entityType: "APPOINTMENT",
+        entityId: input.appointmentId,
+      },
+    });
+  }
+
+  async sendInvoiceNotification(input: {
+    tenantId: string;
+    channel: OutboundNotificationPayload["channel"];
+    to: string;
+    patientName: string;
+    invoiceNumber: string;
+    invoiceId: string;
+  }) {
+    return this.sendOutboundNotification(input.tenantId, {
+      channel: input.channel,
+      to: input.to,
+      templateId: "INVOICE_READY",
+      variables: {
+        name: input.patientName,
+        invoiceNumber: input.invoiceNumber,
+      },
+      metadata: {
+        entityType: "INVOICE",
+        entityId: input.invoiceId,
+      },
+    });
+  }
+
+  async sendReportExportNotification(input: {
+    tenantId: string;
+    to: string;
+    reportName: string;
+    downloadUrl?: string;
+    reportId?: string;
+  }) {
+    return this.sendOutboundNotification(input.tenantId, {
+      channel: "EMAIL",
+      to: input.to,
+      templateId: "REPORT_EXPORT",
+      variables: {
+        reportName: input.reportName,
+        downloadUrl: input.downloadUrl ?? "",
+      },
+      metadata: {
+        entityType: "REPORT",
+        entityId: input.reportId,
+      },
+    });
   }
 
   async deliverNotification(input: {
@@ -35,6 +118,8 @@ export class NotificationsService {
     metadata?: Record<string, unknown>;
     correlationId?: string;
     sendEmail?: boolean;
+    emailTo?: string;
+    smsTo?: string;
   }) {
     const notification = await this.repository.create({
       tenantId: input.tenantId ?? null,
@@ -45,12 +130,31 @@ export class NotificationsService {
       metadata: input.metadata as Prisma.InputJsonValue | undefined,
     });
 
-    if (input.sendEmail !== false) {
-      await this.emailDelivery.sendPlaceholder({
-        toUserId: input.userId,
+    if (input.tenantId && input.emailTo && input.sendEmail !== false) {
+      this.queueOutbound(input.tenantId, {
+        channel: "EMAIL",
+        to: input.emailTo,
+        templateId: input.type,
         subject: input.title,
-        body: input.message,
-        tenantId: input.tenantId ?? null,
+        message: input.message,
+        metadata: {
+          ...input.metadata,
+          notificationId: notification.id,
+          entityType: "NOTIFICATION",
+          entityId: notification.id,
+        },
+      });
+    }
+
+    if (input.tenantId && input.smsTo) {
+      this.queueOutbound(input.tenantId, {
+        channel: "SMS",
+        to: input.smsTo,
+        message: input.message,
+        metadata: {
+          ...input.metadata,
+          notificationId: notification.id,
+        },
       });
     }
 
@@ -72,12 +176,20 @@ export class NotificationsService {
         input.userId,
         input.tenantId,
       );
-      await this.pushDelivery.sendToTokens({
-        tokens: deviceTokens.map((entry) => entry.token),
-        title: input.title,
-        message: input.message,
-        metadata: input.metadata,
-      });
+
+      for (const entry of deviceTokens) {
+        this.queueOutbound(input.tenantId, {
+          channel: "PUSH",
+          to: entry.token,
+          title: input.title,
+          message: input.message,
+          metadata: {
+            ...input.metadata,
+            notificationId: notification.id,
+            platform: entry.platform,
+          },
+        });
+      }
     }
 
     return toNotificationResponse(notification);

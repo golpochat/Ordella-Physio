@@ -45,7 +45,13 @@ export type ServiceEnvKey =
   | "ORGANIZATION_SERVICE_URL"
   | "TERMINAL_SERVICE_URL"
   | "USER_ROLE_SERVICE_URL"
-  | "STAFF_SERVICE_URL";
+  | "STAFF_SERVICE_URL"
+  | "AUDIT_SERVICE_URL"
+  | "FILE_STORAGE_SERVICE_URL"
+  | "NOTIFICATION_PROVIDER_SERVICE_URL"
+  | "SEARCH_INDEX_SERVICE_URL"
+  | "SUBSCRIPTION_BILLING_SERVICE_URL"
+  | "AI_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -163,6 +169,42 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     healthPath: "/staff/health",
     defaultUrl: "http://staff-service:3069",
   },
+  {
+    name: "audit",
+    envKey: "AUDIT_SERVICE_URL",
+    healthPath: "/audit-logs/health",
+    defaultUrl: "http://audit-service:3070",
+  },
+  {
+    name: "file-storage",
+    envKey: "FILE_STORAGE_SERVICE_URL",
+    healthPath: "/files/health",
+    defaultUrl: "http://file-storage-service:3071",
+  },
+  {
+    name: "notification-provider",
+    envKey: "NOTIFICATION_PROVIDER_SERVICE_URL",
+    healthPath: "/notification-providers/health",
+    defaultUrl: "http://notification-provider-service:3072",
+  },
+  {
+    name: "search-index",
+    envKey: "SEARCH_INDEX_SERVICE_URL",
+    healthPath: "/search-index/health",
+    defaultUrl: "http://search-index-service:3073",
+  },
+  {
+    name: "subscription-billing",
+    envKey: "SUBSCRIPTION_BILLING_SERVICE_URL",
+    healthPath: "/subscription-billing/health",
+    defaultUrl: "http://subscription-billing-service:3074",
+  },
+  {
+    name: "ai-service",
+    envKey: "AI_SERVICE_URL",
+    healthPath: "/ai/platform/health",
+    defaultUrl: "http://ai-service:3075",
+  },
 ];
 
 export const PUBLIC_PATHS = [
@@ -173,8 +215,10 @@ export const PUBLIC_PATHS = [
   "/auth",
   "/payments/webhook",
   "/billing/webhook",
+  "/subscription-billing/stripe/webhook",
   "/tenants/internal",
   "/tenants/directory",
+  "/files/access",
 ];
 
 export const SKIP_TENANT_PATHS = [
@@ -185,8 +229,10 @@ export const SKIP_TENANT_PATHS = [
   "/auth",
   "/payments/webhook",
   "/billing/webhook",
+  "/subscription-billing/stripe/webhook",
   "/tenants/internal",
   "/tenants/directory",
+  "/files/access",
 ];
 
 export const PUBLIC_JWT_PATHS = [
@@ -197,8 +243,10 @@ export const PUBLIC_JWT_PATHS = [
   "/auth",
   "/payments/webhook",
   "/billing/webhook",
+  "/subscription-billing/stripe/webhook",
   "/tenants/internal",
   "/tenants/directory",
+  "/files/access",
 ];
 
 export const GATEWAY_SERVICE_NAME = "api-gateway";

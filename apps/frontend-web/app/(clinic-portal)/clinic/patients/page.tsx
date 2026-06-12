@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
+import { EntityIndexSearchBox } from "@/components/search/EntityIndexSearchBox";
 import { PatientListFilters } from "@/components/patients/PatientListFilters";
 import { PatientListTable } from "@/components/patients/PatientListTable";
 import { useClinicPatientsList } from "@/hooks/useClinicPortal";
@@ -197,6 +198,13 @@ export default function ClinicPatientsPage() {
         onRetry={() => void refetch()}
         loadingRows={6}
       >
+        <EntityIndexSearchBox
+          indexName="patients"
+          label="Index search"
+          placeholder="Search indexed patients by name, phone, or email"
+          detailHref={(id) => `/clinic/patients/${id}`}
+        />
+
         <PatientListFilters
           filters={filters}
           draftSearch={draftSearch}

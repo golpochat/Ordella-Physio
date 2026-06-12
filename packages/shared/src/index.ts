@@ -4,3 +4,8 @@ export * from "./constants";
 export * from "./events";
 export * from "./dto";
 export * from "./utils";
+export * from "./integrations/audit-log";
+export * from "./integrations/audit-actor";
+export * from "./integrations/file-storage";
+export * from "./integrations/notification-provider";
+export * from "./integrations/subscription-billing";

@@ -34,6 +34,10 @@ infrastructure/deployment-layer/
 | communication-service | 3058 |
 | reporting-service     | 3059 |
 | event-bus-service     | 3060 |
+| messaging-service     | 3061 |
+| notification-service  | 3062 |
+| ai-notes-service      | 3063 |
+| ai-service            | 3075 |
 | frontend-web          | 3010 |
 
 ## Local Development (Docker Compose)

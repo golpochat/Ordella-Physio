@@ -2,6 +2,9 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/commo
 import { createEventBus, type EventBus, toSubject } from "@ordella/event-bus";
 import { BILLING_EVENTS } from "@/constants";
 import type { InvoiceCreatedEvent } from "@/invoices/events/invoice-created.event";
+import type { InvoiceIssuedEvent } from "@/invoices/events/invoice-issued.event";
+import type { InvoicePaidEvent } from "@/invoices/events/invoice-paid.event";
+import type { InvoiceVoidedEvent } from "@/invoices/events/invoice-voided.event";
 import type { InvoiceUpdatedEvent } from "@/invoices/events/invoice-updated.event";
 import type { InvoiceItemAddedEvent } from "@/invoices/events/invoice-item-added.event";
 import type { InvoiceItemUpdatedEvent } from "@/invoices/events/invoice-item-updated.event";
@@ -39,6 +42,18 @@ export class BillingEventPublisher implements OnModuleInit, OnModuleDestroy {
 
   async publishInvoiceUpdated(event: InvoiceUpdatedEvent, correlationId?: string) {
     await this.publish(BILLING_EVENTS.INVOICE_UPDATED, event.tenantId, event, correlationId);
+  }
+
+  async publishInvoiceIssued(event: InvoiceIssuedEvent, correlationId?: string) {
+    await this.publish(BILLING_EVENTS.INVOICE_ISSUED, event.tenantId, event, correlationId);
+  }
+
+  async publishInvoicePaid(event: InvoicePaidEvent, correlationId?: string) {
+    await this.publish(BILLING_EVENTS.INVOICE_PAID, event.tenantId, event, correlationId);
+  }
+
+  async publishInvoiceVoided(event: InvoiceVoidedEvent, correlationId?: string) {
+    await this.publish(BILLING_EVENTS.INVOICE_VOIDED, event.tenantId, event, correlationId);
   }
 
   async publishInvoiceItemAdded(event: InvoiceItemAddedEvent, correlationId?: string) {

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PatientStatusBadge } from "@/components/patients/PatientStatusBadge";
 import { useDeleteClinicPatient } from "@/hooks/useClinicPortal";
+import { IfHasPermission } from "@/lib/auth/withPermission";
 import type { ClinicPatientDetailResponse } from "@/lib/clinic-portal-types";
 import { formatPortalDate, getPatientDisplayName } from "@/lib/clinic-portal-utils";
 
@@ -40,6 +41,11 @@ export function ClinicPatientDetail({ detail }: { detail: ClinicPatientDetailRes
               <Button asChild variant="outline">
                 <Link href={`/clinic/patients/${patient.id}/attachments`}>Attachments</Link>
               </Button>
+              <IfHasPermission permission="audit.view">
+                <Button asChild variant="outline">
+                  <Link href={`/clinic/patients/${patient.id}/audit`}>View audit log</Link>
+                </Button>
+              </IfHasPermission>
               <Button asChild>
                 <Link href={`/clinic/patients/${patient.id}/edit`}>Edit</Link>
               </Button>

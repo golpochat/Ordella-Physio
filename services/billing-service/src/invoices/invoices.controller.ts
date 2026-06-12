@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -12,6 +14,7 @@ import {
 import {
   createInvoiceItemSchema,
   createInvoiceSchema,
+  markInvoicePaidSchema,
   updateInvoiceItemSchema,
   updateInvoiceSchema,
   UseZodValidation,
@@ -25,6 +28,9 @@ import type { CreateInvoiceDto } from "@/invoices/dto/create-invoice.dto";
 import type { UpdateInvoiceDto } from "@/invoices/dto/update-invoice.dto";
 import type { CreateInvoiceItemDto } from "@/invoices/dto/create-invoice-item.dto";
 import type { UpdateInvoiceItemDto } from "@/invoices/dto/update-invoice-item.dto";
+import type { MarkInvoicePaidDto } from "@/invoices/dto/mark-invoice-paid.dto";
+import { CurrentUser } from "@/invoices/guards/current-user.decorator";
+import type { AuthenticatedBillingUser } from "@/utils/billing-helpers";
 
 @Controller("billing")
 export class BillingHealthController {
@@ -46,15 +52,35 @@ export class InvoicesController {
     @TenantId() tenantId: string,
     @Body() dto: CreateInvoiceDto,
     @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedBillingUser,
   ) {
-    return this.invoicesService.create(tenantId, dto, request.correlationId);
+    return this.invoicesService.create(tenantId, dto, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
   }
 
   @Get()
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("billing.read")
-  list(@TenantId() tenantId: string, @Query("patientId") patientId?: string) {
-    return this.invoicesService.list(tenantId, patientId);
+  list(
+    @TenantId() tenantId: string,
+    @Query() query: Record<string, string | string[] | undefined>,
+  ) {
+    return this.invoicesService.list(tenantId, query);
+  }
+
+  @Get(":id/ai-context")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("ai.use")
+  async getAiContext(@TenantId() tenantId: string, @Param("id") id: string) {
+    const context = await this.invoicesService.getAiContext(tenantId, id);
+    if (!context) {
+      throw new NotFoundException();
+    }
+    return context;
   }
 
   @Get(":id")
@@ -64,7 +90,7 @@ export class InvoicesController {
     return this.invoicesService.findById(tenantId, id);
   }
 
-  @Patch(":id")
+  @Put(":id")
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("billing.write")
   @UseZodValidation(updateInvoiceSchema)
@@ -73,8 +99,86 @@ export class InvoicesController {
     @Param("id") id: string,
     @Body() dto: UpdateInvoiceDto,
     @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedBillingUser,
   ) {
-    return this.invoicesService.update(tenantId, id, dto, request.correlationId);
+    return this.invoicesService.update(tenantId, id, dto, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
+  }
+
+  @Patch(":id")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("billing.write")
+  @UseZodValidation(updateInvoiceSchema)
+  patch(
+    @TenantId() tenantId: string,
+    @Param("id") id: string,
+    @Body() dto: UpdateInvoiceDto,
+    @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedBillingUser,
+  ) {
+    return this.invoicesService.update(tenantId, id, dto, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
+  }
+
+  @Post(":id/issue")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("billing.write")
+  issue(
+    @TenantId() tenantId: string,
+    @Param("id") id: string,
+    @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedBillingUser,
+  ) {
+    return this.invoicesService.issueInvoice(tenantId, id, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
+  }
+
+  @Post(":id/pay")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("billing.write")
+  @UseZodValidation(markInvoicePaidSchema)
+  markPaid(
+    @TenantId() tenantId: string,
+    @Param("id") id: string,
+    @Body() dto: MarkInvoicePaidDto,
+    @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedBillingUser,
+  ) {
+    return this.invoicesService.markInvoicePaid(tenantId, id, dto, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
+  }
+
+  @Post(":id/void")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("billing.write")
+  void(
+    @TenantId() tenantId: string,
+    @Param("id") id: string,
+    @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedBillingUser,
+  ) {
+    return this.invoicesService.voidInvoice(tenantId, id, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
   }
 
   @Post(":id/items")

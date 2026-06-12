@@ -20,6 +20,8 @@ import type { OrdellaRequest } from "@ordella/middleware";
 import { PatientsService } from "@/patients/patients.service";
 import { JwtGuard } from "@/patients/guards/jwt.guard";
 import { TenantId } from "@/patients/guards/tenant-id.decorator";
+import { CurrentUser } from "@/patients/guards/current-user.decorator";
+import type { AuthenticatedPatientUser } from "@/utils/patient-helpers";
 import type { UpdateMedicalRecordDto } from "@/medical-records/dto/update-medical-record.dto";
 
 @Controller("patients")
@@ -37,14 +39,27 @@ export class PatientsController {
     @TenantId() tenantId: string,
     @Body() payload: unknown,
     @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedPatientUser,
   ) {
-    return this.patientsService.create(tenantId, payload, request.correlationId);
+    return this.patientsService.create(tenantId, payload, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
   }
 
   @Get()
   @UseGuards(JwtGuard, TenantGuard, PatientListGuard)
   listPatients(@TenantId() tenantId: string, @Query() query: Record<string, unknown>) {
     return this.patientsService.listPatients(tenantId, query);
+  }
+
+  @Get(":id/ai-context")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("ai.use")
+  getAiContext(@TenantId() tenantId: string, @Param("id") id: string) {
+    return this.patientsService.getAiContext(tenantId, id);
   }
 
   @Get(":id")
@@ -73,8 +88,14 @@ export class PatientsController {
     @Param("id") id: string,
     @Body() payload: unknown,
     @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedPatientUser,
   ) {
-    return this.patientsService.update(tenantId, id, payload, request.correlationId);
+    return this.patientsService.update(tenantId, id, payload, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
   }
 
   @Delete(":id")
@@ -84,8 +105,14 @@ export class PatientsController {
     @TenantId() tenantId: string,
     @Param("id") id: string,
     @Req() request: OrdellaRequest,
+    @CurrentUser() user: AuthenticatedPatientUser,
   ) {
-    return this.patientsService.delete(tenantId, id, request.correlationId);
+    return this.patientsService.delete(tenantId, id, request.correlationId, {
+      userId: user.userId,
+      role: user.role,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") ?? undefined,
+    });
   }
 
   @Get(":id/medical-record")

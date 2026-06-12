@@ -68,11 +68,12 @@ export function ClinicAppointmentCreateForm() {
             createAppointment.mutate(
               {
                 patientId,
-                therapistId,
+                staffId: therapistId,
                 locationId,
+                appointmentType:
+                  type === "TELEMEDICINE" ? "TELEMEDICINE" : "IN_PERSON",
                 startTime: toIsoDateTime(startTime),
                 endTime: toIsoDateTime(endTime),
-                type,
                 notes: notes || undefined,
               },
               {

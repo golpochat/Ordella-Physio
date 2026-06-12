@@ -99,6 +99,7 @@ export function PortalNavigationShell({
           <div className="dashboard-main">
             <Topbar
               title={pageMeta.title}
+              showSearch={portalId === "clinic"}
               settingsHref={config.settingsHref}
               profileHref={config.profileHref}
             />

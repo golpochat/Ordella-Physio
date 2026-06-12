@@ -20,6 +20,18 @@ export { organizationConfig, type OrganizationConfig } from "./services/organiza
 export { terminalConfig, type TerminalConfig } from "./services/terminal";
 export { userRoleConfig, type UserRoleConfig } from "./services/user-role";
 export { staffConfig, type StaffConfig } from "./services/staff";
+export { auditConfig, type AuditConfig } from "./services/audit";
+export { fileStorageConfig, type FileStorageConfig } from "./services/file-storage";
+export {
+  notificationProviderConfig,
+  type NotificationProviderConfig,
+} from "./services/notification-provider";
+export { aiServiceConfig, type AiServiceConfig } from "./services/ai";
+export { searchIndexConfig, type SearchIndexConfig } from "./services/search-index";
+export {
+  subscriptionBillingConfig,
+  type SubscriptionBillingConfig,
+} from "./services/subscription-billing";
 export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
 export { gatewayConfig, type GatewayConfig } from "./services/gateway";
 export * from "./regions/constants";

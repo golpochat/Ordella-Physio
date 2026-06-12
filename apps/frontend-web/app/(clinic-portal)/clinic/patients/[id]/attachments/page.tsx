@@ -1,16 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { FileList } from "@/components/files/FileList";
+import { FileUploadField } from "@/components/files/FileUploadField";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
-import { PatientAttachmentList } from "@/components/patients/attachments/PatientAttachmentList";
-import { PatientAttachmentUploader } from "@/components/patients/attachments/PatientAttachmentUploader";
-import { useClinicPatient, useClinicPatientAttachments } from "@/hooks/useClinicPortal";
-import { WithPermission } from "@/lib/auth/withPermission";
-import { parsePatientAttachmentListErrors } from "@/lib/clinic-patient-api-errors";
+import { useClinicPatient } from "@/hooks/useClinicPortal";
+import { WithAllPermissions } from "@/lib/auth/withPermission";
 import { getPatientDisplayName } from "@/lib/clinic-portal-utils";
 
 type ClinicPatientAttachmentsPageProps = {
@@ -20,65 +19,46 @@ type ClinicPatientAttachmentsPageProps = {
 export default function ClinicPatientAttachmentsPage({ params }: ClinicPatientAttachmentsPageProps) {
   const router = useRouter();
   const patientQuery = useClinicPatient(params.id);
-  const attachmentsQuery = useClinicPatientAttachments(params.id);
+  const [fileListKey, setFileListKey] = useState(0);
 
   useEffect(() => {
-    if (!attachmentsQuery.error) {
+    if (!patientQuery.error) {
       return;
     }
 
-    const parsed = parsePatientAttachmentListErrors(attachmentsQuery.error);
-
-    if (parsed.forbidden || parsed.tenantMismatch) {
-      router.replace("/forbidden");
-      return;
-    }
-
-    if (parsed.patientNotFound) {
-      toast.error(parsed.toastError ?? "Patient does not exist.");
-      router.replace("/clinic/patients");
-      return;
-    }
-
-    if (parsed.toastError) {
-      toast.error(parsed.toastError);
-    }
-  }, [attachmentsQuery.error, router]);
+    router.replace("/clinic/patients");
+    toast.error("Patient does not exist.");
+  }, [patientQuery.error, router]);
 
   const patientName = patientQuery.data?.patient
     ? getPatientDisplayName(patientQuery.data.patient)
     : "Patient";
 
-  const attachments = attachmentsQuery.data?.data ?? [];
-
   return (
-    <WithPermission permission="patient.attachments">
+    <WithAllPermissions permissions={["patient.attachments", "files.view"]}>
       <ListPage
         title={`Attachments — ${patientName}`}
-        subtitle="Upload and manage patient documents and images."
+        subtitle="Upload and manage patient documents via secure file storage."
         action={
           <Button asChild variant="ghost">
             <Link href={`/clinic/patients/${params.id}`}>&larr; Back to patient</Link>
           </Button>
         }
-        isLoading={attachmentsQuery.isLoading || patientQuery.isLoading}
-        isError={attachmentsQuery.isError}
-        onRetry={() => void attachmentsQuery.refetch()}
+        isLoading={patientQuery.isLoading}
+        isError={patientQuery.isError}
+        onRetry={() => void patientQuery.refetch()}
         loadingRows={4}
       >
-        <PatientAttachmentUploader
-          patientId={params.id}
-          disabled={attachmentsQuery.isFetching}
-          onUploaded={() => void attachmentsQuery.refetch()}
-        />
+        <WithAllPermissions permissions={["files.upload"]}>
+          <FileUploadField
+            entityType="PATIENT"
+            entityId={params.id}
+            onUploaded={() => setFileListKey((value) => value + 1)}
+          />
+        </WithAllPermissions>
 
-        <PatientAttachmentList
-          patientId={params.id}
-          attachments={attachments}
-          isBusy={attachmentsQuery.isFetching}
-          onChanged={() => void attachmentsQuery.refetch()}
-        />
+        <FileList key={fileListKey} entityType="PATIENT" entityId={params.id} />
       </ListPage>
-    </WithPermission>
+    </WithAllPermissions>
   );
 }

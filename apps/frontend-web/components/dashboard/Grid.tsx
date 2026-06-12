@@ -20,6 +20,12 @@ export const DASHBOARD_GRID = {
     "1.2fr 1.2fr 1fr 0.9fr 1fr 1.2fr 0.8fr 1fr minmax(10rem, 1.2fr)",
   patientTable:
     "1.2fr 1fr 1.2fr 0.8fr 1fr 0.8fr 1fr minmax(10rem, 1.2fr)",
+  appointmentTable:
+    "1.2fr 1.2fr 0.9fr 1fr 1fr 1fr 0.9fr minmax(10rem, 1.2fr)",
+  invoiceTable:
+    "1fr 1.2fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr minmax(10rem, 1.2fr)",
+  reminderTable:
+    "0.8fr 1fr 1.2fr 0.8fr 1.2fr minmax(8rem, 1fr)",
   patientNotesTable:
     "1.2fr 0.9fr 1fr 1fr minmax(10rem, 1.2fr)",
   patientAttachmentsTable:

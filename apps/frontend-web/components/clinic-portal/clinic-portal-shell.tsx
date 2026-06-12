@@ -1,5 +1,6 @@
 "use client";
 
+import { AIAssistantBubble } from "@/components/ai/AIAssistantBubble";
 import { PortalNavigationShell } from "@/components/navigation/PortalNavigationShell";
 import { useClinicContext } from "@/hooks/useClinicPortal";
 
@@ -9,6 +10,7 @@ export function ClinicPortalShell({ children }: { children: React.ReactNode }) {
   return (
     <PortalNavigationShell portalId="clinic" displayName={displayName}>
       {children}
+      <AIAssistantBubble />
     </PortalNavigationShell>
   );
 }

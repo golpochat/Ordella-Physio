@@ -12,12 +12,15 @@ import {
   patientTenantMismatchError,
   patientValidationError,
 } from "@/utils/patient-errors";
+import { AuditLogClient } from "@/integrations/audit-log.client";
+import type { AuditActorContext } from "@ordella/shared";
 
 export type UpdatePatientCommandInput = {
   tenantId: string;
   patientId: string;
   payload: unknown;
   correlationId?: string;
+  actor?: AuditActorContext;
 };
 
 @Injectable()
@@ -26,6 +29,7 @@ export class UpdatePatientCommand {
     private readonly patientsRepository: PatientsRepository,
     private readonly patientInsuranceRepository: PatientInsuranceRepository,
     private readonly eventPublisher: PatientEventPublisher,
+    private readonly auditLogClient: AuditLogClient,
   ) {}
 
   async execute(input: UpdatePatientCommandInput) {
@@ -111,6 +115,27 @@ export class UpdatePatientCommand {
       },
       input.correlationId,
     );
+
+    if (input.actor?.userId) {
+      void this.auditLogClient.logAction(
+        {
+          tenantId: input.tenantId,
+          actorUserId: input.actor.userId,
+          actorRole: input.actor.role,
+          entityType: "PATIENT",
+          entityId: patient.id,
+          action: "UPDATE",
+          metadata: {
+            patientId: patient.id,
+            changedFields: Object.keys(normalized),
+          },
+        },
+        {
+          ipAddress: input.actor.ipAddress,
+          userAgent: input.actor.userAgent,
+        },
+      );
+    }
 
     return {
       patient: toPatientResponse(patient),

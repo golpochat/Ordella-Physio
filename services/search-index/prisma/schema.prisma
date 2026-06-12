@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SearchProviderName {
+  MEILISEARCH
+  ELASTICSEARCH
+  LOCAL
+}
+
+model SearchIndexConfig {
+  id         String             @id @default(cuid())
+  tenantId   String
+  indexName  String
+  provider   SearchProviderName @default(LOCAL)
+  settings   Json               @default("{}")
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  @@unique([tenantId, indexName])
+  @@index([tenantId])
+  @@index([indexName])
+  @@map("search_index_configs")
+}
+
+enum VectorIndexProvider {
+  LOCAL
+  PINECONE
+  ELASTICSEARCH_VECTOR
+  QDRANT
+}
+
+enum EmbeddingModel {
+  OPENAI_TEXT_EMBEDDING
+  LOCAL_MINILM
+}
+
+model VectorIndexConfig {
+  id             String              @id @default(cuid())
+  tenantId       String
+  indexName      String
+  provider       VectorIndexProvider @default(LOCAL)
+  embeddingModel EmbeddingModel      @default(LOCAL_MINILM)
+  dimensions     Int                 @default(384)
+  settings       Json                @default("{}")
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@unique([tenantId, indexName])
+  @@index([tenantId])
+  @@index([indexName])
+  @@map("vector_index_configs")
+}
+
+model SearchQueryLog {
+  id         String   @id @default(cuid())
+  tenantId   String
+  indexName  String
+  query      String
+  filters    Json?
+  totalHits  Int      @default(0)
+  durationMs Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([indexName])
+  @@index([createdAt])
+  @@map("search_query_logs")
+}

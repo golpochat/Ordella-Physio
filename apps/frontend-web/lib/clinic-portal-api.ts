@@ -2,7 +2,16 @@ import type { createApiClient } from "@/lib/api-client";
 import type {
   ClinicAppointment,
   ClinicAppointmentListResponse,
+  ClinicAppointmentListFilters,
   ClinicInvoice,
+  ClinicInvoiceListFilters,
+  ClinicInvoiceListResponse,
+  CreateClinicInvoicePayload,
+  CreateClinicInvoiceResponse,
+  MarkClinicInvoicePaidPayload,
+  UpdateClinicInvoicePayload,
+  UpdateClinicInvoiceResponse,
+  ClinicInvoiceStatusActionResponse,
   ClinicNote,
   ClinicNoteListResponse,
   ClinicPatient,
@@ -33,6 +42,16 @@ import type {
   CancelClinicSubscriptionPayload,
   CreateClinicSubscriptionPayload,
   CreateClinicAppointmentPayload,
+  CreateClinicAppointmentResponse,
+  UpdateClinicAppointmentPayload,
+  UpdateClinicAppointmentResponse,
+  ClinicAppointmentStatusActionResponse,
+  ClinicAppointmentCalendarFilters,
+  ClinicAppointmentCalendarResponse,
+  ClinicAppointmentReminder,
+  CreateClinicAppointmentReminderPayload,
+  UpdateClinicAppointmentReminderPayload,
+  ClinicAppointmentReminderSaveResponse,
   CreateClinicPatientPayload,
   CreateClinicPatientResponse,
   CreateClinicStaffPayload,
@@ -174,9 +193,10 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       );
     },
 
-    listAppointments(params?: { page?: number; limit?: number }) {
+    listAppointments(params?: ClinicAppointmentListFilters) {
       return api.get<ClinicAppointmentListResponse | ClinicAppointment[]>("appointment", "", {
         params,
+        unwrapData: false,
       });
     },
 
@@ -185,7 +205,59 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
     },
 
     createAppointment(payload: CreateClinicAppointmentPayload) {
-      return api.post<ClinicAppointment>("appointment", "", payload);
+      return api.post<CreateClinicAppointmentResponse>("appointment", "", payload);
+    },
+
+    updateAppointment(id: string, payload: UpdateClinicAppointmentPayload) {
+      return api.put<UpdateClinicAppointmentResponse>("appointment", `/${id}`, payload);
+    },
+
+    cancelAppointment(id: string) {
+      return api.post<ClinicAppointmentStatusActionResponse>("appointment", `/${id}/cancel`);
+    },
+
+    completeAppointment(id: string) {
+      return api.post<ClinicAppointmentStatusActionResponse>("appointment", `/${id}/complete`);
+    },
+
+    markAppointmentNoShow(id: string) {
+      return api.post<ClinicAppointmentStatusActionResponse>("appointment", `/${id}/no-show`);
+    },
+
+    getCalendarEvents(params: ClinicAppointmentCalendarFilters) {
+      return api.get<ClinicAppointmentCalendarResponse>("appointment", "/calendar", {
+        params,
+        unwrapData: false,
+      });
+    },
+
+    listAppointmentReminders(appointmentId: string) {
+      return api.get<ClinicAppointmentReminder[]>("appointment", `/${appointmentId}/reminders`, {
+        unwrapData: false,
+      });
+    },
+
+    createAppointmentReminder(
+      appointmentId: string,
+      payload: CreateClinicAppointmentReminderPayload,
+    ) {
+      return api.post<ClinicAppointmentReminderSaveResponse>(
+        "appointment",
+        `/${appointmentId}/reminders`,
+        payload,
+      );
+    },
+
+    updateAppointmentReminder(
+      appointmentId: string,
+      reminderId: string,
+      payload: UpdateClinicAppointmentReminderPayload,
+    ) {
+      return api.put<ClinicAppointmentReminderSaveResponse>(
+        "appointment",
+        `/${appointmentId}/reminders/${reminderId}`,
+        payload,
+      );
     },
 
     listLocations(params?: ClinicLocationListFilters) {
@@ -247,12 +319,54 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       );
     },
 
+    listInvoices(params?: ClinicInvoiceListFilters) {
+      return api.get<ClinicInvoiceListResponse>("billing", "/invoices", {
+        params,
+        unwrapData: false,
+      });
+    },
+
     listBilling() {
-      return api.get<ClinicInvoice[]>("billing", "/invoices");
+      return api.get<ClinicInvoiceListResponse>("billing", "/invoices", {
+        params: { page: 1, limit: 100 },
+        unwrapData: false,
+      });
     },
 
     getInvoice(invoiceId: string) {
       return api.get<ClinicInvoice>("billing", `/invoices/${invoiceId}`);
+    },
+
+    createInvoice(payload: CreateClinicInvoicePayload) {
+      return api.post<CreateClinicInvoiceResponse>("billing", "/invoices", payload);
+    },
+
+    updateInvoice(invoiceId: string, payload: UpdateClinicInvoicePayload) {
+      return api.put<UpdateClinicInvoiceResponse>("billing", `/invoices/${invoiceId}`, payload);
+    },
+
+    issueInvoice(invoiceId: string) {
+      return api.post<ClinicInvoiceStatusActionResponse>(
+        "billing",
+        `/invoices/${invoiceId}/issue`,
+        {},
+      );
+    },
+
+    payInvoice(invoiceId: string, payload?: MarkClinicInvoicePaidPayload) {
+      return api.post<ClinicInvoiceStatusActionResponse>(
+        "billing",
+        `/invoices/${invoiceId}/pay`,
+        payload ?? {},
+      );
+    },
+
+    voidInvoice(invoiceId: string) {
+      return api.post<ClinicInvoiceStatusActionResponse>(
+        "billing",
+        `/invoices/${invoiceId}/void`,
+        {},
+      );
     },
 
     getSubscription() {
@@ -352,6 +466,119 @@ export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[]
   if (!response) return [];
   if (Array.isArray(response)) return response;
   return response.data ?? [];
+}
+
+export function normalizeInvoiceListResponse(
+  response: ClinicInvoiceListResponse | ClinicInvoice[] | undefined,
+): ClinicInvoiceListResponse {
+  if (!response) {
+    return {
+      data: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+    };
+  }
+
+  if (Array.isArray(response)) {
+    return {
+      data: response.map((item) => ({
+        ...item,
+        patient: {
+          id: item.patientId,
+          firstName: "Unknown",
+          lastName: "Patient",
+        },
+        staff: item.staffId
+          ? { id: item.staffId, firstName: "Unknown", lastName: "Staff" }
+          : null,
+      })),
+      pagination: {
+        page: 1,
+        limit: response.length,
+        total: response.length,
+        totalPages: response.length > 0 ? 1 : 0,
+      },
+    };
+  }
+
+  return {
+    data: response.data ?? [],
+    pagination: response.pagination ?? {
+      page: 1,
+      limit: 20,
+      total: 0,
+      totalPages: 0,
+    },
+  };
+}
+
+export function normalizeAppointmentListResponse(
+  response: ClinicAppointmentListResponse | ClinicAppointment[] | undefined,
+): ClinicAppointmentListResponse {
+  if (!response) {
+    return {
+      data: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+    };
+  }
+
+  if (Array.isArray(response)) {
+    return {
+      data: response.map((item) => ({
+        ...item,
+        patient: {
+          id: item.patientId,
+          firstName: "Unknown",
+          lastName: "Patient",
+        },
+        staff: {
+          id: item.therapistId,
+          firstName: "Unknown",
+          lastName: "Staff",
+        },
+        location: item.locationId ? { id: item.locationId, name: item.locationId } : null,
+        appointmentType: item.type,
+      })),
+      pagination: {
+        page: 1,
+        limit: response.length,
+        total: response.length,
+        totalPages: response.length > 0 ? 1 : 0,
+      },
+    };
+  }
+
+  if ("pagination" in response && response.pagination) {
+    return response;
+  }
+
+  const legacyMeta = (response as { meta?: ClinicAppointmentListResponse["pagination"] }).meta;
+  if (legacyMeta) {
+    return {
+      data: (response.data ?? []).map((item) => ({
+        ...item,
+        patient: item.patient ?? {
+          id: item.patientId,
+          firstName: "Unknown",
+          lastName: "Patient",
+        },
+        staff: item.staff ?? {
+          id: item.therapistId,
+          firstName: "Unknown",
+          lastName: "Staff",
+        },
+        location:
+          item.location ??
+          (item.locationId ? { id: item.locationId, name: item.locationId } : null),
+        appointmentType: item.appointmentType ?? item.type,
+      })),
+      pagination: legacyMeta,
+    };
+  }
+
+  return {
+    data: response.data ?? [],
+    pagination: { page: 1, limit: 20, total: response.data?.length ?? 0, totalPages: 0 },
+  };
 }
 
 export function normalizePatientListResponse(

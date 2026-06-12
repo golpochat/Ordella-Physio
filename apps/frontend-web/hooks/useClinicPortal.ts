@@ -6,6 +6,8 @@ import { useApi } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import {
   createClinicPortalApi,
+  normalizeAppointmentListResponse,
+  normalizeInvoiceListResponse,
   normalizeList,
   normalizePatientListResponse,
   normalizeStaffList,
@@ -17,7 +19,16 @@ import type {
   UpdateClinicLocationPayload,
   ClinicLocationListFilters,
   ClinicLocationConfigNamespace,
+  ClinicAppointmentListFilters,
+  ClinicAppointmentCalendarFilters,
+  CreateClinicAppointmentReminderPayload,
+  UpdateClinicAppointmentReminderPayload,
   CreateClinicAppointmentPayload,
+  UpdateClinicAppointmentPayload,
+  ClinicInvoiceListFilters,
+  CreateClinicInvoicePayload,
+  MarkClinicInvoicePaidPayload,
+  UpdateClinicInvoicePayload,
   CreateClinicPatientPayload,
   CreateClinicSubscriptionPayload,
   CreateClinicStaffPayload,
@@ -313,8 +324,25 @@ export function useClinicAppointments() {
   const { tenantId } = useClinicContext();
 
   return useQuery({
-    queryKey: ["clinic", "appointments", tenantId],
-    queryFn: async () => normalizeList(await requireApi(clinicApi).listAppointments({ limit: 100 })),
+    queryKey: ["clinic", "appointments", tenantId, "overview"],
+    queryFn: async () =>
+      normalizeAppointmentListResponse(
+        await requireApi(clinicApi).listAppointments({ page: 1, limit: 100 }),
+      ).data,
+    enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useClinicAppointmentsList(filters: ClinicAppointmentListFilters = {}) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "appointments", tenantId, filters],
+    queryFn: async () =>
+      normalizeAppointmentListResponse(
+        await requireApi(clinicApi).listAppointments(filters),
+      ),
     enabled: Boolean(tenantId && clinicApi),
   });
 }
@@ -334,9 +362,121 @@ export function useCreateClinicAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateClinicAppointmentPayload) =>
-      requireApi(clinicApi).createAppointment(payload),
+    mutationFn: async (payload: CreateClinicAppointmentPayload) => {
+      const response = await requireApi(clinicApi).createAppointment(payload);
+      return "appointment" in response ? response.appointment : response;
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clinic", "appointments"] }),
+  });
+}
+
+export function useUpdateClinicAppointment(appointmentId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: UpdateClinicAppointmentPayload) => {
+      const response = await requireApi(clinicApi).updateAppointment(appointmentId, payload);
+      return "appointment" in response ? response.appointment : response;
+    },
+    onSuccess: (appointment) => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "appointments"] });
+      queryClient.setQueryData(["clinic", "appointments", appointmentId], appointment);
+    },
+  });
+}
+
+function useClinicAppointmentStatusMutation(
+  appointmentId: string,
+  action: "cancel" | "complete" | "no-show",
+) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const api = requireApi(clinicApi);
+      if (action === "cancel") {
+        return api.cancelAppointment(appointmentId);
+      }
+      if (action === "complete") {
+        return api.completeAppointment(appointmentId);
+      }
+      return api.markAppointmentNoShow(appointmentId);
+    },
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "appointments"] });
+      queryClient.setQueryData(["clinic", "appointments", appointmentId], response.appointment);
+    },
+  });
+}
+
+export function useCancelClinicAppointment(appointmentId: string) {
+  return useClinicAppointmentStatusMutation(appointmentId, "cancel");
+}
+
+export function useCompleteClinicAppointment(appointmentId: string) {
+  return useClinicAppointmentStatusMutation(appointmentId, "complete");
+}
+
+export function useMarkClinicAppointmentNoShow(appointmentId: string) {
+  return useClinicAppointmentStatusMutation(appointmentId, "no-show");
+}
+
+export function useClinicAppointmentReminders(appointmentId: string) {
+  const clinicApi = useClinicPortalApi();
+
+  return useQuery({
+    queryKey: ["clinic", "appointments", appointmentId, "reminders"],
+    queryFn: async () => {
+      const response = await requireApi(clinicApi).listAppointmentReminders(appointmentId);
+      return Array.isArray(response) ? response : [];
+    },
+    enabled: Boolean(appointmentId && clinicApi),
+  });
+}
+
+export function useCreateClinicAppointmentReminder(appointmentId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateClinicAppointmentReminderPayload) =>
+      requireApi(clinicApi).createAppointmentReminder(appointmentId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["clinic", "appointments", appointmentId, "reminders"],
+      });
+    },
+  });
+}
+
+export function useUpdateClinicAppointmentReminder(appointmentId: string, reminderId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateClinicAppointmentReminderPayload) =>
+      requireApi(clinicApi).updateAppointmentReminder(appointmentId, reminderId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["clinic", "appointments", appointmentId, "reminders"],
+      });
+    },
+  });
+}
+
+export function useClinicAppointmentCalendar(filters: ClinicAppointmentCalendarFilters = {}) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "appointments", "calendar", tenantId, filters],
+    queryFn: async () => {
+      const response = await requireApi(clinicApi).getCalendarEvents(filters);
+      return response.data ?? [];
+    },
+    enabled: Boolean(tenantId && clinicApi && filters.date),
   });
 }
 
@@ -492,8 +632,89 @@ export function useClinicBilling() {
 
   return useQuery({
     queryKey: ["clinic", "billing", tenantId],
-    queryFn: async () => normalizeList(await requireApi(clinicApi).listBilling()),
+    queryFn: async () =>
+      normalizeInvoiceListResponse(await requireApi(clinicApi).listBilling()).data,
     enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useClinicInvoicesList(filters: ClinicInvoiceListFilters = {}) {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+
+  return useQuery({
+    queryKey: ["clinic", "billing", "invoices", tenantId, filters],
+    queryFn: async () =>
+      normalizeInvoiceListResponse(await requireApi(clinicApi).listInvoices(filters)),
+    enabled: Boolean(tenantId && clinicApi),
+  });
+}
+
+export function useCreateClinicInvoice() {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateClinicInvoicePayload) =>
+      requireApi(clinicApi).createInvoice(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "billing"] });
+    },
+  });
+}
+
+export function useUpdateClinicInvoice(invoiceId: string) {
+  const clinicApi = useClinicPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateClinicInvoicePayload) =>
+      requireApi(clinicApi).updateInvoice(invoiceId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clinic", "billing"] });
+      queryClient.invalidateQueries({ queryKey: ["clinic", "billing", invoiceId] });
+    },
+  });
+}
+
+function useInvalidateInvoiceQueries(invoiceId: string) {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({ queryKey: ["clinic", "billing"] });
+    queryClient.invalidateQueries({ queryKey: ["clinic", "billing", "invoices"] });
+    queryClient.invalidateQueries({ queryKey: ["clinic", "billing", invoiceId] });
+  };
+}
+
+export function useIssueClinicInvoice(invoiceId: string) {
+  const clinicApi = useClinicPortalApi();
+  const invalidate = useInvalidateInvoiceQueries(invoiceId);
+
+  return useMutation({
+    mutationFn: () => requireApi(clinicApi).issueInvoice(invoiceId),
+    onSuccess: invalidate,
+  });
+}
+
+export function usePayClinicInvoice(invoiceId: string) {
+  const clinicApi = useClinicPortalApi();
+  const invalidate = useInvalidateInvoiceQueries(invoiceId);
+
+  return useMutation({
+    mutationFn: (payload?: MarkClinicInvoicePaidPayload) =>
+      requireApi(clinicApi).payInvoice(invoiceId, payload),
+    onSuccess: invalidate,
+  });
+}
+
+export function useVoidClinicInvoice(invoiceId: string) {
+  const clinicApi = useClinicPortalApi();
+  const invalidate = useInvalidateInvoiceQueries(invoiceId);
+
+  return useMutation({
+    mutationFn: () => requireApi(clinicApi).voidInvoice(invoiceId),
+    onSuccess: invalidate,
   });
 }
 

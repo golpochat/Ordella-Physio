@@ -22,7 +22,7 @@ import { STAFF_ROUTES } from "@/routes/staff.routes";
 const metricsRegistry = createMetricsRegistry({ serviceName: "staff-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
-const skipPaths = [STAFF_ROUTES.health];
+const skipPaths = [STAFF_ROUTES.health, "/staff/internal"];
 
 export const StaffAuthContextMiddleware = createAuthContextMiddleware({
   required: false,

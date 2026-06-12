@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import type { CreateStaffPayload, UpdateStaffPayload } from "@/models/Staff";
 import { StaffRepository } from "@/repositories/staff.repository";
 import { AppointmentServiceClient } from "@/integrations/appointment-service.client";
+import { SubscriptionBillingClient } from "@/integrations/subscription-billing.client";
 import { TenantServiceClient } from "@/integrations/tenant-service.client";
 import { UserRoleServiceClient } from "@/integrations/user-role-service.client";
 import { parseListStaffQuery, validateCreateStaff, validateUpdateStaff } from "@/validators/staff.validator";
@@ -33,6 +34,7 @@ export class StaffService {
     private readonly tenantServiceClient: TenantServiceClient,
     private readonly userRoleServiceClient: UserRoleServiceClient,
     private readonly appointmentServiceClient: AppointmentServiceClient,
+    private readonly subscriptionBillingClient: SubscriptionBillingClient,
   ) {}
 
   async listStaff(query: unknown, requestingUser: AuthenticatedStaffUser) {
@@ -151,6 +153,8 @@ export class StaffService {
         throw invalidLocationError();
       }
     }
+
+    await this.subscriptionBillingClient.enforceStaffSeat(tenantId);
 
     const created = await this.staffRepository.createStaffWithLocations({
       tenantId,

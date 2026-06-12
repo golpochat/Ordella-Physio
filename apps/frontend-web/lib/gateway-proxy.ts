@@ -21,6 +21,11 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   terminal: GATEWAY_PATHS.terminal,
   userRole: GATEWAY_PATHS.userRole,
   staffMember: GATEWAY_PATHS.staffMember,
+  audit: GATEWAY_PATHS.audit,
+  files: GATEWAY_PATHS.files,
+  notificationProviders: GATEWAY_PATHS.notificationProviders,
+  searchIndex: GATEWAY_PATHS.searchIndex,
+  subscriptionBilling: GATEWAY_PATHS.subscriptionBilling,
 };
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
@@ -42,6 +47,11 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   terminal: "/api/terminal",
   userRole: "/api/user-role",
   staffMember: "/api/staff",
+  audit: "/api/audit",
+  files: "/api/files",
+  notificationProviders: "/api/notification-providers",
+  searchIndex: "/api/search-index",
+  subscriptionBilling: "/api/subscription-billing",
 };
 
 const PROXY_STRIP_REQUEST_HEADERS = [

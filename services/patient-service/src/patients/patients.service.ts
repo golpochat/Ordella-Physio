@@ -24,6 +24,7 @@ import {
   toPatientListResponse,
   toPatientResponse,
 } from "@/patients/patients.mapper";
+import type { AuditActorContext } from "@ordella/shared";
 
 @Injectable()
 export class PatientsService {
@@ -37,8 +38,8 @@ export class PatientsService {
     private readonly appointmentServiceClient: AppointmentServiceClient,
   ) {}
 
-  create(tenantId: string, payload: unknown, correlationId?: string) {
-    return this.createPatientCommand.execute({ tenantId, payload, correlationId });
+  create(tenantId: string, payload: unknown, correlationId?: string, actor?: AuditActorContext) {
+    return this.createPatientCommand.execute({ tenantId, payload, correlationId, actor });
   }
 
   async listPatients(tenantId: string, query: unknown) {
@@ -85,8 +86,39 @@ export class PatientsService {
     };
   }
 
-  update(tenantId: string, patientId: string, payload: unknown, correlationId?: string) {
-    return this.updatePatientCommand.execute({ tenantId, patientId, payload, correlationId });
+  async getAiContext(tenantId: string, patientId: string) {
+    const detail = await this.findById(tenantId, patientId);
+    const medicalRecord = await this.medicalRecordsService.getByPatientId(tenantId, patientId);
+    const medicalNotes: string[] = [];
+
+    if (medicalRecord?.notes) {
+      medicalNotes.push(medicalRecord.notes);
+    }
+    if (medicalRecord?.conditions) {
+      medicalNotes.push(`Conditions: ${medicalRecord.conditions}`);
+    }
+    if (medicalRecord?.allergies) {
+      medicalNotes.push(`Allergies: ${medicalRecord.allergies}`);
+    }
+    if (medicalRecord?.medications) {
+      medicalNotes.push(`Medications: ${medicalRecord.medications}`);
+    }
+
+    return {
+      demographics: detail.patient,
+      medicalNotes,
+      tags: [] as string[],
+    };
+  }
+
+  update(
+    tenantId: string,
+    patientId: string,
+    payload: unknown,
+    correlationId?: string,
+    actor?: AuditActorContext,
+  ) {
+    return this.updatePatientCommand.execute({ tenantId, patientId, payload, correlationId, actor });
   }
 
   async deactivatePatient(tenantId: string, patientId: string) {
@@ -139,8 +171,8 @@ export class PatientsService {
     };
   }
 
-  delete(tenantId: string, patientId: string, correlationId?: string) {
-    return this.deletePatientCommand.execute({ tenantId, patientId, correlationId });
+  delete(tenantId: string, patientId: string, correlationId?: string, actor?: AuditActorContext) {
+    return this.deletePatientCommand.execute({ tenantId, patientId, correlationId, actor });
   }
 
   getMedicalRecord(tenantId: string, patientId: string) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AuditLogTable } from "@/components/audit/AuditLogTable";
+import { AuthAuditLogTable } from "@/components/audit/AuthAuditLogTable";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -144,7 +144,7 @@ export default function SuperAdminAuditLogsPage() {
         </div>
       </section>
 
-      <AuditLogTable logs={logs} tenantNameById={tenantNameById} />
+      <AuthAuditLogTable logs={logs} tenantNameById={tenantNameById} />
 
       {total > 0 ? (
         <nav className="audit-log-pagination" aria-label="Audit log pagination">
