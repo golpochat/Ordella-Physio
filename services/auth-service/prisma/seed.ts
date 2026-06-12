@@ -57,7 +57,7 @@ export const DEV_SEED_USERS: SeedUser[] = [
     lastName: "Pharmacy",
   },
   {
-    id: "dev_user_patient1",
+    id: "dev_patient_1",
     email: "patient1@ordella.dev",
     password: "Patient123!",
     role: "PATIENT",
@@ -65,7 +65,7 @@ export const DEV_SEED_USERS: SeedUser[] = [
     lastName: "One",
   },
   {
-    id: "dev_user_patient2",
+    id: "dev_patient_2",
     email: "patient2@ordella.dev",
     password: "Patient123!",
     role: "PATIENT",

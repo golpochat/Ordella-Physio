@@ -12,7 +12,7 @@ export default function ResetPasswordTokenPage({ params }: ResetPasswordTokenPag
   const { token } = params;
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Reset password</CardTitle>
@@ -27,6 +27,6 @@ export default function ResetPasswordTokenPage({ params }: ResetPasswordTokenPag
           </p>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

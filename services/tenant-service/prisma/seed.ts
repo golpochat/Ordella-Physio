@@ -25,6 +25,7 @@ async function main() {
       'GBP',
       '1 Demo Street, London',
       '+44 20 7946 0958',
+      'ACTIVE'::"TenantStatus",
       true,
       NOW(),
       NOW()

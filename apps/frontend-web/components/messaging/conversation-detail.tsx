@@ -22,11 +22,25 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
   const conversationId = conversation?.id ?? null;
   const messagesQuery = useConversationMessages(conversationId);
   const sendMessage = useSendMessage(conversationId);
-  const markRead = useMarkMessageRead();
+  const { mutate: markRead } = useMarkMessageRead();
   const [draft, setDraft] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const markedMessageIdsRef = useRef<Set<string>>(new Set());
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastMessageId = messagesQuery.data?.items?.at(-1)?.id ?? null;
   const typingMutation = useMessageTyping(conversationId, lastMessageId);
+
+  useEffect(() => {
+    markedMessageIdsRef.current.clear();
+  }, [conversationId]);
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,13 +50,18 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
     if (!conversationId || !messagesQuery.data?.items?.length || !userId) return;
 
     const unread = messagesQuery.data.items.filter(
-      (message) => !message.isOwn && !message.isRead && !message.optimistic,
+      (message) =>
+        !message.isOwn &&
+        !message.isRead &&
+        !message.optimistic &&
+        !markedMessageIdsRef.current.has(message.id),
     );
 
     for (const message of unread) {
-      void markRead.mutate(message.id);
+      markedMessageIdsRef.current.add(message.id);
+      markRead(message.id);
     }
-  }, [conversationId, messagesQuery.data?.items, userId, markRead]);
+  }, [conversationId, markRead, messagesQuery.data?.items, userId]);
 
   if (!conversation) {
     return (
@@ -103,9 +122,15 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
           value={draft}
           onChange={(event) => {
             setDraft(event.target.value);
-            if (lastMessageId) {
-              void typingMutation.mutate(true);
+            if (!lastMessageId) return;
+
+            if (typingTimeoutRef.current) {
+              clearTimeout(typingTimeoutRef.current);
             }
+
+            typingTimeoutRef.current = setTimeout(() => {
+              void typingMutation.mutate(true);
+            }, 400);
           }}
           placeholder="Type a message..."
         />

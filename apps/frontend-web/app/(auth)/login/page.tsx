@@ -27,7 +27,7 @@ export default function LoginPage() {
   const [tenantId] = useState(getDefaultTenantId() ?? "");
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
           <div className="auth-form-stack">
             <div className="flex justify-between text-sm">
-              <Link href="/register" className="text-primary hover:underline">
+              <Link href="/signup" className="text-primary hover:underline">
                 Create account
               </Link>
               <Link href="/forgot-password" className="text-primary hover:underline">
@@ -64,6 +64,6 @@ export default function LoginPage() {
           </div>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

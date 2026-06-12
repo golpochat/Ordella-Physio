@@ -67,7 +67,9 @@ export function NotificationLauncher() {
               </Link>
             </div>
           </ModalHeader>
-          <NotificationCenter compact viewAllHref={viewAllHref} />
+          {open ? (
+            <NotificationCenter compact viewAllHref={viewAllHref} />
+          ) : null}
         </ModalContent>
       </Modal>
     </>

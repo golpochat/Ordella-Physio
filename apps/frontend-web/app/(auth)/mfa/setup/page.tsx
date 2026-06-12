@@ -6,7 +6,7 @@ import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/compon
 
 export default function MfaSetupPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Set up multi-factor authentication</CardTitle>
@@ -21,6 +21,6 @@ export default function MfaSetupPage() {
           </p>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

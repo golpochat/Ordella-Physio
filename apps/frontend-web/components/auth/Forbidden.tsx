@@ -12,7 +12,7 @@ export function Forbidden() {
   const homeHref = user ? getPortalForRole(roles[0] ?? user.role) : "/login";
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Access denied</CardTitle>
@@ -27,6 +27,6 @@ export function Forbidden() {
           </Link>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

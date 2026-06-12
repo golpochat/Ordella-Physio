@@ -10,7 +10,17 @@ import { createMessagingApi } from "@/lib/messaging-api";
 import type { CreateConversationPayload, MessagingMessage } from "@/lib/messaging-types";
 import { useAuthStore } from "@/store/auth.store";
 
-const POLL_INTERVAL_MS = 4_000;
+const POLL_INTERVAL_MS = 15_000;
+const UNREAD_POLL_INTERVAL_MS = 60_000;
+const UNREAD_POLL_BACKOFF_MS = 120_000;
+
+function unreadCountRefetchInterval(query: { state: { error: unknown } }) {
+  return query.state.error ? UNREAD_POLL_BACKOFF_MS : UNREAD_POLL_INTERVAL_MS;
+}
+
+function messagingPollRefetchInterval(query: { state: { error: unknown } }) {
+  return query.state.error ? UNREAD_POLL_BACKOFF_MS : POLL_INTERVAL_MS;
+}
 
 export function useMessagingApi() {
   const api = useApi();
@@ -40,7 +50,9 @@ export function useUnreadMessageCount() {
     queryKey: ["messaging", "unread-count", tenantId, userId],
     queryFn: () => messagingApi.unreadCount(),
     enabled: canQueryMessaging(tenantId, userId, tenantScoped),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: unreadCountRefetchInterval,
+    refetchIntervalInBackground: false,
+    retry: false,
     select: (response) => response.count,
   });
 }
@@ -53,7 +65,9 @@ export function useConversations() {
     queryKey: ["messaging", "conversations", tenantId, userId],
     queryFn: () => messagingApi.listConversations(),
     enabled: canQueryMessaging(tenantId, userId, tenantScoped),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: messagingPollRefetchInterval,
+    refetchIntervalInBackground: false,
+    retry: false,
   });
 }
 
@@ -65,7 +79,9 @@ export function useConversation(conversationId: string | null) {
     queryKey: ["messaging", "conversation", tenantId, userId, conversationId],
     queryFn: () => messagingApi.getConversation(conversationId!),
     enabled: canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: messagingPollRefetchInterval,
+    refetchIntervalInBackground: false,
+    retry: false,
   });
 }
 
@@ -101,7 +117,9 @@ export function useConversationMessages(conversationId: string | null) {
       return { items: merged, typingUsers: response.typingUsers };
     },
     enabled: canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: messagingPollRefetchInterval,
+    refetchIntervalInBackground: false,
+    retry: false,
   });
 
   return query;
@@ -201,9 +219,35 @@ export function useMarkMessageRead() {
 
   return useMutation({
     mutationFn: (messageId: string) => messagingApi.markRead(messageId),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["messaging", "conversations", tenantId, userId] });
-      void queryClient.invalidateQueries({ queryKey: ["messaging", "unread-count", tenantId, userId] });
+    meta: { silent: true },
+    onSuccess: (_data, messageId) => {
+      queryClient.setQueryData(
+        ["messaging", "unread-count", tenantId, userId],
+        (current?: number) => Math.max(0, (current ?? 0) - 1),
+      );
+
+      queryClient.setQueryData(
+        ["messaging", "conversations", tenantId, userId],
+        (current?: Awaited<ReturnType<typeof messagingApi.listConversations>>) =>
+          current?.map((conversation) =>
+            conversation.lastMessage?.id === messageId
+              ? { ...conversation, unreadCount: Math.max(0, (conversation.unreadCount ?? 0) - 1) }
+              : conversation,
+          ),
+      );
+
+      queryClient.setQueriesData<{ items: MessagingMessage[]; typingUsers: string[] }>(
+        { queryKey: ["messaging", "messages", tenantId, userId] },
+        (current) =>
+          current
+            ? {
+                ...current,
+                items: current.items.map((message) =>
+                  message.id === messageId ? { ...message, isRead: true } : message,
+                ),
+              }
+            : current,
+      );
     },
   });
 }
@@ -216,6 +260,6 @@ export function useMessageTyping(conversationId: string | null, lastMessageId: s
       if (!lastMessageId) return Promise.resolve({ success: true });
       return messagingApi.setTyping(lastMessageId, isTyping);
     },
-    meta: { conversationId },
+    meta: { silent: true, conversationId },
   });
 }

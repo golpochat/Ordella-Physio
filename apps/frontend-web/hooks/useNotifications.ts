@@ -10,7 +10,17 @@ import { createNotificationApi } from "@/lib/notification-api";
 import type { AppNotification } from "@/lib/notification-types";
 import { useAuthStore } from "@/store/auth.store";
 
-const POLL_INTERVAL_MS = 4_000;
+const POLL_INTERVAL_MS = 30_000;
+const UNREAD_POLL_INTERVAL_MS = 60_000;
+const UNREAD_POLL_BACKOFF_MS = 120_000;
+
+function unreadCountRefetchInterval(query: { state: { error: unknown } }) {
+  return query.state.error ? UNREAD_POLL_BACKOFF_MS : UNREAD_POLL_INTERVAL_MS;
+}
+
+function notificationPollRefetchInterval(query: { state: { error: unknown } }) {
+  return query.state.error ? UNREAD_POLL_BACKOFF_MS : POLL_INTERVAL_MS;
+}
 
 export function useNotificationApi() {
   const api = useApi();
@@ -44,7 +54,9 @@ export function useUnreadNotificationCount() {
     queryKey: ["notifications", "unread-count", tenantId, userId],
     queryFn: () => notificationApi.unreadCount(),
     enabled: canQueryNotifications(tenantId, userId, tenantScoped),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: unreadCountRefetchInterval,
+    refetchIntervalInBackground: false,
+    retry: false,
     select: (response) => response.count,
   });
 }
@@ -83,7 +95,9 @@ export function useNotifications(options?: { unreadOnly?: boolean; limit?: numbe
       );
     },
     enabled: canQueryNotifications(tenantId, userId, tenantScoped),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: notificationPollRefetchInterval,
+    refetchIntervalInBackground: false,
+    retry: false,
   });
 }
 
@@ -94,6 +108,7 @@ export function useMarkNotificationsRead() {
 
   return useMutation({
     mutationFn: (notificationIds: string[]) => notificationApi.markRead(notificationIds),
+    meta: { silent: true },
     onMutate: async (notificationIds) => {
       await queryClient.cancelQueries({ queryKey: notificationQueryKey(tenantId, userId) });
 
@@ -140,6 +155,7 @@ export function useMarkAllNotificationsRead() {
 
   return useMutation({
     mutationFn: () => notificationApi.markAllRead(),
+    meta: { silent: true },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: notificationQueryKey(tenantId, userId) });
 

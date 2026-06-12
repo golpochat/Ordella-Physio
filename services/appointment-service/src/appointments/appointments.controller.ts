@@ -57,7 +57,8 @@ export class AppointmentsController {
   }
 
   @Get()
-  @UseGuards(JwtGuard, TenantGuard, AppointmentManageGuard)
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("appointment.read")
   list(
     @Query() query: Record<string, string | string[] | undefined>,
     @CurrentUser() user: AuthenticatedAppointmentUser,

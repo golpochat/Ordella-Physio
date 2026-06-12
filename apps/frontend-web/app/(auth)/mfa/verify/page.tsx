@@ -23,7 +23,7 @@ export default function MfaVerifyPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Verify your identity</CardTitle>
@@ -38,6 +38,6 @@ export default function MfaVerifyPage() {
           </p>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

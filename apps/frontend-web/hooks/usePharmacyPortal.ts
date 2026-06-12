@@ -131,10 +131,13 @@ export function usePharmacyFulfillmentOrder(id: string) {
 
 export function usePharmacyProfile() {
   const pharmacyApi = usePharmacyPortalApi();
+  const user = useAuthStore((state) => state.user);
 
   return useQuery({
-    queryKey: ["pharmacy", "profile"],
+    queryKey: ["pharmacy", "profile", user?.id],
     queryFn: () => requireApi(pharmacyApi).getProfile(),
+    enabled: Boolean(user?.id),
+    retry: false,
   });
 }
 

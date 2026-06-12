@@ -11,7 +11,7 @@ export default function VerifyEmailPage({ params }: VerifyEmailPageProps) {
   const { token } = params;
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Email verification</CardTitle>
@@ -21,6 +21,6 @@ export default function VerifyEmailPage({ params }: VerifyEmailPageProps) {
           <VerificationMessage token={token} />
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

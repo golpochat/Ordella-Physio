@@ -16,3 +16,7 @@ export function getApiErrorMessage(error: unknown, fallback = "Something went wr
 export function isAuthError(error: unknown): boolean {
   return error instanceof ApiError && (error.status === 401 || error.status === 403);
 }
+
+export function isRateLimitError(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 429;
+}

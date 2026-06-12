@@ -740,6 +740,8 @@ services:
       SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
       SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
       CORS_ORIGIN: "*"
+      GATEWAY_RATE_LIMIT_IP: 5000
+      GATEWAY_RATE_LIMIT_TENANT: 10000
     ports:
       - "${API_GATEWAY_PORT:-3049}:3049"
     depends_on:

@@ -33,6 +33,27 @@ export const ROUTE_ROLE_ACCESS: Record<string, PortalRole[]> = {
   "/settings": ["SYSTEM", "OWNER", "ADMIN", "STAFF", "THERAPIST", "PATIENT", "PHARMACY", "USER"],
 };
 
+const GENERIC_ROUTE_PREFIXES = new Set(["/appointments", "/patients", "/billing", "/notes"]);
+
+const PORTAL_ROUTE_PREFIXES = [
+  DASHBOARD_ROUTES.superAdmin,
+  DASHBOARD_ROUTES.admin,
+  DASHBOARD_ROUTES.clinic,
+  DASHBOARD_ROUTES.therapist,
+  DASHBOARD_ROUTES.patient,
+  DASHBOARD_ROUTES.pharmacy,
+  DASHBOARD_ROUTES.staff,
+  DASHBOARD_ROUTES.user,
+] as const;
+
+function getPortalRoutePrefix(pathname: string): string | null {
+  return (
+    PORTAL_ROUTE_PREFIXES.find(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    ) ?? null
+  );
+}
+
 export function hasRole(userRoles: PortalRole[], required: PortalRole | PortalRole[]): boolean {
   const requiredRoles = Array.isArray(required) ? required : [required];
   return requiredRoles.some((role) => userRoles.includes(role));
@@ -62,15 +83,28 @@ export function hasPermission(
 }
 
 export function canAccessRoute(pathname: string, roles: PortalRole[]): boolean {
-  const matched = Object.entries(ROUTE_ROLE_ACCESS).find(
-    ([route]) => pathname === route || pathname.startsWith(`${route}/`),
-  );
+  const portalPrefix = getPortalRoutePrefix(pathname);
+  const matches = Object.entries(ROUTE_ROLE_ACCESS).filter(([route]) => {
+    if (!(pathname === route || pathname.startsWith(`${route}/`))) {
+      return false;
+    }
 
-  if (!matched) {
+    if (
+      portalPrefix &&
+      route !== portalPrefix &&
+      GENERIC_ROUTE_PREFIXES.has(route)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  if (!matches.length) {
     return true;
   }
 
-  const [, allowedRoles] = matched;
+  const [, allowedRoles] = matches.sort(([routeA], [routeB]) => routeB.length - routeA.length)[0]!;
   return hasRole(roles, allowedRoles);
 }
 

@@ -6,7 +6,7 @@ import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/compon
 
 export default function ForgotPasswordPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-page-shell">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Forgot password</CardTitle>
@@ -21,6 +21,6 @@ export default function ForgotPasswordPage() {
           </p>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

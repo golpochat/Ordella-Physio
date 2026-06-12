@@ -15,7 +15,11 @@ const SOCIAL_LINKS = [
   { href: "https://instagram.com", label: "Instagram" },
 ] as const;
 
-export default function Footer() {
+type FooterProps = {
+  showCta?: boolean;
+};
+
+export default function Footer({ showCta = true }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -23,29 +27,31 @@ export default function Footer() {
       className="footer mt-2xl border-t border-brand-gray/20 bg-brand-light py-2xl max-sm:py-xl"
       role="contentinfo"
     >
-      <div className="footer-cta marketing-container mb-xl rounded-lg bg-card p-xl text-center shadow-soft max-sm:p-xl">
-        <h2 className={cn("mb-sm", marketingHeading.h3)}>Ready to modernize your clinic?</h2>
-        <p className={cn("mb-md", marketingHeading.body)}>
-          Join clinics using Ordella Physio to streamline operations and patient care.
-        </p>
-        <ExperimentCta
-          experimentId="footer_cta"
-          location="footer"
-          size="default"
-          variantA={{
-            href: "/contact",
-            label: "Footer get started",
-            children: "Get Started",
-            buttonClassName: marketingButtonPrimaryClass,
-          }}
-          variantB={{
-            href: "/contact",
-            label: "Footer book a demo",
-            children: "Book a Demo",
-            buttonClassName: marketingButtonPrimaryClass,
-          }}
-        />
-      </div>
+      {showCta ? (
+        <div className="footer-cta marketing-container mb-xl rounded-lg bg-card p-xl text-center shadow-soft max-sm:p-xl">
+          <h2 className={cn("mb-sm", marketingHeading.h3)}>Ready to modernize your clinic?</h2>
+          <p className={cn("mb-md", marketingHeading.body)}>
+            Join clinics using Ordella Physio to streamline operations and patient care.
+          </p>
+          <ExperimentCta
+            experimentId="footer_cta"
+            location="footer"
+            size="default"
+            variantA={{
+              href: "/contact",
+              label: "Footer get started",
+              children: "Get Started",
+              buttonClassName: marketingButtonPrimaryClass,
+            }}
+            variantB={{
+              href: "/contact",
+              label: "Footer book a demo",
+              children: "Book a Demo",
+              buttonClassName: marketingButtonPrimaryClass,
+            }}
+          />
+        </div>
+      ) : null}
 
       <div className="footer-columns marketing-container">
         <div className="footer-brand">

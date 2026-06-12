@@ -41,7 +41,7 @@ export function MessagingLauncher() {
           <ModalHeader>
             <ModalTitle>Messages</ModalTitle>
           </ModalHeader>
-          <MessagingWorkspace />
+          {open ? <MessagingWorkspace /> : null}
         </ModalContent>
       </Modal>
     </>

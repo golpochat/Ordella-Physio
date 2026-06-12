@@ -37,6 +37,7 @@ export type ApiClientOptions = Omit<RequestInit, "body"> & {
   formData?: FormData;
   unwrapData?: boolean;
   _retried?: boolean;
+  suppressForbiddenRedirect?: boolean;
 };
 
 function buildServiceUrl(
@@ -59,9 +60,18 @@ function buildServiceUrl(
   return url.toString();
 }
 
+function isSelfProfileRequest(
+  service: keyof typeof API_ROUTES,
+  path: string,
+  method: string | undefined,
+): boolean {
+  const normalizedMethod = method?.toUpperCase() ?? "GET";
+  return service === "auth" && normalizedMethod === "GET" && (path === "/users/me" || path === "users/me");
+}
+
 export function createApiClient(getContext: () => ApiClientContext) {
   async function request<T>(options: ApiClientOptions): Promise<T> {
-    const { service, path = "", params, context, headers, jsonBody, formData, unwrapData, ...init } = options;
+    const { service, path = "", params, context, headers, jsonBody, formData, unwrapData, suppressForbiddenRedirect, ...init } = options;
     const session = { ...getContext(), ...context };
     const correlationId = session.correlationId ?? uuidv4();
 
@@ -100,7 +110,15 @@ export function createApiClient(getContext: () => ApiClientContext) {
         if (getApiErrorCode(payload) === "TENANT_SUSPENDED") {
           useUiStore.getState().setTenantSuspended(true);
         } else {
-          redirectToForbidden();
+          const method = init.method?.toUpperCase() ?? "GET";
+          const shouldRedirect =
+            !suppressForbiddenRedirect &&
+            method !== "GET" &&
+            !isSelfProfileRequest(service, path, init.method);
+
+          if (shouldRedirect) {
+            redirectToForbidden();
+          }
         }
       }
 

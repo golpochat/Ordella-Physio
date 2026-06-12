@@ -37,6 +37,7 @@ export function usePatientAppointments() {
       return normalizeAppointmentList(response);
     },
     enabled: Boolean(patientId),
+    retry: false,
   });
 }
 
@@ -61,6 +62,7 @@ export function usePatientBilling() {
       return normalizeInvoiceList(response);
     },
     enabled: Boolean(patientId),
+    retry: false,
   });
 }
 
@@ -85,6 +87,7 @@ export function usePatientNotes() {
       return normalizeNoteList(response);
     },
     enabled: Boolean(patientId),
+    retry: false,
   });
 }
 
@@ -100,10 +103,13 @@ export function usePatientNote(id: string) {
 
 export function usePatientProfile() {
   const patientApi = usePatientPortalApi();
+  const user = useAuthStore((state) => state.user);
 
   return useQuery({
-    queryKey: ["patient", "profile"],
+    queryKey: ["patient", "profile", user?.id],
     queryFn: () => patientApi.getProfile(),
+    enabled: Boolean(user?.id),
+    retry: false,
   });
 }
 

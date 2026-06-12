@@ -1,13 +1,26 @@
-import { QueryClient, type QueryClientConfig } from "@tanstack/react-query";
+import { MutationCache, QueryClient, type QueryClientConfig } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getApiErrorMessage, isAuthError } from "@/lib/api-error";
+import { getApiErrorMessage, isAuthError, isRateLimitError } from "@/lib/api-error";
 
-function handleGlobalQueryError(error: unknown): void {
-  if (isAuthError(error)) {
-    return;
+const API_ERROR_TOAST_ID = "global-api-error";
+
+function shouldShowMutationError(
+  error: unknown,
+  mutation: { meta?: Record<string, unknown> },
+): boolean {
+  if (mutation.meta?.silent) {
+    return false;
   }
 
-  toast.error(getApiErrorMessage(error));
+  if (isAuthError(error) || isRateLimitError(error)) {
+    return false;
+  }
+
+  return true;
+}
+
+function handleGlobalMutationError(error: unknown): void {
+  toast.error(getApiErrorMessage(error), { id: API_ERROR_TOAST_ID });
 }
 
 const queryClientConfig: QueryClientConfig = {
@@ -15,15 +28,10 @@ const queryClientConfig: QueryClientConfig = {
     queries: {
       staleTime: 30_000,
       retry: (failureCount, error) => {
-        if (isAuthError(error)) {
+        if (isAuthError(error) || isRateLimitError(error)) {
           return false;
         }
         return failureCount < 1;
-      },
-    },
-    mutations: {
-      onError: (error) => {
-        handleGlobalQueryError(error);
       },
     },
   },
@@ -32,13 +40,21 @@ const queryClientConfig: QueryClientConfig = {
 export function createAppQueryClient(): QueryClient {
   return new QueryClient({
     ...queryClientConfig,
+    mutationCache: new MutationCache({
+      onError: (error, _variables, _context, mutation) => {
+        if (!shouldShowMutationError(error, mutation)) {
+          return;
+        }
+
+        handleGlobalMutationError(error);
+      },
+    }),
     defaultOptions: {
       ...queryClientConfig.defaultOptions,
       queries: {
         ...queryClientConfig.defaultOptions?.queries,
         throwOnError: false,
       },
-      mutations: queryClientConfig.defaultOptions?.mutations,
     },
   });
 }

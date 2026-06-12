@@ -1,33 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import { usePharmacyProfile, useUpdatePharmacyProfile } from "@/hooks/usePharmacyPortal";
+import { useAuthStore } from "@/store/auth.store";
 
 export function PharmacyProfileForm() {
+  const user = useAuthStore((state) => state.user);
   const { data: profile, isLoading, isError, refetch } = usePharmacyProfile();
   const updateProfile = useUpdatePharmacyProfile();
+  const profileSource = useMemo(() => profile ?? user, [profile, user]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    if (profile) {
-      setFirstName(profile.firstName ?? "");
-      setLastName(profile.lastName ?? "");
-      setEmail(profile.email ?? "");
+    if (profileSource) {
+      setFirstName(profileSource.firstName ?? "");
+      setLastName(profileSource.lastName ?? "");
+      setEmail(profileSource.email ?? "");
     }
-  }, [profile]);
+  }, [profileSource]);
 
-  if (isLoading) {
+  if (!profileSource && isLoading) {
     return <PageLoading rows={4} />;
   }
 
-  if (isError) {
+  if (!profileSource && isError) {
     return <PageError onRetry={() => void refetch()} />;
   }
 

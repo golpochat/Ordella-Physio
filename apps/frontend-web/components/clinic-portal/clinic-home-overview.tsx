@@ -14,6 +14,7 @@ import {
   useClinicTherapists,
 } from "@/hooks/useClinicPortal";
 import { partitionClinicAppointments } from "@/lib/clinic-portal-utils";
+import { isRateLimitError } from "@/lib/api-error";
 
 export function ClinicHomeOverview() {
   const { displayName } = useClinicContext();
@@ -38,14 +39,27 @@ export function ClinicHomeOverview() {
   }
 
   if (isError) {
+    const rateLimited = [appointmentsQuery, patientsQuery, therapistsQuery, billingQuery].some(
+      (query) => query.error && isRateLimitError(query.error),
+    );
+
     return (
       <PageError
-        onRetry={() => {
-          void appointmentsQuery.refetch();
-          void patientsQuery.refetch();
-          void therapistsQuery.refetch();
-          void billingQuery.refetch();
-        }}
+        message={
+          rateLimited
+            ? "Too many requests were sent in a short time. Please wait about a minute, then try again."
+            : undefined
+        }
+        onRetry={
+          rateLimited
+            ? undefined
+            : () => {
+                void appointmentsQuery.refetch();
+                void patientsQuery.refetch();
+                void therapistsQuery.refetch();
+                void billingQuery.refetch();
+              }
+        }
       />
     );
   }
