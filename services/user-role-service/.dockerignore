@@ -1,0 +1,48 @@
+# Node modules (never copy from host)
+node_modules
+**/node_modules
+**/node_modules/**
+
+# Build output
+dist
+build
+.next
+.turbo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.dev.yml
+
+# Cache
+.cache
+.npm
+.pnpm-store
+.eslintcache
+
+# Temporary files
+*.tmp
+*.swp
+*.swo

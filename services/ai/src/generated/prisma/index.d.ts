@@ -29,10 +29,50 @@ export type AIRequestLog = $Result.DefaultSelection<Prisma.$AIRequestLogPayload>
  */
 export type AIMemory = $Result.DefaultSelection<Prisma.$AIMemoryPayload>
 /**
+ * Model AIWorkflow
+ * 
+ */
+export type AIWorkflow = $Result.DefaultSelection<Prisma.$AIWorkflowPayload>
+/**
  * Model AIWorkflowRun
  * 
  */
 export type AIWorkflowRun = $Result.DefaultSelection<Prisma.$AIWorkflowRunPayload>
+/**
+ * Model AIWorkflowVersion
+ * 
+ */
+export type AIWorkflowVersion = $Result.DefaultSelection<Prisma.$AIWorkflowVersionPayload>
+/**
+ * Model AIWorkflowLiveEvent
+ * 
+ */
+export type AIWorkflowLiveEvent = $Result.DefaultSelection<Prisma.$AIWorkflowLiveEventPayload>
+/**
+ * Model AIDataset
+ * 
+ */
+export type AIDataset = $Result.DefaultSelection<Prisma.$AIDatasetPayload>
+/**
+ * Model AIDatasetVersion
+ * 
+ */
+export type AIDatasetVersion = $Result.DefaultSelection<Prisma.$AIDatasetVersionPayload>
+/**
+ * Model AIDatasetRecord
+ * 
+ */
+export type AIDatasetRecord = $Result.DefaultSelection<Prisma.$AIDatasetRecordPayload>
+/**
+ * Model AIDatasetLabel
+ * 
+ */
+export type AIDatasetLabel = $Result.DefaultSelection<Prisma.$AIDatasetLabelPayload>
+/**
+ * Model AIDatasetAuditLog
+ * 
+ */
+export type AIDatasetAuditLog = $Result.DefaultSelection<Prisma.$AIDatasetAuditLogPayload>
 /**
  * Model AIStreamSession
  * 
@@ -52,11 +92,38 @@ export namespace $Enums {
 
 export type AIProviderType = (typeof AIProviderType)[keyof typeof AIProviderType]
 
+
+export const AIDatasetType: {
+  TEXT: 'TEXT',
+  JSON: 'JSON',
+  CONVERSATION: 'CONVERSATION',
+  EMBEDDING: 'EMBEDDING'
+};
+
+export type AIDatasetType = (typeof AIDatasetType)[keyof typeof AIDatasetType]
+
+
+export const AIDatasetLabelType: {
+  CLASSIFICATION: 'CLASSIFICATION',
+  EXTRACTION: 'EXTRACTION',
+  CORRECTION: 'CORRECTION'
+};
+
+export type AIDatasetLabelType = (typeof AIDatasetLabelType)[keyof typeof AIDatasetLabelType]
+
 }
 
 export type AIProviderType = $Enums.AIProviderType
 
 export const AIProviderType: typeof $Enums.AIProviderType
+
+export type AIDatasetType = $Enums.AIDatasetType
+
+export const AIDatasetType: typeof $Enums.AIDatasetType
+
+export type AIDatasetLabelType = $Enums.AIDatasetLabelType
+
+export const AIDatasetLabelType: typeof $Enums.AIDatasetLabelType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -207,6 +274,16 @@ export class PrismaClient<
   get aIMemory(): Prisma.AIMemoryDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.aIWorkflow`: Exposes CRUD operations for the **AIWorkflow** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIWorkflows
+    * const aIWorkflows = await prisma.aIWorkflow.findMany()
+    * ```
+    */
+  get aIWorkflow(): Prisma.AIWorkflowDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.aIWorkflowRun`: Exposes CRUD operations for the **AIWorkflowRun** model.
     * Example usage:
     * ```ts
@@ -215,6 +292,76 @@ export class PrismaClient<
     * ```
     */
   get aIWorkflowRun(): Prisma.AIWorkflowRunDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIWorkflowVersion`: Exposes CRUD operations for the **AIWorkflowVersion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIWorkflowVersions
+    * const aIWorkflowVersions = await prisma.aIWorkflowVersion.findMany()
+    * ```
+    */
+  get aIWorkflowVersion(): Prisma.AIWorkflowVersionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIWorkflowLiveEvent`: Exposes CRUD operations for the **AIWorkflowLiveEvent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIWorkflowLiveEvents
+    * const aIWorkflowLiveEvents = await prisma.aIWorkflowLiveEvent.findMany()
+    * ```
+    */
+  get aIWorkflowLiveEvent(): Prisma.AIWorkflowLiveEventDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIDataset`: Exposes CRUD operations for the **AIDataset** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIDatasets
+    * const aIDatasets = await prisma.aIDataset.findMany()
+    * ```
+    */
+  get aIDataset(): Prisma.AIDatasetDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIDatasetVersion`: Exposes CRUD operations for the **AIDatasetVersion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIDatasetVersions
+    * const aIDatasetVersions = await prisma.aIDatasetVersion.findMany()
+    * ```
+    */
+  get aIDatasetVersion(): Prisma.AIDatasetVersionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIDatasetRecord`: Exposes CRUD operations for the **AIDatasetRecord** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIDatasetRecords
+    * const aIDatasetRecords = await prisma.aIDatasetRecord.findMany()
+    * ```
+    */
+  get aIDatasetRecord(): Prisma.AIDatasetRecordDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIDatasetLabel`: Exposes CRUD operations for the **AIDatasetLabel** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIDatasetLabels
+    * const aIDatasetLabels = await prisma.aIDatasetLabel.findMany()
+    * ```
+    */
+  get aIDatasetLabel(): Prisma.AIDatasetLabelDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIDatasetAuditLog`: Exposes CRUD operations for the **AIDatasetAuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIDatasetAuditLogs
+    * const aIDatasetAuditLogs = await prisma.aIDatasetAuditLog.findMany()
+    * ```
+    */
+  get aIDatasetAuditLog(): Prisma.AIDatasetAuditLogDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.aIStreamSession`: Exposes CRUD operations for the **AIStreamSession** model.
@@ -669,7 +816,15 @@ export namespace Prisma {
     AIProviderConfig: 'AIProviderConfig',
     AIRequestLog: 'AIRequestLog',
     AIMemory: 'AIMemory',
+    AIWorkflow: 'AIWorkflow',
     AIWorkflowRun: 'AIWorkflowRun',
+    AIWorkflowVersion: 'AIWorkflowVersion',
+    AIWorkflowLiveEvent: 'AIWorkflowLiveEvent',
+    AIDataset: 'AIDataset',
+    AIDatasetVersion: 'AIDatasetVersion',
+    AIDatasetRecord: 'AIDatasetRecord',
+    AIDatasetLabel: 'AIDatasetLabel',
+    AIDatasetAuditLog: 'AIDatasetAuditLog',
     AIStreamSession: 'AIStreamSession'
   };
 
@@ -689,7 +844,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "aIProviderConfig" | "aIRequestLog" | "aIMemory" | "aIWorkflowRun" | "aIStreamSession"
+      modelProps: "aIProviderConfig" | "aIRequestLog" | "aIMemory" | "aIWorkflow" | "aIWorkflowRun" | "aIWorkflowVersion" | "aIWorkflowLiveEvent" | "aIDataset" | "aIDatasetVersion" | "aIDatasetRecord" | "aIDatasetLabel" | "aIDatasetAuditLog" | "aIStreamSession"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -915,6 +1070,80 @@ export namespace Prisma {
           }
         }
       }
+      AIWorkflow: {
+        payload: Prisma.$AIWorkflowPayload<ExtArgs>
+        fields: Prisma.AIWorkflowFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIWorkflowFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIWorkflowFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>
+          }
+          findFirst: {
+            args: Prisma.AIWorkflowFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIWorkflowFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>
+          }
+          findMany: {
+            args: Prisma.AIWorkflowFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>[]
+          }
+          create: {
+            args: Prisma.AIWorkflowCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>
+          }
+          createMany: {
+            args: Prisma.AIWorkflowCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIWorkflowCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>[]
+          }
+          delete: {
+            args: Prisma.AIWorkflowDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>
+          }
+          update: {
+            args: Prisma.AIWorkflowUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIWorkflowDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIWorkflowUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIWorkflowUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIWorkflowUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowPayload>
+          }
+          aggregate: {
+            args: Prisma.AIWorkflowAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIWorkflow>
+          }
+          groupBy: {
+            args: Prisma.AIWorkflowGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIWorkflowGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIWorkflowCountArgs<ExtArgs>
+            result: $Utils.Optional<AIWorkflowCountAggregateOutputType> | number
+          }
+        }
+      }
       AIWorkflowRun: {
         payload: Prisma.$AIWorkflowRunPayload<ExtArgs>
         fields: Prisma.AIWorkflowRunFieldRefs
@@ -986,6 +1215,524 @@ export namespace Prisma {
           count: {
             args: Prisma.AIWorkflowRunCountArgs<ExtArgs>
             result: $Utils.Optional<AIWorkflowRunCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIWorkflowVersion: {
+        payload: Prisma.$AIWorkflowVersionPayload<ExtArgs>
+        fields: Prisma.AIWorkflowVersionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIWorkflowVersionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIWorkflowVersionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>
+          }
+          findFirst: {
+            args: Prisma.AIWorkflowVersionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIWorkflowVersionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>
+          }
+          findMany: {
+            args: Prisma.AIWorkflowVersionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>[]
+          }
+          create: {
+            args: Prisma.AIWorkflowVersionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>
+          }
+          createMany: {
+            args: Prisma.AIWorkflowVersionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIWorkflowVersionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>[]
+          }
+          delete: {
+            args: Prisma.AIWorkflowVersionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>
+          }
+          update: {
+            args: Prisma.AIWorkflowVersionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIWorkflowVersionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIWorkflowVersionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIWorkflowVersionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIWorkflowVersionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowVersionPayload>
+          }
+          aggregate: {
+            args: Prisma.AIWorkflowVersionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIWorkflowVersion>
+          }
+          groupBy: {
+            args: Prisma.AIWorkflowVersionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIWorkflowVersionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIWorkflowVersionCountArgs<ExtArgs>
+            result: $Utils.Optional<AIWorkflowVersionCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIWorkflowLiveEvent: {
+        payload: Prisma.$AIWorkflowLiveEventPayload<ExtArgs>
+        fields: Prisma.AIWorkflowLiveEventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIWorkflowLiveEventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIWorkflowLiveEventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>
+          }
+          findFirst: {
+            args: Prisma.AIWorkflowLiveEventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIWorkflowLiveEventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>
+          }
+          findMany: {
+            args: Prisma.AIWorkflowLiveEventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>[]
+          }
+          create: {
+            args: Prisma.AIWorkflowLiveEventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>
+          }
+          createMany: {
+            args: Prisma.AIWorkflowLiveEventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIWorkflowLiveEventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>[]
+          }
+          delete: {
+            args: Prisma.AIWorkflowLiveEventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>
+          }
+          update: {
+            args: Prisma.AIWorkflowLiveEventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIWorkflowLiveEventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIWorkflowLiveEventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIWorkflowLiveEventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIWorkflowLiveEventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIWorkflowLiveEventPayload>
+          }
+          aggregate: {
+            args: Prisma.AIWorkflowLiveEventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIWorkflowLiveEvent>
+          }
+          groupBy: {
+            args: Prisma.AIWorkflowLiveEventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIWorkflowLiveEventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIWorkflowLiveEventCountArgs<ExtArgs>
+            result: $Utils.Optional<AIWorkflowLiveEventCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIDataset: {
+        payload: Prisma.$AIDatasetPayload<ExtArgs>
+        fields: Prisma.AIDatasetFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIDatasetFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIDatasetFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>
+          }
+          findFirst: {
+            args: Prisma.AIDatasetFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIDatasetFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>
+          }
+          findMany: {
+            args: Prisma.AIDatasetFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>[]
+          }
+          create: {
+            args: Prisma.AIDatasetCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>
+          }
+          createMany: {
+            args: Prisma.AIDatasetCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIDatasetCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>[]
+          }
+          delete: {
+            args: Prisma.AIDatasetDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>
+          }
+          update: {
+            args: Prisma.AIDatasetUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIDatasetDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIDatasetUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIDatasetUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIDatasetUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetPayload>
+          }
+          aggregate: {
+            args: Prisma.AIDatasetAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIDataset>
+          }
+          groupBy: {
+            args: Prisma.AIDatasetGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIDatasetCountArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIDatasetVersion: {
+        payload: Prisma.$AIDatasetVersionPayload<ExtArgs>
+        fields: Prisma.AIDatasetVersionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIDatasetVersionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIDatasetVersionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>
+          }
+          findFirst: {
+            args: Prisma.AIDatasetVersionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIDatasetVersionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>
+          }
+          findMany: {
+            args: Prisma.AIDatasetVersionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>[]
+          }
+          create: {
+            args: Prisma.AIDatasetVersionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>
+          }
+          createMany: {
+            args: Prisma.AIDatasetVersionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIDatasetVersionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>[]
+          }
+          delete: {
+            args: Prisma.AIDatasetVersionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>
+          }
+          update: {
+            args: Prisma.AIDatasetVersionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIDatasetVersionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIDatasetVersionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIDatasetVersionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIDatasetVersionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetVersionPayload>
+          }
+          aggregate: {
+            args: Prisma.AIDatasetVersionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIDatasetVersion>
+          }
+          groupBy: {
+            args: Prisma.AIDatasetVersionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetVersionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIDatasetVersionCountArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetVersionCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIDatasetRecord: {
+        payload: Prisma.$AIDatasetRecordPayload<ExtArgs>
+        fields: Prisma.AIDatasetRecordFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIDatasetRecordFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIDatasetRecordFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>
+          }
+          findFirst: {
+            args: Prisma.AIDatasetRecordFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIDatasetRecordFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>
+          }
+          findMany: {
+            args: Prisma.AIDatasetRecordFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>[]
+          }
+          create: {
+            args: Prisma.AIDatasetRecordCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>
+          }
+          createMany: {
+            args: Prisma.AIDatasetRecordCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIDatasetRecordCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>[]
+          }
+          delete: {
+            args: Prisma.AIDatasetRecordDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>
+          }
+          update: {
+            args: Prisma.AIDatasetRecordUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIDatasetRecordDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIDatasetRecordUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIDatasetRecordUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIDatasetRecordUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetRecordPayload>
+          }
+          aggregate: {
+            args: Prisma.AIDatasetRecordAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIDatasetRecord>
+          }
+          groupBy: {
+            args: Prisma.AIDatasetRecordGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetRecordGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIDatasetRecordCountArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetRecordCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIDatasetLabel: {
+        payload: Prisma.$AIDatasetLabelPayload<ExtArgs>
+        fields: Prisma.AIDatasetLabelFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIDatasetLabelFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIDatasetLabelFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>
+          }
+          findFirst: {
+            args: Prisma.AIDatasetLabelFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIDatasetLabelFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>
+          }
+          findMany: {
+            args: Prisma.AIDatasetLabelFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>[]
+          }
+          create: {
+            args: Prisma.AIDatasetLabelCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>
+          }
+          createMany: {
+            args: Prisma.AIDatasetLabelCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIDatasetLabelCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>[]
+          }
+          delete: {
+            args: Prisma.AIDatasetLabelDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>
+          }
+          update: {
+            args: Prisma.AIDatasetLabelUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIDatasetLabelDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIDatasetLabelUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIDatasetLabelUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIDatasetLabelUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetLabelPayload>
+          }
+          aggregate: {
+            args: Prisma.AIDatasetLabelAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIDatasetLabel>
+          }
+          groupBy: {
+            args: Prisma.AIDatasetLabelGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetLabelGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIDatasetLabelCountArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetLabelCountAggregateOutputType> | number
+          }
+        }
+      }
+      AIDatasetAuditLog: {
+        payload: Prisma.$AIDatasetAuditLogPayload<ExtArgs>
+        fields: Prisma.AIDatasetAuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIDatasetAuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIDatasetAuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.AIDatasetAuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIDatasetAuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.AIDatasetAuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.AIDatasetAuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.AIDatasetAuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AIDatasetAuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.AIDatasetAuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>
+          }
+          update: {
+            args: Prisma.AIDatasetAuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIDatasetAuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIDatasetAuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AIDatasetAuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.AIDatasetAuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIDatasetAuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.AIDatasetAuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIDatasetAuditLog>
+          }
+          groupBy: {
+            args: Prisma.AIDatasetAuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetAuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AIDatasetAuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<AIDatasetAuditLogCountAggregateOutputType> | number
           }
         }
       }
@@ -1162,7 +1909,15 @@ export namespace Prisma {
     aIProviderConfig?: AIProviderConfigOmit
     aIRequestLog?: AIRequestLogOmit
     aIMemory?: AIMemoryOmit
+    aIWorkflow?: AIWorkflowOmit
     aIWorkflowRun?: AIWorkflowRunOmit
+    aIWorkflowVersion?: AIWorkflowVersionOmit
+    aIWorkflowLiveEvent?: AIWorkflowLiveEventOmit
+    aIDataset?: AIDatasetOmit
+    aIDatasetVersion?: AIDatasetVersionOmit
+    aIDatasetRecord?: AIDatasetRecordOmit
+    aIDatasetLabel?: AIDatasetLabelOmit
+    aIDatasetAuditLog?: AIDatasetAuditLogOmit
     aIStreamSession?: AIStreamSessionOmit
   }
 
@@ -1238,6 +1993,116 @@ export namespace Prisma {
    * Count Types
    */
 
+
+  /**
+   * Count Type AIDatasetCountOutputType
+   */
+
+  export type AIDatasetCountOutputType = {
+    versions: number
+    records: number
+    auditLogs: number
+  }
+
+  export type AIDatasetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    versions?: boolean | AIDatasetCountOutputTypeCountVersionsArgs
+    records?: boolean | AIDatasetCountOutputTypeCountRecordsArgs
+    auditLogs?: boolean | AIDatasetCountOutputTypeCountAuditLogsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * AIDatasetCountOutputType without action
+   */
+  export type AIDatasetCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetCountOutputType
+     */
+    select?: AIDatasetCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetCountOutputType without action
+   */
+  export type AIDatasetCountOutputTypeCountVersionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetVersionWhereInput
+  }
+
+  /**
+   * AIDatasetCountOutputType without action
+   */
+  export type AIDatasetCountOutputTypeCountRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetRecordWhereInput
+  }
+
+  /**
+   * AIDatasetCountOutputType without action
+   */
+  export type AIDatasetCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetAuditLogWhereInput
+  }
+
+
+  /**
+   * Count Type AIDatasetVersionCountOutputType
+   */
+
+  export type AIDatasetVersionCountOutputType = {
+    records: number
+  }
+
+  export type AIDatasetVersionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    records?: boolean | AIDatasetVersionCountOutputTypeCountRecordsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * AIDatasetVersionCountOutputType without action
+   */
+  export type AIDatasetVersionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersionCountOutputType
+     */
+    select?: AIDatasetVersionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetVersionCountOutputType without action
+   */
+  export type AIDatasetVersionCountOutputTypeCountRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetRecordWhereInput
+  }
+
+
+  /**
+   * Count Type AIDatasetRecordCountOutputType
+   */
+
+  export type AIDatasetRecordCountOutputType = {
+    labels: number
+  }
+
+  export type AIDatasetRecordCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    labels?: boolean | AIDatasetRecordCountOutputTypeCountLabelsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * AIDatasetRecordCountOutputType without action
+   */
+  export type AIDatasetRecordCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecordCountOutputType
+     */
+    select?: AIDatasetRecordCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetRecordCountOutputType without action
+   */
+  export type AIDatasetRecordCountOutputTypeCountLabelsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetLabelWhereInput
+  }
 
 
   /**
@@ -2398,6 +3263,7 @@ export namespace Prisma {
     tokensInput: number
     tokensOutput: number
     latencyMs: number
+    metadata: number
     createdAt: number
     _all: number
   }
@@ -2451,6 +3317,7 @@ export namespace Prisma {
     tokensInput?: true
     tokensOutput?: true
     latencyMs?: true
+    metadata?: true
     createdAt?: true
     _all?: true
   }
@@ -2551,6 +3418,7 @@ export namespace Prisma {
     tokensInput: number
     tokensOutput: number
     latencyMs: number
+    metadata: JsonValue
     createdAt: Date
     _count: AIRequestLogCountAggregateOutputType | null
     _avg: AIRequestLogAvgAggregateOutputType | null
@@ -2583,6 +3451,7 @@ export namespace Prisma {
     tokensInput?: boolean
     tokensOutput?: boolean
     latencyMs?: boolean
+    metadata?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["aIRequestLog"]>
 
@@ -2596,6 +3465,7 @@ export namespace Prisma {
     tokensInput?: boolean
     tokensOutput?: boolean
     latencyMs?: boolean
+    metadata?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["aIRequestLog"]>
 
@@ -2609,6 +3479,7 @@ export namespace Prisma {
     tokensInput?: boolean
     tokensOutput?: boolean
     latencyMs?: boolean
+    metadata?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["aIRequestLog"]>
 
@@ -2622,10 +3493,11 @@ export namespace Prisma {
     tokensInput?: boolean
     tokensOutput?: boolean
     latencyMs?: boolean
+    metadata?: boolean
     createdAt?: boolean
   }
 
-  export type AIRequestLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "provider" | "modelName" | "prompt" | "response" | "tokensInput" | "tokensOutput" | "latencyMs" | "createdAt", ExtArgs["result"]["aIRequestLog"]>
+  export type AIRequestLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "provider" | "modelName" | "prompt" | "response" | "tokensInput" | "tokensOutput" | "latencyMs" | "metadata" | "createdAt", ExtArgs["result"]["aIRequestLog"]>
 
   export type $AIRequestLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AIRequestLog"
@@ -2640,6 +3512,7 @@ export namespace Prisma {
       tokensInput: number
       tokensOutput: number
       latencyMs: number
+      metadata: Prisma.JsonValue
       createdAt: Date
     }, ExtArgs["result"]["aIRequestLog"]>
     composites: {}
@@ -3073,6 +3946,7 @@ export namespace Prisma {
     readonly tokensInput: FieldRef<"AIRequestLog", 'Int'>
     readonly tokensOutput: FieldRef<"AIRequestLog", 'Int'>
     readonly latencyMs: FieldRef<"AIRequestLog", 'Int'>
+    readonly metadata: FieldRef<"AIRequestLog", 'Json'>
     readonly createdAt: FieldRef<"AIRequestLog", 'DateTime'>
   }
     
@@ -4471,6 +5345,1067 @@ export namespace Prisma {
 
 
   /**
+   * Model AIWorkflow
+   */
+
+  export type AggregateAIWorkflow = {
+    _count: AIWorkflowCountAggregateOutputType | null
+    _min: AIWorkflowMinAggregateOutputType | null
+    _max: AIWorkflowMaxAggregateOutputType | null
+  }
+
+  export type AIWorkflowMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    name: string | null
+    description: string | null
+    isActive: boolean | null
+    dryRun: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AIWorkflowMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    name: string | null
+    description: string | null
+    isActive: boolean | null
+    dryRun: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AIWorkflowCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    name: number
+    description: number
+    isActive: number
+    dryRun: number
+    trigger: number
+    conditions: number
+    actions: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AIWorkflowMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    description?: true
+    isActive?: true
+    dryRun?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AIWorkflowMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    description?: true
+    isActive?: true
+    dryRun?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AIWorkflowCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    description?: true
+    isActive?: true
+    dryRun?: true
+    trigger?: true
+    conditions?: true
+    actions?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AIWorkflowAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIWorkflow to aggregate.
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflows to fetch.
+     */
+    orderBy?: AIWorkflowOrderByWithRelationInput | AIWorkflowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIWorkflowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIWorkflows
+    **/
+    _count?: true | AIWorkflowCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIWorkflowMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIWorkflowMaxAggregateInputType
+  }
+
+  export type GetAIWorkflowAggregateType<T extends AIWorkflowAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIWorkflow]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIWorkflow[P]>
+      : GetScalarType<T[P], AggregateAIWorkflow[P]>
+  }
+
+
+
+
+  export type AIWorkflowGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIWorkflowWhereInput
+    orderBy?: AIWorkflowOrderByWithAggregationInput | AIWorkflowOrderByWithAggregationInput[]
+    by: AIWorkflowScalarFieldEnum[] | AIWorkflowScalarFieldEnum
+    having?: AIWorkflowScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIWorkflowCountAggregateInputType | true
+    _min?: AIWorkflowMinAggregateInputType
+    _max?: AIWorkflowMaxAggregateInputType
+  }
+
+  export type AIWorkflowGroupByOutputType = {
+    id: string
+    tenantId: string
+    name: string
+    description: string
+    isActive: boolean
+    dryRun: boolean
+    trigger: JsonValue
+    conditions: JsonValue
+    actions: JsonValue
+    createdAt: Date
+    updatedAt: Date
+    _count: AIWorkflowCountAggregateOutputType | null
+    _min: AIWorkflowMinAggregateOutputType | null
+    _max: AIWorkflowMaxAggregateOutputType | null
+  }
+
+  type GetAIWorkflowGroupByPayload<T extends AIWorkflowGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIWorkflowGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIWorkflowGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIWorkflowGroupByOutputType[P]>
+            : GetScalarType<T[P], AIWorkflowGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIWorkflowSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    dryRun?: boolean
+    trigger?: boolean
+    conditions?: boolean
+    actions?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aIWorkflow"]>
+
+  export type AIWorkflowSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    dryRun?: boolean
+    trigger?: boolean
+    conditions?: boolean
+    actions?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aIWorkflow"]>
+
+  export type AIWorkflowSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    dryRun?: boolean
+    trigger?: boolean
+    conditions?: boolean
+    actions?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aIWorkflow"]>
+
+  export type AIWorkflowSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    dryRun?: boolean
+    trigger?: boolean
+    conditions?: boolean
+    actions?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AIWorkflowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "name" | "description" | "isActive" | "dryRun" | "trigger" | "conditions" | "actions" | "createdAt" | "updatedAt", ExtArgs["result"]["aIWorkflow"]>
+
+  export type $AIWorkflowPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIWorkflow"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      name: string
+      description: string
+      isActive: boolean
+      dryRun: boolean
+      trigger: Prisma.JsonValue
+      conditions: Prisma.JsonValue
+      actions: Prisma.JsonValue
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["aIWorkflow"]>
+    composites: {}
+  }
+
+  type AIWorkflowGetPayload<S extends boolean | null | undefined | AIWorkflowDefaultArgs> = $Result.GetResult<Prisma.$AIWorkflowPayload, S>
+
+  type AIWorkflowCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIWorkflowFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIWorkflowCountAggregateInputType | true
+    }
+
+  export interface AIWorkflowDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIWorkflow'], meta: { name: 'AIWorkflow' } }
+    /**
+     * Find zero or one AIWorkflow that matches the filter.
+     * @param {AIWorkflowFindUniqueArgs} args - Arguments to find a AIWorkflow
+     * @example
+     * // Get one AIWorkflow
+     * const aIWorkflow = await prisma.aIWorkflow.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIWorkflowFindUniqueArgs>(args: SelectSubset<T, AIWorkflowFindUniqueArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIWorkflow that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIWorkflowFindUniqueOrThrowArgs} args - Arguments to find a AIWorkflow
+     * @example
+     * // Get one AIWorkflow
+     * const aIWorkflow = await prisma.aIWorkflow.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIWorkflowFindUniqueOrThrowArgs>(args: SelectSubset<T, AIWorkflowFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIWorkflow that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowFindFirstArgs} args - Arguments to find a AIWorkflow
+     * @example
+     * // Get one AIWorkflow
+     * const aIWorkflow = await prisma.aIWorkflow.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIWorkflowFindFirstArgs>(args?: SelectSubset<T, AIWorkflowFindFirstArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIWorkflow that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowFindFirstOrThrowArgs} args - Arguments to find a AIWorkflow
+     * @example
+     * // Get one AIWorkflow
+     * const aIWorkflow = await prisma.aIWorkflow.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIWorkflowFindFirstOrThrowArgs>(args?: SelectSubset<T, AIWorkflowFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIWorkflows that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIWorkflows
+     * const aIWorkflows = await prisma.aIWorkflow.findMany()
+     * 
+     * // Get first 10 AIWorkflows
+     * const aIWorkflows = await prisma.aIWorkflow.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIWorkflowWithIdOnly = await prisma.aIWorkflow.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIWorkflowFindManyArgs>(args?: SelectSubset<T, AIWorkflowFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIWorkflow.
+     * @param {AIWorkflowCreateArgs} args - Arguments to create a AIWorkflow.
+     * @example
+     * // Create one AIWorkflow
+     * const AIWorkflow = await prisma.aIWorkflow.create({
+     *   data: {
+     *     // ... data to create a AIWorkflow
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIWorkflowCreateArgs>(args: SelectSubset<T, AIWorkflowCreateArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIWorkflows.
+     * @param {AIWorkflowCreateManyArgs} args - Arguments to create many AIWorkflows.
+     * @example
+     * // Create many AIWorkflows
+     * const aIWorkflow = await prisma.aIWorkflow.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIWorkflowCreateManyArgs>(args?: SelectSubset<T, AIWorkflowCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIWorkflows and returns the data saved in the database.
+     * @param {AIWorkflowCreateManyAndReturnArgs} args - Arguments to create many AIWorkflows.
+     * @example
+     * // Create many AIWorkflows
+     * const aIWorkflow = await prisma.aIWorkflow.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIWorkflows and only return the `id`
+     * const aIWorkflowWithIdOnly = await prisma.aIWorkflow.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIWorkflowCreateManyAndReturnArgs>(args?: SelectSubset<T, AIWorkflowCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIWorkflow.
+     * @param {AIWorkflowDeleteArgs} args - Arguments to delete one AIWorkflow.
+     * @example
+     * // Delete one AIWorkflow
+     * const AIWorkflow = await prisma.aIWorkflow.delete({
+     *   where: {
+     *     // ... filter to delete one AIWorkflow
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIWorkflowDeleteArgs>(args: SelectSubset<T, AIWorkflowDeleteArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIWorkflow.
+     * @param {AIWorkflowUpdateArgs} args - Arguments to update one AIWorkflow.
+     * @example
+     * // Update one AIWorkflow
+     * const aIWorkflow = await prisma.aIWorkflow.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIWorkflowUpdateArgs>(args: SelectSubset<T, AIWorkflowUpdateArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIWorkflows.
+     * @param {AIWorkflowDeleteManyArgs} args - Arguments to filter AIWorkflows to delete.
+     * @example
+     * // Delete a few AIWorkflows
+     * const { count } = await prisma.aIWorkflow.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIWorkflowDeleteManyArgs>(args?: SelectSubset<T, AIWorkflowDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIWorkflows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIWorkflows
+     * const aIWorkflow = await prisma.aIWorkflow.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIWorkflowUpdateManyArgs>(args: SelectSubset<T, AIWorkflowUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIWorkflows and returns the data updated in the database.
+     * @param {AIWorkflowUpdateManyAndReturnArgs} args - Arguments to update many AIWorkflows.
+     * @example
+     * // Update many AIWorkflows
+     * const aIWorkflow = await prisma.aIWorkflow.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIWorkflows and only return the `id`
+     * const aIWorkflowWithIdOnly = await prisma.aIWorkflow.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIWorkflowUpdateManyAndReturnArgs>(args: SelectSubset<T, AIWorkflowUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIWorkflow.
+     * @param {AIWorkflowUpsertArgs} args - Arguments to update or create a AIWorkflow.
+     * @example
+     * // Update or create a AIWorkflow
+     * const aIWorkflow = await prisma.aIWorkflow.upsert({
+     *   create: {
+     *     // ... data to create a AIWorkflow
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIWorkflow we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIWorkflowUpsertArgs>(args: SelectSubset<T, AIWorkflowUpsertArgs<ExtArgs>>): Prisma__AIWorkflowClient<$Result.GetResult<Prisma.$AIWorkflowPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIWorkflows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowCountArgs} args - Arguments to filter AIWorkflows to count.
+     * @example
+     * // Count the number of AIWorkflows
+     * const count = await prisma.aIWorkflow.count({
+     *   where: {
+     *     // ... the filter for the AIWorkflows we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIWorkflowCountArgs>(
+      args?: Subset<T, AIWorkflowCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIWorkflowCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIWorkflow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIWorkflowAggregateArgs>(args: Subset<T, AIWorkflowAggregateArgs>): Prisma.PrismaPromise<GetAIWorkflowAggregateType<T>>
+
+    /**
+     * Group by AIWorkflow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIWorkflowGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIWorkflowGroupByArgs['orderBy'] }
+        : { orderBy?: AIWorkflowGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIWorkflowGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIWorkflowGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIWorkflow model
+   */
+  readonly fields: AIWorkflowFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIWorkflow.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIWorkflowClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIWorkflow model
+   */
+  interface AIWorkflowFieldRefs {
+    readonly id: FieldRef<"AIWorkflow", 'String'>
+    readonly tenantId: FieldRef<"AIWorkflow", 'String'>
+    readonly name: FieldRef<"AIWorkflow", 'String'>
+    readonly description: FieldRef<"AIWorkflow", 'String'>
+    readonly isActive: FieldRef<"AIWorkflow", 'Boolean'>
+    readonly dryRun: FieldRef<"AIWorkflow", 'Boolean'>
+    readonly trigger: FieldRef<"AIWorkflow", 'Json'>
+    readonly conditions: FieldRef<"AIWorkflow", 'Json'>
+    readonly actions: FieldRef<"AIWorkflow", 'Json'>
+    readonly createdAt: FieldRef<"AIWorkflow", 'DateTime'>
+    readonly updatedAt: FieldRef<"AIWorkflow", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIWorkflow findUnique
+   */
+  export type AIWorkflowFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflow to fetch.
+     */
+    where: AIWorkflowWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflow findUniqueOrThrow
+   */
+  export type AIWorkflowFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflow to fetch.
+     */
+    where: AIWorkflowWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflow findFirst
+   */
+  export type AIWorkflowFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflow to fetch.
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflows to fetch.
+     */
+    orderBy?: AIWorkflowOrderByWithRelationInput | AIWorkflowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIWorkflows.
+     */
+    cursor?: AIWorkflowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIWorkflows.
+     */
+    distinct?: AIWorkflowScalarFieldEnum | AIWorkflowScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflow findFirstOrThrow
+   */
+  export type AIWorkflowFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflow to fetch.
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflows to fetch.
+     */
+    orderBy?: AIWorkflowOrderByWithRelationInput | AIWorkflowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIWorkflows.
+     */
+    cursor?: AIWorkflowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIWorkflows.
+     */
+    distinct?: AIWorkflowScalarFieldEnum | AIWorkflowScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflow findMany
+   */
+  export type AIWorkflowFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflows to fetch.
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflows to fetch.
+     */
+    orderBy?: AIWorkflowOrderByWithRelationInput | AIWorkflowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIWorkflows.
+     */
+    cursor?: AIWorkflowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflows.
+     */
+    skip?: number
+    distinct?: AIWorkflowScalarFieldEnum | AIWorkflowScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflow create
+   */
+  export type AIWorkflowCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AIWorkflow.
+     */
+    data: XOR<AIWorkflowCreateInput, AIWorkflowUncheckedCreateInput>
+  }
+
+  /**
+   * AIWorkflow createMany
+   */
+  export type AIWorkflowCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIWorkflows.
+     */
+    data: AIWorkflowCreateManyInput | AIWorkflowCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIWorkflow createManyAndReturn
+   */
+  export type AIWorkflowCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIWorkflows.
+     */
+    data: AIWorkflowCreateManyInput | AIWorkflowCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIWorkflow update
+   */
+  export type AIWorkflowUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AIWorkflow.
+     */
+    data: XOR<AIWorkflowUpdateInput, AIWorkflowUncheckedUpdateInput>
+    /**
+     * Choose, which AIWorkflow to update.
+     */
+    where: AIWorkflowWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflow updateMany
+   */
+  export type AIWorkflowUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIWorkflows.
+     */
+    data: XOR<AIWorkflowUpdateManyMutationInput, AIWorkflowUncheckedUpdateManyInput>
+    /**
+     * Filter which AIWorkflows to update
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * Limit how many AIWorkflows to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflow updateManyAndReturn
+   */
+  export type AIWorkflowUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * The data used to update AIWorkflows.
+     */
+    data: XOR<AIWorkflowUpdateManyMutationInput, AIWorkflowUncheckedUpdateManyInput>
+    /**
+     * Filter which AIWorkflows to update
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * Limit how many AIWorkflows to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflow upsert
+   */
+  export type AIWorkflowUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AIWorkflow to update in case it exists.
+     */
+    where: AIWorkflowWhereUniqueInput
+    /**
+     * In case the AIWorkflow found by the `where` argument doesn't exist, create a new AIWorkflow with this data.
+     */
+    create: XOR<AIWorkflowCreateInput, AIWorkflowUncheckedCreateInput>
+    /**
+     * In case the AIWorkflow was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIWorkflowUpdateInput, AIWorkflowUncheckedUpdateInput>
+  }
+
+  /**
+   * AIWorkflow delete
+   */
+  export type AIWorkflowDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+    /**
+     * Filter which AIWorkflow to delete.
+     */
+    where: AIWorkflowWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflow deleteMany
+   */
+  export type AIWorkflowDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIWorkflows to delete
+     */
+    where?: AIWorkflowWhereInput
+    /**
+     * Limit how many AIWorkflows to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflow without action
+   */
+  export type AIWorkflowDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflow
+     */
+    select?: AIWorkflowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflow
+     */
+    omit?: AIWorkflowOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model AIWorkflowRun
    */
 
@@ -4483,6 +6418,7 @@ export namespace Prisma {
   export type AIWorkflowRunMinAggregateOutputType = {
     id: string | null
     tenantId: string | null
+    workflowId: string | null
     trigger: string | null
     status: string | null
     createdAt: Date | null
@@ -4492,6 +6428,7 @@ export namespace Prisma {
   export type AIWorkflowRunMaxAggregateOutputType = {
     id: string | null
     tenantId: string | null
+    workflowId: string | null
     trigger: string | null
     status: string | null
     createdAt: Date | null
@@ -4501,6 +6438,7 @@ export namespace Prisma {
   export type AIWorkflowRunCountAggregateOutputType = {
     id: number
     tenantId: number
+    workflowId: number
     trigger: number
     status: number
     steps: number
@@ -4514,6 +6452,7 @@ export namespace Prisma {
   export type AIWorkflowRunMinAggregateInputType = {
     id?: true
     tenantId?: true
+    workflowId?: true
     trigger?: true
     status?: true
     createdAt?: true
@@ -4523,6 +6462,7 @@ export namespace Prisma {
   export type AIWorkflowRunMaxAggregateInputType = {
     id?: true
     tenantId?: true
+    workflowId?: true
     trigger?: true
     status?: true
     createdAt?: true
@@ -4532,6 +6472,7 @@ export namespace Prisma {
   export type AIWorkflowRunCountAggregateInputType = {
     id?: true
     tenantId?: true
+    workflowId?: true
     trigger?: true
     status?: true
     steps?: true
@@ -4616,6 +6557,7 @@ export namespace Prisma {
   export type AIWorkflowRunGroupByOutputType = {
     id: string
     tenantId: string
+    workflowId: string | null
     trigger: string
     status: string
     steps: JsonValue
@@ -4644,6 +6586,7 @@ export namespace Prisma {
   export type AIWorkflowRunSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     tenantId?: boolean
+    workflowId?: boolean
     trigger?: boolean
     status?: boolean
     steps?: boolean
@@ -4655,6 +6598,7 @@ export namespace Prisma {
   export type AIWorkflowRunSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     tenantId?: boolean
+    workflowId?: boolean
     trigger?: boolean
     status?: boolean
     steps?: boolean
@@ -4666,6 +6610,7 @@ export namespace Prisma {
   export type AIWorkflowRunSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     tenantId?: boolean
+    workflowId?: boolean
     trigger?: boolean
     status?: boolean
     steps?: boolean
@@ -4677,6 +6622,7 @@ export namespace Prisma {
   export type AIWorkflowRunSelectScalar = {
     id?: boolean
     tenantId?: boolean
+    workflowId?: boolean
     trigger?: boolean
     status?: boolean
     steps?: boolean
@@ -4685,7 +6631,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type AIWorkflowRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "trigger" | "status" | "steps" | "result" | "createdAt" | "updatedAt", ExtArgs["result"]["aIWorkflowRun"]>
+  export type AIWorkflowRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "workflowId" | "trigger" | "status" | "steps" | "result" | "createdAt" | "updatedAt", ExtArgs["result"]["aIWorkflowRun"]>
 
   export type $AIWorkflowRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AIWorkflowRun"
@@ -4693,6 +6639,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       tenantId: string
+      workflowId: string | null
       trigger: string
       status: string
       steps: Prisma.JsonValue
@@ -5124,6 +7071,7 @@ export namespace Prisma {
   interface AIWorkflowRunFieldRefs {
     readonly id: FieldRef<"AIWorkflowRun", 'String'>
     readonly tenantId: FieldRef<"AIWorkflowRun", 'String'>
+    readonly workflowId: FieldRef<"AIWorkflowRun", 'String'>
     readonly trigger: FieldRef<"AIWorkflowRun", 'String'>
     readonly status: FieldRef<"AIWorkflowRun", 'String'>
     readonly steps: FieldRef<"AIWorkflowRun", 'Json'>
@@ -5493,6 +7441,7791 @@ export namespace Prisma {
      * Omit specific fields from the AIWorkflowRun
      */
     omit?: AIWorkflowRunOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIWorkflowVersion
+   */
+
+  export type AggregateAIWorkflowVersion = {
+    _count: AIWorkflowVersionCountAggregateOutputType | null
+    _avg: AIWorkflowVersionAvgAggregateOutputType | null
+    _sum: AIWorkflowVersionSumAggregateOutputType | null
+    _min: AIWorkflowVersionMinAggregateOutputType | null
+    _max: AIWorkflowVersionMaxAggregateOutputType | null
+  }
+
+  export type AIWorkflowVersionAvgAggregateOutputType = {
+    versionNumber: number | null
+  }
+
+  export type AIWorkflowVersionSumAggregateOutputType = {
+    versionNumber: number | null
+  }
+
+  export type AIWorkflowVersionMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    workflowId: string | null
+    versionNumber: number | null
+    label: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIWorkflowVersionMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    workflowId: string | null
+    versionNumber: number | null
+    label: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIWorkflowVersionCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    workflowId: number
+    versionNumber: number
+    label: number
+    definition: number
+    createdByUserId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AIWorkflowVersionAvgAggregateInputType = {
+    versionNumber?: true
+  }
+
+  export type AIWorkflowVersionSumAggregateInputType = {
+    versionNumber?: true
+  }
+
+  export type AIWorkflowVersionMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    workflowId?: true
+    versionNumber?: true
+    label?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type AIWorkflowVersionMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    workflowId?: true
+    versionNumber?: true
+    label?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type AIWorkflowVersionCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    workflowId?: true
+    versionNumber?: true
+    label?: true
+    definition?: true
+    createdByUserId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AIWorkflowVersionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIWorkflowVersion to aggregate.
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowVersions to fetch.
+     */
+    orderBy?: AIWorkflowVersionOrderByWithRelationInput | AIWorkflowVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIWorkflowVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIWorkflowVersions
+    **/
+    _count?: true | AIWorkflowVersionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AIWorkflowVersionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AIWorkflowVersionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIWorkflowVersionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIWorkflowVersionMaxAggregateInputType
+  }
+
+  export type GetAIWorkflowVersionAggregateType<T extends AIWorkflowVersionAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIWorkflowVersion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIWorkflowVersion[P]>
+      : GetScalarType<T[P], AggregateAIWorkflowVersion[P]>
+  }
+
+
+
+
+  export type AIWorkflowVersionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIWorkflowVersionWhereInput
+    orderBy?: AIWorkflowVersionOrderByWithAggregationInput | AIWorkflowVersionOrderByWithAggregationInput[]
+    by: AIWorkflowVersionScalarFieldEnum[] | AIWorkflowVersionScalarFieldEnum
+    having?: AIWorkflowVersionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIWorkflowVersionCountAggregateInputType | true
+    _avg?: AIWorkflowVersionAvgAggregateInputType
+    _sum?: AIWorkflowVersionSumAggregateInputType
+    _min?: AIWorkflowVersionMinAggregateInputType
+    _max?: AIWorkflowVersionMaxAggregateInputType
+  }
+
+  export type AIWorkflowVersionGroupByOutputType = {
+    id: string
+    tenantId: string
+    workflowId: string
+    versionNumber: number
+    label: string | null
+    definition: JsonValue
+    createdByUserId: string
+    createdAt: Date
+    _count: AIWorkflowVersionCountAggregateOutputType | null
+    _avg: AIWorkflowVersionAvgAggregateOutputType | null
+    _sum: AIWorkflowVersionSumAggregateOutputType | null
+    _min: AIWorkflowVersionMinAggregateOutputType | null
+    _max: AIWorkflowVersionMaxAggregateOutputType | null
+  }
+
+  type GetAIWorkflowVersionGroupByPayload<T extends AIWorkflowVersionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIWorkflowVersionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIWorkflowVersionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIWorkflowVersionGroupByOutputType[P]>
+            : GetScalarType<T[P], AIWorkflowVersionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIWorkflowVersionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    versionNumber?: boolean
+    label?: boolean
+    definition?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["aIWorkflowVersion"]>
+
+  export type AIWorkflowVersionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    versionNumber?: boolean
+    label?: boolean
+    definition?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["aIWorkflowVersion"]>
+
+  export type AIWorkflowVersionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    versionNumber?: boolean
+    label?: boolean
+    definition?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["aIWorkflowVersion"]>
+
+  export type AIWorkflowVersionSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    versionNumber?: boolean
+    label?: boolean
+    definition?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }
+
+  export type AIWorkflowVersionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "workflowId" | "versionNumber" | "label" | "definition" | "createdByUserId" | "createdAt", ExtArgs["result"]["aIWorkflowVersion"]>
+
+  export type $AIWorkflowVersionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIWorkflowVersion"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      workflowId: string
+      versionNumber: number
+      label: string | null
+      definition: Prisma.JsonValue
+      createdByUserId: string
+      createdAt: Date
+    }, ExtArgs["result"]["aIWorkflowVersion"]>
+    composites: {}
+  }
+
+  type AIWorkflowVersionGetPayload<S extends boolean | null | undefined | AIWorkflowVersionDefaultArgs> = $Result.GetResult<Prisma.$AIWorkflowVersionPayload, S>
+
+  type AIWorkflowVersionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIWorkflowVersionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIWorkflowVersionCountAggregateInputType | true
+    }
+
+  export interface AIWorkflowVersionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIWorkflowVersion'], meta: { name: 'AIWorkflowVersion' } }
+    /**
+     * Find zero or one AIWorkflowVersion that matches the filter.
+     * @param {AIWorkflowVersionFindUniqueArgs} args - Arguments to find a AIWorkflowVersion
+     * @example
+     * // Get one AIWorkflowVersion
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIWorkflowVersionFindUniqueArgs>(args: SelectSubset<T, AIWorkflowVersionFindUniqueArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIWorkflowVersion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIWorkflowVersionFindUniqueOrThrowArgs} args - Arguments to find a AIWorkflowVersion
+     * @example
+     * // Get one AIWorkflowVersion
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIWorkflowVersionFindUniqueOrThrowArgs>(args: SelectSubset<T, AIWorkflowVersionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIWorkflowVersion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionFindFirstArgs} args - Arguments to find a AIWorkflowVersion
+     * @example
+     * // Get one AIWorkflowVersion
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIWorkflowVersionFindFirstArgs>(args?: SelectSubset<T, AIWorkflowVersionFindFirstArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIWorkflowVersion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionFindFirstOrThrowArgs} args - Arguments to find a AIWorkflowVersion
+     * @example
+     * // Get one AIWorkflowVersion
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIWorkflowVersionFindFirstOrThrowArgs>(args?: SelectSubset<T, AIWorkflowVersionFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIWorkflowVersions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIWorkflowVersions
+     * const aIWorkflowVersions = await prisma.aIWorkflowVersion.findMany()
+     * 
+     * // Get first 10 AIWorkflowVersions
+     * const aIWorkflowVersions = await prisma.aIWorkflowVersion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIWorkflowVersionWithIdOnly = await prisma.aIWorkflowVersion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIWorkflowVersionFindManyArgs>(args?: SelectSubset<T, AIWorkflowVersionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIWorkflowVersion.
+     * @param {AIWorkflowVersionCreateArgs} args - Arguments to create a AIWorkflowVersion.
+     * @example
+     * // Create one AIWorkflowVersion
+     * const AIWorkflowVersion = await prisma.aIWorkflowVersion.create({
+     *   data: {
+     *     // ... data to create a AIWorkflowVersion
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIWorkflowVersionCreateArgs>(args: SelectSubset<T, AIWorkflowVersionCreateArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIWorkflowVersions.
+     * @param {AIWorkflowVersionCreateManyArgs} args - Arguments to create many AIWorkflowVersions.
+     * @example
+     * // Create many AIWorkflowVersions
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIWorkflowVersionCreateManyArgs>(args?: SelectSubset<T, AIWorkflowVersionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIWorkflowVersions and returns the data saved in the database.
+     * @param {AIWorkflowVersionCreateManyAndReturnArgs} args - Arguments to create many AIWorkflowVersions.
+     * @example
+     * // Create many AIWorkflowVersions
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIWorkflowVersions and only return the `id`
+     * const aIWorkflowVersionWithIdOnly = await prisma.aIWorkflowVersion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIWorkflowVersionCreateManyAndReturnArgs>(args?: SelectSubset<T, AIWorkflowVersionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIWorkflowVersion.
+     * @param {AIWorkflowVersionDeleteArgs} args - Arguments to delete one AIWorkflowVersion.
+     * @example
+     * // Delete one AIWorkflowVersion
+     * const AIWorkflowVersion = await prisma.aIWorkflowVersion.delete({
+     *   where: {
+     *     // ... filter to delete one AIWorkflowVersion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIWorkflowVersionDeleteArgs>(args: SelectSubset<T, AIWorkflowVersionDeleteArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIWorkflowVersion.
+     * @param {AIWorkflowVersionUpdateArgs} args - Arguments to update one AIWorkflowVersion.
+     * @example
+     * // Update one AIWorkflowVersion
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIWorkflowVersionUpdateArgs>(args: SelectSubset<T, AIWorkflowVersionUpdateArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIWorkflowVersions.
+     * @param {AIWorkflowVersionDeleteManyArgs} args - Arguments to filter AIWorkflowVersions to delete.
+     * @example
+     * // Delete a few AIWorkflowVersions
+     * const { count } = await prisma.aIWorkflowVersion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIWorkflowVersionDeleteManyArgs>(args?: SelectSubset<T, AIWorkflowVersionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIWorkflowVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIWorkflowVersions
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIWorkflowVersionUpdateManyArgs>(args: SelectSubset<T, AIWorkflowVersionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIWorkflowVersions and returns the data updated in the database.
+     * @param {AIWorkflowVersionUpdateManyAndReturnArgs} args - Arguments to update many AIWorkflowVersions.
+     * @example
+     * // Update many AIWorkflowVersions
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIWorkflowVersions and only return the `id`
+     * const aIWorkflowVersionWithIdOnly = await prisma.aIWorkflowVersion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIWorkflowVersionUpdateManyAndReturnArgs>(args: SelectSubset<T, AIWorkflowVersionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIWorkflowVersion.
+     * @param {AIWorkflowVersionUpsertArgs} args - Arguments to update or create a AIWorkflowVersion.
+     * @example
+     * // Update or create a AIWorkflowVersion
+     * const aIWorkflowVersion = await prisma.aIWorkflowVersion.upsert({
+     *   create: {
+     *     // ... data to create a AIWorkflowVersion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIWorkflowVersion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIWorkflowVersionUpsertArgs>(args: SelectSubset<T, AIWorkflowVersionUpsertArgs<ExtArgs>>): Prisma__AIWorkflowVersionClient<$Result.GetResult<Prisma.$AIWorkflowVersionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIWorkflowVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionCountArgs} args - Arguments to filter AIWorkflowVersions to count.
+     * @example
+     * // Count the number of AIWorkflowVersions
+     * const count = await prisma.aIWorkflowVersion.count({
+     *   where: {
+     *     // ... the filter for the AIWorkflowVersions we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIWorkflowVersionCountArgs>(
+      args?: Subset<T, AIWorkflowVersionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIWorkflowVersionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIWorkflowVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIWorkflowVersionAggregateArgs>(args: Subset<T, AIWorkflowVersionAggregateArgs>): Prisma.PrismaPromise<GetAIWorkflowVersionAggregateType<T>>
+
+    /**
+     * Group by AIWorkflowVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowVersionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIWorkflowVersionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIWorkflowVersionGroupByArgs['orderBy'] }
+        : { orderBy?: AIWorkflowVersionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIWorkflowVersionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIWorkflowVersionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIWorkflowVersion model
+   */
+  readonly fields: AIWorkflowVersionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIWorkflowVersion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIWorkflowVersionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIWorkflowVersion model
+   */
+  interface AIWorkflowVersionFieldRefs {
+    readonly id: FieldRef<"AIWorkflowVersion", 'String'>
+    readonly tenantId: FieldRef<"AIWorkflowVersion", 'String'>
+    readonly workflowId: FieldRef<"AIWorkflowVersion", 'String'>
+    readonly versionNumber: FieldRef<"AIWorkflowVersion", 'Int'>
+    readonly label: FieldRef<"AIWorkflowVersion", 'String'>
+    readonly definition: FieldRef<"AIWorkflowVersion", 'Json'>
+    readonly createdByUserId: FieldRef<"AIWorkflowVersion", 'String'>
+    readonly createdAt: FieldRef<"AIWorkflowVersion", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIWorkflowVersion findUnique
+   */
+  export type AIWorkflowVersionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowVersion to fetch.
+     */
+    where: AIWorkflowVersionWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowVersion findUniqueOrThrow
+   */
+  export type AIWorkflowVersionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowVersion to fetch.
+     */
+    where: AIWorkflowVersionWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowVersion findFirst
+   */
+  export type AIWorkflowVersionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowVersion to fetch.
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowVersions to fetch.
+     */
+    orderBy?: AIWorkflowVersionOrderByWithRelationInput | AIWorkflowVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIWorkflowVersions.
+     */
+    cursor?: AIWorkflowVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIWorkflowVersions.
+     */
+    distinct?: AIWorkflowVersionScalarFieldEnum | AIWorkflowVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflowVersion findFirstOrThrow
+   */
+  export type AIWorkflowVersionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowVersion to fetch.
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowVersions to fetch.
+     */
+    orderBy?: AIWorkflowVersionOrderByWithRelationInput | AIWorkflowVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIWorkflowVersions.
+     */
+    cursor?: AIWorkflowVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIWorkflowVersions.
+     */
+    distinct?: AIWorkflowVersionScalarFieldEnum | AIWorkflowVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflowVersion findMany
+   */
+  export type AIWorkflowVersionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowVersions to fetch.
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowVersions to fetch.
+     */
+    orderBy?: AIWorkflowVersionOrderByWithRelationInput | AIWorkflowVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIWorkflowVersions.
+     */
+    cursor?: AIWorkflowVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowVersions.
+     */
+    skip?: number
+    distinct?: AIWorkflowVersionScalarFieldEnum | AIWorkflowVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflowVersion create
+   */
+  export type AIWorkflowVersionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AIWorkflowVersion.
+     */
+    data: XOR<AIWorkflowVersionCreateInput, AIWorkflowVersionUncheckedCreateInput>
+  }
+
+  /**
+   * AIWorkflowVersion createMany
+   */
+  export type AIWorkflowVersionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIWorkflowVersions.
+     */
+    data: AIWorkflowVersionCreateManyInput | AIWorkflowVersionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIWorkflowVersion createManyAndReturn
+   */
+  export type AIWorkflowVersionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIWorkflowVersions.
+     */
+    data: AIWorkflowVersionCreateManyInput | AIWorkflowVersionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIWorkflowVersion update
+   */
+  export type AIWorkflowVersionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AIWorkflowVersion.
+     */
+    data: XOR<AIWorkflowVersionUpdateInput, AIWorkflowVersionUncheckedUpdateInput>
+    /**
+     * Choose, which AIWorkflowVersion to update.
+     */
+    where: AIWorkflowVersionWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowVersion updateMany
+   */
+  export type AIWorkflowVersionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIWorkflowVersions.
+     */
+    data: XOR<AIWorkflowVersionUpdateManyMutationInput, AIWorkflowVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which AIWorkflowVersions to update
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * Limit how many AIWorkflowVersions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflowVersion updateManyAndReturn
+   */
+  export type AIWorkflowVersionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * The data used to update AIWorkflowVersions.
+     */
+    data: XOR<AIWorkflowVersionUpdateManyMutationInput, AIWorkflowVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which AIWorkflowVersions to update
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * Limit how many AIWorkflowVersions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflowVersion upsert
+   */
+  export type AIWorkflowVersionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AIWorkflowVersion to update in case it exists.
+     */
+    where: AIWorkflowVersionWhereUniqueInput
+    /**
+     * In case the AIWorkflowVersion found by the `where` argument doesn't exist, create a new AIWorkflowVersion with this data.
+     */
+    create: XOR<AIWorkflowVersionCreateInput, AIWorkflowVersionUncheckedCreateInput>
+    /**
+     * In case the AIWorkflowVersion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIWorkflowVersionUpdateInput, AIWorkflowVersionUncheckedUpdateInput>
+  }
+
+  /**
+   * AIWorkflowVersion delete
+   */
+  export type AIWorkflowVersionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+    /**
+     * Filter which AIWorkflowVersion to delete.
+     */
+    where: AIWorkflowVersionWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowVersion deleteMany
+   */
+  export type AIWorkflowVersionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIWorkflowVersions to delete
+     */
+    where?: AIWorkflowVersionWhereInput
+    /**
+     * Limit how many AIWorkflowVersions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflowVersion without action
+   */
+  export type AIWorkflowVersionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowVersion
+     */
+    select?: AIWorkflowVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowVersion
+     */
+    omit?: AIWorkflowVersionOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIWorkflowLiveEvent
+   */
+
+  export type AggregateAIWorkflowLiveEvent = {
+    _count: AIWorkflowLiveEventCountAggregateOutputType | null
+    _avg: AIWorkflowLiveEventAvgAggregateOutputType | null
+    _sum: AIWorkflowLiveEventSumAggregateOutputType | null
+    _min: AIWorkflowLiveEventMinAggregateOutputType | null
+    _max: AIWorkflowLiveEventMaxAggregateOutputType | null
+  }
+
+  export type AIWorkflowLiveEventAvgAggregateOutputType = {
+    durationMs: number | null
+  }
+
+  export type AIWorkflowLiveEventSumAggregateOutputType = {
+    durationMs: number | null
+  }
+
+  export type AIWorkflowLiveEventMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    workflowId: string | null
+    workflowName: string | null
+    runId: string | null
+    eventType: string | null
+    timestamp: Date | null
+    durationMs: number | null
+    status: string | null
+  }
+
+  export type AIWorkflowLiveEventMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    workflowId: string | null
+    workflowName: string | null
+    runId: string | null
+    eventType: string | null
+    timestamp: Date | null
+    durationMs: number | null
+    status: string | null
+  }
+
+  export type AIWorkflowLiveEventCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    workflowId: number
+    workflowName: number
+    runId: number
+    eventType: number
+    timestamp: number
+    payload: number
+    durationMs: number
+    status: number
+    _all: number
+  }
+
+
+  export type AIWorkflowLiveEventAvgAggregateInputType = {
+    durationMs?: true
+  }
+
+  export type AIWorkflowLiveEventSumAggregateInputType = {
+    durationMs?: true
+  }
+
+  export type AIWorkflowLiveEventMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    workflowId?: true
+    workflowName?: true
+    runId?: true
+    eventType?: true
+    timestamp?: true
+    durationMs?: true
+    status?: true
+  }
+
+  export type AIWorkflowLiveEventMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    workflowId?: true
+    workflowName?: true
+    runId?: true
+    eventType?: true
+    timestamp?: true
+    durationMs?: true
+    status?: true
+  }
+
+  export type AIWorkflowLiveEventCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    workflowId?: true
+    workflowName?: true
+    runId?: true
+    eventType?: true
+    timestamp?: true
+    payload?: true
+    durationMs?: true
+    status?: true
+    _all?: true
+  }
+
+  export type AIWorkflowLiveEventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIWorkflowLiveEvent to aggregate.
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowLiveEvents to fetch.
+     */
+    orderBy?: AIWorkflowLiveEventOrderByWithRelationInput | AIWorkflowLiveEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIWorkflowLiveEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowLiveEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowLiveEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIWorkflowLiveEvents
+    **/
+    _count?: true | AIWorkflowLiveEventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AIWorkflowLiveEventAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AIWorkflowLiveEventSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIWorkflowLiveEventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIWorkflowLiveEventMaxAggregateInputType
+  }
+
+  export type GetAIWorkflowLiveEventAggregateType<T extends AIWorkflowLiveEventAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIWorkflowLiveEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIWorkflowLiveEvent[P]>
+      : GetScalarType<T[P], AggregateAIWorkflowLiveEvent[P]>
+  }
+
+
+
+
+  export type AIWorkflowLiveEventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIWorkflowLiveEventWhereInput
+    orderBy?: AIWorkflowLiveEventOrderByWithAggregationInput | AIWorkflowLiveEventOrderByWithAggregationInput[]
+    by: AIWorkflowLiveEventScalarFieldEnum[] | AIWorkflowLiveEventScalarFieldEnum
+    having?: AIWorkflowLiveEventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIWorkflowLiveEventCountAggregateInputType | true
+    _avg?: AIWorkflowLiveEventAvgAggregateInputType
+    _sum?: AIWorkflowLiveEventSumAggregateInputType
+    _min?: AIWorkflowLiveEventMinAggregateInputType
+    _max?: AIWorkflowLiveEventMaxAggregateInputType
+  }
+
+  export type AIWorkflowLiveEventGroupByOutputType = {
+    id: string
+    tenantId: string
+    workflowId: string | null
+    workflowName: string | null
+    runId: string | null
+    eventType: string
+    timestamp: Date
+    payload: JsonValue
+    durationMs: number | null
+    status: string | null
+    _count: AIWorkflowLiveEventCountAggregateOutputType | null
+    _avg: AIWorkflowLiveEventAvgAggregateOutputType | null
+    _sum: AIWorkflowLiveEventSumAggregateOutputType | null
+    _min: AIWorkflowLiveEventMinAggregateOutputType | null
+    _max: AIWorkflowLiveEventMaxAggregateOutputType | null
+  }
+
+  type GetAIWorkflowLiveEventGroupByPayload<T extends AIWorkflowLiveEventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIWorkflowLiveEventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIWorkflowLiveEventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIWorkflowLiveEventGroupByOutputType[P]>
+            : GetScalarType<T[P], AIWorkflowLiveEventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIWorkflowLiveEventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    workflowName?: boolean
+    runId?: boolean
+    eventType?: boolean
+    timestamp?: boolean
+    payload?: boolean
+    durationMs?: boolean
+    status?: boolean
+  }, ExtArgs["result"]["aIWorkflowLiveEvent"]>
+
+  export type AIWorkflowLiveEventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    workflowName?: boolean
+    runId?: boolean
+    eventType?: boolean
+    timestamp?: boolean
+    payload?: boolean
+    durationMs?: boolean
+    status?: boolean
+  }, ExtArgs["result"]["aIWorkflowLiveEvent"]>
+
+  export type AIWorkflowLiveEventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    workflowName?: boolean
+    runId?: boolean
+    eventType?: boolean
+    timestamp?: boolean
+    payload?: boolean
+    durationMs?: boolean
+    status?: boolean
+  }, ExtArgs["result"]["aIWorkflowLiveEvent"]>
+
+  export type AIWorkflowLiveEventSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    workflowId?: boolean
+    workflowName?: boolean
+    runId?: boolean
+    eventType?: boolean
+    timestamp?: boolean
+    payload?: boolean
+    durationMs?: boolean
+    status?: boolean
+  }
+
+  export type AIWorkflowLiveEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "workflowId" | "workflowName" | "runId" | "eventType" | "timestamp" | "payload" | "durationMs" | "status", ExtArgs["result"]["aIWorkflowLiveEvent"]>
+
+  export type $AIWorkflowLiveEventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIWorkflowLiveEvent"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      workflowId: string | null
+      workflowName: string | null
+      runId: string | null
+      eventType: string
+      timestamp: Date
+      payload: Prisma.JsonValue
+      durationMs: number | null
+      status: string | null
+    }, ExtArgs["result"]["aIWorkflowLiveEvent"]>
+    composites: {}
+  }
+
+  type AIWorkflowLiveEventGetPayload<S extends boolean | null | undefined | AIWorkflowLiveEventDefaultArgs> = $Result.GetResult<Prisma.$AIWorkflowLiveEventPayload, S>
+
+  type AIWorkflowLiveEventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIWorkflowLiveEventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIWorkflowLiveEventCountAggregateInputType | true
+    }
+
+  export interface AIWorkflowLiveEventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIWorkflowLiveEvent'], meta: { name: 'AIWorkflowLiveEvent' } }
+    /**
+     * Find zero or one AIWorkflowLiveEvent that matches the filter.
+     * @param {AIWorkflowLiveEventFindUniqueArgs} args - Arguments to find a AIWorkflowLiveEvent
+     * @example
+     * // Get one AIWorkflowLiveEvent
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIWorkflowLiveEventFindUniqueArgs>(args: SelectSubset<T, AIWorkflowLiveEventFindUniqueArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIWorkflowLiveEvent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIWorkflowLiveEventFindUniqueOrThrowArgs} args - Arguments to find a AIWorkflowLiveEvent
+     * @example
+     * // Get one AIWorkflowLiveEvent
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIWorkflowLiveEventFindUniqueOrThrowArgs>(args: SelectSubset<T, AIWorkflowLiveEventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIWorkflowLiveEvent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventFindFirstArgs} args - Arguments to find a AIWorkflowLiveEvent
+     * @example
+     * // Get one AIWorkflowLiveEvent
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIWorkflowLiveEventFindFirstArgs>(args?: SelectSubset<T, AIWorkflowLiveEventFindFirstArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIWorkflowLiveEvent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventFindFirstOrThrowArgs} args - Arguments to find a AIWorkflowLiveEvent
+     * @example
+     * // Get one AIWorkflowLiveEvent
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIWorkflowLiveEventFindFirstOrThrowArgs>(args?: SelectSubset<T, AIWorkflowLiveEventFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIWorkflowLiveEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIWorkflowLiveEvents
+     * const aIWorkflowLiveEvents = await prisma.aIWorkflowLiveEvent.findMany()
+     * 
+     * // Get first 10 AIWorkflowLiveEvents
+     * const aIWorkflowLiveEvents = await prisma.aIWorkflowLiveEvent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIWorkflowLiveEventWithIdOnly = await prisma.aIWorkflowLiveEvent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIWorkflowLiveEventFindManyArgs>(args?: SelectSubset<T, AIWorkflowLiveEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIWorkflowLiveEvent.
+     * @param {AIWorkflowLiveEventCreateArgs} args - Arguments to create a AIWorkflowLiveEvent.
+     * @example
+     * // Create one AIWorkflowLiveEvent
+     * const AIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.create({
+     *   data: {
+     *     // ... data to create a AIWorkflowLiveEvent
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIWorkflowLiveEventCreateArgs>(args: SelectSubset<T, AIWorkflowLiveEventCreateArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIWorkflowLiveEvents.
+     * @param {AIWorkflowLiveEventCreateManyArgs} args - Arguments to create many AIWorkflowLiveEvents.
+     * @example
+     * // Create many AIWorkflowLiveEvents
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIWorkflowLiveEventCreateManyArgs>(args?: SelectSubset<T, AIWorkflowLiveEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIWorkflowLiveEvents and returns the data saved in the database.
+     * @param {AIWorkflowLiveEventCreateManyAndReturnArgs} args - Arguments to create many AIWorkflowLiveEvents.
+     * @example
+     * // Create many AIWorkflowLiveEvents
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIWorkflowLiveEvents and only return the `id`
+     * const aIWorkflowLiveEventWithIdOnly = await prisma.aIWorkflowLiveEvent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIWorkflowLiveEventCreateManyAndReturnArgs>(args?: SelectSubset<T, AIWorkflowLiveEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIWorkflowLiveEvent.
+     * @param {AIWorkflowLiveEventDeleteArgs} args - Arguments to delete one AIWorkflowLiveEvent.
+     * @example
+     * // Delete one AIWorkflowLiveEvent
+     * const AIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.delete({
+     *   where: {
+     *     // ... filter to delete one AIWorkflowLiveEvent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIWorkflowLiveEventDeleteArgs>(args: SelectSubset<T, AIWorkflowLiveEventDeleteArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIWorkflowLiveEvent.
+     * @param {AIWorkflowLiveEventUpdateArgs} args - Arguments to update one AIWorkflowLiveEvent.
+     * @example
+     * // Update one AIWorkflowLiveEvent
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIWorkflowLiveEventUpdateArgs>(args: SelectSubset<T, AIWorkflowLiveEventUpdateArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIWorkflowLiveEvents.
+     * @param {AIWorkflowLiveEventDeleteManyArgs} args - Arguments to filter AIWorkflowLiveEvents to delete.
+     * @example
+     * // Delete a few AIWorkflowLiveEvents
+     * const { count } = await prisma.aIWorkflowLiveEvent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIWorkflowLiveEventDeleteManyArgs>(args?: SelectSubset<T, AIWorkflowLiveEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIWorkflowLiveEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIWorkflowLiveEvents
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIWorkflowLiveEventUpdateManyArgs>(args: SelectSubset<T, AIWorkflowLiveEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIWorkflowLiveEvents and returns the data updated in the database.
+     * @param {AIWorkflowLiveEventUpdateManyAndReturnArgs} args - Arguments to update many AIWorkflowLiveEvents.
+     * @example
+     * // Update many AIWorkflowLiveEvents
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIWorkflowLiveEvents and only return the `id`
+     * const aIWorkflowLiveEventWithIdOnly = await prisma.aIWorkflowLiveEvent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIWorkflowLiveEventUpdateManyAndReturnArgs>(args: SelectSubset<T, AIWorkflowLiveEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIWorkflowLiveEvent.
+     * @param {AIWorkflowLiveEventUpsertArgs} args - Arguments to update or create a AIWorkflowLiveEvent.
+     * @example
+     * // Update or create a AIWorkflowLiveEvent
+     * const aIWorkflowLiveEvent = await prisma.aIWorkflowLiveEvent.upsert({
+     *   create: {
+     *     // ... data to create a AIWorkflowLiveEvent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIWorkflowLiveEvent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIWorkflowLiveEventUpsertArgs>(args: SelectSubset<T, AIWorkflowLiveEventUpsertArgs<ExtArgs>>): Prisma__AIWorkflowLiveEventClient<$Result.GetResult<Prisma.$AIWorkflowLiveEventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIWorkflowLiveEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventCountArgs} args - Arguments to filter AIWorkflowLiveEvents to count.
+     * @example
+     * // Count the number of AIWorkflowLiveEvents
+     * const count = await prisma.aIWorkflowLiveEvent.count({
+     *   where: {
+     *     // ... the filter for the AIWorkflowLiveEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIWorkflowLiveEventCountArgs>(
+      args?: Subset<T, AIWorkflowLiveEventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIWorkflowLiveEventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIWorkflowLiveEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIWorkflowLiveEventAggregateArgs>(args: Subset<T, AIWorkflowLiveEventAggregateArgs>): Prisma.PrismaPromise<GetAIWorkflowLiveEventAggregateType<T>>
+
+    /**
+     * Group by AIWorkflowLiveEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIWorkflowLiveEventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIWorkflowLiveEventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIWorkflowLiveEventGroupByArgs['orderBy'] }
+        : { orderBy?: AIWorkflowLiveEventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIWorkflowLiveEventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIWorkflowLiveEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIWorkflowLiveEvent model
+   */
+  readonly fields: AIWorkflowLiveEventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIWorkflowLiveEvent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIWorkflowLiveEventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIWorkflowLiveEvent model
+   */
+  interface AIWorkflowLiveEventFieldRefs {
+    readonly id: FieldRef<"AIWorkflowLiveEvent", 'String'>
+    readonly tenantId: FieldRef<"AIWorkflowLiveEvent", 'String'>
+    readonly workflowId: FieldRef<"AIWorkflowLiveEvent", 'String'>
+    readonly workflowName: FieldRef<"AIWorkflowLiveEvent", 'String'>
+    readonly runId: FieldRef<"AIWorkflowLiveEvent", 'String'>
+    readonly eventType: FieldRef<"AIWorkflowLiveEvent", 'String'>
+    readonly timestamp: FieldRef<"AIWorkflowLiveEvent", 'DateTime'>
+    readonly payload: FieldRef<"AIWorkflowLiveEvent", 'Json'>
+    readonly durationMs: FieldRef<"AIWorkflowLiveEvent", 'Int'>
+    readonly status: FieldRef<"AIWorkflowLiveEvent", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIWorkflowLiveEvent findUnique
+   */
+  export type AIWorkflowLiveEventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowLiveEvent to fetch.
+     */
+    where: AIWorkflowLiveEventWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowLiveEvent findUniqueOrThrow
+   */
+  export type AIWorkflowLiveEventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowLiveEvent to fetch.
+     */
+    where: AIWorkflowLiveEventWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowLiveEvent findFirst
+   */
+  export type AIWorkflowLiveEventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowLiveEvent to fetch.
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowLiveEvents to fetch.
+     */
+    orderBy?: AIWorkflowLiveEventOrderByWithRelationInput | AIWorkflowLiveEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIWorkflowLiveEvents.
+     */
+    cursor?: AIWorkflowLiveEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowLiveEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowLiveEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIWorkflowLiveEvents.
+     */
+    distinct?: AIWorkflowLiveEventScalarFieldEnum | AIWorkflowLiveEventScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflowLiveEvent findFirstOrThrow
+   */
+  export type AIWorkflowLiveEventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowLiveEvent to fetch.
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowLiveEvents to fetch.
+     */
+    orderBy?: AIWorkflowLiveEventOrderByWithRelationInput | AIWorkflowLiveEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIWorkflowLiveEvents.
+     */
+    cursor?: AIWorkflowLiveEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowLiveEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowLiveEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIWorkflowLiveEvents.
+     */
+    distinct?: AIWorkflowLiveEventScalarFieldEnum | AIWorkflowLiveEventScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflowLiveEvent findMany
+   */
+  export type AIWorkflowLiveEventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AIWorkflowLiveEvents to fetch.
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIWorkflowLiveEvents to fetch.
+     */
+    orderBy?: AIWorkflowLiveEventOrderByWithRelationInput | AIWorkflowLiveEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIWorkflowLiveEvents.
+     */
+    cursor?: AIWorkflowLiveEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIWorkflowLiveEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIWorkflowLiveEvents.
+     */
+    skip?: number
+    distinct?: AIWorkflowLiveEventScalarFieldEnum | AIWorkflowLiveEventScalarFieldEnum[]
+  }
+
+  /**
+   * AIWorkflowLiveEvent create
+   */
+  export type AIWorkflowLiveEventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AIWorkflowLiveEvent.
+     */
+    data: XOR<AIWorkflowLiveEventCreateInput, AIWorkflowLiveEventUncheckedCreateInput>
+  }
+
+  /**
+   * AIWorkflowLiveEvent createMany
+   */
+  export type AIWorkflowLiveEventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIWorkflowLiveEvents.
+     */
+    data: AIWorkflowLiveEventCreateManyInput | AIWorkflowLiveEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIWorkflowLiveEvent createManyAndReturn
+   */
+  export type AIWorkflowLiveEventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIWorkflowLiveEvents.
+     */
+    data: AIWorkflowLiveEventCreateManyInput | AIWorkflowLiveEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIWorkflowLiveEvent update
+   */
+  export type AIWorkflowLiveEventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AIWorkflowLiveEvent.
+     */
+    data: XOR<AIWorkflowLiveEventUpdateInput, AIWorkflowLiveEventUncheckedUpdateInput>
+    /**
+     * Choose, which AIWorkflowLiveEvent to update.
+     */
+    where: AIWorkflowLiveEventWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowLiveEvent updateMany
+   */
+  export type AIWorkflowLiveEventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIWorkflowLiveEvents.
+     */
+    data: XOR<AIWorkflowLiveEventUpdateManyMutationInput, AIWorkflowLiveEventUncheckedUpdateManyInput>
+    /**
+     * Filter which AIWorkflowLiveEvents to update
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * Limit how many AIWorkflowLiveEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflowLiveEvent updateManyAndReturn
+   */
+  export type AIWorkflowLiveEventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * The data used to update AIWorkflowLiveEvents.
+     */
+    data: XOR<AIWorkflowLiveEventUpdateManyMutationInput, AIWorkflowLiveEventUncheckedUpdateManyInput>
+    /**
+     * Filter which AIWorkflowLiveEvents to update
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * Limit how many AIWorkflowLiveEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflowLiveEvent upsert
+   */
+  export type AIWorkflowLiveEventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AIWorkflowLiveEvent to update in case it exists.
+     */
+    where: AIWorkflowLiveEventWhereUniqueInput
+    /**
+     * In case the AIWorkflowLiveEvent found by the `where` argument doesn't exist, create a new AIWorkflowLiveEvent with this data.
+     */
+    create: XOR<AIWorkflowLiveEventCreateInput, AIWorkflowLiveEventUncheckedCreateInput>
+    /**
+     * In case the AIWorkflowLiveEvent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIWorkflowLiveEventUpdateInput, AIWorkflowLiveEventUncheckedUpdateInput>
+  }
+
+  /**
+   * AIWorkflowLiveEvent delete
+   */
+  export type AIWorkflowLiveEventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+    /**
+     * Filter which AIWorkflowLiveEvent to delete.
+     */
+    where: AIWorkflowLiveEventWhereUniqueInput
+  }
+
+  /**
+   * AIWorkflowLiveEvent deleteMany
+   */
+  export type AIWorkflowLiveEventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIWorkflowLiveEvents to delete
+     */
+    where?: AIWorkflowLiveEventWhereInput
+    /**
+     * Limit how many AIWorkflowLiveEvents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIWorkflowLiveEvent without action
+   */
+  export type AIWorkflowLiveEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIWorkflowLiveEvent
+     */
+    select?: AIWorkflowLiveEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIWorkflowLiveEvent
+     */
+    omit?: AIWorkflowLiveEventOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIDataset
+   */
+
+  export type AggregateAIDataset = {
+    _count: AIDatasetCountAggregateOutputType | null
+    _min: AIDatasetMinAggregateOutputType | null
+    _max: AIDatasetMaxAggregateOutputType | null
+  }
+
+  export type AIDatasetMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    name: string | null
+    description: string | null
+    type: $Enums.AIDatasetType | null
+    createdByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AIDatasetMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    name: string | null
+    description: string | null
+    type: $Enums.AIDatasetType | null
+    createdByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AIDatasetCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    name: number
+    description: number
+    type: number
+    tags: number
+    createdByUserId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AIDatasetMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    description?: true
+    type?: true
+    createdByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AIDatasetMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    description?: true
+    type?: true
+    createdByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AIDatasetCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    description?: true
+    type?: true
+    tags?: true
+    createdByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AIDatasetAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDataset to aggregate.
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasets to fetch.
+     */
+    orderBy?: AIDatasetOrderByWithRelationInput | AIDatasetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIDatasetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIDatasets
+    **/
+    _count?: true | AIDatasetCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIDatasetMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIDatasetMaxAggregateInputType
+  }
+
+  export type GetAIDatasetAggregateType<T extends AIDatasetAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIDataset]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIDataset[P]>
+      : GetScalarType<T[P], AggregateAIDataset[P]>
+  }
+
+
+
+
+  export type AIDatasetGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetWhereInput
+    orderBy?: AIDatasetOrderByWithAggregationInput | AIDatasetOrderByWithAggregationInput[]
+    by: AIDatasetScalarFieldEnum[] | AIDatasetScalarFieldEnum
+    having?: AIDatasetScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIDatasetCountAggregateInputType | true
+    _min?: AIDatasetMinAggregateInputType
+    _max?: AIDatasetMaxAggregateInputType
+  }
+
+  export type AIDatasetGroupByOutputType = {
+    id: string
+    tenantId: string
+    name: string
+    description: string
+    type: $Enums.AIDatasetType
+    tags: string[]
+    createdByUserId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: AIDatasetCountAggregateOutputType | null
+    _min: AIDatasetMinAggregateOutputType | null
+    _max: AIDatasetMaxAggregateOutputType | null
+  }
+
+  type GetAIDatasetGroupByPayload<T extends AIDatasetGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIDatasetGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIDatasetGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIDatasetGroupByOutputType[P]>
+            : GetScalarType<T[P], AIDatasetGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIDatasetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    type?: boolean
+    tags?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    versions?: boolean | AIDataset$versionsArgs<ExtArgs>
+    records?: boolean | AIDataset$recordsArgs<ExtArgs>
+    auditLogs?: boolean | AIDataset$auditLogsArgs<ExtArgs>
+    _count?: boolean | AIDatasetCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDataset"]>
+
+  export type AIDatasetSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    type?: boolean
+    tags?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aIDataset"]>
+
+  export type AIDatasetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    type?: boolean
+    tags?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aIDataset"]>
+
+  export type AIDatasetSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    description?: boolean
+    type?: boolean
+    tags?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AIDatasetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "name" | "description" | "type" | "tags" | "createdByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIDataset"]>
+  export type AIDatasetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    versions?: boolean | AIDataset$versionsArgs<ExtArgs>
+    records?: boolean | AIDataset$recordsArgs<ExtArgs>
+    auditLogs?: boolean | AIDataset$auditLogsArgs<ExtArgs>
+    _count?: boolean | AIDatasetCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type AIDatasetIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $AIDatasetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIDataset"
+    objects: {
+      versions: Prisma.$AIDatasetVersionPayload<ExtArgs>[]
+      records: Prisma.$AIDatasetRecordPayload<ExtArgs>[]
+      auditLogs: Prisma.$AIDatasetAuditLogPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      name: string
+      description: string
+      type: $Enums.AIDatasetType
+      tags: string[]
+      createdByUserId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["aIDataset"]>
+    composites: {}
+  }
+
+  type AIDatasetGetPayload<S extends boolean | null | undefined | AIDatasetDefaultArgs> = $Result.GetResult<Prisma.$AIDatasetPayload, S>
+
+  type AIDatasetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIDatasetFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIDatasetCountAggregateInputType | true
+    }
+
+  export interface AIDatasetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIDataset'], meta: { name: 'AIDataset' } }
+    /**
+     * Find zero or one AIDataset that matches the filter.
+     * @param {AIDatasetFindUniqueArgs} args - Arguments to find a AIDataset
+     * @example
+     * // Get one AIDataset
+     * const aIDataset = await prisma.aIDataset.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIDatasetFindUniqueArgs>(args: SelectSubset<T, AIDatasetFindUniqueArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIDataset that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIDatasetFindUniqueOrThrowArgs} args - Arguments to find a AIDataset
+     * @example
+     * // Get one AIDataset
+     * const aIDataset = await prisma.aIDataset.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIDatasetFindUniqueOrThrowArgs>(args: SelectSubset<T, AIDatasetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDataset that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetFindFirstArgs} args - Arguments to find a AIDataset
+     * @example
+     * // Get one AIDataset
+     * const aIDataset = await prisma.aIDataset.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIDatasetFindFirstArgs>(args?: SelectSubset<T, AIDatasetFindFirstArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDataset that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetFindFirstOrThrowArgs} args - Arguments to find a AIDataset
+     * @example
+     * // Get one AIDataset
+     * const aIDataset = await prisma.aIDataset.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIDatasetFindFirstOrThrowArgs>(args?: SelectSubset<T, AIDatasetFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIDatasets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIDatasets
+     * const aIDatasets = await prisma.aIDataset.findMany()
+     * 
+     * // Get first 10 AIDatasets
+     * const aIDatasets = await prisma.aIDataset.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIDatasetWithIdOnly = await prisma.aIDataset.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIDatasetFindManyArgs>(args?: SelectSubset<T, AIDatasetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIDataset.
+     * @param {AIDatasetCreateArgs} args - Arguments to create a AIDataset.
+     * @example
+     * // Create one AIDataset
+     * const AIDataset = await prisma.aIDataset.create({
+     *   data: {
+     *     // ... data to create a AIDataset
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIDatasetCreateArgs>(args: SelectSubset<T, AIDatasetCreateArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIDatasets.
+     * @param {AIDatasetCreateManyArgs} args - Arguments to create many AIDatasets.
+     * @example
+     * // Create many AIDatasets
+     * const aIDataset = await prisma.aIDataset.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIDatasetCreateManyArgs>(args?: SelectSubset<T, AIDatasetCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIDatasets and returns the data saved in the database.
+     * @param {AIDatasetCreateManyAndReturnArgs} args - Arguments to create many AIDatasets.
+     * @example
+     * // Create many AIDatasets
+     * const aIDataset = await prisma.aIDataset.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIDatasets and only return the `id`
+     * const aIDatasetWithIdOnly = await prisma.aIDataset.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIDatasetCreateManyAndReturnArgs>(args?: SelectSubset<T, AIDatasetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIDataset.
+     * @param {AIDatasetDeleteArgs} args - Arguments to delete one AIDataset.
+     * @example
+     * // Delete one AIDataset
+     * const AIDataset = await prisma.aIDataset.delete({
+     *   where: {
+     *     // ... filter to delete one AIDataset
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIDatasetDeleteArgs>(args: SelectSubset<T, AIDatasetDeleteArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIDataset.
+     * @param {AIDatasetUpdateArgs} args - Arguments to update one AIDataset.
+     * @example
+     * // Update one AIDataset
+     * const aIDataset = await prisma.aIDataset.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIDatasetUpdateArgs>(args: SelectSubset<T, AIDatasetUpdateArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIDatasets.
+     * @param {AIDatasetDeleteManyArgs} args - Arguments to filter AIDatasets to delete.
+     * @example
+     * // Delete a few AIDatasets
+     * const { count } = await prisma.aIDataset.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIDatasetDeleteManyArgs>(args?: SelectSubset<T, AIDatasetDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIDatasets
+     * const aIDataset = await prisma.aIDataset.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIDatasetUpdateManyArgs>(args: SelectSubset<T, AIDatasetUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasets and returns the data updated in the database.
+     * @param {AIDatasetUpdateManyAndReturnArgs} args - Arguments to update many AIDatasets.
+     * @example
+     * // Update many AIDatasets
+     * const aIDataset = await prisma.aIDataset.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIDatasets and only return the `id`
+     * const aIDatasetWithIdOnly = await prisma.aIDataset.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIDatasetUpdateManyAndReturnArgs>(args: SelectSubset<T, AIDatasetUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIDataset.
+     * @param {AIDatasetUpsertArgs} args - Arguments to update or create a AIDataset.
+     * @example
+     * // Update or create a AIDataset
+     * const aIDataset = await prisma.aIDataset.upsert({
+     *   create: {
+     *     // ... data to create a AIDataset
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIDataset we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIDatasetUpsertArgs>(args: SelectSubset<T, AIDatasetUpsertArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIDatasets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetCountArgs} args - Arguments to filter AIDatasets to count.
+     * @example
+     * // Count the number of AIDatasets
+     * const count = await prisma.aIDataset.count({
+     *   where: {
+     *     // ... the filter for the AIDatasets we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIDatasetCountArgs>(
+      args?: Subset<T, AIDatasetCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIDatasetCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIDataset.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIDatasetAggregateArgs>(args: Subset<T, AIDatasetAggregateArgs>): Prisma.PrismaPromise<GetAIDatasetAggregateType<T>>
+
+    /**
+     * Group by AIDataset.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIDatasetGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIDatasetGroupByArgs['orderBy'] }
+        : { orderBy?: AIDatasetGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIDatasetGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIDatasetGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIDataset model
+   */
+  readonly fields: AIDatasetFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIDataset.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIDatasetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    versions<T extends AIDataset$versionsArgs<ExtArgs> = {}>(args?: Subset<T, AIDataset$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    records<T extends AIDataset$recordsArgs<ExtArgs> = {}>(args?: Subset<T, AIDataset$recordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    auditLogs<T extends AIDataset$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, AIDataset$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIDataset model
+   */
+  interface AIDatasetFieldRefs {
+    readonly id: FieldRef<"AIDataset", 'String'>
+    readonly tenantId: FieldRef<"AIDataset", 'String'>
+    readonly name: FieldRef<"AIDataset", 'String'>
+    readonly description: FieldRef<"AIDataset", 'String'>
+    readonly type: FieldRef<"AIDataset", 'AIDatasetType'>
+    readonly tags: FieldRef<"AIDataset", 'String[]'>
+    readonly createdByUserId: FieldRef<"AIDataset", 'String'>
+    readonly createdAt: FieldRef<"AIDataset", 'DateTime'>
+    readonly updatedAt: FieldRef<"AIDataset", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIDataset findUnique
+   */
+  export type AIDatasetFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDataset to fetch.
+     */
+    where: AIDatasetWhereUniqueInput
+  }
+
+  /**
+   * AIDataset findUniqueOrThrow
+   */
+  export type AIDatasetFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDataset to fetch.
+     */
+    where: AIDatasetWhereUniqueInput
+  }
+
+  /**
+   * AIDataset findFirst
+   */
+  export type AIDatasetFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDataset to fetch.
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasets to fetch.
+     */
+    orderBy?: AIDatasetOrderByWithRelationInput | AIDatasetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasets.
+     */
+    cursor?: AIDatasetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasets.
+     */
+    distinct?: AIDatasetScalarFieldEnum | AIDatasetScalarFieldEnum[]
+  }
+
+  /**
+   * AIDataset findFirstOrThrow
+   */
+  export type AIDatasetFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDataset to fetch.
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasets to fetch.
+     */
+    orderBy?: AIDatasetOrderByWithRelationInput | AIDatasetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasets.
+     */
+    cursor?: AIDatasetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasets.
+     */
+    distinct?: AIDatasetScalarFieldEnum | AIDatasetScalarFieldEnum[]
+  }
+
+  /**
+   * AIDataset findMany
+   */
+  export type AIDatasetFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasets to fetch.
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasets to fetch.
+     */
+    orderBy?: AIDatasetOrderByWithRelationInput | AIDatasetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIDatasets.
+     */
+    cursor?: AIDatasetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasets.
+     */
+    skip?: number
+    distinct?: AIDatasetScalarFieldEnum | AIDatasetScalarFieldEnum[]
+  }
+
+  /**
+   * AIDataset create
+   */
+  export type AIDatasetCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AIDataset.
+     */
+    data: XOR<AIDatasetCreateInput, AIDatasetUncheckedCreateInput>
+  }
+
+  /**
+   * AIDataset createMany
+   */
+  export type AIDatasetCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIDatasets.
+     */
+    data: AIDatasetCreateManyInput | AIDatasetCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIDataset createManyAndReturn
+   */
+  export type AIDatasetCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIDatasets.
+     */
+    data: AIDatasetCreateManyInput | AIDatasetCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIDataset update
+   */
+  export type AIDatasetUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AIDataset.
+     */
+    data: XOR<AIDatasetUpdateInput, AIDatasetUncheckedUpdateInput>
+    /**
+     * Choose, which AIDataset to update.
+     */
+    where: AIDatasetWhereUniqueInput
+  }
+
+  /**
+   * AIDataset updateMany
+   */
+  export type AIDatasetUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIDatasets.
+     */
+    data: XOR<AIDatasetUpdateManyMutationInput, AIDatasetUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasets to update
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * Limit how many AIDatasets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDataset updateManyAndReturn
+   */
+  export type AIDatasetUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * The data used to update AIDatasets.
+     */
+    data: XOR<AIDatasetUpdateManyMutationInput, AIDatasetUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasets to update
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * Limit how many AIDatasets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDataset upsert
+   */
+  export type AIDatasetUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AIDataset to update in case it exists.
+     */
+    where: AIDatasetWhereUniqueInput
+    /**
+     * In case the AIDataset found by the `where` argument doesn't exist, create a new AIDataset with this data.
+     */
+    create: XOR<AIDatasetCreateInput, AIDatasetUncheckedCreateInput>
+    /**
+     * In case the AIDataset was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIDatasetUpdateInput, AIDatasetUncheckedUpdateInput>
+  }
+
+  /**
+   * AIDataset delete
+   */
+  export type AIDatasetDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+    /**
+     * Filter which AIDataset to delete.
+     */
+    where: AIDatasetWhereUniqueInput
+  }
+
+  /**
+   * AIDataset deleteMany
+   */
+  export type AIDatasetDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasets to delete
+     */
+    where?: AIDatasetWhereInput
+    /**
+     * Limit how many AIDatasets to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDataset.versions
+   */
+  export type AIDataset$versionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    where?: AIDatasetVersionWhereInput
+    orderBy?: AIDatasetVersionOrderByWithRelationInput | AIDatasetVersionOrderByWithRelationInput[]
+    cursor?: AIDatasetVersionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AIDatasetVersionScalarFieldEnum | AIDatasetVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIDataset.records
+   */
+  export type AIDataset$recordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    where?: AIDatasetRecordWhereInput
+    orderBy?: AIDatasetRecordOrderByWithRelationInput | AIDatasetRecordOrderByWithRelationInput[]
+    cursor?: AIDatasetRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AIDatasetRecordScalarFieldEnum | AIDatasetRecordScalarFieldEnum[]
+  }
+
+  /**
+   * AIDataset.auditLogs
+   */
+  export type AIDataset$auditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    where?: AIDatasetAuditLogWhereInput
+    orderBy?: AIDatasetAuditLogOrderByWithRelationInput | AIDatasetAuditLogOrderByWithRelationInput[]
+    cursor?: AIDatasetAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AIDatasetAuditLogScalarFieldEnum | AIDatasetAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AIDataset without action
+   */
+  export type AIDatasetDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDataset
+     */
+    select?: AIDatasetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDataset
+     */
+    omit?: AIDatasetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIDatasetVersion
+   */
+
+  export type AggregateAIDatasetVersion = {
+    _count: AIDatasetVersionCountAggregateOutputType | null
+    _avg: AIDatasetVersionAvgAggregateOutputType | null
+    _sum: AIDatasetVersionSumAggregateOutputType | null
+    _min: AIDatasetVersionMinAggregateOutputType | null
+    _max: AIDatasetVersionMaxAggregateOutputType | null
+  }
+
+  export type AIDatasetVersionAvgAggregateOutputType = {
+    versionNumber: number | null
+    recordCount: number | null
+  }
+
+  export type AIDatasetVersionSumAggregateOutputType = {
+    versionNumber: number | null
+    recordCount: number | null
+  }
+
+  export type AIDatasetVersionMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    datasetId: string | null
+    versionNumber: number | null
+    recordCount: number | null
+    embeddingModel: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetVersionMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    datasetId: string | null
+    versionNumber: number | null
+    recordCount: number | null
+    embeddingModel: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetVersionCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    datasetId: number
+    versionNumber: number
+    recordCount: number
+    embeddingModel: number
+    createdByUserId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AIDatasetVersionAvgAggregateInputType = {
+    versionNumber?: true
+    recordCount?: true
+  }
+
+  export type AIDatasetVersionSumAggregateInputType = {
+    versionNumber?: true
+    recordCount?: true
+  }
+
+  export type AIDatasetVersionMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    versionNumber?: true
+    recordCount?: true
+    embeddingModel?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetVersionMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    versionNumber?: true
+    recordCount?: true
+    embeddingModel?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetVersionCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    versionNumber?: true
+    recordCount?: true
+    embeddingModel?: true
+    createdByUserId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AIDatasetVersionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetVersion to aggregate.
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetVersions to fetch.
+     */
+    orderBy?: AIDatasetVersionOrderByWithRelationInput | AIDatasetVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIDatasetVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIDatasetVersions
+    **/
+    _count?: true | AIDatasetVersionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AIDatasetVersionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AIDatasetVersionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIDatasetVersionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIDatasetVersionMaxAggregateInputType
+  }
+
+  export type GetAIDatasetVersionAggregateType<T extends AIDatasetVersionAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIDatasetVersion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIDatasetVersion[P]>
+      : GetScalarType<T[P], AggregateAIDatasetVersion[P]>
+  }
+
+
+
+
+  export type AIDatasetVersionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetVersionWhereInput
+    orderBy?: AIDatasetVersionOrderByWithAggregationInput | AIDatasetVersionOrderByWithAggregationInput[]
+    by: AIDatasetVersionScalarFieldEnum[] | AIDatasetVersionScalarFieldEnum
+    having?: AIDatasetVersionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIDatasetVersionCountAggregateInputType | true
+    _avg?: AIDatasetVersionAvgAggregateInputType
+    _sum?: AIDatasetVersionSumAggregateInputType
+    _min?: AIDatasetVersionMinAggregateInputType
+    _max?: AIDatasetVersionMaxAggregateInputType
+  }
+
+  export type AIDatasetVersionGroupByOutputType = {
+    id: string
+    tenantId: string
+    datasetId: string
+    versionNumber: number
+    recordCount: number
+    embeddingModel: string | null
+    createdByUserId: string
+    createdAt: Date
+    _count: AIDatasetVersionCountAggregateOutputType | null
+    _avg: AIDatasetVersionAvgAggregateOutputType | null
+    _sum: AIDatasetVersionSumAggregateOutputType | null
+    _min: AIDatasetVersionMinAggregateOutputType | null
+    _max: AIDatasetVersionMaxAggregateOutputType | null
+  }
+
+  type GetAIDatasetVersionGroupByPayload<T extends AIDatasetVersionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIDatasetVersionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIDatasetVersionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIDatasetVersionGroupByOutputType[P]>
+            : GetScalarType<T[P], AIDatasetVersionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIDatasetVersionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionNumber?: boolean
+    recordCount?: boolean
+    embeddingModel?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    records?: boolean | AIDatasetVersion$recordsArgs<ExtArgs>
+    _count?: boolean | AIDatasetVersionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetVersion"]>
+
+  export type AIDatasetVersionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionNumber?: boolean
+    recordCount?: boolean
+    embeddingModel?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetVersion"]>
+
+  export type AIDatasetVersionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionNumber?: boolean
+    recordCount?: boolean
+    embeddingModel?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetVersion"]>
+
+  export type AIDatasetVersionSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionNumber?: boolean
+    recordCount?: boolean
+    embeddingModel?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }
+
+  export type AIDatasetVersionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "datasetId" | "versionNumber" | "recordCount" | "embeddingModel" | "createdByUserId" | "createdAt", ExtArgs["result"]["aIDatasetVersion"]>
+  export type AIDatasetVersionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    records?: boolean | AIDatasetVersion$recordsArgs<ExtArgs>
+    _count?: boolean | AIDatasetVersionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetVersionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetVersionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }
+
+  export type $AIDatasetVersionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIDatasetVersion"
+    objects: {
+      dataset: Prisma.$AIDatasetPayload<ExtArgs>
+      records: Prisma.$AIDatasetRecordPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      datasetId: string
+      versionNumber: number
+      recordCount: number
+      embeddingModel: string | null
+      createdByUserId: string
+      createdAt: Date
+    }, ExtArgs["result"]["aIDatasetVersion"]>
+    composites: {}
+  }
+
+  type AIDatasetVersionGetPayload<S extends boolean | null | undefined | AIDatasetVersionDefaultArgs> = $Result.GetResult<Prisma.$AIDatasetVersionPayload, S>
+
+  type AIDatasetVersionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIDatasetVersionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIDatasetVersionCountAggregateInputType | true
+    }
+
+  export interface AIDatasetVersionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIDatasetVersion'], meta: { name: 'AIDatasetVersion' } }
+    /**
+     * Find zero or one AIDatasetVersion that matches the filter.
+     * @param {AIDatasetVersionFindUniqueArgs} args - Arguments to find a AIDatasetVersion
+     * @example
+     * // Get one AIDatasetVersion
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIDatasetVersionFindUniqueArgs>(args: SelectSubset<T, AIDatasetVersionFindUniqueArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIDatasetVersion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIDatasetVersionFindUniqueOrThrowArgs} args - Arguments to find a AIDatasetVersion
+     * @example
+     * // Get one AIDatasetVersion
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIDatasetVersionFindUniqueOrThrowArgs>(args: SelectSubset<T, AIDatasetVersionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetVersion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionFindFirstArgs} args - Arguments to find a AIDatasetVersion
+     * @example
+     * // Get one AIDatasetVersion
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIDatasetVersionFindFirstArgs>(args?: SelectSubset<T, AIDatasetVersionFindFirstArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetVersion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionFindFirstOrThrowArgs} args - Arguments to find a AIDatasetVersion
+     * @example
+     * // Get one AIDatasetVersion
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIDatasetVersionFindFirstOrThrowArgs>(args?: SelectSubset<T, AIDatasetVersionFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIDatasetVersions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIDatasetVersions
+     * const aIDatasetVersions = await prisma.aIDatasetVersion.findMany()
+     * 
+     * // Get first 10 AIDatasetVersions
+     * const aIDatasetVersions = await prisma.aIDatasetVersion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIDatasetVersionWithIdOnly = await prisma.aIDatasetVersion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIDatasetVersionFindManyArgs>(args?: SelectSubset<T, AIDatasetVersionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIDatasetVersion.
+     * @param {AIDatasetVersionCreateArgs} args - Arguments to create a AIDatasetVersion.
+     * @example
+     * // Create one AIDatasetVersion
+     * const AIDatasetVersion = await prisma.aIDatasetVersion.create({
+     *   data: {
+     *     // ... data to create a AIDatasetVersion
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIDatasetVersionCreateArgs>(args: SelectSubset<T, AIDatasetVersionCreateArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIDatasetVersions.
+     * @param {AIDatasetVersionCreateManyArgs} args - Arguments to create many AIDatasetVersions.
+     * @example
+     * // Create many AIDatasetVersions
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIDatasetVersionCreateManyArgs>(args?: SelectSubset<T, AIDatasetVersionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIDatasetVersions and returns the data saved in the database.
+     * @param {AIDatasetVersionCreateManyAndReturnArgs} args - Arguments to create many AIDatasetVersions.
+     * @example
+     * // Create many AIDatasetVersions
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIDatasetVersions and only return the `id`
+     * const aIDatasetVersionWithIdOnly = await prisma.aIDatasetVersion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIDatasetVersionCreateManyAndReturnArgs>(args?: SelectSubset<T, AIDatasetVersionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIDatasetVersion.
+     * @param {AIDatasetVersionDeleteArgs} args - Arguments to delete one AIDatasetVersion.
+     * @example
+     * // Delete one AIDatasetVersion
+     * const AIDatasetVersion = await prisma.aIDatasetVersion.delete({
+     *   where: {
+     *     // ... filter to delete one AIDatasetVersion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIDatasetVersionDeleteArgs>(args: SelectSubset<T, AIDatasetVersionDeleteArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIDatasetVersion.
+     * @param {AIDatasetVersionUpdateArgs} args - Arguments to update one AIDatasetVersion.
+     * @example
+     * // Update one AIDatasetVersion
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIDatasetVersionUpdateArgs>(args: SelectSubset<T, AIDatasetVersionUpdateArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIDatasetVersions.
+     * @param {AIDatasetVersionDeleteManyArgs} args - Arguments to filter AIDatasetVersions to delete.
+     * @example
+     * // Delete a few AIDatasetVersions
+     * const { count } = await prisma.aIDatasetVersion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIDatasetVersionDeleteManyArgs>(args?: SelectSubset<T, AIDatasetVersionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIDatasetVersions
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIDatasetVersionUpdateManyArgs>(args: SelectSubset<T, AIDatasetVersionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetVersions and returns the data updated in the database.
+     * @param {AIDatasetVersionUpdateManyAndReturnArgs} args - Arguments to update many AIDatasetVersions.
+     * @example
+     * // Update many AIDatasetVersions
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIDatasetVersions and only return the `id`
+     * const aIDatasetVersionWithIdOnly = await prisma.aIDatasetVersion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIDatasetVersionUpdateManyAndReturnArgs>(args: SelectSubset<T, AIDatasetVersionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIDatasetVersion.
+     * @param {AIDatasetVersionUpsertArgs} args - Arguments to update or create a AIDatasetVersion.
+     * @example
+     * // Update or create a AIDatasetVersion
+     * const aIDatasetVersion = await prisma.aIDatasetVersion.upsert({
+     *   create: {
+     *     // ... data to create a AIDatasetVersion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIDatasetVersion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIDatasetVersionUpsertArgs>(args: SelectSubset<T, AIDatasetVersionUpsertArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIDatasetVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionCountArgs} args - Arguments to filter AIDatasetVersions to count.
+     * @example
+     * // Count the number of AIDatasetVersions
+     * const count = await prisma.aIDatasetVersion.count({
+     *   where: {
+     *     // ... the filter for the AIDatasetVersions we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIDatasetVersionCountArgs>(
+      args?: Subset<T, AIDatasetVersionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIDatasetVersionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIDatasetVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIDatasetVersionAggregateArgs>(args: Subset<T, AIDatasetVersionAggregateArgs>): Prisma.PrismaPromise<GetAIDatasetVersionAggregateType<T>>
+
+    /**
+     * Group by AIDatasetVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetVersionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIDatasetVersionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIDatasetVersionGroupByArgs['orderBy'] }
+        : { orderBy?: AIDatasetVersionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIDatasetVersionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIDatasetVersionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIDatasetVersion model
+   */
+  readonly fields: AIDatasetVersionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIDatasetVersion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIDatasetVersionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    dataset<T extends AIDatasetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetDefaultArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    records<T extends AIDatasetVersion$recordsArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetVersion$recordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIDatasetVersion model
+   */
+  interface AIDatasetVersionFieldRefs {
+    readonly id: FieldRef<"AIDatasetVersion", 'String'>
+    readonly tenantId: FieldRef<"AIDatasetVersion", 'String'>
+    readonly datasetId: FieldRef<"AIDatasetVersion", 'String'>
+    readonly versionNumber: FieldRef<"AIDatasetVersion", 'Int'>
+    readonly recordCount: FieldRef<"AIDatasetVersion", 'Int'>
+    readonly embeddingModel: FieldRef<"AIDatasetVersion", 'String'>
+    readonly createdByUserId: FieldRef<"AIDatasetVersion", 'String'>
+    readonly createdAt: FieldRef<"AIDatasetVersion", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIDatasetVersion findUnique
+   */
+  export type AIDatasetVersionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetVersion to fetch.
+     */
+    where: AIDatasetVersionWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetVersion findUniqueOrThrow
+   */
+  export type AIDatasetVersionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetVersion to fetch.
+     */
+    where: AIDatasetVersionWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetVersion findFirst
+   */
+  export type AIDatasetVersionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetVersion to fetch.
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetVersions to fetch.
+     */
+    orderBy?: AIDatasetVersionOrderByWithRelationInput | AIDatasetVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetVersions.
+     */
+    cursor?: AIDatasetVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetVersions.
+     */
+    distinct?: AIDatasetVersionScalarFieldEnum | AIDatasetVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetVersion findFirstOrThrow
+   */
+  export type AIDatasetVersionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetVersion to fetch.
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetVersions to fetch.
+     */
+    orderBy?: AIDatasetVersionOrderByWithRelationInput | AIDatasetVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetVersions.
+     */
+    cursor?: AIDatasetVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetVersions.
+     */
+    distinct?: AIDatasetVersionScalarFieldEnum | AIDatasetVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetVersion findMany
+   */
+  export type AIDatasetVersionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetVersions to fetch.
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetVersions to fetch.
+     */
+    orderBy?: AIDatasetVersionOrderByWithRelationInput | AIDatasetVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIDatasetVersions.
+     */
+    cursor?: AIDatasetVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetVersions.
+     */
+    skip?: number
+    distinct?: AIDatasetVersionScalarFieldEnum | AIDatasetVersionScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetVersion create
+   */
+  export type AIDatasetVersionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AIDatasetVersion.
+     */
+    data: XOR<AIDatasetVersionCreateInput, AIDatasetVersionUncheckedCreateInput>
+  }
+
+  /**
+   * AIDatasetVersion createMany
+   */
+  export type AIDatasetVersionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIDatasetVersions.
+     */
+    data: AIDatasetVersionCreateManyInput | AIDatasetVersionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIDatasetVersion createManyAndReturn
+   */
+  export type AIDatasetVersionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIDatasetVersions.
+     */
+    data: AIDatasetVersionCreateManyInput | AIDatasetVersionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetVersion update
+   */
+  export type AIDatasetVersionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AIDatasetVersion.
+     */
+    data: XOR<AIDatasetVersionUpdateInput, AIDatasetVersionUncheckedUpdateInput>
+    /**
+     * Choose, which AIDatasetVersion to update.
+     */
+    where: AIDatasetVersionWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetVersion updateMany
+   */
+  export type AIDatasetVersionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIDatasetVersions.
+     */
+    data: XOR<AIDatasetVersionUpdateManyMutationInput, AIDatasetVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetVersions to update
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * Limit how many AIDatasetVersions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetVersion updateManyAndReturn
+   */
+  export type AIDatasetVersionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * The data used to update AIDatasetVersions.
+     */
+    data: XOR<AIDatasetVersionUpdateManyMutationInput, AIDatasetVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetVersions to update
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * Limit how many AIDatasetVersions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetVersion upsert
+   */
+  export type AIDatasetVersionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AIDatasetVersion to update in case it exists.
+     */
+    where: AIDatasetVersionWhereUniqueInput
+    /**
+     * In case the AIDatasetVersion found by the `where` argument doesn't exist, create a new AIDatasetVersion with this data.
+     */
+    create: XOR<AIDatasetVersionCreateInput, AIDatasetVersionUncheckedCreateInput>
+    /**
+     * In case the AIDatasetVersion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIDatasetVersionUpdateInput, AIDatasetVersionUncheckedUpdateInput>
+  }
+
+  /**
+   * AIDatasetVersion delete
+   */
+  export type AIDatasetVersionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+    /**
+     * Filter which AIDatasetVersion to delete.
+     */
+    where: AIDatasetVersionWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetVersion deleteMany
+   */
+  export type AIDatasetVersionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetVersions to delete
+     */
+    where?: AIDatasetVersionWhereInput
+    /**
+     * Limit how many AIDatasetVersions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetVersion.records
+   */
+  export type AIDatasetVersion$recordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    where?: AIDatasetRecordWhereInput
+    orderBy?: AIDatasetRecordOrderByWithRelationInput | AIDatasetRecordOrderByWithRelationInput[]
+    cursor?: AIDatasetRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AIDatasetRecordScalarFieldEnum | AIDatasetRecordScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetVersion without action
+   */
+  export type AIDatasetVersionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetVersion
+     */
+    select?: AIDatasetVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetVersion
+     */
+    omit?: AIDatasetVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetVersionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIDatasetRecord
+   */
+
+  export type AggregateAIDatasetRecord = {
+    _count: AIDatasetRecordCountAggregateOutputType | null
+    _min: AIDatasetRecordMinAggregateOutputType | null
+    _max: AIDatasetRecordMaxAggregateOutputType | null
+  }
+
+  export type AIDatasetRecordMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    datasetId: string | null
+    versionId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetRecordMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    datasetId: string | null
+    versionId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetRecordCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    datasetId: number
+    versionId: number
+    input: number
+    output: number
+    metadata: number
+    embedding: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AIDatasetRecordMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    versionId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetRecordMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    versionId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetRecordCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    versionId?: true
+    input?: true
+    output?: true
+    metadata?: true
+    embedding?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AIDatasetRecordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetRecord to aggregate.
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetRecords to fetch.
+     */
+    orderBy?: AIDatasetRecordOrderByWithRelationInput | AIDatasetRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIDatasetRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIDatasetRecords
+    **/
+    _count?: true | AIDatasetRecordCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIDatasetRecordMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIDatasetRecordMaxAggregateInputType
+  }
+
+  export type GetAIDatasetRecordAggregateType<T extends AIDatasetRecordAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIDatasetRecord]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIDatasetRecord[P]>
+      : GetScalarType<T[P], AggregateAIDatasetRecord[P]>
+  }
+
+
+
+
+  export type AIDatasetRecordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetRecordWhereInput
+    orderBy?: AIDatasetRecordOrderByWithAggregationInput | AIDatasetRecordOrderByWithAggregationInput[]
+    by: AIDatasetRecordScalarFieldEnum[] | AIDatasetRecordScalarFieldEnum
+    having?: AIDatasetRecordScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIDatasetRecordCountAggregateInputType | true
+    _min?: AIDatasetRecordMinAggregateInputType
+    _max?: AIDatasetRecordMaxAggregateInputType
+  }
+
+  export type AIDatasetRecordGroupByOutputType = {
+    id: string
+    tenantId: string
+    datasetId: string
+    versionId: string
+    input: JsonValue
+    output: JsonValue | null
+    metadata: JsonValue
+    embedding: JsonValue | null
+    createdAt: Date
+    _count: AIDatasetRecordCountAggregateOutputType | null
+    _min: AIDatasetRecordMinAggregateOutputType | null
+    _max: AIDatasetRecordMaxAggregateOutputType | null
+  }
+
+  type GetAIDatasetRecordGroupByPayload<T extends AIDatasetRecordGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIDatasetRecordGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIDatasetRecordGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIDatasetRecordGroupByOutputType[P]>
+            : GetScalarType<T[P], AIDatasetRecordGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIDatasetRecordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionId?: boolean
+    input?: boolean
+    output?: boolean
+    metadata?: boolean
+    embedding?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    version?: boolean | AIDatasetVersionDefaultArgs<ExtArgs>
+    labels?: boolean | AIDatasetRecord$labelsArgs<ExtArgs>
+    _count?: boolean | AIDatasetRecordCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetRecord"]>
+
+  export type AIDatasetRecordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionId?: boolean
+    input?: boolean
+    output?: boolean
+    metadata?: boolean
+    embedding?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    version?: boolean | AIDatasetVersionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetRecord"]>
+
+  export type AIDatasetRecordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionId?: boolean
+    input?: boolean
+    output?: boolean
+    metadata?: boolean
+    embedding?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    version?: boolean | AIDatasetVersionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetRecord"]>
+
+  export type AIDatasetRecordSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    versionId?: boolean
+    input?: boolean
+    output?: boolean
+    metadata?: boolean
+    embedding?: boolean
+    createdAt?: boolean
+  }
+
+  export type AIDatasetRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "datasetId" | "versionId" | "input" | "output" | "metadata" | "embedding" | "createdAt", ExtArgs["result"]["aIDatasetRecord"]>
+  export type AIDatasetRecordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    version?: boolean | AIDatasetVersionDefaultArgs<ExtArgs>
+    labels?: boolean | AIDatasetRecord$labelsArgs<ExtArgs>
+    _count?: boolean | AIDatasetRecordCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetRecordIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    version?: boolean | AIDatasetVersionDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetRecordIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+    version?: boolean | AIDatasetVersionDefaultArgs<ExtArgs>
+  }
+
+  export type $AIDatasetRecordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIDatasetRecord"
+    objects: {
+      dataset: Prisma.$AIDatasetPayload<ExtArgs>
+      version: Prisma.$AIDatasetVersionPayload<ExtArgs>
+      labels: Prisma.$AIDatasetLabelPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      datasetId: string
+      versionId: string
+      input: Prisma.JsonValue
+      output: Prisma.JsonValue | null
+      metadata: Prisma.JsonValue
+      embedding: Prisma.JsonValue | null
+      createdAt: Date
+    }, ExtArgs["result"]["aIDatasetRecord"]>
+    composites: {}
+  }
+
+  type AIDatasetRecordGetPayload<S extends boolean | null | undefined | AIDatasetRecordDefaultArgs> = $Result.GetResult<Prisma.$AIDatasetRecordPayload, S>
+
+  type AIDatasetRecordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIDatasetRecordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIDatasetRecordCountAggregateInputType | true
+    }
+
+  export interface AIDatasetRecordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIDatasetRecord'], meta: { name: 'AIDatasetRecord' } }
+    /**
+     * Find zero or one AIDatasetRecord that matches the filter.
+     * @param {AIDatasetRecordFindUniqueArgs} args - Arguments to find a AIDatasetRecord
+     * @example
+     * // Get one AIDatasetRecord
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIDatasetRecordFindUniqueArgs>(args: SelectSubset<T, AIDatasetRecordFindUniqueArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIDatasetRecord that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIDatasetRecordFindUniqueOrThrowArgs} args - Arguments to find a AIDatasetRecord
+     * @example
+     * // Get one AIDatasetRecord
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIDatasetRecordFindUniqueOrThrowArgs>(args: SelectSubset<T, AIDatasetRecordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetRecord that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordFindFirstArgs} args - Arguments to find a AIDatasetRecord
+     * @example
+     * // Get one AIDatasetRecord
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIDatasetRecordFindFirstArgs>(args?: SelectSubset<T, AIDatasetRecordFindFirstArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetRecord that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordFindFirstOrThrowArgs} args - Arguments to find a AIDatasetRecord
+     * @example
+     * // Get one AIDatasetRecord
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIDatasetRecordFindFirstOrThrowArgs>(args?: SelectSubset<T, AIDatasetRecordFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIDatasetRecords that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIDatasetRecords
+     * const aIDatasetRecords = await prisma.aIDatasetRecord.findMany()
+     * 
+     * // Get first 10 AIDatasetRecords
+     * const aIDatasetRecords = await prisma.aIDatasetRecord.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIDatasetRecordWithIdOnly = await prisma.aIDatasetRecord.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIDatasetRecordFindManyArgs>(args?: SelectSubset<T, AIDatasetRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIDatasetRecord.
+     * @param {AIDatasetRecordCreateArgs} args - Arguments to create a AIDatasetRecord.
+     * @example
+     * // Create one AIDatasetRecord
+     * const AIDatasetRecord = await prisma.aIDatasetRecord.create({
+     *   data: {
+     *     // ... data to create a AIDatasetRecord
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIDatasetRecordCreateArgs>(args: SelectSubset<T, AIDatasetRecordCreateArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIDatasetRecords.
+     * @param {AIDatasetRecordCreateManyArgs} args - Arguments to create many AIDatasetRecords.
+     * @example
+     * // Create many AIDatasetRecords
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIDatasetRecordCreateManyArgs>(args?: SelectSubset<T, AIDatasetRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIDatasetRecords and returns the data saved in the database.
+     * @param {AIDatasetRecordCreateManyAndReturnArgs} args - Arguments to create many AIDatasetRecords.
+     * @example
+     * // Create many AIDatasetRecords
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIDatasetRecords and only return the `id`
+     * const aIDatasetRecordWithIdOnly = await prisma.aIDatasetRecord.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIDatasetRecordCreateManyAndReturnArgs>(args?: SelectSubset<T, AIDatasetRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIDatasetRecord.
+     * @param {AIDatasetRecordDeleteArgs} args - Arguments to delete one AIDatasetRecord.
+     * @example
+     * // Delete one AIDatasetRecord
+     * const AIDatasetRecord = await prisma.aIDatasetRecord.delete({
+     *   where: {
+     *     // ... filter to delete one AIDatasetRecord
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIDatasetRecordDeleteArgs>(args: SelectSubset<T, AIDatasetRecordDeleteArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIDatasetRecord.
+     * @param {AIDatasetRecordUpdateArgs} args - Arguments to update one AIDatasetRecord.
+     * @example
+     * // Update one AIDatasetRecord
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIDatasetRecordUpdateArgs>(args: SelectSubset<T, AIDatasetRecordUpdateArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIDatasetRecords.
+     * @param {AIDatasetRecordDeleteManyArgs} args - Arguments to filter AIDatasetRecords to delete.
+     * @example
+     * // Delete a few AIDatasetRecords
+     * const { count } = await prisma.aIDatasetRecord.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIDatasetRecordDeleteManyArgs>(args?: SelectSubset<T, AIDatasetRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIDatasetRecords
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIDatasetRecordUpdateManyArgs>(args: SelectSubset<T, AIDatasetRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetRecords and returns the data updated in the database.
+     * @param {AIDatasetRecordUpdateManyAndReturnArgs} args - Arguments to update many AIDatasetRecords.
+     * @example
+     * // Update many AIDatasetRecords
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIDatasetRecords and only return the `id`
+     * const aIDatasetRecordWithIdOnly = await prisma.aIDatasetRecord.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIDatasetRecordUpdateManyAndReturnArgs>(args: SelectSubset<T, AIDatasetRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIDatasetRecord.
+     * @param {AIDatasetRecordUpsertArgs} args - Arguments to update or create a AIDatasetRecord.
+     * @example
+     * // Update or create a AIDatasetRecord
+     * const aIDatasetRecord = await prisma.aIDatasetRecord.upsert({
+     *   create: {
+     *     // ... data to create a AIDatasetRecord
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIDatasetRecord we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIDatasetRecordUpsertArgs>(args: SelectSubset<T, AIDatasetRecordUpsertArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIDatasetRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordCountArgs} args - Arguments to filter AIDatasetRecords to count.
+     * @example
+     * // Count the number of AIDatasetRecords
+     * const count = await prisma.aIDatasetRecord.count({
+     *   where: {
+     *     // ... the filter for the AIDatasetRecords we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIDatasetRecordCountArgs>(
+      args?: Subset<T, AIDatasetRecordCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIDatasetRecordCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIDatasetRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIDatasetRecordAggregateArgs>(args: Subset<T, AIDatasetRecordAggregateArgs>): Prisma.PrismaPromise<GetAIDatasetRecordAggregateType<T>>
+
+    /**
+     * Group by AIDatasetRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetRecordGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIDatasetRecordGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIDatasetRecordGroupByArgs['orderBy'] }
+        : { orderBy?: AIDatasetRecordGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIDatasetRecordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIDatasetRecordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIDatasetRecord model
+   */
+  readonly fields: AIDatasetRecordFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIDatasetRecord.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIDatasetRecordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    dataset<T extends AIDatasetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetDefaultArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    version<T extends AIDatasetVersionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetVersionDefaultArgs<ExtArgs>>): Prisma__AIDatasetVersionClient<$Result.GetResult<Prisma.$AIDatasetVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    labels<T extends AIDatasetRecord$labelsArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetRecord$labelsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIDatasetRecord model
+   */
+  interface AIDatasetRecordFieldRefs {
+    readonly id: FieldRef<"AIDatasetRecord", 'String'>
+    readonly tenantId: FieldRef<"AIDatasetRecord", 'String'>
+    readonly datasetId: FieldRef<"AIDatasetRecord", 'String'>
+    readonly versionId: FieldRef<"AIDatasetRecord", 'String'>
+    readonly input: FieldRef<"AIDatasetRecord", 'Json'>
+    readonly output: FieldRef<"AIDatasetRecord", 'Json'>
+    readonly metadata: FieldRef<"AIDatasetRecord", 'Json'>
+    readonly embedding: FieldRef<"AIDatasetRecord", 'Json'>
+    readonly createdAt: FieldRef<"AIDatasetRecord", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIDatasetRecord findUnique
+   */
+  export type AIDatasetRecordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetRecord to fetch.
+     */
+    where: AIDatasetRecordWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetRecord findUniqueOrThrow
+   */
+  export type AIDatasetRecordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetRecord to fetch.
+     */
+    where: AIDatasetRecordWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetRecord findFirst
+   */
+  export type AIDatasetRecordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetRecord to fetch.
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetRecords to fetch.
+     */
+    orderBy?: AIDatasetRecordOrderByWithRelationInput | AIDatasetRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetRecords.
+     */
+    cursor?: AIDatasetRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetRecords.
+     */
+    distinct?: AIDatasetRecordScalarFieldEnum | AIDatasetRecordScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetRecord findFirstOrThrow
+   */
+  export type AIDatasetRecordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetRecord to fetch.
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetRecords to fetch.
+     */
+    orderBy?: AIDatasetRecordOrderByWithRelationInput | AIDatasetRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetRecords.
+     */
+    cursor?: AIDatasetRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetRecords.
+     */
+    distinct?: AIDatasetRecordScalarFieldEnum | AIDatasetRecordScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetRecord findMany
+   */
+  export type AIDatasetRecordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetRecords to fetch.
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetRecords to fetch.
+     */
+    orderBy?: AIDatasetRecordOrderByWithRelationInput | AIDatasetRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIDatasetRecords.
+     */
+    cursor?: AIDatasetRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetRecords.
+     */
+    skip?: number
+    distinct?: AIDatasetRecordScalarFieldEnum | AIDatasetRecordScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetRecord create
+   */
+  export type AIDatasetRecordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AIDatasetRecord.
+     */
+    data: XOR<AIDatasetRecordCreateInput, AIDatasetRecordUncheckedCreateInput>
+  }
+
+  /**
+   * AIDatasetRecord createMany
+   */
+  export type AIDatasetRecordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIDatasetRecords.
+     */
+    data: AIDatasetRecordCreateManyInput | AIDatasetRecordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIDatasetRecord createManyAndReturn
+   */
+  export type AIDatasetRecordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIDatasetRecords.
+     */
+    data: AIDatasetRecordCreateManyInput | AIDatasetRecordCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetRecord update
+   */
+  export type AIDatasetRecordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AIDatasetRecord.
+     */
+    data: XOR<AIDatasetRecordUpdateInput, AIDatasetRecordUncheckedUpdateInput>
+    /**
+     * Choose, which AIDatasetRecord to update.
+     */
+    where: AIDatasetRecordWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetRecord updateMany
+   */
+  export type AIDatasetRecordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIDatasetRecords.
+     */
+    data: XOR<AIDatasetRecordUpdateManyMutationInput, AIDatasetRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetRecords to update
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * Limit how many AIDatasetRecords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetRecord updateManyAndReturn
+   */
+  export type AIDatasetRecordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * The data used to update AIDatasetRecords.
+     */
+    data: XOR<AIDatasetRecordUpdateManyMutationInput, AIDatasetRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetRecords to update
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * Limit how many AIDatasetRecords to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetRecord upsert
+   */
+  export type AIDatasetRecordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AIDatasetRecord to update in case it exists.
+     */
+    where: AIDatasetRecordWhereUniqueInput
+    /**
+     * In case the AIDatasetRecord found by the `where` argument doesn't exist, create a new AIDatasetRecord with this data.
+     */
+    create: XOR<AIDatasetRecordCreateInput, AIDatasetRecordUncheckedCreateInput>
+    /**
+     * In case the AIDatasetRecord was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIDatasetRecordUpdateInput, AIDatasetRecordUncheckedUpdateInput>
+  }
+
+  /**
+   * AIDatasetRecord delete
+   */
+  export type AIDatasetRecordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+    /**
+     * Filter which AIDatasetRecord to delete.
+     */
+    where: AIDatasetRecordWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetRecord deleteMany
+   */
+  export type AIDatasetRecordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetRecords to delete
+     */
+    where?: AIDatasetRecordWhereInput
+    /**
+     * Limit how many AIDatasetRecords to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetRecord.labels
+   */
+  export type AIDatasetRecord$labelsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    where?: AIDatasetLabelWhereInput
+    orderBy?: AIDatasetLabelOrderByWithRelationInput | AIDatasetLabelOrderByWithRelationInput[]
+    cursor?: AIDatasetLabelWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AIDatasetLabelScalarFieldEnum | AIDatasetLabelScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetRecord without action
+   */
+  export type AIDatasetRecordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetRecord
+     */
+    select?: AIDatasetRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetRecord
+     */
+    omit?: AIDatasetRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetRecordInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIDatasetLabel
+   */
+
+  export type AggregateAIDatasetLabel = {
+    _count: AIDatasetLabelCountAggregateOutputType | null
+    _min: AIDatasetLabelMinAggregateOutputType | null
+    _max: AIDatasetLabelMaxAggregateOutputType | null
+  }
+
+  export type AIDatasetLabelMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    recordId: string | null
+    labelType: $Enums.AIDatasetLabelType | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetLabelMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    recordId: string | null
+    labelType: $Enums.AIDatasetLabelType | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetLabelCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    recordId: number
+    labelType: number
+    labelValue: number
+    createdByUserId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AIDatasetLabelMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    recordId?: true
+    labelType?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetLabelMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    recordId?: true
+    labelType?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetLabelCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    recordId?: true
+    labelType?: true
+    labelValue?: true
+    createdByUserId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AIDatasetLabelAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetLabel to aggregate.
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetLabels to fetch.
+     */
+    orderBy?: AIDatasetLabelOrderByWithRelationInput | AIDatasetLabelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIDatasetLabelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetLabels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetLabels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIDatasetLabels
+    **/
+    _count?: true | AIDatasetLabelCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIDatasetLabelMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIDatasetLabelMaxAggregateInputType
+  }
+
+  export type GetAIDatasetLabelAggregateType<T extends AIDatasetLabelAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIDatasetLabel]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIDatasetLabel[P]>
+      : GetScalarType<T[P], AggregateAIDatasetLabel[P]>
+  }
+
+
+
+
+  export type AIDatasetLabelGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetLabelWhereInput
+    orderBy?: AIDatasetLabelOrderByWithAggregationInput | AIDatasetLabelOrderByWithAggregationInput[]
+    by: AIDatasetLabelScalarFieldEnum[] | AIDatasetLabelScalarFieldEnum
+    having?: AIDatasetLabelScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIDatasetLabelCountAggregateInputType | true
+    _min?: AIDatasetLabelMinAggregateInputType
+    _max?: AIDatasetLabelMaxAggregateInputType
+  }
+
+  export type AIDatasetLabelGroupByOutputType = {
+    id: string
+    tenantId: string
+    recordId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonValue
+    createdByUserId: string
+    createdAt: Date
+    _count: AIDatasetLabelCountAggregateOutputType | null
+    _min: AIDatasetLabelMinAggregateOutputType | null
+    _max: AIDatasetLabelMaxAggregateOutputType | null
+  }
+
+  type GetAIDatasetLabelGroupByPayload<T extends AIDatasetLabelGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIDatasetLabelGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIDatasetLabelGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIDatasetLabelGroupByOutputType[P]>
+            : GetScalarType<T[P], AIDatasetLabelGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIDatasetLabelSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    recordId?: boolean
+    labelType?: boolean
+    labelValue?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    record?: boolean | AIDatasetRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetLabel"]>
+
+  export type AIDatasetLabelSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    recordId?: boolean
+    labelType?: boolean
+    labelValue?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    record?: boolean | AIDatasetRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetLabel"]>
+
+  export type AIDatasetLabelSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    recordId?: boolean
+    labelType?: boolean
+    labelValue?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    record?: boolean | AIDatasetRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetLabel"]>
+
+  export type AIDatasetLabelSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    recordId?: boolean
+    labelType?: boolean
+    labelValue?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }
+
+  export type AIDatasetLabelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "recordId" | "labelType" | "labelValue" | "createdByUserId" | "createdAt", ExtArgs["result"]["aIDatasetLabel"]>
+  export type AIDatasetLabelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    record?: boolean | AIDatasetRecordDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetLabelIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    record?: boolean | AIDatasetRecordDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetLabelIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    record?: boolean | AIDatasetRecordDefaultArgs<ExtArgs>
+  }
+
+  export type $AIDatasetLabelPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIDatasetLabel"
+    objects: {
+      record: Prisma.$AIDatasetRecordPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      recordId: string
+      labelType: $Enums.AIDatasetLabelType
+      labelValue: Prisma.JsonValue
+      createdByUserId: string
+      createdAt: Date
+    }, ExtArgs["result"]["aIDatasetLabel"]>
+    composites: {}
+  }
+
+  type AIDatasetLabelGetPayload<S extends boolean | null | undefined | AIDatasetLabelDefaultArgs> = $Result.GetResult<Prisma.$AIDatasetLabelPayload, S>
+
+  type AIDatasetLabelCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIDatasetLabelFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIDatasetLabelCountAggregateInputType | true
+    }
+
+  export interface AIDatasetLabelDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIDatasetLabel'], meta: { name: 'AIDatasetLabel' } }
+    /**
+     * Find zero or one AIDatasetLabel that matches the filter.
+     * @param {AIDatasetLabelFindUniqueArgs} args - Arguments to find a AIDatasetLabel
+     * @example
+     * // Get one AIDatasetLabel
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIDatasetLabelFindUniqueArgs>(args: SelectSubset<T, AIDatasetLabelFindUniqueArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIDatasetLabel that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIDatasetLabelFindUniqueOrThrowArgs} args - Arguments to find a AIDatasetLabel
+     * @example
+     * // Get one AIDatasetLabel
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIDatasetLabelFindUniqueOrThrowArgs>(args: SelectSubset<T, AIDatasetLabelFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetLabel that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelFindFirstArgs} args - Arguments to find a AIDatasetLabel
+     * @example
+     * // Get one AIDatasetLabel
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIDatasetLabelFindFirstArgs>(args?: SelectSubset<T, AIDatasetLabelFindFirstArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetLabel that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelFindFirstOrThrowArgs} args - Arguments to find a AIDatasetLabel
+     * @example
+     * // Get one AIDatasetLabel
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIDatasetLabelFindFirstOrThrowArgs>(args?: SelectSubset<T, AIDatasetLabelFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIDatasetLabels that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIDatasetLabels
+     * const aIDatasetLabels = await prisma.aIDatasetLabel.findMany()
+     * 
+     * // Get first 10 AIDatasetLabels
+     * const aIDatasetLabels = await prisma.aIDatasetLabel.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIDatasetLabelWithIdOnly = await prisma.aIDatasetLabel.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIDatasetLabelFindManyArgs>(args?: SelectSubset<T, AIDatasetLabelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIDatasetLabel.
+     * @param {AIDatasetLabelCreateArgs} args - Arguments to create a AIDatasetLabel.
+     * @example
+     * // Create one AIDatasetLabel
+     * const AIDatasetLabel = await prisma.aIDatasetLabel.create({
+     *   data: {
+     *     // ... data to create a AIDatasetLabel
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIDatasetLabelCreateArgs>(args: SelectSubset<T, AIDatasetLabelCreateArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIDatasetLabels.
+     * @param {AIDatasetLabelCreateManyArgs} args - Arguments to create many AIDatasetLabels.
+     * @example
+     * // Create many AIDatasetLabels
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIDatasetLabelCreateManyArgs>(args?: SelectSubset<T, AIDatasetLabelCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIDatasetLabels and returns the data saved in the database.
+     * @param {AIDatasetLabelCreateManyAndReturnArgs} args - Arguments to create many AIDatasetLabels.
+     * @example
+     * // Create many AIDatasetLabels
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIDatasetLabels and only return the `id`
+     * const aIDatasetLabelWithIdOnly = await prisma.aIDatasetLabel.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIDatasetLabelCreateManyAndReturnArgs>(args?: SelectSubset<T, AIDatasetLabelCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIDatasetLabel.
+     * @param {AIDatasetLabelDeleteArgs} args - Arguments to delete one AIDatasetLabel.
+     * @example
+     * // Delete one AIDatasetLabel
+     * const AIDatasetLabel = await prisma.aIDatasetLabel.delete({
+     *   where: {
+     *     // ... filter to delete one AIDatasetLabel
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIDatasetLabelDeleteArgs>(args: SelectSubset<T, AIDatasetLabelDeleteArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIDatasetLabel.
+     * @param {AIDatasetLabelUpdateArgs} args - Arguments to update one AIDatasetLabel.
+     * @example
+     * // Update one AIDatasetLabel
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIDatasetLabelUpdateArgs>(args: SelectSubset<T, AIDatasetLabelUpdateArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIDatasetLabels.
+     * @param {AIDatasetLabelDeleteManyArgs} args - Arguments to filter AIDatasetLabels to delete.
+     * @example
+     * // Delete a few AIDatasetLabels
+     * const { count } = await prisma.aIDatasetLabel.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIDatasetLabelDeleteManyArgs>(args?: SelectSubset<T, AIDatasetLabelDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetLabels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIDatasetLabels
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIDatasetLabelUpdateManyArgs>(args: SelectSubset<T, AIDatasetLabelUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetLabels and returns the data updated in the database.
+     * @param {AIDatasetLabelUpdateManyAndReturnArgs} args - Arguments to update many AIDatasetLabels.
+     * @example
+     * // Update many AIDatasetLabels
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIDatasetLabels and only return the `id`
+     * const aIDatasetLabelWithIdOnly = await prisma.aIDatasetLabel.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIDatasetLabelUpdateManyAndReturnArgs>(args: SelectSubset<T, AIDatasetLabelUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIDatasetLabel.
+     * @param {AIDatasetLabelUpsertArgs} args - Arguments to update or create a AIDatasetLabel.
+     * @example
+     * // Update or create a AIDatasetLabel
+     * const aIDatasetLabel = await prisma.aIDatasetLabel.upsert({
+     *   create: {
+     *     // ... data to create a AIDatasetLabel
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIDatasetLabel we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIDatasetLabelUpsertArgs>(args: SelectSubset<T, AIDatasetLabelUpsertArgs<ExtArgs>>): Prisma__AIDatasetLabelClient<$Result.GetResult<Prisma.$AIDatasetLabelPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIDatasetLabels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelCountArgs} args - Arguments to filter AIDatasetLabels to count.
+     * @example
+     * // Count the number of AIDatasetLabels
+     * const count = await prisma.aIDatasetLabel.count({
+     *   where: {
+     *     // ... the filter for the AIDatasetLabels we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIDatasetLabelCountArgs>(
+      args?: Subset<T, AIDatasetLabelCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIDatasetLabelCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIDatasetLabel.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIDatasetLabelAggregateArgs>(args: Subset<T, AIDatasetLabelAggregateArgs>): Prisma.PrismaPromise<GetAIDatasetLabelAggregateType<T>>
+
+    /**
+     * Group by AIDatasetLabel.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetLabelGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIDatasetLabelGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIDatasetLabelGroupByArgs['orderBy'] }
+        : { orderBy?: AIDatasetLabelGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIDatasetLabelGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIDatasetLabelGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIDatasetLabel model
+   */
+  readonly fields: AIDatasetLabelFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIDatasetLabel.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIDatasetLabelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    record<T extends AIDatasetRecordDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetRecordDefaultArgs<ExtArgs>>): Prisma__AIDatasetRecordClient<$Result.GetResult<Prisma.$AIDatasetRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIDatasetLabel model
+   */
+  interface AIDatasetLabelFieldRefs {
+    readonly id: FieldRef<"AIDatasetLabel", 'String'>
+    readonly tenantId: FieldRef<"AIDatasetLabel", 'String'>
+    readonly recordId: FieldRef<"AIDatasetLabel", 'String'>
+    readonly labelType: FieldRef<"AIDatasetLabel", 'AIDatasetLabelType'>
+    readonly labelValue: FieldRef<"AIDatasetLabel", 'Json'>
+    readonly createdByUserId: FieldRef<"AIDatasetLabel", 'String'>
+    readonly createdAt: FieldRef<"AIDatasetLabel", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIDatasetLabel findUnique
+   */
+  export type AIDatasetLabelFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetLabel to fetch.
+     */
+    where: AIDatasetLabelWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetLabel findUniqueOrThrow
+   */
+  export type AIDatasetLabelFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetLabel to fetch.
+     */
+    where: AIDatasetLabelWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetLabel findFirst
+   */
+  export type AIDatasetLabelFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetLabel to fetch.
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetLabels to fetch.
+     */
+    orderBy?: AIDatasetLabelOrderByWithRelationInput | AIDatasetLabelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetLabels.
+     */
+    cursor?: AIDatasetLabelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetLabels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetLabels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetLabels.
+     */
+    distinct?: AIDatasetLabelScalarFieldEnum | AIDatasetLabelScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetLabel findFirstOrThrow
+   */
+  export type AIDatasetLabelFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetLabel to fetch.
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetLabels to fetch.
+     */
+    orderBy?: AIDatasetLabelOrderByWithRelationInput | AIDatasetLabelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetLabels.
+     */
+    cursor?: AIDatasetLabelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetLabels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetLabels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetLabels.
+     */
+    distinct?: AIDatasetLabelScalarFieldEnum | AIDatasetLabelScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetLabel findMany
+   */
+  export type AIDatasetLabelFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetLabels to fetch.
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetLabels to fetch.
+     */
+    orderBy?: AIDatasetLabelOrderByWithRelationInput | AIDatasetLabelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIDatasetLabels.
+     */
+    cursor?: AIDatasetLabelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetLabels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetLabels.
+     */
+    skip?: number
+    distinct?: AIDatasetLabelScalarFieldEnum | AIDatasetLabelScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetLabel create
+   */
+  export type AIDatasetLabelCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AIDatasetLabel.
+     */
+    data: XOR<AIDatasetLabelCreateInput, AIDatasetLabelUncheckedCreateInput>
+  }
+
+  /**
+   * AIDatasetLabel createMany
+   */
+  export type AIDatasetLabelCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIDatasetLabels.
+     */
+    data: AIDatasetLabelCreateManyInput | AIDatasetLabelCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIDatasetLabel createManyAndReturn
+   */
+  export type AIDatasetLabelCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIDatasetLabels.
+     */
+    data: AIDatasetLabelCreateManyInput | AIDatasetLabelCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetLabel update
+   */
+  export type AIDatasetLabelUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AIDatasetLabel.
+     */
+    data: XOR<AIDatasetLabelUpdateInput, AIDatasetLabelUncheckedUpdateInput>
+    /**
+     * Choose, which AIDatasetLabel to update.
+     */
+    where: AIDatasetLabelWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetLabel updateMany
+   */
+  export type AIDatasetLabelUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIDatasetLabels.
+     */
+    data: XOR<AIDatasetLabelUpdateManyMutationInput, AIDatasetLabelUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetLabels to update
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * Limit how many AIDatasetLabels to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetLabel updateManyAndReturn
+   */
+  export type AIDatasetLabelUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * The data used to update AIDatasetLabels.
+     */
+    data: XOR<AIDatasetLabelUpdateManyMutationInput, AIDatasetLabelUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetLabels to update
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * Limit how many AIDatasetLabels to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetLabel upsert
+   */
+  export type AIDatasetLabelUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AIDatasetLabel to update in case it exists.
+     */
+    where: AIDatasetLabelWhereUniqueInput
+    /**
+     * In case the AIDatasetLabel found by the `where` argument doesn't exist, create a new AIDatasetLabel with this data.
+     */
+    create: XOR<AIDatasetLabelCreateInput, AIDatasetLabelUncheckedCreateInput>
+    /**
+     * In case the AIDatasetLabel was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIDatasetLabelUpdateInput, AIDatasetLabelUncheckedUpdateInput>
+  }
+
+  /**
+   * AIDatasetLabel delete
+   */
+  export type AIDatasetLabelDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+    /**
+     * Filter which AIDatasetLabel to delete.
+     */
+    where: AIDatasetLabelWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetLabel deleteMany
+   */
+  export type AIDatasetLabelDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetLabels to delete
+     */
+    where?: AIDatasetLabelWhereInput
+    /**
+     * Limit how many AIDatasetLabels to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetLabel without action
+   */
+  export type AIDatasetLabelDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetLabel
+     */
+    select?: AIDatasetLabelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetLabel
+     */
+    omit?: AIDatasetLabelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetLabelInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AIDatasetAuditLog
+   */
+
+  export type AggregateAIDatasetAuditLog = {
+    _count: AIDatasetAuditLogCountAggregateOutputType | null
+    _min: AIDatasetAuditLogMinAggregateOutputType | null
+    _max: AIDatasetAuditLogMaxAggregateOutputType | null
+  }
+
+  export type AIDatasetAuditLogMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    datasetId: string | null
+    action: string | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetAuditLogMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    datasetId: string | null
+    action: string | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type AIDatasetAuditLogCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    datasetId: number
+    action: number
+    userId: number
+    metadata: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AIDatasetAuditLogMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    action?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetAuditLogMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    action?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type AIDatasetAuditLogCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    datasetId?: true
+    action?: true
+    userId?: true
+    metadata?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AIDatasetAuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetAuditLog to aggregate.
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetAuditLogs to fetch.
+     */
+    orderBy?: AIDatasetAuditLogOrderByWithRelationInput | AIDatasetAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIDatasetAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIDatasetAuditLogs
+    **/
+    _count?: true | AIDatasetAuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIDatasetAuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIDatasetAuditLogMaxAggregateInputType
+  }
+
+  export type GetAIDatasetAuditLogAggregateType<T extends AIDatasetAuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIDatasetAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIDatasetAuditLog[P]>
+      : GetScalarType<T[P], AggregateAIDatasetAuditLog[P]>
+  }
+
+
+
+
+  export type AIDatasetAuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIDatasetAuditLogWhereInput
+    orderBy?: AIDatasetAuditLogOrderByWithAggregationInput | AIDatasetAuditLogOrderByWithAggregationInput[]
+    by: AIDatasetAuditLogScalarFieldEnum[] | AIDatasetAuditLogScalarFieldEnum
+    having?: AIDatasetAuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIDatasetAuditLogCountAggregateInputType | true
+    _min?: AIDatasetAuditLogMinAggregateInputType
+    _max?: AIDatasetAuditLogMaxAggregateInputType
+  }
+
+  export type AIDatasetAuditLogGroupByOutputType = {
+    id: string
+    tenantId: string
+    datasetId: string
+    action: string
+    userId: string
+    metadata: JsonValue
+    createdAt: Date
+    _count: AIDatasetAuditLogCountAggregateOutputType | null
+    _min: AIDatasetAuditLogMinAggregateOutputType | null
+    _max: AIDatasetAuditLogMaxAggregateOutputType | null
+  }
+
+  type GetAIDatasetAuditLogGroupByPayload<T extends AIDatasetAuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIDatasetAuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIDatasetAuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIDatasetAuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], AIDatasetAuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIDatasetAuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    action?: boolean
+    userId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetAuditLog"]>
+
+  export type AIDatasetAuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    action?: boolean
+    userId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetAuditLog"]>
+
+  export type AIDatasetAuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    action?: boolean
+    userId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aIDatasetAuditLog"]>
+
+  export type AIDatasetAuditLogSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    datasetId?: boolean
+    action?: boolean
+    userId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+  }
+
+  export type AIDatasetAuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "datasetId" | "action" | "userId" | "metadata" | "createdAt", ExtArgs["result"]["aIDatasetAuditLog"]>
+  export type AIDatasetAuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetAuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }
+  export type AIDatasetAuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    dataset?: boolean | AIDatasetDefaultArgs<ExtArgs>
+  }
+
+  export type $AIDatasetAuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIDatasetAuditLog"
+    objects: {
+      dataset: Prisma.$AIDatasetPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      datasetId: string
+      action: string
+      userId: string
+      metadata: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["aIDatasetAuditLog"]>
+    composites: {}
+  }
+
+  type AIDatasetAuditLogGetPayload<S extends boolean | null | undefined | AIDatasetAuditLogDefaultArgs> = $Result.GetResult<Prisma.$AIDatasetAuditLogPayload, S>
+
+  type AIDatasetAuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIDatasetAuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIDatasetAuditLogCountAggregateInputType | true
+    }
+
+  export interface AIDatasetAuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIDatasetAuditLog'], meta: { name: 'AIDatasetAuditLog' } }
+    /**
+     * Find zero or one AIDatasetAuditLog that matches the filter.
+     * @param {AIDatasetAuditLogFindUniqueArgs} args - Arguments to find a AIDatasetAuditLog
+     * @example
+     * // Get one AIDatasetAuditLog
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIDatasetAuditLogFindUniqueArgs>(args: SelectSubset<T, AIDatasetAuditLogFindUniqueArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIDatasetAuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIDatasetAuditLogFindUniqueOrThrowArgs} args - Arguments to find a AIDatasetAuditLog
+     * @example
+     * // Get one AIDatasetAuditLog
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIDatasetAuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, AIDatasetAuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetAuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogFindFirstArgs} args - Arguments to find a AIDatasetAuditLog
+     * @example
+     * // Get one AIDatasetAuditLog
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIDatasetAuditLogFindFirstArgs>(args?: SelectSubset<T, AIDatasetAuditLogFindFirstArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIDatasetAuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogFindFirstOrThrowArgs} args - Arguments to find a AIDatasetAuditLog
+     * @example
+     * // Get one AIDatasetAuditLog
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIDatasetAuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, AIDatasetAuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIDatasetAuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIDatasetAuditLogs
+     * const aIDatasetAuditLogs = await prisma.aIDatasetAuditLog.findMany()
+     * 
+     * // Get first 10 AIDatasetAuditLogs
+     * const aIDatasetAuditLogs = await prisma.aIDatasetAuditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIDatasetAuditLogWithIdOnly = await prisma.aIDatasetAuditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIDatasetAuditLogFindManyArgs>(args?: SelectSubset<T, AIDatasetAuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIDatasetAuditLog.
+     * @param {AIDatasetAuditLogCreateArgs} args - Arguments to create a AIDatasetAuditLog.
+     * @example
+     * // Create one AIDatasetAuditLog
+     * const AIDatasetAuditLog = await prisma.aIDatasetAuditLog.create({
+     *   data: {
+     *     // ... data to create a AIDatasetAuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIDatasetAuditLogCreateArgs>(args: SelectSubset<T, AIDatasetAuditLogCreateArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIDatasetAuditLogs.
+     * @param {AIDatasetAuditLogCreateManyArgs} args - Arguments to create many AIDatasetAuditLogs.
+     * @example
+     * // Create many AIDatasetAuditLogs
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIDatasetAuditLogCreateManyArgs>(args?: SelectSubset<T, AIDatasetAuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AIDatasetAuditLogs and returns the data saved in the database.
+     * @param {AIDatasetAuditLogCreateManyAndReturnArgs} args - Arguments to create many AIDatasetAuditLogs.
+     * @example
+     * // Create many AIDatasetAuditLogs
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AIDatasetAuditLogs and only return the `id`
+     * const aIDatasetAuditLogWithIdOnly = await prisma.aIDatasetAuditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AIDatasetAuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, AIDatasetAuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AIDatasetAuditLog.
+     * @param {AIDatasetAuditLogDeleteArgs} args - Arguments to delete one AIDatasetAuditLog.
+     * @example
+     * // Delete one AIDatasetAuditLog
+     * const AIDatasetAuditLog = await prisma.aIDatasetAuditLog.delete({
+     *   where: {
+     *     // ... filter to delete one AIDatasetAuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIDatasetAuditLogDeleteArgs>(args: SelectSubset<T, AIDatasetAuditLogDeleteArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIDatasetAuditLog.
+     * @param {AIDatasetAuditLogUpdateArgs} args - Arguments to update one AIDatasetAuditLog.
+     * @example
+     * // Update one AIDatasetAuditLog
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIDatasetAuditLogUpdateArgs>(args: SelectSubset<T, AIDatasetAuditLogUpdateArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIDatasetAuditLogs.
+     * @param {AIDatasetAuditLogDeleteManyArgs} args - Arguments to filter AIDatasetAuditLogs to delete.
+     * @example
+     * // Delete a few AIDatasetAuditLogs
+     * const { count } = await prisma.aIDatasetAuditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIDatasetAuditLogDeleteManyArgs>(args?: SelectSubset<T, AIDatasetAuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIDatasetAuditLogs
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIDatasetAuditLogUpdateManyArgs>(args: SelectSubset<T, AIDatasetAuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIDatasetAuditLogs and returns the data updated in the database.
+     * @param {AIDatasetAuditLogUpdateManyAndReturnArgs} args - Arguments to update many AIDatasetAuditLogs.
+     * @example
+     * // Update many AIDatasetAuditLogs
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AIDatasetAuditLogs and only return the `id`
+     * const aIDatasetAuditLogWithIdOnly = await prisma.aIDatasetAuditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AIDatasetAuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, AIDatasetAuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AIDatasetAuditLog.
+     * @param {AIDatasetAuditLogUpsertArgs} args - Arguments to update or create a AIDatasetAuditLog.
+     * @example
+     * // Update or create a AIDatasetAuditLog
+     * const aIDatasetAuditLog = await prisma.aIDatasetAuditLog.upsert({
+     *   create: {
+     *     // ... data to create a AIDatasetAuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIDatasetAuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIDatasetAuditLogUpsertArgs>(args: SelectSubset<T, AIDatasetAuditLogUpsertArgs<ExtArgs>>): Prisma__AIDatasetAuditLogClient<$Result.GetResult<Prisma.$AIDatasetAuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AIDatasetAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogCountArgs} args - Arguments to filter AIDatasetAuditLogs to count.
+     * @example
+     * // Count the number of AIDatasetAuditLogs
+     * const count = await prisma.aIDatasetAuditLog.count({
+     *   where: {
+     *     // ... the filter for the AIDatasetAuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIDatasetAuditLogCountArgs>(
+      args?: Subset<T, AIDatasetAuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIDatasetAuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIDatasetAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIDatasetAuditLogAggregateArgs>(args: Subset<T, AIDatasetAuditLogAggregateArgs>): Prisma.PrismaPromise<GetAIDatasetAuditLogAggregateType<T>>
+
+    /**
+     * Group by AIDatasetAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIDatasetAuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIDatasetAuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIDatasetAuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: AIDatasetAuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIDatasetAuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIDatasetAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIDatasetAuditLog model
+   */
+  readonly fields: AIDatasetAuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIDatasetAuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIDatasetAuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    dataset<T extends AIDatasetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIDatasetDefaultArgs<ExtArgs>>): Prisma__AIDatasetClient<$Result.GetResult<Prisma.$AIDatasetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIDatasetAuditLog model
+   */
+  interface AIDatasetAuditLogFieldRefs {
+    readonly id: FieldRef<"AIDatasetAuditLog", 'String'>
+    readonly tenantId: FieldRef<"AIDatasetAuditLog", 'String'>
+    readonly datasetId: FieldRef<"AIDatasetAuditLog", 'String'>
+    readonly action: FieldRef<"AIDatasetAuditLog", 'String'>
+    readonly userId: FieldRef<"AIDatasetAuditLog", 'String'>
+    readonly metadata: FieldRef<"AIDatasetAuditLog", 'Json'>
+    readonly createdAt: FieldRef<"AIDatasetAuditLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIDatasetAuditLog findUnique
+   */
+  export type AIDatasetAuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetAuditLog to fetch.
+     */
+    where: AIDatasetAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetAuditLog findUniqueOrThrow
+   */
+  export type AIDatasetAuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetAuditLog to fetch.
+     */
+    where: AIDatasetAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetAuditLog findFirst
+   */
+  export type AIDatasetAuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetAuditLog to fetch.
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetAuditLogs to fetch.
+     */
+    orderBy?: AIDatasetAuditLogOrderByWithRelationInput | AIDatasetAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetAuditLogs.
+     */
+    cursor?: AIDatasetAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetAuditLogs.
+     */
+    distinct?: AIDatasetAuditLogScalarFieldEnum | AIDatasetAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetAuditLog findFirstOrThrow
+   */
+  export type AIDatasetAuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetAuditLog to fetch.
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetAuditLogs to fetch.
+     */
+    orderBy?: AIDatasetAuditLogOrderByWithRelationInput | AIDatasetAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIDatasetAuditLogs.
+     */
+    cursor?: AIDatasetAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIDatasetAuditLogs.
+     */
+    distinct?: AIDatasetAuditLogScalarFieldEnum | AIDatasetAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetAuditLog findMany
+   */
+  export type AIDatasetAuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AIDatasetAuditLogs to fetch.
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIDatasetAuditLogs to fetch.
+     */
+    orderBy?: AIDatasetAuditLogOrderByWithRelationInput | AIDatasetAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIDatasetAuditLogs.
+     */
+    cursor?: AIDatasetAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIDatasetAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIDatasetAuditLogs.
+     */
+    skip?: number
+    distinct?: AIDatasetAuditLogScalarFieldEnum | AIDatasetAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AIDatasetAuditLog create
+   */
+  export type AIDatasetAuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AIDatasetAuditLog.
+     */
+    data: XOR<AIDatasetAuditLogCreateInput, AIDatasetAuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * AIDatasetAuditLog createMany
+   */
+  export type AIDatasetAuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIDatasetAuditLogs.
+     */
+    data: AIDatasetAuditLogCreateManyInput | AIDatasetAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AIDatasetAuditLog createManyAndReturn
+   */
+  export type AIDatasetAuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many AIDatasetAuditLogs.
+     */
+    data: AIDatasetAuditLogCreateManyInput | AIDatasetAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetAuditLog update
+   */
+  export type AIDatasetAuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AIDatasetAuditLog.
+     */
+    data: XOR<AIDatasetAuditLogUpdateInput, AIDatasetAuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which AIDatasetAuditLog to update.
+     */
+    where: AIDatasetAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetAuditLog updateMany
+   */
+  export type AIDatasetAuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIDatasetAuditLogs.
+     */
+    data: XOR<AIDatasetAuditLogUpdateManyMutationInput, AIDatasetAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetAuditLogs to update
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * Limit how many AIDatasetAuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetAuditLog updateManyAndReturn
+   */
+  export type AIDatasetAuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update AIDatasetAuditLogs.
+     */
+    data: XOR<AIDatasetAuditLogUpdateManyMutationInput, AIDatasetAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AIDatasetAuditLogs to update
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * Limit how many AIDatasetAuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AIDatasetAuditLog upsert
+   */
+  export type AIDatasetAuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AIDatasetAuditLog to update in case it exists.
+     */
+    where: AIDatasetAuditLogWhereUniqueInput
+    /**
+     * In case the AIDatasetAuditLog found by the `where` argument doesn't exist, create a new AIDatasetAuditLog with this data.
+     */
+    create: XOR<AIDatasetAuditLogCreateInput, AIDatasetAuditLogUncheckedCreateInput>
+    /**
+     * In case the AIDatasetAuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIDatasetAuditLogUpdateInput, AIDatasetAuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * AIDatasetAuditLog delete
+   */
+  export type AIDatasetAuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which AIDatasetAuditLog to delete.
+     */
+    where: AIDatasetAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AIDatasetAuditLog deleteMany
+   */
+  export type AIDatasetAuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIDatasetAuditLogs to delete
+     */
+    where?: AIDatasetAuditLogWhereInput
+    /**
+     * Limit how many AIDatasetAuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIDatasetAuditLog without action
+   */
+  export type AIDatasetAuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIDatasetAuditLog
+     */
+    select?: AIDatasetAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIDatasetAuditLog
+     */
+    omit?: AIDatasetAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AIDatasetAuditLogInclude<ExtArgs> | null
   }
 
 
@@ -6575,6 +16308,7 @@ export namespace Prisma {
     tokensInput: 'tokensInput',
     tokensOutput: 'tokensOutput',
     latencyMs: 'latencyMs',
+    metadata: 'metadata',
     createdAt: 'createdAt'
   };
 
@@ -6595,9 +16329,27 @@ export namespace Prisma {
   export type AIMemoryScalarFieldEnum = (typeof AIMemoryScalarFieldEnum)[keyof typeof AIMemoryScalarFieldEnum]
 
 
+  export const AIWorkflowScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    name: 'name',
+    description: 'description',
+    isActive: 'isActive',
+    dryRun: 'dryRun',
+    trigger: 'trigger',
+    conditions: 'conditions',
+    actions: 'actions',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AIWorkflowScalarFieldEnum = (typeof AIWorkflowScalarFieldEnum)[keyof typeof AIWorkflowScalarFieldEnum]
+
+
   export const AIWorkflowRunScalarFieldEnum: {
     id: 'id',
     tenantId: 'tenantId',
+    workflowId: 'workflowId',
     trigger: 'trigger',
     status: 'status',
     steps: 'steps',
@@ -6607,6 +16359,106 @@ export namespace Prisma {
   };
 
   export type AIWorkflowRunScalarFieldEnum = (typeof AIWorkflowRunScalarFieldEnum)[keyof typeof AIWorkflowRunScalarFieldEnum]
+
+
+  export const AIWorkflowVersionScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    workflowId: 'workflowId',
+    versionNumber: 'versionNumber',
+    label: 'label',
+    definition: 'definition',
+    createdByUserId: 'createdByUserId',
+    createdAt: 'createdAt'
+  };
+
+  export type AIWorkflowVersionScalarFieldEnum = (typeof AIWorkflowVersionScalarFieldEnum)[keyof typeof AIWorkflowVersionScalarFieldEnum]
+
+
+  export const AIWorkflowLiveEventScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    workflowId: 'workflowId',
+    workflowName: 'workflowName',
+    runId: 'runId',
+    eventType: 'eventType',
+    timestamp: 'timestamp',
+    payload: 'payload',
+    durationMs: 'durationMs',
+    status: 'status'
+  };
+
+  export type AIWorkflowLiveEventScalarFieldEnum = (typeof AIWorkflowLiveEventScalarFieldEnum)[keyof typeof AIWorkflowLiveEventScalarFieldEnum]
+
+
+  export const AIDatasetScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    name: 'name',
+    description: 'description',
+    type: 'type',
+    tags: 'tags',
+    createdByUserId: 'createdByUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AIDatasetScalarFieldEnum = (typeof AIDatasetScalarFieldEnum)[keyof typeof AIDatasetScalarFieldEnum]
+
+
+  export const AIDatasetVersionScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    datasetId: 'datasetId',
+    versionNumber: 'versionNumber',
+    recordCount: 'recordCount',
+    embeddingModel: 'embeddingModel',
+    createdByUserId: 'createdByUserId',
+    createdAt: 'createdAt'
+  };
+
+  export type AIDatasetVersionScalarFieldEnum = (typeof AIDatasetVersionScalarFieldEnum)[keyof typeof AIDatasetVersionScalarFieldEnum]
+
+
+  export const AIDatasetRecordScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    datasetId: 'datasetId',
+    versionId: 'versionId',
+    input: 'input',
+    output: 'output',
+    metadata: 'metadata',
+    embedding: 'embedding',
+    createdAt: 'createdAt'
+  };
+
+  export type AIDatasetRecordScalarFieldEnum = (typeof AIDatasetRecordScalarFieldEnum)[keyof typeof AIDatasetRecordScalarFieldEnum]
+
+
+  export const AIDatasetLabelScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    recordId: 'recordId',
+    labelType: 'labelType',
+    labelValue: 'labelValue',
+    createdByUserId: 'createdByUserId',
+    createdAt: 'createdAt'
+  };
+
+  export type AIDatasetLabelScalarFieldEnum = (typeof AIDatasetLabelScalarFieldEnum)[keyof typeof AIDatasetLabelScalarFieldEnum]
+
+
+  export const AIDatasetAuditLogScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    datasetId: 'datasetId',
+    action: 'action',
+    userId: 'userId',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
+  };
+
+  export type AIDatasetAuditLogScalarFieldEnum = (typeof AIDatasetAuditLogScalarFieldEnum)[keyof typeof AIDatasetAuditLogScalarFieldEnum]
 
 
   export const AIStreamSessionScalarFieldEnum: {
@@ -6755,6 +16607,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AIDatasetType'
+   */
+  export type EnumAIDatasetTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AIDatasetType'>
+    
+
+
+  /**
+   * Reference to a field of type 'AIDatasetType[]'
+   */
+  export type ListEnumAIDatasetTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AIDatasetType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AIDatasetLabelType'
+   */
+  export type EnumAIDatasetLabelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AIDatasetLabelType'>
+    
+
+
+  /**
+   * Reference to a field of type 'AIDatasetLabelType[]'
+   */
+  export type ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AIDatasetLabelType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -6863,6 +16743,7 @@ export namespace Prisma {
     tokensInput?: IntFilter<"AIRequestLog"> | number
     tokensOutput?: IntFilter<"AIRequestLog"> | number
     latencyMs?: IntFilter<"AIRequestLog"> | number
+    metadata?: JsonFilter<"AIRequestLog">
     createdAt?: DateTimeFilter<"AIRequestLog"> | Date | string
   }
 
@@ -6876,6 +16757,7 @@ export namespace Prisma {
     tokensInput?: SortOrder
     tokensOutput?: SortOrder
     latencyMs?: SortOrder
+    metadata?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6892,6 +16774,7 @@ export namespace Prisma {
     tokensInput?: IntFilter<"AIRequestLog"> | number
     tokensOutput?: IntFilter<"AIRequestLog"> | number
     latencyMs?: IntFilter<"AIRequestLog"> | number
+    metadata?: JsonFilter<"AIRequestLog">
     createdAt?: DateTimeFilter<"AIRequestLog"> | Date | string
   }, "id">
 
@@ -6905,6 +16788,7 @@ export namespace Prisma {
     tokensInput?: SortOrder
     tokensOutput?: SortOrder
     latencyMs?: SortOrder
+    metadata?: SortOrder
     createdAt?: SortOrder
     _count?: AIRequestLogCountOrderByAggregateInput
     _avg?: AIRequestLogAvgOrderByAggregateInput
@@ -6926,6 +16810,7 @@ export namespace Prisma {
     tokensInput?: IntWithAggregatesFilter<"AIRequestLog"> | number
     tokensOutput?: IntWithAggregatesFilter<"AIRequestLog"> | number
     latencyMs?: IntWithAggregatesFilter<"AIRequestLog"> | number
+    metadata?: JsonWithAggregatesFilter<"AIRequestLog">
     createdAt?: DateTimeWithAggregatesFilter<"AIRequestLog"> | Date | string
   }
 
@@ -6997,12 +16882,95 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"AIMemory"> | Date | string
   }
 
+  export type AIWorkflowWhereInput = {
+    AND?: AIWorkflowWhereInput | AIWorkflowWhereInput[]
+    OR?: AIWorkflowWhereInput[]
+    NOT?: AIWorkflowWhereInput | AIWorkflowWhereInput[]
+    id?: StringFilter<"AIWorkflow"> | string
+    tenantId?: StringFilter<"AIWorkflow"> | string
+    name?: StringFilter<"AIWorkflow"> | string
+    description?: StringFilter<"AIWorkflow"> | string
+    isActive?: BoolFilter<"AIWorkflow"> | boolean
+    dryRun?: BoolFilter<"AIWorkflow"> | boolean
+    trigger?: JsonFilter<"AIWorkflow">
+    conditions?: JsonFilter<"AIWorkflow">
+    actions?: JsonFilter<"AIWorkflow">
+    createdAt?: DateTimeFilter<"AIWorkflow"> | Date | string
+    updatedAt?: DateTimeFilter<"AIWorkflow"> | Date | string
+  }
+
+  export type AIWorkflowOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    dryRun?: SortOrder
+    trigger?: SortOrder
+    conditions?: SortOrder
+    actions?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIWorkflowWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AIWorkflowWhereInput | AIWorkflowWhereInput[]
+    OR?: AIWorkflowWhereInput[]
+    NOT?: AIWorkflowWhereInput | AIWorkflowWhereInput[]
+    tenantId?: StringFilter<"AIWorkflow"> | string
+    name?: StringFilter<"AIWorkflow"> | string
+    description?: StringFilter<"AIWorkflow"> | string
+    isActive?: BoolFilter<"AIWorkflow"> | boolean
+    dryRun?: BoolFilter<"AIWorkflow"> | boolean
+    trigger?: JsonFilter<"AIWorkflow">
+    conditions?: JsonFilter<"AIWorkflow">
+    actions?: JsonFilter<"AIWorkflow">
+    createdAt?: DateTimeFilter<"AIWorkflow"> | Date | string
+    updatedAt?: DateTimeFilter<"AIWorkflow"> | Date | string
+  }, "id">
+
+  export type AIWorkflowOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    dryRun?: SortOrder
+    trigger?: SortOrder
+    conditions?: SortOrder
+    actions?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AIWorkflowCountOrderByAggregateInput
+    _max?: AIWorkflowMaxOrderByAggregateInput
+    _min?: AIWorkflowMinOrderByAggregateInput
+  }
+
+  export type AIWorkflowScalarWhereWithAggregatesInput = {
+    AND?: AIWorkflowScalarWhereWithAggregatesInput | AIWorkflowScalarWhereWithAggregatesInput[]
+    OR?: AIWorkflowScalarWhereWithAggregatesInput[]
+    NOT?: AIWorkflowScalarWhereWithAggregatesInput | AIWorkflowScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIWorkflow"> | string
+    tenantId?: StringWithAggregatesFilter<"AIWorkflow"> | string
+    name?: StringWithAggregatesFilter<"AIWorkflow"> | string
+    description?: StringWithAggregatesFilter<"AIWorkflow"> | string
+    isActive?: BoolWithAggregatesFilter<"AIWorkflow"> | boolean
+    dryRun?: BoolWithAggregatesFilter<"AIWorkflow"> | boolean
+    trigger?: JsonWithAggregatesFilter<"AIWorkflow">
+    conditions?: JsonWithAggregatesFilter<"AIWorkflow">
+    actions?: JsonWithAggregatesFilter<"AIWorkflow">
+    createdAt?: DateTimeWithAggregatesFilter<"AIWorkflow"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AIWorkflow"> | Date | string
+  }
+
   export type AIWorkflowRunWhereInput = {
     AND?: AIWorkflowRunWhereInput | AIWorkflowRunWhereInput[]
     OR?: AIWorkflowRunWhereInput[]
     NOT?: AIWorkflowRunWhereInput | AIWorkflowRunWhereInput[]
     id?: StringFilter<"AIWorkflowRun"> | string
     tenantId?: StringFilter<"AIWorkflowRun"> | string
+    workflowId?: StringNullableFilter<"AIWorkflowRun"> | string | null
     trigger?: StringFilter<"AIWorkflowRun"> | string
     status?: StringFilter<"AIWorkflowRun"> | string
     steps?: JsonFilter<"AIWorkflowRun">
@@ -7014,6 +16982,7 @@ export namespace Prisma {
   export type AIWorkflowRunOrderByWithRelationInput = {
     id?: SortOrder
     tenantId?: SortOrder
+    workflowId?: SortOrderInput | SortOrder
     trigger?: SortOrder
     status?: SortOrder
     steps?: SortOrder
@@ -7028,6 +16997,7 @@ export namespace Prisma {
     OR?: AIWorkflowRunWhereInput[]
     NOT?: AIWorkflowRunWhereInput | AIWorkflowRunWhereInput[]
     tenantId?: StringFilter<"AIWorkflowRun"> | string
+    workflowId?: StringNullableFilter<"AIWorkflowRun"> | string | null
     trigger?: StringFilter<"AIWorkflowRun"> | string
     status?: StringFilter<"AIWorkflowRun"> | string
     steps?: JsonFilter<"AIWorkflowRun">
@@ -7039,6 +17009,7 @@ export namespace Prisma {
   export type AIWorkflowRunOrderByWithAggregationInput = {
     id?: SortOrder
     tenantId?: SortOrder
+    workflowId?: SortOrderInput | SortOrder
     trigger?: SortOrder
     status?: SortOrder
     steps?: SortOrder
@@ -7056,12 +17027,530 @@ export namespace Prisma {
     NOT?: AIWorkflowRunScalarWhereWithAggregatesInput | AIWorkflowRunScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"AIWorkflowRun"> | string
     tenantId?: StringWithAggregatesFilter<"AIWorkflowRun"> | string
+    workflowId?: StringNullableWithAggregatesFilter<"AIWorkflowRun"> | string | null
     trigger?: StringWithAggregatesFilter<"AIWorkflowRun"> | string
     status?: StringWithAggregatesFilter<"AIWorkflowRun"> | string
     steps?: JsonWithAggregatesFilter<"AIWorkflowRun">
     result?: JsonNullableWithAggregatesFilter<"AIWorkflowRun">
     createdAt?: DateTimeWithAggregatesFilter<"AIWorkflowRun"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AIWorkflowRun"> | Date | string
+  }
+
+  export type AIWorkflowVersionWhereInput = {
+    AND?: AIWorkflowVersionWhereInput | AIWorkflowVersionWhereInput[]
+    OR?: AIWorkflowVersionWhereInput[]
+    NOT?: AIWorkflowVersionWhereInput | AIWorkflowVersionWhereInput[]
+    id?: StringFilter<"AIWorkflowVersion"> | string
+    tenantId?: StringFilter<"AIWorkflowVersion"> | string
+    workflowId?: StringFilter<"AIWorkflowVersion"> | string
+    versionNumber?: IntFilter<"AIWorkflowVersion"> | number
+    label?: StringNullableFilter<"AIWorkflowVersion"> | string | null
+    definition?: JsonFilter<"AIWorkflowVersion">
+    createdByUserId?: StringFilter<"AIWorkflowVersion"> | string
+    createdAt?: DateTimeFilter<"AIWorkflowVersion"> | Date | string
+  }
+
+  export type AIWorkflowVersionOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    versionNumber?: SortOrder
+    label?: SortOrderInput | SortOrder
+    definition?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIWorkflowVersionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workflowId_versionNumber?: AIWorkflowVersionWorkflowIdVersionNumberCompoundUniqueInput
+    AND?: AIWorkflowVersionWhereInput | AIWorkflowVersionWhereInput[]
+    OR?: AIWorkflowVersionWhereInput[]
+    NOT?: AIWorkflowVersionWhereInput | AIWorkflowVersionWhereInput[]
+    tenantId?: StringFilter<"AIWorkflowVersion"> | string
+    workflowId?: StringFilter<"AIWorkflowVersion"> | string
+    versionNumber?: IntFilter<"AIWorkflowVersion"> | number
+    label?: StringNullableFilter<"AIWorkflowVersion"> | string | null
+    definition?: JsonFilter<"AIWorkflowVersion">
+    createdByUserId?: StringFilter<"AIWorkflowVersion"> | string
+    createdAt?: DateTimeFilter<"AIWorkflowVersion"> | Date | string
+  }, "id" | "workflowId_versionNumber">
+
+  export type AIWorkflowVersionOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    versionNumber?: SortOrder
+    label?: SortOrderInput | SortOrder
+    definition?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    _count?: AIWorkflowVersionCountOrderByAggregateInput
+    _avg?: AIWorkflowVersionAvgOrderByAggregateInput
+    _max?: AIWorkflowVersionMaxOrderByAggregateInput
+    _min?: AIWorkflowVersionMinOrderByAggregateInput
+    _sum?: AIWorkflowVersionSumOrderByAggregateInput
+  }
+
+  export type AIWorkflowVersionScalarWhereWithAggregatesInput = {
+    AND?: AIWorkflowVersionScalarWhereWithAggregatesInput | AIWorkflowVersionScalarWhereWithAggregatesInput[]
+    OR?: AIWorkflowVersionScalarWhereWithAggregatesInput[]
+    NOT?: AIWorkflowVersionScalarWhereWithAggregatesInput | AIWorkflowVersionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIWorkflowVersion"> | string
+    tenantId?: StringWithAggregatesFilter<"AIWorkflowVersion"> | string
+    workflowId?: StringWithAggregatesFilter<"AIWorkflowVersion"> | string
+    versionNumber?: IntWithAggregatesFilter<"AIWorkflowVersion"> | number
+    label?: StringNullableWithAggregatesFilter<"AIWorkflowVersion"> | string | null
+    definition?: JsonWithAggregatesFilter<"AIWorkflowVersion">
+    createdByUserId?: StringWithAggregatesFilter<"AIWorkflowVersion"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AIWorkflowVersion"> | Date | string
+  }
+
+  export type AIWorkflowLiveEventWhereInput = {
+    AND?: AIWorkflowLiveEventWhereInput | AIWorkflowLiveEventWhereInput[]
+    OR?: AIWorkflowLiveEventWhereInput[]
+    NOT?: AIWorkflowLiveEventWhereInput | AIWorkflowLiveEventWhereInput[]
+    id?: StringFilter<"AIWorkflowLiveEvent"> | string
+    tenantId?: StringFilter<"AIWorkflowLiveEvent"> | string
+    workflowId?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+    workflowName?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+    runId?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+    eventType?: StringFilter<"AIWorkflowLiveEvent"> | string
+    timestamp?: DateTimeFilter<"AIWorkflowLiveEvent"> | Date | string
+    payload?: JsonFilter<"AIWorkflowLiveEvent">
+    durationMs?: IntNullableFilter<"AIWorkflowLiveEvent"> | number | null
+    status?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+  }
+
+  export type AIWorkflowLiveEventOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrderInput | SortOrder
+    workflowName?: SortOrderInput | SortOrder
+    runId?: SortOrderInput | SortOrder
+    eventType?: SortOrder
+    timestamp?: SortOrder
+    payload?: SortOrder
+    durationMs?: SortOrderInput | SortOrder
+    status?: SortOrderInput | SortOrder
+  }
+
+  export type AIWorkflowLiveEventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AIWorkflowLiveEventWhereInput | AIWorkflowLiveEventWhereInput[]
+    OR?: AIWorkflowLiveEventWhereInput[]
+    NOT?: AIWorkflowLiveEventWhereInput | AIWorkflowLiveEventWhereInput[]
+    tenantId?: StringFilter<"AIWorkflowLiveEvent"> | string
+    workflowId?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+    workflowName?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+    runId?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+    eventType?: StringFilter<"AIWorkflowLiveEvent"> | string
+    timestamp?: DateTimeFilter<"AIWorkflowLiveEvent"> | Date | string
+    payload?: JsonFilter<"AIWorkflowLiveEvent">
+    durationMs?: IntNullableFilter<"AIWorkflowLiveEvent"> | number | null
+    status?: StringNullableFilter<"AIWorkflowLiveEvent"> | string | null
+  }, "id">
+
+  export type AIWorkflowLiveEventOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrderInput | SortOrder
+    workflowName?: SortOrderInput | SortOrder
+    runId?: SortOrderInput | SortOrder
+    eventType?: SortOrder
+    timestamp?: SortOrder
+    payload?: SortOrder
+    durationMs?: SortOrderInput | SortOrder
+    status?: SortOrderInput | SortOrder
+    _count?: AIWorkflowLiveEventCountOrderByAggregateInput
+    _avg?: AIWorkflowLiveEventAvgOrderByAggregateInput
+    _max?: AIWorkflowLiveEventMaxOrderByAggregateInput
+    _min?: AIWorkflowLiveEventMinOrderByAggregateInput
+    _sum?: AIWorkflowLiveEventSumOrderByAggregateInput
+  }
+
+  export type AIWorkflowLiveEventScalarWhereWithAggregatesInput = {
+    AND?: AIWorkflowLiveEventScalarWhereWithAggregatesInput | AIWorkflowLiveEventScalarWhereWithAggregatesInput[]
+    OR?: AIWorkflowLiveEventScalarWhereWithAggregatesInput[]
+    NOT?: AIWorkflowLiveEventScalarWhereWithAggregatesInput | AIWorkflowLiveEventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIWorkflowLiveEvent"> | string
+    tenantId?: StringWithAggregatesFilter<"AIWorkflowLiveEvent"> | string
+    workflowId?: StringNullableWithAggregatesFilter<"AIWorkflowLiveEvent"> | string | null
+    workflowName?: StringNullableWithAggregatesFilter<"AIWorkflowLiveEvent"> | string | null
+    runId?: StringNullableWithAggregatesFilter<"AIWorkflowLiveEvent"> | string | null
+    eventType?: StringWithAggregatesFilter<"AIWorkflowLiveEvent"> | string
+    timestamp?: DateTimeWithAggregatesFilter<"AIWorkflowLiveEvent"> | Date | string
+    payload?: JsonWithAggregatesFilter<"AIWorkflowLiveEvent">
+    durationMs?: IntNullableWithAggregatesFilter<"AIWorkflowLiveEvent"> | number | null
+    status?: StringNullableWithAggregatesFilter<"AIWorkflowLiveEvent"> | string | null
+  }
+
+  export type AIDatasetWhereInput = {
+    AND?: AIDatasetWhereInput | AIDatasetWhereInput[]
+    OR?: AIDatasetWhereInput[]
+    NOT?: AIDatasetWhereInput | AIDatasetWhereInput[]
+    id?: StringFilter<"AIDataset"> | string
+    tenantId?: StringFilter<"AIDataset"> | string
+    name?: StringFilter<"AIDataset"> | string
+    description?: StringFilter<"AIDataset"> | string
+    type?: EnumAIDatasetTypeFilter<"AIDataset"> | $Enums.AIDatasetType
+    tags?: StringNullableListFilter<"AIDataset">
+    createdByUserId?: StringFilter<"AIDataset"> | string
+    createdAt?: DateTimeFilter<"AIDataset"> | Date | string
+    updatedAt?: DateTimeFilter<"AIDataset"> | Date | string
+    versions?: AIDatasetVersionListRelationFilter
+    records?: AIDatasetRecordListRelationFilter
+    auditLogs?: AIDatasetAuditLogListRelationFilter
+  }
+
+  export type AIDatasetOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    tags?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    versions?: AIDatasetVersionOrderByRelationAggregateInput
+    records?: AIDatasetRecordOrderByRelationAggregateInput
+    auditLogs?: AIDatasetAuditLogOrderByRelationAggregateInput
+  }
+
+  export type AIDatasetWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AIDatasetWhereInput | AIDatasetWhereInput[]
+    OR?: AIDatasetWhereInput[]
+    NOT?: AIDatasetWhereInput | AIDatasetWhereInput[]
+    tenantId?: StringFilter<"AIDataset"> | string
+    name?: StringFilter<"AIDataset"> | string
+    description?: StringFilter<"AIDataset"> | string
+    type?: EnumAIDatasetTypeFilter<"AIDataset"> | $Enums.AIDatasetType
+    tags?: StringNullableListFilter<"AIDataset">
+    createdByUserId?: StringFilter<"AIDataset"> | string
+    createdAt?: DateTimeFilter<"AIDataset"> | Date | string
+    updatedAt?: DateTimeFilter<"AIDataset"> | Date | string
+    versions?: AIDatasetVersionListRelationFilter
+    records?: AIDatasetRecordListRelationFilter
+    auditLogs?: AIDatasetAuditLogListRelationFilter
+  }, "id">
+
+  export type AIDatasetOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    tags?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AIDatasetCountOrderByAggregateInput
+    _max?: AIDatasetMaxOrderByAggregateInput
+    _min?: AIDatasetMinOrderByAggregateInput
+  }
+
+  export type AIDatasetScalarWhereWithAggregatesInput = {
+    AND?: AIDatasetScalarWhereWithAggregatesInput | AIDatasetScalarWhereWithAggregatesInput[]
+    OR?: AIDatasetScalarWhereWithAggregatesInput[]
+    NOT?: AIDatasetScalarWhereWithAggregatesInput | AIDatasetScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIDataset"> | string
+    tenantId?: StringWithAggregatesFilter<"AIDataset"> | string
+    name?: StringWithAggregatesFilter<"AIDataset"> | string
+    description?: StringWithAggregatesFilter<"AIDataset"> | string
+    type?: EnumAIDatasetTypeWithAggregatesFilter<"AIDataset"> | $Enums.AIDatasetType
+    tags?: StringNullableListFilter<"AIDataset">
+    createdByUserId?: StringWithAggregatesFilter<"AIDataset"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AIDataset"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AIDataset"> | Date | string
+  }
+
+  export type AIDatasetVersionWhereInput = {
+    AND?: AIDatasetVersionWhereInput | AIDatasetVersionWhereInput[]
+    OR?: AIDatasetVersionWhereInput[]
+    NOT?: AIDatasetVersionWhereInput | AIDatasetVersionWhereInput[]
+    id?: StringFilter<"AIDatasetVersion"> | string
+    tenantId?: StringFilter<"AIDatasetVersion"> | string
+    datasetId?: StringFilter<"AIDatasetVersion"> | string
+    versionNumber?: IntFilter<"AIDatasetVersion"> | number
+    recordCount?: IntFilter<"AIDatasetVersion"> | number
+    embeddingModel?: StringNullableFilter<"AIDatasetVersion"> | string | null
+    createdByUserId?: StringFilter<"AIDatasetVersion"> | string
+    createdAt?: DateTimeFilter<"AIDatasetVersion"> | Date | string
+    dataset?: XOR<AIDatasetScalarRelationFilter, AIDatasetWhereInput>
+    records?: AIDatasetRecordListRelationFilter
+  }
+
+  export type AIDatasetVersionOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+    embeddingModel?: SortOrderInput | SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    dataset?: AIDatasetOrderByWithRelationInput
+    records?: AIDatasetRecordOrderByRelationAggregateInput
+  }
+
+  export type AIDatasetVersionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    datasetId_versionNumber?: AIDatasetVersionDatasetIdVersionNumberCompoundUniqueInput
+    AND?: AIDatasetVersionWhereInput | AIDatasetVersionWhereInput[]
+    OR?: AIDatasetVersionWhereInput[]
+    NOT?: AIDatasetVersionWhereInput | AIDatasetVersionWhereInput[]
+    tenantId?: StringFilter<"AIDatasetVersion"> | string
+    datasetId?: StringFilter<"AIDatasetVersion"> | string
+    versionNumber?: IntFilter<"AIDatasetVersion"> | number
+    recordCount?: IntFilter<"AIDatasetVersion"> | number
+    embeddingModel?: StringNullableFilter<"AIDatasetVersion"> | string | null
+    createdByUserId?: StringFilter<"AIDatasetVersion"> | string
+    createdAt?: DateTimeFilter<"AIDatasetVersion"> | Date | string
+    dataset?: XOR<AIDatasetScalarRelationFilter, AIDatasetWhereInput>
+    records?: AIDatasetRecordListRelationFilter
+  }, "id" | "datasetId_versionNumber">
+
+  export type AIDatasetVersionOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+    embeddingModel?: SortOrderInput | SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    _count?: AIDatasetVersionCountOrderByAggregateInput
+    _avg?: AIDatasetVersionAvgOrderByAggregateInput
+    _max?: AIDatasetVersionMaxOrderByAggregateInput
+    _min?: AIDatasetVersionMinOrderByAggregateInput
+    _sum?: AIDatasetVersionSumOrderByAggregateInput
+  }
+
+  export type AIDatasetVersionScalarWhereWithAggregatesInput = {
+    AND?: AIDatasetVersionScalarWhereWithAggregatesInput | AIDatasetVersionScalarWhereWithAggregatesInput[]
+    OR?: AIDatasetVersionScalarWhereWithAggregatesInput[]
+    NOT?: AIDatasetVersionScalarWhereWithAggregatesInput | AIDatasetVersionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIDatasetVersion"> | string
+    tenantId?: StringWithAggregatesFilter<"AIDatasetVersion"> | string
+    datasetId?: StringWithAggregatesFilter<"AIDatasetVersion"> | string
+    versionNumber?: IntWithAggregatesFilter<"AIDatasetVersion"> | number
+    recordCount?: IntWithAggregatesFilter<"AIDatasetVersion"> | number
+    embeddingModel?: StringNullableWithAggregatesFilter<"AIDatasetVersion"> | string | null
+    createdByUserId?: StringWithAggregatesFilter<"AIDatasetVersion"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AIDatasetVersion"> | Date | string
+  }
+
+  export type AIDatasetRecordWhereInput = {
+    AND?: AIDatasetRecordWhereInput | AIDatasetRecordWhereInput[]
+    OR?: AIDatasetRecordWhereInput[]
+    NOT?: AIDatasetRecordWhereInput | AIDatasetRecordWhereInput[]
+    id?: StringFilter<"AIDatasetRecord"> | string
+    tenantId?: StringFilter<"AIDatasetRecord"> | string
+    datasetId?: StringFilter<"AIDatasetRecord"> | string
+    versionId?: StringFilter<"AIDatasetRecord"> | string
+    input?: JsonFilter<"AIDatasetRecord">
+    output?: JsonNullableFilter<"AIDatasetRecord">
+    metadata?: JsonFilter<"AIDatasetRecord">
+    embedding?: JsonNullableFilter<"AIDatasetRecord">
+    createdAt?: DateTimeFilter<"AIDatasetRecord"> | Date | string
+    dataset?: XOR<AIDatasetScalarRelationFilter, AIDatasetWhereInput>
+    version?: XOR<AIDatasetVersionScalarRelationFilter, AIDatasetVersionWhereInput>
+    labels?: AIDatasetLabelListRelationFilter
+  }
+
+  export type AIDatasetRecordOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionId?: SortOrder
+    input?: SortOrder
+    output?: SortOrderInput | SortOrder
+    metadata?: SortOrder
+    embedding?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    dataset?: AIDatasetOrderByWithRelationInput
+    version?: AIDatasetVersionOrderByWithRelationInput
+    labels?: AIDatasetLabelOrderByRelationAggregateInput
+  }
+
+  export type AIDatasetRecordWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AIDatasetRecordWhereInput | AIDatasetRecordWhereInput[]
+    OR?: AIDatasetRecordWhereInput[]
+    NOT?: AIDatasetRecordWhereInput | AIDatasetRecordWhereInput[]
+    tenantId?: StringFilter<"AIDatasetRecord"> | string
+    datasetId?: StringFilter<"AIDatasetRecord"> | string
+    versionId?: StringFilter<"AIDatasetRecord"> | string
+    input?: JsonFilter<"AIDatasetRecord">
+    output?: JsonNullableFilter<"AIDatasetRecord">
+    metadata?: JsonFilter<"AIDatasetRecord">
+    embedding?: JsonNullableFilter<"AIDatasetRecord">
+    createdAt?: DateTimeFilter<"AIDatasetRecord"> | Date | string
+    dataset?: XOR<AIDatasetScalarRelationFilter, AIDatasetWhereInput>
+    version?: XOR<AIDatasetVersionScalarRelationFilter, AIDatasetVersionWhereInput>
+    labels?: AIDatasetLabelListRelationFilter
+  }, "id">
+
+  export type AIDatasetRecordOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionId?: SortOrder
+    input?: SortOrder
+    output?: SortOrderInput | SortOrder
+    metadata?: SortOrder
+    embedding?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AIDatasetRecordCountOrderByAggregateInput
+    _max?: AIDatasetRecordMaxOrderByAggregateInput
+    _min?: AIDatasetRecordMinOrderByAggregateInput
+  }
+
+  export type AIDatasetRecordScalarWhereWithAggregatesInput = {
+    AND?: AIDatasetRecordScalarWhereWithAggregatesInput | AIDatasetRecordScalarWhereWithAggregatesInput[]
+    OR?: AIDatasetRecordScalarWhereWithAggregatesInput[]
+    NOT?: AIDatasetRecordScalarWhereWithAggregatesInput | AIDatasetRecordScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIDatasetRecord"> | string
+    tenantId?: StringWithAggregatesFilter<"AIDatasetRecord"> | string
+    datasetId?: StringWithAggregatesFilter<"AIDatasetRecord"> | string
+    versionId?: StringWithAggregatesFilter<"AIDatasetRecord"> | string
+    input?: JsonWithAggregatesFilter<"AIDatasetRecord">
+    output?: JsonNullableWithAggregatesFilter<"AIDatasetRecord">
+    metadata?: JsonWithAggregatesFilter<"AIDatasetRecord">
+    embedding?: JsonNullableWithAggregatesFilter<"AIDatasetRecord">
+    createdAt?: DateTimeWithAggregatesFilter<"AIDatasetRecord"> | Date | string
+  }
+
+  export type AIDatasetLabelWhereInput = {
+    AND?: AIDatasetLabelWhereInput | AIDatasetLabelWhereInput[]
+    OR?: AIDatasetLabelWhereInput[]
+    NOT?: AIDatasetLabelWhereInput | AIDatasetLabelWhereInput[]
+    id?: StringFilter<"AIDatasetLabel"> | string
+    tenantId?: StringFilter<"AIDatasetLabel"> | string
+    recordId?: StringFilter<"AIDatasetLabel"> | string
+    labelType?: EnumAIDatasetLabelTypeFilter<"AIDatasetLabel"> | $Enums.AIDatasetLabelType
+    labelValue?: JsonFilter<"AIDatasetLabel">
+    createdByUserId?: StringFilter<"AIDatasetLabel"> | string
+    createdAt?: DateTimeFilter<"AIDatasetLabel"> | Date | string
+    record?: XOR<AIDatasetRecordScalarRelationFilter, AIDatasetRecordWhereInput>
+  }
+
+  export type AIDatasetLabelOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    recordId?: SortOrder
+    labelType?: SortOrder
+    labelValue?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    record?: AIDatasetRecordOrderByWithRelationInput
+  }
+
+  export type AIDatasetLabelWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AIDatasetLabelWhereInput | AIDatasetLabelWhereInput[]
+    OR?: AIDatasetLabelWhereInput[]
+    NOT?: AIDatasetLabelWhereInput | AIDatasetLabelWhereInput[]
+    tenantId?: StringFilter<"AIDatasetLabel"> | string
+    recordId?: StringFilter<"AIDatasetLabel"> | string
+    labelType?: EnumAIDatasetLabelTypeFilter<"AIDatasetLabel"> | $Enums.AIDatasetLabelType
+    labelValue?: JsonFilter<"AIDatasetLabel">
+    createdByUserId?: StringFilter<"AIDatasetLabel"> | string
+    createdAt?: DateTimeFilter<"AIDatasetLabel"> | Date | string
+    record?: XOR<AIDatasetRecordScalarRelationFilter, AIDatasetRecordWhereInput>
+  }, "id">
+
+  export type AIDatasetLabelOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    recordId?: SortOrder
+    labelType?: SortOrder
+    labelValue?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    _count?: AIDatasetLabelCountOrderByAggregateInput
+    _max?: AIDatasetLabelMaxOrderByAggregateInput
+    _min?: AIDatasetLabelMinOrderByAggregateInput
+  }
+
+  export type AIDatasetLabelScalarWhereWithAggregatesInput = {
+    AND?: AIDatasetLabelScalarWhereWithAggregatesInput | AIDatasetLabelScalarWhereWithAggregatesInput[]
+    OR?: AIDatasetLabelScalarWhereWithAggregatesInput[]
+    NOT?: AIDatasetLabelScalarWhereWithAggregatesInput | AIDatasetLabelScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIDatasetLabel"> | string
+    tenantId?: StringWithAggregatesFilter<"AIDatasetLabel"> | string
+    recordId?: StringWithAggregatesFilter<"AIDatasetLabel"> | string
+    labelType?: EnumAIDatasetLabelTypeWithAggregatesFilter<"AIDatasetLabel"> | $Enums.AIDatasetLabelType
+    labelValue?: JsonWithAggregatesFilter<"AIDatasetLabel">
+    createdByUserId?: StringWithAggregatesFilter<"AIDatasetLabel"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AIDatasetLabel"> | Date | string
+  }
+
+  export type AIDatasetAuditLogWhereInput = {
+    AND?: AIDatasetAuditLogWhereInput | AIDatasetAuditLogWhereInput[]
+    OR?: AIDatasetAuditLogWhereInput[]
+    NOT?: AIDatasetAuditLogWhereInput | AIDatasetAuditLogWhereInput[]
+    id?: StringFilter<"AIDatasetAuditLog"> | string
+    tenantId?: StringFilter<"AIDatasetAuditLog"> | string
+    datasetId?: StringFilter<"AIDatasetAuditLog"> | string
+    action?: StringFilter<"AIDatasetAuditLog"> | string
+    userId?: StringFilter<"AIDatasetAuditLog"> | string
+    metadata?: JsonFilter<"AIDatasetAuditLog">
+    createdAt?: DateTimeFilter<"AIDatasetAuditLog"> | Date | string
+    dataset?: XOR<AIDatasetScalarRelationFilter, AIDatasetWhereInput>
+  }
+
+  export type AIDatasetAuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    action?: SortOrder
+    userId?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    dataset?: AIDatasetOrderByWithRelationInput
+  }
+
+  export type AIDatasetAuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AIDatasetAuditLogWhereInput | AIDatasetAuditLogWhereInput[]
+    OR?: AIDatasetAuditLogWhereInput[]
+    NOT?: AIDatasetAuditLogWhereInput | AIDatasetAuditLogWhereInput[]
+    tenantId?: StringFilter<"AIDatasetAuditLog"> | string
+    datasetId?: StringFilter<"AIDatasetAuditLog"> | string
+    action?: StringFilter<"AIDatasetAuditLog"> | string
+    userId?: StringFilter<"AIDatasetAuditLog"> | string
+    metadata?: JsonFilter<"AIDatasetAuditLog">
+    createdAt?: DateTimeFilter<"AIDatasetAuditLog"> | Date | string
+    dataset?: XOR<AIDatasetScalarRelationFilter, AIDatasetWhereInput>
+  }, "id">
+
+  export type AIDatasetAuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    action?: SortOrder
+    userId?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    _count?: AIDatasetAuditLogCountOrderByAggregateInput
+    _max?: AIDatasetAuditLogMaxOrderByAggregateInput
+    _min?: AIDatasetAuditLogMinOrderByAggregateInput
+  }
+
+  export type AIDatasetAuditLogScalarWhereWithAggregatesInput = {
+    AND?: AIDatasetAuditLogScalarWhereWithAggregatesInput | AIDatasetAuditLogScalarWhereWithAggregatesInput[]
+    OR?: AIDatasetAuditLogScalarWhereWithAggregatesInput[]
+    NOT?: AIDatasetAuditLogScalarWhereWithAggregatesInput | AIDatasetAuditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIDatasetAuditLog"> | string
+    tenantId?: StringWithAggregatesFilter<"AIDatasetAuditLog"> | string
+    datasetId?: StringWithAggregatesFilter<"AIDatasetAuditLog"> | string
+    action?: StringWithAggregatesFilter<"AIDatasetAuditLog"> | string
+    userId?: StringWithAggregatesFilter<"AIDatasetAuditLog"> | string
+    metadata?: JsonWithAggregatesFilter<"AIDatasetAuditLog">
+    createdAt?: DateTimeWithAggregatesFilter<"AIDatasetAuditLog"> | Date | string
   }
 
   export type AIStreamSessionWhereInput = {
@@ -7237,6 +17726,7 @@ export namespace Prisma {
     tokensInput?: number
     tokensOutput?: number
     latencyMs?: number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -7250,6 +17740,7 @@ export namespace Prisma {
     tokensInput?: number
     tokensOutput?: number
     latencyMs?: number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -7263,6 +17754,7 @@ export namespace Prisma {
     tokensInput?: IntFieldUpdateOperationsInput | number
     tokensOutput?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7276,6 +17768,7 @@ export namespace Prisma {
     tokensInput?: IntFieldUpdateOperationsInput | number
     tokensOutput?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7289,6 +17782,7 @@ export namespace Prisma {
     tokensInput?: number
     tokensOutput?: number
     latencyMs?: number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -7302,6 +17796,7 @@ export namespace Prisma {
     tokensInput?: IntFieldUpdateOperationsInput | number
     tokensOutput?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7315,6 +17810,7 @@ export namespace Prisma {
     tokensInput?: IntFieldUpdateOperationsInput | number
     tokensOutput?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7395,9 +17891,108 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AIWorkflowCreateInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    isActive?: boolean
+    dryRun?: boolean
+    trigger: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIWorkflowUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    isActive?: boolean
+    dryRun?: boolean
+    trigger: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIWorkflowUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    dryRun?: BoolFieldUpdateOperationsInput | boolean
+    trigger?: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    dryRun?: BoolFieldUpdateOperationsInput | boolean
+    trigger?: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowCreateManyInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    isActive?: boolean
+    dryRun?: boolean
+    trigger: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIWorkflowUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    dryRun?: BoolFieldUpdateOperationsInput | boolean
+    trigger?: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    dryRun?: BoolFieldUpdateOperationsInput | boolean
+    trigger?: JsonNullValueInput | InputJsonValue
+    conditions?: JsonNullValueInput | InputJsonValue
+    actions?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AIWorkflowRunCreateInput = {
     id?: string
     tenantId: string
+    workflowId?: string | null
     trigger: string
     status: string
     steps: JsonNullValueInput | InputJsonValue
@@ -7409,6 +18004,7 @@ export namespace Prisma {
   export type AIWorkflowRunUncheckedCreateInput = {
     id?: string
     tenantId: string
+    workflowId?: string | null
     trigger: string
     status: string
     steps: JsonNullValueInput | InputJsonValue
@@ -7420,6 +18016,7 @@ export namespace Prisma {
   export type AIWorkflowRunUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
     trigger?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     steps?: JsonNullValueInput | InputJsonValue
@@ -7431,6 +18028,7 @@ export namespace Prisma {
   export type AIWorkflowRunUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
     trigger?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     steps?: JsonNullValueInput | InputJsonValue
@@ -7442,6 +18040,7 @@ export namespace Prisma {
   export type AIWorkflowRunCreateManyInput = {
     id?: string
     tenantId: string
+    workflowId?: string | null
     trigger: string
     status: string
     steps: JsonNullValueInput | InputJsonValue
@@ -7453,6 +18052,7 @@ export namespace Prisma {
   export type AIWorkflowRunUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
     trigger?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     steps?: JsonNullValueInput | InputJsonValue
@@ -7464,12 +18064,581 @@ export namespace Prisma {
   export type AIWorkflowRunUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
     trigger?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     steps?: JsonNullValueInput | InputJsonValue
     result?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowVersionCreateInput = {
+    id?: string
+    tenantId: string
+    workflowId: string
+    versionNumber: number
+    label?: string | null
+    definition: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIWorkflowVersionUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    workflowId: string
+    versionNumber: number
+    label?: string | null
+    definition: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIWorkflowVersionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    definition?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowVersionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    definition?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowVersionCreateManyInput = {
+    id?: string
+    tenantId: string
+    workflowId: string
+    versionNumber: number
+    label?: string | null
+    definition: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIWorkflowVersionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    definition?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowVersionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    definition?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIWorkflowLiveEventCreateInput = {
+    id?: string
+    tenantId: string
+    workflowId?: string | null
+    workflowName?: string | null
+    runId?: string | null
+    eventType: string
+    timestamp?: Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: number | null
+    status?: string | null
+  }
+
+  export type AIWorkflowLiveEventUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    workflowId?: string | null
+    workflowName?: string | null
+    runId?: string | null
+    eventType: string
+    timestamp?: Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: number | null
+    status?: string | null
+  }
+
+  export type AIWorkflowLiveEventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
+    workflowName?: NullableStringFieldUpdateOperationsInput | string | null
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AIWorkflowLiveEventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
+    workflowName?: NullableStringFieldUpdateOperationsInput | string | null
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AIWorkflowLiveEventCreateManyInput = {
+    id?: string
+    tenantId: string
+    workflowId?: string | null
+    workflowName?: string | null
+    runId?: string | null
+    eventType: string
+    timestamp?: Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: number | null
+    status?: string | null
+  }
+
+  export type AIWorkflowLiveEventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
+    workflowName?: NullableStringFieldUpdateOperationsInput | string | null
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AIWorkflowLiveEventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    workflowId?: NullableStringFieldUpdateOperationsInput | string | null
+    workflowName?: NullableStringFieldUpdateOperationsInput | string | null
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    payload?: JsonNullValueInput | InputJsonValue
+    durationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AIDatasetCreateInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: AIDatasetVersionCreateNestedManyWithoutDatasetInput
+    records?: AIDatasetRecordCreateNestedManyWithoutDatasetInput
+    auditLogs?: AIDatasetAuditLogCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: AIDatasetVersionUncheckedCreateNestedManyWithoutDatasetInput
+    records?: AIDatasetRecordUncheckedCreateNestedManyWithoutDatasetInput
+    auditLogs?: AIDatasetAuditLogUncheckedCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: AIDatasetVersionUpdateManyWithoutDatasetNestedInput
+    records?: AIDatasetRecordUpdateManyWithoutDatasetNestedInput
+    auditLogs?: AIDatasetAuditLogUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: AIDatasetVersionUncheckedUpdateManyWithoutDatasetNestedInput
+    records?: AIDatasetRecordUncheckedUpdateManyWithoutDatasetNestedInput
+    auditLogs?: AIDatasetAuditLogUncheckedUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetCreateManyInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIDatasetUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetVersionCreateInput = {
+    id?: string
+    tenantId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+    dataset: AIDatasetCreateNestedOneWithoutVersionsInput
+    records?: AIDatasetRecordCreateNestedManyWithoutVersionInput
+  }
+
+  export type AIDatasetVersionUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+    records?: AIDatasetRecordUncheckedCreateNestedManyWithoutVersionInput
+  }
+
+  export type AIDatasetVersionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataset?: AIDatasetUpdateOneRequiredWithoutVersionsNestedInput
+    records?: AIDatasetRecordUpdateManyWithoutVersionNestedInput
+  }
+
+  export type AIDatasetVersionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: AIDatasetRecordUncheckedUpdateManyWithoutVersionNestedInput
+  }
+
+  export type AIDatasetVersionCreateManyInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetVersionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetVersionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetRecordCreateInput = {
+    id?: string
+    tenantId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    dataset: AIDatasetCreateNestedOneWithoutRecordsInput
+    version: AIDatasetVersionCreateNestedOneWithoutRecordsInput
+    labels?: AIDatasetLabelCreateNestedManyWithoutRecordInput
+  }
+
+  export type AIDatasetRecordUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    versionId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    labels?: AIDatasetLabelUncheckedCreateNestedManyWithoutRecordInput
+  }
+
+  export type AIDatasetRecordUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataset?: AIDatasetUpdateOneRequiredWithoutRecordsNestedInput
+    version?: AIDatasetVersionUpdateOneRequiredWithoutRecordsNestedInput
+    labels?: AIDatasetLabelUpdateManyWithoutRecordNestedInput
+  }
+
+  export type AIDatasetRecordUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    versionId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    labels?: AIDatasetLabelUncheckedUpdateManyWithoutRecordNestedInput
+  }
+
+  export type AIDatasetRecordCreateManyInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    versionId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetRecordUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetRecordUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    versionId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelCreateInput = {
+    id?: string
+    tenantId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    record: AIDatasetRecordCreateNestedOneWithoutLabelsInput
+  }
+
+  export type AIDatasetLabelUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    recordId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetLabelUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    record?: AIDatasetRecordUpdateOneRequiredWithoutLabelsNestedInput
+  }
+
+  export type AIDatasetLabelUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    recordId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelCreateManyInput = {
+    id?: string
+    tenantId: string
+    recordId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetLabelUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    recordId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetAuditLogCreateInput = {
+    id?: string
+    tenantId: string
+    action: string
+    userId: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    dataset: AIDatasetCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type AIDatasetAuditLogUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    action: string
+    userId: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetAuditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataset?: AIDatasetUpdateOneRequiredWithoutAuditLogsNestedInput
+  }
+
+  export type AIDatasetAuditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetAuditLogCreateManyInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    action: string
+    userId: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetAuditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetAuditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AIStreamSessionCreateInput = {
@@ -7755,6 +18924,29 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type AIRequestLogCountOrderByAggregateInput = {
     id?: SortOrder
@@ -7766,6 +18958,7 @@ export namespace Prisma {
     tokensInput?: SortOrder
     tokensOutput?: SortOrder
     latencyMs?: SortOrder
+    metadata?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -7806,14 +18999,14 @@ export namespace Prisma {
     tokensOutput?: SortOrder
     latencyMs?: SortOrder
   }
-  export type JsonFilter<$PrismaModel = never> =
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
-        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonFilterBase<$PrismaModel>>
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
       >
-    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonFilterBase<$PrismaModel = never> = {
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
     equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
     path?: string[]
     mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
@@ -7828,6 +19021,9 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type AIMemoryTenantIdMemoryKeyCompoundUniqueInput = {
@@ -7865,31 +19061,41 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
+  export type AIWorkflowCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    dryRun?: SortOrder
+    trigger?: SortOrder
+    conditions?: SortOrder
+    actions?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIWorkflowMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    dryRun?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIWorkflowMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    dryRun?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -7918,6 +19124,7 @@ export namespace Prisma {
   export type AIWorkflowRunCountOrderByAggregateInput = {
     id?: SortOrder
     tenantId?: SortOrder
+    workflowId?: SortOrder
     trigger?: SortOrder
     status?: SortOrder
     steps?: SortOrder
@@ -7929,6 +19136,7 @@ export namespace Prisma {
   export type AIWorkflowRunMaxOrderByAggregateInput = {
     id?: SortOrder
     tenantId?: SortOrder
+    workflowId?: SortOrder
     trigger?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
@@ -7938,6 +19146,7 @@ export namespace Prisma {
   export type AIWorkflowRunMinOrderByAggregateInput = {
     id?: SortOrder
     tenantId?: SortOrder
+    workflowId?: SortOrder
     trigger?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
@@ -7968,6 +19177,385 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type AIWorkflowVersionWorkflowIdVersionNumberCompoundUniqueInput = {
+    workflowId: string
+    versionNumber: number
+  }
+
+  export type AIWorkflowVersionCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    versionNumber?: SortOrder
+    label?: SortOrder
+    definition?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIWorkflowVersionAvgOrderByAggregateInput = {
+    versionNumber?: SortOrder
+  }
+
+  export type AIWorkflowVersionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    versionNumber?: SortOrder
+    label?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIWorkflowVersionMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    versionNumber?: SortOrder
+    label?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIWorkflowVersionSumOrderByAggregateInput = {
+    versionNumber?: SortOrder
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type AIWorkflowLiveEventCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    workflowName?: SortOrder
+    runId?: SortOrder
+    eventType?: SortOrder
+    timestamp?: SortOrder
+    payload?: SortOrder
+    durationMs?: SortOrder
+    status?: SortOrder
+  }
+
+  export type AIWorkflowLiveEventAvgOrderByAggregateInput = {
+    durationMs?: SortOrder
+  }
+
+  export type AIWorkflowLiveEventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    workflowName?: SortOrder
+    runId?: SortOrder
+    eventType?: SortOrder
+    timestamp?: SortOrder
+    durationMs?: SortOrder
+    status?: SortOrder
+  }
+
+  export type AIWorkflowLiveEventMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    workflowId?: SortOrder
+    workflowName?: SortOrder
+    runId?: SortOrder
+    eventType?: SortOrder
+    timestamp?: SortOrder
+    durationMs?: SortOrder
+    status?: SortOrder
+  }
+
+  export type AIWorkflowLiveEventSumOrderByAggregateInput = {
+    durationMs?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumAIDatasetTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetType | EnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetTypeFilter<$PrismaModel> | $Enums.AIDatasetType
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type AIDatasetVersionListRelationFilter = {
+    every?: AIDatasetVersionWhereInput
+    some?: AIDatasetVersionWhereInput
+    none?: AIDatasetVersionWhereInput
+  }
+
+  export type AIDatasetRecordListRelationFilter = {
+    every?: AIDatasetRecordWhereInput
+    some?: AIDatasetRecordWhereInput
+    none?: AIDatasetRecordWhereInput
+  }
+
+  export type AIDatasetAuditLogListRelationFilter = {
+    every?: AIDatasetAuditLogWhereInput
+    some?: AIDatasetAuditLogWhereInput
+    none?: AIDatasetAuditLogWhereInput
+  }
+
+  export type AIDatasetVersionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AIDatasetRecordOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AIDatasetAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AIDatasetCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    tags?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIDatasetMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIDatasetMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumAIDatasetTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetType | EnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetTypeWithAggregatesFilter<$PrismaModel> | $Enums.AIDatasetType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAIDatasetTypeFilter<$PrismaModel>
+    _max?: NestedEnumAIDatasetTypeFilter<$PrismaModel>
+  }
+
+  export type AIDatasetScalarRelationFilter = {
+    is?: AIDatasetWhereInput
+    isNot?: AIDatasetWhereInput
+  }
+
+  export type AIDatasetVersionDatasetIdVersionNumberCompoundUniqueInput = {
+    datasetId: string
+    versionNumber: number
+  }
+
+  export type AIDatasetVersionCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+    embeddingModel?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetVersionAvgOrderByAggregateInput = {
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+  }
+
+  export type AIDatasetVersionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+    embeddingModel?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetVersionMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+    embeddingModel?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetVersionSumOrderByAggregateInput = {
+    versionNumber?: SortOrder
+    recordCount?: SortOrder
+  }
+
+  export type AIDatasetVersionScalarRelationFilter = {
+    is?: AIDatasetVersionWhereInput
+    isNot?: AIDatasetVersionWhereInput
+  }
+
+  export type AIDatasetLabelListRelationFilter = {
+    every?: AIDatasetLabelWhereInput
+    some?: AIDatasetLabelWhereInput
+    none?: AIDatasetLabelWhereInput
+  }
+
+  export type AIDatasetLabelOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AIDatasetRecordCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionId?: SortOrder
+    input?: SortOrder
+    output?: SortOrder
+    metadata?: SortOrder
+    embedding?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetRecordMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetRecordMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    versionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumAIDatasetLabelTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetLabelType | EnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetLabelTypeFilter<$PrismaModel> | $Enums.AIDatasetLabelType
+  }
+
+  export type AIDatasetRecordScalarRelationFilter = {
+    is?: AIDatasetRecordWhereInput
+    isNot?: AIDatasetRecordWhereInput
+  }
+
+  export type AIDatasetLabelCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    recordId?: SortOrder
+    labelType?: SortOrder
+    labelValue?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetLabelMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    recordId?: SortOrder
+    labelType?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetLabelMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    recordId?: SortOrder
+    labelType?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumAIDatasetLabelTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetLabelType | EnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetLabelTypeWithAggregatesFilter<$PrismaModel> | $Enums.AIDatasetLabelType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAIDatasetLabelTypeFilter<$PrismaModel>
+    _max?: NestedEnumAIDatasetLabelTypeFilter<$PrismaModel>
+  }
+
+  export type AIDatasetAuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    action?: SortOrder
+    userId?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetAuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    action?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AIDatasetAuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    datasetId?: SortOrder
+    action?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type AIStreamSessionCountOrderByAggregateInput = {
@@ -8028,6 +19616,311 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type AIDatasetCreatetagsInput = {
+    set: string[]
+  }
+
+  export type AIDatasetVersionCreateNestedManyWithoutDatasetInput = {
+    create?: XOR<AIDatasetVersionCreateWithoutDatasetInput, AIDatasetVersionUncheckedCreateWithoutDatasetInput> | AIDatasetVersionCreateWithoutDatasetInput[] | AIDatasetVersionUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetVersionCreateOrConnectWithoutDatasetInput | AIDatasetVersionCreateOrConnectWithoutDatasetInput[]
+    createMany?: AIDatasetVersionCreateManyDatasetInputEnvelope
+    connect?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+  }
+
+  export type AIDatasetRecordCreateNestedManyWithoutDatasetInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutDatasetInput, AIDatasetRecordUncheckedCreateWithoutDatasetInput> | AIDatasetRecordCreateWithoutDatasetInput[] | AIDatasetRecordUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutDatasetInput | AIDatasetRecordCreateOrConnectWithoutDatasetInput[]
+    createMany?: AIDatasetRecordCreateManyDatasetInputEnvelope
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+  }
+
+  export type AIDatasetAuditLogCreateNestedManyWithoutDatasetInput = {
+    create?: XOR<AIDatasetAuditLogCreateWithoutDatasetInput, AIDatasetAuditLogUncheckedCreateWithoutDatasetInput> | AIDatasetAuditLogCreateWithoutDatasetInput[] | AIDatasetAuditLogUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetAuditLogCreateOrConnectWithoutDatasetInput | AIDatasetAuditLogCreateOrConnectWithoutDatasetInput[]
+    createMany?: AIDatasetAuditLogCreateManyDatasetInputEnvelope
+    connect?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+  }
+
+  export type AIDatasetVersionUncheckedCreateNestedManyWithoutDatasetInput = {
+    create?: XOR<AIDatasetVersionCreateWithoutDatasetInput, AIDatasetVersionUncheckedCreateWithoutDatasetInput> | AIDatasetVersionCreateWithoutDatasetInput[] | AIDatasetVersionUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetVersionCreateOrConnectWithoutDatasetInput | AIDatasetVersionCreateOrConnectWithoutDatasetInput[]
+    createMany?: AIDatasetVersionCreateManyDatasetInputEnvelope
+    connect?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+  }
+
+  export type AIDatasetRecordUncheckedCreateNestedManyWithoutDatasetInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutDatasetInput, AIDatasetRecordUncheckedCreateWithoutDatasetInput> | AIDatasetRecordCreateWithoutDatasetInput[] | AIDatasetRecordUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutDatasetInput | AIDatasetRecordCreateOrConnectWithoutDatasetInput[]
+    createMany?: AIDatasetRecordCreateManyDatasetInputEnvelope
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+  }
+
+  export type AIDatasetAuditLogUncheckedCreateNestedManyWithoutDatasetInput = {
+    create?: XOR<AIDatasetAuditLogCreateWithoutDatasetInput, AIDatasetAuditLogUncheckedCreateWithoutDatasetInput> | AIDatasetAuditLogCreateWithoutDatasetInput[] | AIDatasetAuditLogUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetAuditLogCreateOrConnectWithoutDatasetInput | AIDatasetAuditLogCreateOrConnectWithoutDatasetInput[]
+    createMany?: AIDatasetAuditLogCreateManyDatasetInputEnvelope
+    connect?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+  }
+
+  export type EnumAIDatasetTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AIDatasetType
+  }
+
+  export type AIDatasetUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type AIDatasetVersionUpdateManyWithoutDatasetNestedInput = {
+    create?: XOR<AIDatasetVersionCreateWithoutDatasetInput, AIDatasetVersionUncheckedCreateWithoutDatasetInput> | AIDatasetVersionCreateWithoutDatasetInput[] | AIDatasetVersionUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetVersionCreateOrConnectWithoutDatasetInput | AIDatasetVersionCreateOrConnectWithoutDatasetInput[]
+    upsert?: AIDatasetVersionUpsertWithWhereUniqueWithoutDatasetInput | AIDatasetVersionUpsertWithWhereUniqueWithoutDatasetInput[]
+    createMany?: AIDatasetVersionCreateManyDatasetInputEnvelope
+    set?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    disconnect?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    delete?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    connect?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    update?: AIDatasetVersionUpdateWithWhereUniqueWithoutDatasetInput | AIDatasetVersionUpdateWithWhereUniqueWithoutDatasetInput[]
+    updateMany?: AIDatasetVersionUpdateManyWithWhereWithoutDatasetInput | AIDatasetVersionUpdateManyWithWhereWithoutDatasetInput[]
+    deleteMany?: AIDatasetVersionScalarWhereInput | AIDatasetVersionScalarWhereInput[]
+  }
+
+  export type AIDatasetRecordUpdateManyWithoutDatasetNestedInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutDatasetInput, AIDatasetRecordUncheckedCreateWithoutDatasetInput> | AIDatasetRecordCreateWithoutDatasetInput[] | AIDatasetRecordUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutDatasetInput | AIDatasetRecordCreateOrConnectWithoutDatasetInput[]
+    upsert?: AIDatasetRecordUpsertWithWhereUniqueWithoutDatasetInput | AIDatasetRecordUpsertWithWhereUniqueWithoutDatasetInput[]
+    createMany?: AIDatasetRecordCreateManyDatasetInputEnvelope
+    set?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    disconnect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    delete?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    update?: AIDatasetRecordUpdateWithWhereUniqueWithoutDatasetInput | AIDatasetRecordUpdateWithWhereUniqueWithoutDatasetInput[]
+    updateMany?: AIDatasetRecordUpdateManyWithWhereWithoutDatasetInput | AIDatasetRecordUpdateManyWithWhereWithoutDatasetInput[]
+    deleteMany?: AIDatasetRecordScalarWhereInput | AIDatasetRecordScalarWhereInput[]
+  }
+
+  export type AIDatasetAuditLogUpdateManyWithoutDatasetNestedInput = {
+    create?: XOR<AIDatasetAuditLogCreateWithoutDatasetInput, AIDatasetAuditLogUncheckedCreateWithoutDatasetInput> | AIDatasetAuditLogCreateWithoutDatasetInput[] | AIDatasetAuditLogUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetAuditLogCreateOrConnectWithoutDatasetInput | AIDatasetAuditLogCreateOrConnectWithoutDatasetInput[]
+    upsert?: AIDatasetAuditLogUpsertWithWhereUniqueWithoutDatasetInput | AIDatasetAuditLogUpsertWithWhereUniqueWithoutDatasetInput[]
+    createMany?: AIDatasetAuditLogCreateManyDatasetInputEnvelope
+    set?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    disconnect?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    delete?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    connect?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    update?: AIDatasetAuditLogUpdateWithWhereUniqueWithoutDatasetInput | AIDatasetAuditLogUpdateWithWhereUniqueWithoutDatasetInput[]
+    updateMany?: AIDatasetAuditLogUpdateManyWithWhereWithoutDatasetInput | AIDatasetAuditLogUpdateManyWithWhereWithoutDatasetInput[]
+    deleteMany?: AIDatasetAuditLogScalarWhereInput | AIDatasetAuditLogScalarWhereInput[]
+  }
+
+  export type AIDatasetVersionUncheckedUpdateManyWithoutDatasetNestedInput = {
+    create?: XOR<AIDatasetVersionCreateWithoutDatasetInput, AIDatasetVersionUncheckedCreateWithoutDatasetInput> | AIDatasetVersionCreateWithoutDatasetInput[] | AIDatasetVersionUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetVersionCreateOrConnectWithoutDatasetInput | AIDatasetVersionCreateOrConnectWithoutDatasetInput[]
+    upsert?: AIDatasetVersionUpsertWithWhereUniqueWithoutDatasetInput | AIDatasetVersionUpsertWithWhereUniqueWithoutDatasetInput[]
+    createMany?: AIDatasetVersionCreateManyDatasetInputEnvelope
+    set?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    disconnect?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    delete?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    connect?: AIDatasetVersionWhereUniqueInput | AIDatasetVersionWhereUniqueInput[]
+    update?: AIDatasetVersionUpdateWithWhereUniqueWithoutDatasetInput | AIDatasetVersionUpdateWithWhereUniqueWithoutDatasetInput[]
+    updateMany?: AIDatasetVersionUpdateManyWithWhereWithoutDatasetInput | AIDatasetVersionUpdateManyWithWhereWithoutDatasetInput[]
+    deleteMany?: AIDatasetVersionScalarWhereInput | AIDatasetVersionScalarWhereInput[]
+  }
+
+  export type AIDatasetRecordUncheckedUpdateManyWithoutDatasetNestedInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutDatasetInput, AIDatasetRecordUncheckedCreateWithoutDatasetInput> | AIDatasetRecordCreateWithoutDatasetInput[] | AIDatasetRecordUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutDatasetInput | AIDatasetRecordCreateOrConnectWithoutDatasetInput[]
+    upsert?: AIDatasetRecordUpsertWithWhereUniqueWithoutDatasetInput | AIDatasetRecordUpsertWithWhereUniqueWithoutDatasetInput[]
+    createMany?: AIDatasetRecordCreateManyDatasetInputEnvelope
+    set?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    disconnect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    delete?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    update?: AIDatasetRecordUpdateWithWhereUniqueWithoutDatasetInput | AIDatasetRecordUpdateWithWhereUniqueWithoutDatasetInput[]
+    updateMany?: AIDatasetRecordUpdateManyWithWhereWithoutDatasetInput | AIDatasetRecordUpdateManyWithWhereWithoutDatasetInput[]
+    deleteMany?: AIDatasetRecordScalarWhereInput | AIDatasetRecordScalarWhereInput[]
+  }
+
+  export type AIDatasetAuditLogUncheckedUpdateManyWithoutDatasetNestedInput = {
+    create?: XOR<AIDatasetAuditLogCreateWithoutDatasetInput, AIDatasetAuditLogUncheckedCreateWithoutDatasetInput> | AIDatasetAuditLogCreateWithoutDatasetInput[] | AIDatasetAuditLogUncheckedCreateWithoutDatasetInput[]
+    connectOrCreate?: AIDatasetAuditLogCreateOrConnectWithoutDatasetInput | AIDatasetAuditLogCreateOrConnectWithoutDatasetInput[]
+    upsert?: AIDatasetAuditLogUpsertWithWhereUniqueWithoutDatasetInput | AIDatasetAuditLogUpsertWithWhereUniqueWithoutDatasetInput[]
+    createMany?: AIDatasetAuditLogCreateManyDatasetInputEnvelope
+    set?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    disconnect?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    delete?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    connect?: AIDatasetAuditLogWhereUniqueInput | AIDatasetAuditLogWhereUniqueInput[]
+    update?: AIDatasetAuditLogUpdateWithWhereUniqueWithoutDatasetInput | AIDatasetAuditLogUpdateWithWhereUniqueWithoutDatasetInput[]
+    updateMany?: AIDatasetAuditLogUpdateManyWithWhereWithoutDatasetInput | AIDatasetAuditLogUpdateManyWithWhereWithoutDatasetInput[]
+    deleteMany?: AIDatasetAuditLogScalarWhereInput | AIDatasetAuditLogScalarWhereInput[]
+  }
+
+  export type AIDatasetCreateNestedOneWithoutVersionsInput = {
+    create?: XOR<AIDatasetCreateWithoutVersionsInput, AIDatasetUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: AIDatasetCreateOrConnectWithoutVersionsInput
+    connect?: AIDatasetWhereUniqueInput
+  }
+
+  export type AIDatasetRecordCreateNestedManyWithoutVersionInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutVersionInput, AIDatasetRecordUncheckedCreateWithoutVersionInput> | AIDatasetRecordCreateWithoutVersionInput[] | AIDatasetRecordUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutVersionInput | AIDatasetRecordCreateOrConnectWithoutVersionInput[]
+    createMany?: AIDatasetRecordCreateManyVersionInputEnvelope
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+  }
+
+  export type AIDatasetRecordUncheckedCreateNestedManyWithoutVersionInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutVersionInput, AIDatasetRecordUncheckedCreateWithoutVersionInput> | AIDatasetRecordCreateWithoutVersionInput[] | AIDatasetRecordUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutVersionInput | AIDatasetRecordCreateOrConnectWithoutVersionInput[]
+    createMany?: AIDatasetRecordCreateManyVersionInputEnvelope
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+  }
+
+  export type AIDatasetUpdateOneRequiredWithoutVersionsNestedInput = {
+    create?: XOR<AIDatasetCreateWithoutVersionsInput, AIDatasetUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: AIDatasetCreateOrConnectWithoutVersionsInput
+    upsert?: AIDatasetUpsertWithoutVersionsInput
+    connect?: AIDatasetWhereUniqueInput
+    update?: XOR<XOR<AIDatasetUpdateToOneWithWhereWithoutVersionsInput, AIDatasetUpdateWithoutVersionsInput>, AIDatasetUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type AIDatasetRecordUpdateManyWithoutVersionNestedInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutVersionInput, AIDatasetRecordUncheckedCreateWithoutVersionInput> | AIDatasetRecordCreateWithoutVersionInput[] | AIDatasetRecordUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutVersionInput | AIDatasetRecordCreateOrConnectWithoutVersionInput[]
+    upsert?: AIDatasetRecordUpsertWithWhereUniqueWithoutVersionInput | AIDatasetRecordUpsertWithWhereUniqueWithoutVersionInput[]
+    createMany?: AIDatasetRecordCreateManyVersionInputEnvelope
+    set?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    disconnect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    delete?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    update?: AIDatasetRecordUpdateWithWhereUniqueWithoutVersionInput | AIDatasetRecordUpdateWithWhereUniqueWithoutVersionInput[]
+    updateMany?: AIDatasetRecordUpdateManyWithWhereWithoutVersionInput | AIDatasetRecordUpdateManyWithWhereWithoutVersionInput[]
+    deleteMany?: AIDatasetRecordScalarWhereInput | AIDatasetRecordScalarWhereInput[]
+  }
+
+  export type AIDatasetRecordUncheckedUpdateManyWithoutVersionNestedInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutVersionInput, AIDatasetRecordUncheckedCreateWithoutVersionInput> | AIDatasetRecordCreateWithoutVersionInput[] | AIDatasetRecordUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutVersionInput | AIDatasetRecordCreateOrConnectWithoutVersionInput[]
+    upsert?: AIDatasetRecordUpsertWithWhereUniqueWithoutVersionInput | AIDatasetRecordUpsertWithWhereUniqueWithoutVersionInput[]
+    createMany?: AIDatasetRecordCreateManyVersionInputEnvelope
+    set?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    disconnect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    delete?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    connect?: AIDatasetRecordWhereUniqueInput | AIDatasetRecordWhereUniqueInput[]
+    update?: AIDatasetRecordUpdateWithWhereUniqueWithoutVersionInput | AIDatasetRecordUpdateWithWhereUniqueWithoutVersionInput[]
+    updateMany?: AIDatasetRecordUpdateManyWithWhereWithoutVersionInput | AIDatasetRecordUpdateManyWithWhereWithoutVersionInput[]
+    deleteMany?: AIDatasetRecordScalarWhereInput | AIDatasetRecordScalarWhereInput[]
+  }
+
+  export type AIDatasetCreateNestedOneWithoutRecordsInput = {
+    create?: XOR<AIDatasetCreateWithoutRecordsInput, AIDatasetUncheckedCreateWithoutRecordsInput>
+    connectOrCreate?: AIDatasetCreateOrConnectWithoutRecordsInput
+    connect?: AIDatasetWhereUniqueInput
+  }
+
+  export type AIDatasetVersionCreateNestedOneWithoutRecordsInput = {
+    create?: XOR<AIDatasetVersionCreateWithoutRecordsInput, AIDatasetVersionUncheckedCreateWithoutRecordsInput>
+    connectOrCreate?: AIDatasetVersionCreateOrConnectWithoutRecordsInput
+    connect?: AIDatasetVersionWhereUniqueInput
+  }
+
+  export type AIDatasetLabelCreateNestedManyWithoutRecordInput = {
+    create?: XOR<AIDatasetLabelCreateWithoutRecordInput, AIDatasetLabelUncheckedCreateWithoutRecordInput> | AIDatasetLabelCreateWithoutRecordInput[] | AIDatasetLabelUncheckedCreateWithoutRecordInput[]
+    connectOrCreate?: AIDatasetLabelCreateOrConnectWithoutRecordInput | AIDatasetLabelCreateOrConnectWithoutRecordInput[]
+    createMany?: AIDatasetLabelCreateManyRecordInputEnvelope
+    connect?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+  }
+
+  export type AIDatasetLabelUncheckedCreateNestedManyWithoutRecordInput = {
+    create?: XOR<AIDatasetLabelCreateWithoutRecordInput, AIDatasetLabelUncheckedCreateWithoutRecordInput> | AIDatasetLabelCreateWithoutRecordInput[] | AIDatasetLabelUncheckedCreateWithoutRecordInput[]
+    connectOrCreate?: AIDatasetLabelCreateOrConnectWithoutRecordInput | AIDatasetLabelCreateOrConnectWithoutRecordInput[]
+    createMany?: AIDatasetLabelCreateManyRecordInputEnvelope
+    connect?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+  }
+
+  export type AIDatasetUpdateOneRequiredWithoutRecordsNestedInput = {
+    create?: XOR<AIDatasetCreateWithoutRecordsInput, AIDatasetUncheckedCreateWithoutRecordsInput>
+    connectOrCreate?: AIDatasetCreateOrConnectWithoutRecordsInput
+    upsert?: AIDatasetUpsertWithoutRecordsInput
+    connect?: AIDatasetWhereUniqueInput
+    update?: XOR<XOR<AIDatasetUpdateToOneWithWhereWithoutRecordsInput, AIDatasetUpdateWithoutRecordsInput>, AIDatasetUncheckedUpdateWithoutRecordsInput>
+  }
+
+  export type AIDatasetVersionUpdateOneRequiredWithoutRecordsNestedInput = {
+    create?: XOR<AIDatasetVersionCreateWithoutRecordsInput, AIDatasetVersionUncheckedCreateWithoutRecordsInput>
+    connectOrCreate?: AIDatasetVersionCreateOrConnectWithoutRecordsInput
+    upsert?: AIDatasetVersionUpsertWithoutRecordsInput
+    connect?: AIDatasetVersionWhereUniqueInput
+    update?: XOR<XOR<AIDatasetVersionUpdateToOneWithWhereWithoutRecordsInput, AIDatasetVersionUpdateWithoutRecordsInput>, AIDatasetVersionUncheckedUpdateWithoutRecordsInput>
+  }
+
+  export type AIDatasetLabelUpdateManyWithoutRecordNestedInput = {
+    create?: XOR<AIDatasetLabelCreateWithoutRecordInput, AIDatasetLabelUncheckedCreateWithoutRecordInput> | AIDatasetLabelCreateWithoutRecordInput[] | AIDatasetLabelUncheckedCreateWithoutRecordInput[]
+    connectOrCreate?: AIDatasetLabelCreateOrConnectWithoutRecordInput | AIDatasetLabelCreateOrConnectWithoutRecordInput[]
+    upsert?: AIDatasetLabelUpsertWithWhereUniqueWithoutRecordInput | AIDatasetLabelUpsertWithWhereUniqueWithoutRecordInput[]
+    createMany?: AIDatasetLabelCreateManyRecordInputEnvelope
+    set?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    disconnect?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    delete?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    connect?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    update?: AIDatasetLabelUpdateWithWhereUniqueWithoutRecordInput | AIDatasetLabelUpdateWithWhereUniqueWithoutRecordInput[]
+    updateMany?: AIDatasetLabelUpdateManyWithWhereWithoutRecordInput | AIDatasetLabelUpdateManyWithWhereWithoutRecordInput[]
+    deleteMany?: AIDatasetLabelScalarWhereInput | AIDatasetLabelScalarWhereInput[]
+  }
+
+  export type AIDatasetLabelUncheckedUpdateManyWithoutRecordNestedInput = {
+    create?: XOR<AIDatasetLabelCreateWithoutRecordInput, AIDatasetLabelUncheckedCreateWithoutRecordInput> | AIDatasetLabelCreateWithoutRecordInput[] | AIDatasetLabelUncheckedCreateWithoutRecordInput[]
+    connectOrCreate?: AIDatasetLabelCreateOrConnectWithoutRecordInput | AIDatasetLabelCreateOrConnectWithoutRecordInput[]
+    upsert?: AIDatasetLabelUpsertWithWhereUniqueWithoutRecordInput | AIDatasetLabelUpsertWithWhereUniqueWithoutRecordInput[]
+    createMany?: AIDatasetLabelCreateManyRecordInputEnvelope
+    set?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    disconnect?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    delete?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    connect?: AIDatasetLabelWhereUniqueInput | AIDatasetLabelWhereUniqueInput[]
+    update?: AIDatasetLabelUpdateWithWhereUniqueWithoutRecordInput | AIDatasetLabelUpdateWithWhereUniqueWithoutRecordInput[]
+    updateMany?: AIDatasetLabelUpdateManyWithWhereWithoutRecordInput | AIDatasetLabelUpdateManyWithWhereWithoutRecordInput[]
+    deleteMany?: AIDatasetLabelScalarWhereInput | AIDatasetLabelScalarWhereInput[]
+  }
+
+  export type AIDatasetRecordCreateNestedOneWithoutLabelsInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutLabelsInput, AIDatasetRecordUncheckedCreateWithoutLabelsInput>
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutLabelsInput
+    connect?: AIDatasetRecordWhereUniqueInput
+  }
+
+  export type EnumAIDatasetLabelTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AIDatasetLabelType
+  }
+
+  export type AIDatasetRecordUpdateOneRequiredWithoutLabelsNestedInput = {
+    create?: XOR<AIDatasetRecordCreateWithoutLabelsInput, AIDatasetRecordUncheckedCreateWithoutLabelsInput>
+    connectOrCreate?: AIDatasetRecordCreateOrConnectWithoutLabelsInput
+    upsert?: AIDatasetRecordUpsertWithoutLabelsInput
+    connect?: AIDatasetRecordWhereUniqueInput
+    update?: XOR<XOR<AIDatasetRecordUpdateToOneWithWhereWithoutLabelsInput, AIDatasetRecordUpdateWithoutLabelsInput>, AIDatasetRecordUncheckedUpdateWithoutLabelsInput>
+  }
+
+  export type AIDatasetCreateNestedOneWithoutAuditLogsInput = {
+    create?: XOR<AIDatasetCreateWithoutAuditLogsInput, AIDatasetUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: AIDatasetCreateOrConnectWithoutAuditLogsInput
+    connect?: AIDatasetWhereUniqueInput
+  }
+
+  export type AIDatasetUpdateOneRequiredWithoutAuditLogsNestedInput = {
+    create?: XOR<AIDatasetCreateWithoutAuditLogsInput, AIDatasetUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: AIDatasetCreateOrConnectWithoutAuditLogsInput
+    upsert?: AIDatasetUpsertWithoutAuditLogsInput
+    connect?: AIDatasetWhereUniqueInput
+    update?: XOR<XOR<AIDatasetUpdateToOneWithWhereWithoutAuditLogsInput, AIDatasetUpdateWithoutAuditLogsInput>, AIDatasetUncheckedUpdateWithoutAuditLogsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8240,6 +20133,904 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumAIDatasetTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetType | EnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetTypeFilter<$PrismaModel> | $Enums.AIDatasetType
+  }
+
+  export type NestedEnumAIDatasetTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetType | EnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetType[] | ListEnumAIDatasetTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetTypeWithAggregatesFilter<$PrismaModel> | $Enums.AIDatasetType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAIDatasetTypeFilter<$PrismaModel>
+    _max?: NestedEnumAIDatasetTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAIDatasetLabelTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetLabelType | EnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetLabelTypeFilter<$PrismaModel> | $Enums.AIDatasetLabelType
+  }
+
+  export type NestedEnumAIDatasetLabelTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AIDatasetLabelType | EnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AIDatasetLabelType[] | ListEnumAIDatasetLabelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAIDatasetLabelTypeWithAggregatesFilter<$PrismaModel> | $Enums.AIDatasetLabelType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAIDatasetLabelTypeFilter<$PrismaModel>
+    _max?: NestedEnumAIDatasetLabelTypeFilter<$PrismaModel>
+  }
+
+  export type AIDatasetVersionCreateWithoutDatasetInput = {
+    id?: string
+    tenantId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+    records?: AIDatasetRecordCreateNestedManyWithoutVersionInput
+  }
+
+  export type AIDatasetVersionUncheckedCreateWithoutDatasetInput = {
+    id?: string
+    tenantId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+    records?: AIDatasetRecordUncheckedCreateNestedManyWithoutVersionInput
+  }
+
+  export type AIDatasetVersionCreateOrConnectWithoutDatasetInput = {
+    where: AIDatasetVersionWhereUniqueInput
+    create: XOR<AIDatasetVersionCreateWithoutDatasetInput, AIDatasetVersionUncheckedCreateWithoutDatasetInput>
+  }
+
+  export type AIDatasetVersionCreateManyDatasetInputEnvelope = {
+    data: AIDatasetVersionCreateManyDatasetInput | AIDatasetVersionCreateManyDatasetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AIDatasetRecordCreateWithoutDatasetInput = {
+    id?: string
+    tenantId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    version: AIDatasetVersionCreateNestedOneWithoutRecordsInput
+    labels?: AIDatasetLabelCreateNestedManyWithoutRecordInput
+  }
+
+  export type AIDatasetRecordUncheckedCreateWithoutDatasetInput = {
+    id?: string
+    tenantId: string
+    versionId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    labels?: AIDatasetLabelUncheckedCreateNestedManyWithoutRecordInput
+  }
+
+  export type AIDatasetRecordCreateOrConnectWithoutDatasetInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    create: XOR<AIDatasetRecordCreateWithoutDatasetInput, AIDatasetRecordUncheckedCreateWithoutDatasetInput>
+  }
+
+  export type AIDatasetRecordCreateManyDatasetInputEnvelope = {
+    data: AIDatasetRecordCreateManyDatasetInput | AIDatasetRecordCreateManyDatasetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AIDatasetAuditLogCreateWithoutDatasetInput = {
+    id?: string
+    tenantId: string
+    action: string
+    userId: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetAuditLogUncheckedCreateWithoutDatasetInput = {
+    id?: string
+    tenantId: string
+    action: string
+    userId: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetAuditLogCreateOrConnectWithoutDatasetInput = {
+    where: AIDatasetAuditLogWhereUniqueInput
+    create: XOR<AIDatasetAuditLogCreateWithoutDatasetInput, AIDatasetAuditLogUncheckedCreateWithoutDatasetInput>
+  }
+
+  export type AIDatasetAuditLogCreateManyDatasetInputEnvelope = {
+    data: AIDatasetAuditLogCreateManyDatasetInput | AIDatasetAuditLogCreateManyDatasetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AIDatasetVersionUpsertWithWhereUniqueWithoutDatasetInput = {
+    where: AIDatasetVersionWhereUniqueInput
+    update: XOR<AIDatasetVersionUpdateWithoutDatasetInput, AIDatasetVersionUncheckedUpdateWithoutDatasetInput>
+    create: XOR<AIDatasetVersionCreateWithoutDatasetInput, AIDatasetVersionUncheckedCreateWithoutDatasetInput>
+  }
+
+  export type AIDatasetVersionUpdateWithWhereUniqueWithoutDatasetInput = {
+    where: AIDatasetVersionWhereUniqueInput
+    data: XOR<AIDatasetVersionUpdateWithoutDatasetInput, AIDatasetVersionUncheckedUpdateWithoutDatasetInput>
+  }
+
+  export type AIDatasetVersionUpdateManyWithWhereWithoutDatasetInput = {
+    where: AIDatasetVersionScalarWhereInput
+    data: XOR<AIDatasetVersionUpdateManyMutationInput, AIDatasetVersionUncheckedUpdateManyWithoutDatasetInput>
+  }
+
+  export type AIDatasetVersionScalarWhereInput = {
+    AND?: AIDatasetVersionScalarWhereInput | AIDatasetVersionScalarWhereInput[]
+    OR?: AIDatasetVersionScalarWhereInput[]
+    NOT?: AIDatasetVersionScalarWhereInput | AIDatasetVersionScalarWhereInput[]
+    id?: StringFilter<"AIDatasetVersion"> | string
+    tenantId?: StringFilter<"AIDatasetVersion"> | string
+    datasetId?: StringFilter<"AIDatasetVersion"> | string
+    versionNumber?: IntFilter<"AIDatasetVersion"> | number
+    recordCount?: IntFilter<"AIDatasetVersion"> | number
+    embeddingModel?: StringNullableFilter<"AIDatasetVersion"> | string | null
+    createdByUserId?: StringFilter<"AIDatasetVersion"> | string
+    createdAt?: DateTimeFilter<"AIDatasetVersion"> | Date | string
+  }
+
+  export type AIDatasetRecordUpsertWithWhereUniqueWithoutDatasetInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    update: XOR<AIDatasetRecordUpdateWithoutDatasetInput, AIDatasetRecordUncheckedUpdateWithoutDatasetInput>
+    create: XOR<AIDatasetRecordCreateWithoutDatasetInput, AIDatasetRecordUncheckedCreateWithoutDatasetInput>
+  }
+
+  export type AIDatasetRecordUpdateWithWhereUniqueWithoutDatasetInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    data: XOR<AIDatasetRecordUpdateWithoutDatasetInput, AIDatasetRecordUncheckedUpdateWithoutDatasetInput>
+  }
+
+  export type AIDatasetRecordUpdateManyWithWhereWithoutDatasetInput = {
+    where: AIDatasetRecordScalarWhereInput
+    data: XOR<AIDatasetRecordUpdateManyMutationInput, AIDatasetRecordUncheckedUpdateManyWithoutDatasetInput>
+  }
+
+  export type AIDatasetRecordScalarWhereInput = {
+    AND?: AIDatasetRecordScalarWhereInput | AIDatasetRecordScalarWhereInput[]
+    OR?: AIDatasetRecordScalarWhereInput[]
+    NOT?: AIDatasetRecordScalarWhereInput | AIDatasetRecordScalarWhereInput[]
+    id?: StringFilter<"AIDatasetRecord"> | string
+    tenantId?: StringFilter<"AIDatasetRecord"> | string
+    datasetId?: StringFilter<"AIDatasetRecord"> | string
+    versionId?: StringFilter<"AIDatasetRecord"> | string
+    input?: JsonFilter<"AIDatasetRecord">
+    output?: JsonNullableFilter<"AIDatasetRecord">
+    metadata?: JsonFilter<"AIDatasetRecord">
+    embedding?: JsonNullableFilter<"AIDatasetRecord">
+    createdAt?: DateTimeFilter<"AIDatasetRecord"> | Date | string
+  }
+
+  export type AIDatasetAuditLogUpsertWithWhereUniqueWithoutDatasetInput = {
+    where: AIDatasetAuditLogWhereUniqueInput
+    update: XOR<AIDatasetAuditLogUpdateWithoutDatasetInput, AIDatasetAuditLogUncheckedUpdateWithoutDatasetInput>
+    create: XOR<AIDatasetAuditLogCreateWithoutDatasetInput, AIDatasetAuditLogUncheckedCreateWithoutDatasetInput>
+  }
+
+  export type AIDatasetAuditLogUpdateWithWhereUniqueWithoutDatasetInput = {
+    where: AIDatasetAuditLogWhereUniqueInput
+    data: XOR<AIDatasetAuditLogUpdateWithoutDatasetInput, AIDatasetAuditLogUncheckedUpdateWithoutDatasetInput>
+  }
+
+  export type AIDatasetAuditLogUpdateManyWithWhereWithoutDatasetInput = {
+    where: AIDatasetAuditLogScalarWhereInput
+    data: XOR<AIDatasetAuditLogUpdateManyMutationInput, AIDatasetAuditLogUncheckedUpdateManyWithoutDatasetInput>
+  }
+
+  export type AIDatasetAuditLogScalarWhereInput = {
+    AND?: AIDatasetAuditLogScalarWhereInput | AIDatasetAuditLogScalarWhereInput[]
+    OR?: AIDatasetAuditLogScalarWhereInput[]
+    NOT?: AIDatasetAuditLogScalarWhereInput | AIDatasetAuditLogScalarWhereInput[]
+    id?: StringFilter<"AIDatasetAuditLog"> | string
+    tenantId?: StringFilter<"AIDatasetAuditLog"> | string
+    datasetId?: StringFilter<"AIDatasetAuditLog"> | string
+    action?: StringFilter<"AIDatasetAuditLog"> | string
+    userId?: StringFilter<"AIDatasetAuditLog"> | string
+    metadata?: JsonFilter<"AIDatasetAuditLog">
+    createdAt?: DateTimeFilter<"AIDatasetAuditLog"> | Date | string
+  }
+
+  export type AIDatasetCreateWithoutVersionsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    records?: AIDatasetRecordCreateNestedManyWithoutDatasetInput
+    auditLogs?: AIDatasetAuditLogCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetUncheckedCreateWithoutVersionsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    records?: AIDatasetRecordUncheckedCreateNestedManyWithoutDatasetInput
+    auditLogs?: AIDatasetAuditLogUncheckedCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetCreateOrConnectWithoutVersionsInput = {
+    where: AIDatasetWhereUniqueInput
+    create: XOR<AIDatasetCreateWithoutVersionsInput, AIDatasetUncheckedCreateWithoutVersionsInput>
+  }
+
+  export type AIDatasetRecordCreateWithoutVersionInput = {
+    id?: string
+    tenantId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    dataset: AIDatasetCreateNestedOneWithoutRecordsInput
+    labels?: AIDatasetLabelCreateNestedManyWithoutRecordInput
+  }
+
+  export type AIDatasetRecordUncheckedCreateWithoutVersionInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    labels?: AIDatasetLabelUncheckedCreateNestedManyWithoutRecordInput
+  }
+
+  export type AIDatasetRecordCreateOrConnectWithoutVersionInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    create: XOR<AIDatasetRecordCreateWithoutVersionInput, AIDatasetRecordUncheckedCreateWithoutVersionInput>
+  }
+
+  export type AIDatasetRecordCreateManyVersionInputEnvelope = {
+    data: AIDatasetRecordCreateManyVersionInput | AIDatasetRecordCreateManyVersionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AIDatasetUpsertWithoutVersionsInput = {
+    update: XOR<AIDatasetUpdateWithoutVersionsInput, AIDatasetUncheckedUpdateWithoutVersionsInput>
+    create: XOR<AIDatasetCreateWithoutVersionsInput, AIDatasetUncheckedCreateWithoutVersionsInput>
+    where?: AIDatasetWhereInput
+  }
+
+  export type AIDatasetUpdateToOneWithWhereWithoutVersionsInput = {
+    where?: AIDatasetWhereInput
+    data: XOR<AIDatasetUpdateWithoutVersionsInput, AIDatasetUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type AIDatasetUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: AIDatasetRecordUpdateManyWithoutDatasetNestedInput
+    auditLogs?: AIDatasetAuditLogUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetUncheckedUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: AIDatasetRecordUncheckedUpdateManyWithoutDatasetNestedInput
+    auditLogs?: AIDatasetAuditLogUncheckedUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetRecordUpsertWithWhereUniqueWithoutVersionInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    update: XOR<AIDatasetRecordUpdateWithoutVersionInput, AIDatasetRecordUncheckedUpdateWithoutVersionInput>
+    create: XOR<AIDatasetRecordCreateWithoutVersionInput, AIDatasetRecordUncheckedCreateWithoutVersionInput>
+  }
+
+  export type AIDatasetRecordUpdateWithWhereUniqueWithoutVersionInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    data: XOR<AIDatasetRecordUpdateWithoutVersionInput, AIDatasetRecordUncheckedUpdateWithoutVersionInput>
+  }
+
+  export type AIDatasetRecordUpdateManyWithWhereWithoutVersionInput = {
+    where: AIDatasetRecordScalarWhereInput
+    data: XOR<AIDatasetRecordUpdateManyMutationInput, AIDatasetRecordUncheckedUpdateManyWithoutVersionInput>
+  }
+
+  export type AIDatasetCreateWithoutRecordsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: AIDatasetVersionCreateNestedManyWithoutDatasetInput
+    auditLogs?: AIDatasetAuditLogCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetUncheckedCreateWithoutRecordsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: AIDatasetVersionUncheckedCreateNestedManyWithoutDatasetInput
+    auditLogs?: AIDatasetAuditLogUncheckedCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetCreateOrConnectWithoutRecordsInput = {
+    where: AIDatasetWhereUniqueInput
+    create: XOR<AIDatasetCreateWithoutRecordsInput, AIDatasetUncheckedCreateWithoutRecordsInput>
+  }
+
+  export type AIDatasetVersionCreateWithoutRecordsInput = {
+    id?: string
+    tenantId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+    dataset: AIDatasetCreateNestedOneWithoutVersionsInput
+  }
+
+  export type AIDatasetVersionUncheckedCreateWithoutRecordsInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetVersionCreateOrConnectWithoutRecordsInput = {
+    where: AIDatasetVersionWhereUniqueInput
+    create: XOR<AIDatasetVersionCreateWithoutRecordsInput, AIDatasetVersionUncheckedCreateWithoutRecordsInput>
+  }
+
+  export type AIDatasetLabelCreateWithoutRecordInput = {
+    id?: string
+    tenantId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetLabelUncheckedCreateWithoutRecordInput = {
+    id?: string
+    tenantId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetLabelCreateOrConnectWithoutRecordInput = {
+    where: AIDatasetLabelWhereUniqueInput
+    create: XOR<AIDatasetLabelCreateWithoutRecordInput, AIDatasetLabelUncheckedCreateWithoutRecordInput>
+  }
+
+  export type AIDatasetLabelCreateManyRecordInputEnvelope = {
+    data: AIDatasetLabelCreateManyRecordInput | AIDatasetLabelCreateManyRecordInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AIDatasetUpsertWithoutRecordsInput = {
+    update: XOR<AIDatasetUpdateWithoutRecordsInput, AIDatasetUncheckedUpdateWithoutRecordsInput>
+    create: XOR<AIDatasetCreateWithoutRecordsInput, AIDatasetUncheckedCreateWithoutRecordsInput>
+    where?: AIDatasetWhereInput
+  }
+
+  export type AIDatasetUpdateToOneWithWhereWithoutRecordsInput = {
+    where?: AIDatasetWhereInput
+    data: XOR<AIDatasetUpdateWithoutRecordsInput, AIDatasetUncheckedUpdateWithoutRecordsInput>
+  }
+
+  export type AIDatasetUpdateWithoutRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: AIDatasetVersionUpdateManyWithoutDatasetNestedInput
+    auditLogs?: AIDatasetAuditLogUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetUncheckedUpdateWithoutRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: AIDatasetVersionUncheckedUpdateManyWithoutDatasetNestedInput
+    auditLogs?: AIDatasetAuditLogUncheckedUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetVersionUpsertWithoutRecordsInput = {
+    update: XOR<AIDatasetVersionUpdateWithoutRecordsInput, AIDatasetVersionUncheckedUpdateWithoutRecordsInput>
+    create: XOR<AIDatasetVersionCreateWithoutRecordsInput, AIDatasetVersionUncheckedCreateWithoutRecordsInput>
+    where?: AIDatasetVersionWhereInput
+  }
+
+  export type AIDatasetVersionUpdateToOneWithWhereWithoutRecordsInput = {
+    where?: AIDatasetVersionWhereInput
+    data: XOR<AIDatasetVersionUpdateWithoutRecordsInput, AIDatasetVersionUncheckedUpdateWithoutRecordsInput>
+  }
+
+  export type AIDatasetVersionUpdateWithoutRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataset?: AIDatasetUpdateOneRequiredWithoutVersionsNestedInput
+  }
+
+  export type AIDatasetVersionUncheckedUpdateWithoutRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelUpsertWithWhereUniqueWithoutRecordInput = {
+    where: AIDatasetLabelWhereUniqueInput
+    update: XOR<AIDatasetLabelUpdateWithoutRecordInput, AIDatasetLabelUncheckedUpdateWithoutRecordInput>
+    create: XOR<AIDatasetLabelCreateWithoutRecordInput, AIDatasetLabelUncheckedCreateWithoutRecordInput>
+  }
+
+  export type AIDatasetLabelUpdateWithWhereUniqueWithoutRecordInput = {
+    where: AIDatasetLabelWhereUniqueInput
+    data: XOR<AIDatasetLabelUpdateWithoutRecordInput, AIDatasetLabelUncheckedUpdateWithoutRecordInput>
+  }
+
+  export type AIDatasetLabelUpdateManyWithWhereWithoutRecordInput = {
+    where: AIDatasetLabelScalarWhereInput
+    data: XOR<AIDatasetLabelUpdateManyMutationInput, AIDatasetLabelUncheckedUpdateManyWithoutRecordInput>
+  }
+
+  export type AIDatasetLabelScalarWhereInput = {
+    AND?: AIDatasetLabelScalarWhereInput | AIDatasetLabelScalarWhereInput[]
+    OR?: AIDatasetLabelScalarWhereInput[]
+    NOT?: AIDatasetLabelScalarWhereInput | AIDatasetLabelScalarWhereInput[]
+    id?: StringFilter<"AIDatasetLabel"> | string
+    tenantId?: StringFilter<"AIDatasetLabel"> | string
+    recordId?: StringFilter<"AIDatasetLabel"> | string
+    labelType?: EnumAIDatasetLabelTypeFilter<"AIDatasetLabel"> | $Enums.AIDatasetLabelType
+    labelValue?: JsonFilter<"AIDatasetLabel">
+    createdByUserId?: StringFilter<"AIDatasetLabel"> | string
+    createdAt?: DateTimeFilter<"AIDatasetLabel"> | Date | string
+  }
+
+  export type AIDatasetRecordCreateWithoutLabelsInput = {
+    id?: string
+    tenantId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    dataset: AIDatasetCreateNestedOneWithoutRecordsInput
+    version: AIDatasetVersionCreateNestedOneWithoutRecordsInput
+  }
+
+  export type AIDatasetRecordUncheckedCreateWithoutLabelsInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    versionId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetRecordCreateOrConnectWithoutLabelsInput = {
+    where: AIDatasetRecordWhereUniqueInput
+    create: XOR<AIDatasetRecordCreateWithoutLabelsInput, AIDatasetRecordUncheckedCreateWithoutLabelsInput>
+  }
+
+  export type AIDatasetRecordUpsertWithoutLabelsInput = {
+    update: XOR<AIDatasetRecordUpdateWithoutLabelsInput, AIDatasetRecordUncheckedUpdateWithoutLabelsInput>
+    create: XOR<AIDatasetRecordCreateWithoutLabelsInput, AIDatasetRecordUncheckedCreateWithoutLabelsInput>
+    where?: AIDatasetRecordWhereInput
+  }
+
+  export type AIDatasetRecordUpdateToOneWithWhereWithoutLabelsInput = {
+    where?: AIDatasetRecordWhereInput
+    data: XOR<AIDatasetRecordUpdateWithoutLabelsInput, AIDatasetRecordUncheckedUpdateWithoutLabelsInput>
+  }
+
+  export type AIDatasetRecordUpdateWithoutLabelsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataset?: AIDatasetUpdateOneRequiredWithoutRecordsNestedInput
+    version?: AIDatasetVersionUpdateOneRequiredWithoutRecordsNestedInput
+  }
+
+  export type AIDatasetRecordUncheckedUpdateWithoutLabelsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    versionId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetCreateWithoutAuditLogsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: AIDatasetVersionCreateNestedManyWithoutDatasetInput
+    records?: AIDatasetRecordCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetUncheckedCreateWithoutAuditLogsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    description?: string
+    type?: $Enums.AIDatasetType
+    tags?: AIDatasetCreatetagsInput | string[]
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: AIDatasetVersionUncheckedCreateNestedManyWithoutDatasetInput
+    records?: AIDatasetRecordUncheckedCreateNestedManyWithoutDatasetInput
+  }
+
+  export type AIDatasetCreateOrConnectWithoutAuditLogsInput = {
+    where: AIDatasetWhereUniqueInput
+    create: XOR<AIDatasetCreateWithoutAuditLogsInput, AIDatasetUncheckedCreateWithoutAuditLogsInput>
+  }
+
+  export type AIDatasetUpsertWithoutAuditLogsInput = {
+    update: XOR<AIDatasetUpdateWithoutAuditLogsInput, AIDatasetUncheckedUpdateWithoutAuditLogsInput>
+    create: XOR<AIDatasetCreateWithoutAuditLogsInput, AIDatasetUncheckedCreateWithoutAuditLogsInput>
+    where?: AIDatasetWhereInput
+  }
+
+  export type AIDatasetUpdateToOneWithWhereWithoutAuditLogsInput = {
+    where?: AIDatasetWhereInput
+    data: XOR<AIDatasetUpdateWithoutAuditLogsInput, AIDatasetUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type AIDatasetUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: AIDatasetVersionUpdateManyWithoutDatasetNestedInput
+    records?: AIDatasetRecordUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetUncheckedUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: EnumAIDatasetTypeFieldUpdateOperationsInput | $Enums.AIDatasetType
+    tags?: AIDatasetUpdatetagsInput | string[]
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: AIDatasetVersionUncheckedUpdateManyWithoutDatasetNestedInput
+    records?: AIDatasetRecordUncheckedUpdateManyWithoutDatasetNestedInput
+  }
+
+  export type AIDatasetVersionCreateManyDatasetInput = {
+    id?: string
+    tenantId: string
+    versionNumber: number
+    recordCount?: number
+    embeddingModel?: string | null
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetRecordCreateManyDatasetInput = {
+    id?: string
+    tenantId: string
+    versionId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetAuditLogCreateManyDatasetInput = {
+    id?: string
+    tenantId: string
+    action: string
+    userId: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetVersionUpdateWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: AIDatasetRecordUpdateManyWithoutVersionNestedInput
+  }
+
+  export type AIDatasetVersionUncheckedUpdateWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: AIDatasetRecordUncheckedUpdateManyWithoutVersionNestedInput
+  }
+
+  export type AIDatasetVersionUncheckedUpdateManyWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionNumber?: IntFieldUpdateOperationsInput | number
+    recordCount?: IntFieldUpdateOperationsInput | number
+    embeddingModel?: NullableStringFieldUpdateOperationsInput | string | null
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetRecordUpdateWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: AIDatasetVersionUpdateOneRequiredWithoutRecordsNestedInput
+    labels?: AIDatasetLabelUpdateManyWithoutRecordNestedInput
+  }
+
+  export type AIDatasetRecordUncheckedUpdateWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    labels?: AIDatasetLabelUncheckedUpdateManyWithoutRecordNestedInput
+  }
+
+  export type AIDatasetRecordUncheckedUpdateManyWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    versionId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetAuditLogUpdateWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetAuditLogUncheckedUpdateWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetAuditLogUncheckedUpdateManyWithoutDatasetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetRecordCreateManyVersionInput = {
+    id?: string
+    tenantId: string
+    datasetId: string
+    input: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetRecordUpdateWithoutVersionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataset?: AIDatasetUpdateOneRequiredWithoutRecordsNestedInput
+    labels?: AIDatasetLabelUpdateManyWithoutRecordNestedInput
+  }
+
+  export type AIDatasetRecordUncheckedUpdateWithoutVersionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    labels?: AIDatasetLabelUncheckedUpdateManyWithoutRecordNestedInput
+  }
+
+  export type AIDatasetRecordUncheckedUpdateManyWithoutVersionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    datasetId?: StringFieldUpdateOperationsInput | string
+    input?: JsonNullValueInput | InputJsonValue
+    output?: NullableJsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    embedding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelCreateManyRecordInput = {
+    id?: string
+    tenantId: string
+    labelType: $Enums.AIDatasetLabelType
+    labelValue: JsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type AIDatasetLabelUpdateWithoutRecordInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelUncheckedUpdateWithoutRecordInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIDatasetLabelUncheckedUpdateManyWithoutRecordInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    labelType?: EnumAIDatasetLabelTypeFieldUpdateOperationsInput | $Enums.AIDatasetLabelType
+    labelValue?: JsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

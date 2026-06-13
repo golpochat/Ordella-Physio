@@ -18,6 +18,15 @@ import { MESSAGING_ROUTES } from "@/routes/messaging.routes";
 import { NOTIFICATION_ROUTES } from "@/routes/notification.routes";
 import { AI_NOTES_ROUTES } from "@/routes/ai-notes.routes";
 import { AI_SERVICE_ROUTES } from "@/routes/ai-service.routes";
+import { AI_TRAINING_SERVICE_ROUTES } from "@/routes/ai-training-service.routes";
+import { AI_MONITORING_SERVICE_ROUTES } from "@/routes/ai-monitoring-service.routes";
+import { AI_DEPLOY_SERVICE_ROUTES } from "@/routes/ai-deploy-service.routes";
+import { AI_SECURITY_SERVICE_ROUTES } from "@/routes/ai-security-service.routes";
+import { AI_OBSERVABILITY_SERVICE_ROUTES } from "@/routes/ai-observability-service.routes";
+import { AI_AGENTS_SERVICE_ROUTES } from "@/routes/ai-agents-service.routes";
+import { AI_COST_SERVICE_ROUTES } from "@/routes/ai-cost-service.routes";
+import { AI_GATEWAY_SERVICE_ROUTES } from "@/routes/ai-gateway-service.routes";
+import { FEATURE_FLAGS_SERVICE_ROUTES } from "@/routes/feature-flags-service.routes";
 import { MARKETPLACE_ROUTES } from "@/routes/marketplace.routes";
 import { ENTERPRISE_ROUTES } from "@/routes/enterprise.routes";
 import { ORGANIZATION_ROUTES } from "@/routes/organization.routes";
@@ -73,6 +82,76 @@ const proxyControllers = [
   createProxyController(AI_SERVICE_ROUTES.insights, "AI_SERVICE_URL"),
   createProxyController(AI_SERVICE_ROUTES.agent, "AI_SERVICE_URL"),
   createProxyController(AI_SERVICE_ROUTES.copilot, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.workflows, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.datasets, "AI_SERVICE_URL"),
+  createProxyController(AI_SERVICE_ROUTES.inference, "AI_SERVICE_URL"),
+  createProxyController(AI_TRAINING_SERVICE_ROUTES.training, "AI_TRAINING_SERVICE_URL"),
+  createProxyController(AI_TRAINING_SERVICE_ROUTES.models, "AI_TRAINING_SERVICE_URL"),
+  createProxyController(AI_TRAINING_SERVICE_ROUTES.health, "AI_TRAINING_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_MONITORING_SERVICE_ROUTES.drift, "AI_MONITORING_SERVICE_URL"),
+  createProxyController(AI_MONITORING_SERVICE_ROUTES.health, "AI_MONITORING_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_DEPLOY_SERVICE_ROUTES.deploy, "AI_DEPLOY_SERVICE_URL"),
+  createProxyController(AI_DEPLOY_SERVICE_ROUTES.health, "AI_DEPLOY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(FEATURE_FLAGS_SERVICE_ROUTES.flags, "FEATURE_FLAGS_SERVICE_URL"),
+  createProxyController(FEATURE_FLAGS_SERVICE_ROUTES.experiments, "FEATURE_FLAGS_SERVICE_URL"),
+  createProxyController(FEATURE_FLAGS_SERVICE_ROUTES.health, "FEATURE_FLAGS_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_GATEWAY_SERVICE_ROUTES.gateway + "/inference", "AI_GATEWAY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_GATEWAY_SERVICE_ROUTES.gateway + "/embeddings", "AI_GATEWAY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_GATEWAY_SERVICE_ROUTES.gateway, "AI_GATEWAY_SERVICE_URL"),
+  createProxyController(AI_GATEWAY_SERVICE_ROUTES.health, "AI_GATEWAY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_COST_SERVICE_ROUTES.cost, "AI_COST_SERVICE_URL"),
+  createProxyController(AI_COST_SERVICE_ROUTES.cost + "/internal", "AI_COST_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_COST_SERVICE_ROUTES.health, "AI_COST_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_SECURITY_SERVICE_ROUTES.security, "AI_SECURITY_SERVICE_URL"),
+  createProxyController(AI_SECURITY_SERVICE_ROUTES.security + "/internal", "AI_SECURITY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_SECURITY_SERVICE_ROUTES.health, "AI_SECURITY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_OBSERVABILITY_SERVICE_ROUTES.observability, "AI_OBSERVABILITY_SERVICE_URL"),
+  createProxyController(AI_OBSERVABILITY_SERVICE_ROUTES.observability + "/internal", "AI_OBSERVABILITY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_OBSERVABILITY_SERVICE_ROUTES.health, "AI_OBSERVABILITY_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(AI_AGENTS_SERVICE_ROUTES.agents, "AI_AGENTS_SERVICE_URL"),
+  createProxyController(AI_AGENTS_SERVICE_ROUTES.health, "AI_AGENTS_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
   createProxyController(AI_SERVICE_ROUTES.health, "AI_SERVICE_URL", {
     public: true,
     skipTenant: true,

@@ -8,7 +8,7 @@ Distributed caching, rate-limit storage, session cache, queue backing, and in-me
 cd infrastructure/global-caching-layer
 
 # Ensure the shared Docker network exists (start deployment-layer first)
-# docker compose -f ../../infrastructure/deployment-layer/docker-compose.local.yml up -d
+# docker compose -f ../../docker-compose.dev.yml up -d
 
 docker compose up -d
 ```
@@ -23,7 +23,7 @@ Default password is set in `.env` (`REDIS_PASSWORD`). **Change it before product
 
 ## Port conflict note
 
-`infrastructure/deployment-layer/docker-compose.local.yml` already runs a plain `redis:7` service on port **6379**. Do **not** run both stacks on the same host port. Either:
+Root `docker-compose.dev.yml` already runs `redis:7-alpine` on port **6379**. Do **not** run both stacks on the same host port. Either:
 
 - Replace the deployment-layer Redis service with this layer, or
 - Change `REDIS_PORT` in `.env` (e.g. `6380:6379`) when running alongside the main compose stack.

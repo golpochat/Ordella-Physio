@@ -20,6 +20,7 @@ export const ROLE_DASHBOARD_MAP: Record<PortalRole, string> = {
 export const ROUTE_ROLE_ACCESS: Record<string, PortalRole[]> = {
   [DASHBOARD_ROUTES.superAdmin]: ["SYSTEM"],
   [DASHBOARD_ROUTES.admin]: ["OWNER", "ADMIN"],
+  "/admin/ai": ["OWNER", "ADMIN", "CLINIC_ADMIN"],
   [DASHBOARD_ROUTES.clinic]: ["CLINIC_ADMIN"],
   [DASHBOARD_ROUTES.therapist]: ["THERAPIST"],
   [DASHBOARD_ROUTES.patient]: ["PATIENT"],

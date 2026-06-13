@@ -36,6 +36,15 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     SEARCH_INDEX_SERVICE_URL: config.searchIndexServiceUrl,
     SUBSCRIPTION_BILLING_SERVICE_URL: config.subscriptionBillingServiceUrl,
     AI_SERVICE_URL: config.aiServiceUrl,
+    AI_TRAINING_SERVICE_URL: config.aiTrainingServiceUrl,
+    AI_MONITORING_SERVICE_URL: config.aiMonitoringServiceUrl,
+    AI_DEPLOY_SERVICE_URL: config.aiDeployServiceUrl,
+    FEATURE_FLAGS_SERVICE_URL: config.featureFlagsServiceUrl,
+    AI_GATEWAY_SERVICE_URL: config.aiGatewayServiceUrl,
+    AI_COST_SERVICE_URL: config.aiCostServiceUrl,
+    AI_SECURITY_SERVICE_URL: config.aiSecurityServiceUrl,
+    AI_OBSERVABILITY_SERVICE_URL: config.aiObservabilityServiceUrl,
+    AI_AGENTS_SERVICE_URL: config.aiAgentsServiceUrl,
   };
 
   return map[envKey];

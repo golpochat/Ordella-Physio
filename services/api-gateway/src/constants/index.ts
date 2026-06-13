@@ -51,7 +51,16 @@ export type ServiceEnvKey =
   | "NOTIFICATION_PROVIDER_SERVICE_URL"
   | "SEARCH_INDEX_SERVICE_URL"
   | "SUBSCRIPTION_BILLING_SERVICE_URL"
-  | "AI_SERVICE_URL";
+  | "AI_SERVICE_URL"
+  | "AI_TRAINING_SERVICE_URL"
+  | "AI_MONITORING_SERVICE_URL"
+  | "AI_DEPLOY_SERVICE_URL"
+  | "FEATURE_FLAGS_SERVICE_URL"
+  | "AI_GATEWAY_SERVICE_URL"
+  | "AI_COST_SERVICE_URL"
+  | "AI_SECURITY_SERVICE_URL"
+  | "AI_OBSERVABILITY_SERVICE_URL"
+  | "AI_AGENTS_SERVICE_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -204,6 +213,60 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     envKey: "AI_SERVICE_URL",
     healthPath: "/ai/platform/health",
     defaultUrl: "http://ai-service:3075",
+  },
+  {
+    name: "ai-training-service",
+    envKey: "AI_TRAINING_SERVICE_URL",
+    healthPath: "/ai/training/health",
+    defaultUrl: "http://ai-training-service:3076",
+  },
+  {
+    name: "ai-monitoring-service",
+    envKey: "AI_MONITORING_SERVICE_URL",
+    healthPath: "/ai/drift/health",
+    defaultUrl: "http://ai-monitoring-service:3077",
+  },
+  {
+    name: "ai-deploy-service",
+    envKey: "AI_DEPLOY_SERVICE_URL",
+    healthPath: "/ai/deploy/health",
+    defaultUrl: "http://ai-deploy-service:3078",
+  },
+  {
+    name: "feature-flags-service",
+    envKey: "FEATURE_FLAGS_SERVICE_URL",
+    healthPath: "/ai/flags/health",
+    defaultUrl: "http://feature-flags-service:3079",
+  },
+  {
+    name: "ai-gateway-service",
+    envKey: "AI_GATEWAY_SERVICE_URL",
+    healthPath: "/ai/gateway/health",
+    defaultUrl: "http://ai-gateway-service:3080",
+  },
+  {
+    name: "ai-cost-service",
+    envKey: "AI_COST_SERVICE_URL",
+    healthPath: "/ai/cost/health",
+    defaultUrl: "http://ai-cost-service:3081",
+  },
+  {
+    name: "ai-security-service",
+    envKey: "AI_SECURITY_SERVICE_URL",
+    healthPath: "/ai/security/health",
+    defaultUrl: "http://ai-security-service:3082",
+  },
+  {
+    name: "ai-observability-service",
+    envKey: "AI_OBSERVABILITY_SERVICE_URL",
+    healthPath: "/ai/observability/health",
+    defaultUrl: "http://ai-observability-service:3083",
+  },
+  {
+    name: "ai-agents-service",
+    envKey: "AI_AGENTS_SERVICE_URL",
+    healthPath: "/ai/agents/health",
+    defaultUrl: "http://ai-agents-service:3084",
   },
 ];
 

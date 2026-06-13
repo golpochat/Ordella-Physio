@@ -13,7 +13,7 @@ export class InferenceController {
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions(PERMISSIONS.AI_USE)
   runText(@CurrentUser() user: AuthenticatedAiUser, @Body() body: Record<string, unknown>) {
-    return this.inferenceService.runTextCompletion(body, user.tenantId);
+    return this.inferenceService.runTextCompletion(body, user.tenantId, user.userId);
   }
 
   @Post("json")

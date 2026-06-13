@@ -8,7 +8,7 @@ Centralized metrics, alerting, dashboards, and distributed tracing for the **ord
 cd infrastructure/global-metrics-monitoring-layer
 
 # Ensure the shared Docker network exists
-# docker compose -f ../../infrastructure/deployment-layer/docker-compose.local.yml up -d
+# docker compose -f ../../docker-compose.dev.yml up -d
 
 docker compose up -d
 ```

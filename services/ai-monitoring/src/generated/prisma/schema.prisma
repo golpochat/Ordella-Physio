@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AIDriftType {
+  DATA
+  CONCEPT
+  EMBEDDING
+  PERFORMANCE
+}
+
+enum AIDriftSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model AIDriftEvent {
+  id                 String          @id @default(cuid())
+  tenantId           String
+  modelId            String
+  driftType          AIDriftType
+  severity           AIDriftSeverity
+  metrics            Json            @default("{}")
+  summary            String          @default("")
+  recommendedActions Json            @default("[]")
+  detectedAt         DateTime        @default(now())
+  resolvedAt         DateTime?
+  mitigationAction   String?
+
+  @@index([tenantId])
+  @@index([modelId])
+  @@index([modelId, detectedAt])
+  @@index([tenantId, severity])
+  @@map("ai_drift_events")
+}
+
+model AIDriftMetric {
+  id               String   @id @default(cuid())
+  tenantId         String
+  modelId          String
+  timestamp        DateTime @default(now())
+  granularity      String   @default("HOURLY")
+  inputStats       Json     @default("{}")
+  outputStats      Json     @default("{}")
+  embeddingStats   Json     @default("{}")
+  performanceStats Json     @default("{}")
+
+  @@index([tenantId])
+  @@index([modelId])
+  @@index([modelId, timestamp])
+  @@map("ai_drift_metrics")
+}

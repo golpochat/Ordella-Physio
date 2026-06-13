@@ -2,8 +2,9 @@ import { Injectable, Logger } from "@nestjs/common";
 import type { AIProviderType } from "@/generated/prisma";
 import { resolveAiConfig } from "@/config/ai.config";
 import { AIProviderConfigRepository } from "@/repositories/ai-provider-config.repository";
-import { AIRequestLogRepository } from "@/repositories/ai-request-log.repository";
+import { InferenceLoggerService } from "@/services/inference-logger.service";
 import { PromptTemplateService } from "@/services/prompt-template.service";
+import { InferenceRouterService } from "@/services/inference-router.service";
 import { ProviderRegistryService } from "@/services/provider-registry.service";
 import { decryptApiKey } from "@/utils/crypto.util";
 import { aiProviderFailedError } from "@/utils/ai-errors";
@@ -27,14 +28,41 @@ export class InferenceService {
 
   constructor(
     private readonly providerConfigRepository: AIProviderConfigRepository,
-    private readonly requestLogRepository: AIRequestLogRepository,
+    private readonly inferenceLoggerService: InferenceLoggerService,
     private readonly providerRegistry: ProviderRegistryService,
     private readonly promptTemplateService: PromptTemplateService,
+    private readonly inferenceRouter: InferenceRouterService,
   ) {}
 
-  async runTextCompletion(payloadInput: Record<string, unknown>, tenantId: string) {
+  async runTextCompletion(payloadInput: Record<string, unknown>, tenantId: string, userId?: string) {
     const payload = validateTextCompletion(payloadInput);
     const prompt = this.resolvePrompt(payload);
+    const deployedRoute = payload.model
+      ? this.inferenceRouter.routeInference(tenantId, payload.model, undefined, userId)
+      : null;
+    if (deployedRoute) {
+      this.providerRegistry.registerDeployedEndpoint(`${tenantId}:${deployedRoute.modelId}`, {
+        region: deployedRoute.region,
+        endpoint: deployedRoute.endpoint,
+        modelId: deployedRoute.modelId,
+        version: deployedRoute.version,
+      });
+      if (deployedRoute.experimentId && deployedRoute.experimentVariant) {
+        this.providerRegistry.registerExperimentModel(
+          `${tenantId}:${payload.model}`,
+          deployedRoute.experimentVariant,
+          deployedRoute.modelId,
+        );
+        this.inferenceRouter.logExperimentEvent(
+          deployedRoute.experimentId,
+          deployedRoute.experimentVariant,
+          "inference",
+        );
+      }
+      this.logger.log(
+        `Routing inference for ${payload.model} → ${deployedRoute.region} (${deployedRoute.mode})`,
+      );
+    }
     const configs = await this.resolveProviderConfigs(tenantId, payload.model);
     const errors: string[] = [];
 
@@ -50,7 +78,7 @@ export class InferenceService {
           baseUrl: config.baseUrl ?? undefined,
         });
 
-        await this.logRequest({
+        await this.inferenceLoggerService.logInference({
           tenantId,
           provider: config.provider,
           modelName: config.modelName,
@@ -59,6 +87,16 @@ export class InferenceService {
           tokensInput: result.tokensInput,
           tokensOutput: result.tokensOutput,
           latencyMs: result.latencyMs,
+          taskType: "TEXT",
+          metadata: deployedRoute
+            ? {
+                region: deployedRoute.region,
+                mode: deployedRoute.mode,
+                endpoint: deployedRoute.endpoint,
+                experimentId: deployedRoute.experimentId,
+                experimentVariant: deployedRoute.experimentVariant,
+              }
+            : undefined,
         });
 
         return {
@@ -69,6 +107,9 @@ export class InferenceService {
           tokensInput: result.tokensInput,
           tokensOutput: result.tokensOutput,
           latencyMs: result.latencyMs,
+          ...(deployedRoute
+            ? { region: deployedRoute.region, routingMode: deployedRoute.mode }
+            : {}),
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Provider failed.";
@@ -103,7 +144,7 @@ export class InferenceService {
 
         const data = validateStructuredOutput(result.data, payload.schema);
 
-        await this.logRequest({
+        await this.inferenceLoggerService.logInference({
           tenantId,
           provider: config.provider,
           modelName: config.modelName,
@@ -112,6 +153,7 @@ export class InferenceService {
           tokensInput: result.tokensInput,
           tokensOutput: result.tokensOutput,
           latencyMs: result.latencyMs,
+          taskType: "STRUCTURED",
         });
 
         return {
@@ -150,7 +192,7 @@ export class InferenceService {
           baseUrl: config.baseUrl ?? undefined,
         });
 
-        await this.logRequest({
+        await this.inferenceLoggerService.logInference({
           tenantId,
           provider: config.provider,
           modelName: config.modelName,
@@ -159,6 +201,7 @@ export class InferenceService {
           tokensInput: result.tokensInput,
           tokensOutput: 0,
           latencyMs: result.latencyMs,
+          taskType: "EMBED",
         });
 
         return {
@@ -223,16 +266,4 @@ export class InferenceService {
     ];
   }
 
-  private logRequest(input: {
-    tenantId: string;
-    provider: string;
-    modelName: string;
-    prompt: string;
-    response: string;
-    tokensInput: number;
-    tokensOutput: number;
-    latencyMs: number;
-  }) {
-    return this.requestLogRepository.create(input);
-  }
 }

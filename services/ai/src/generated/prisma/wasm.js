@@ -116,6 +116,7 @@ exports.Prisma.AIRequestLogScalarFieldEnum = {
   tokensInput: 'tokensInput',
   tokensOutput: 'tokensOutput',
   latencyMs: 'latencyMs',
+  metadata: 'metadata',
   createdAt: 'createdAt'
 };
 
@@ -130,15 +131,109 @@ exports.Prisma.AIMemoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AIWorkflowScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  isActive: 'isActive',
+  dryRun: 'dryRun',
+  trigger: 'trigger',
+  conditions: 'conditions',
+  actions: 'actions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AIWorkflowRunScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  workflowId: 'workflowId',
   trigger: 'trigger',
   status: 'status',
   steps: 'steps',
   result: 'result',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AIWorkflowVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  versionNumber: 'versionNumber',
+  label: 'label',
+  definition: 'definition',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIWorkflowLiveEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  workflowName: 'workflowName',
+  runId: 'runId',
+  eventType: 'eventType',
+  timestamp: 'timestamp',
+  payload: 'payload',
+  durationMs: 'durationMs',
+  status: 'status'
+};
+
+exports.Prisma.AIDatasetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  tags: 'tags',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AIDatasetVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  versionNumber: 'versionNumber',
+  recordCount: 'recordCount',
+  embeddingModel: 'embeddingModel',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIDatasetRecordScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  versionId: 'versionId',
+  input: 'input',
+  output: 'output',
+  metadata: 'metadata',
+  embedding: 'embedding',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIDatasetLabelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  recordId: 'recordId',
+  labelType: 'labelType',
+  labelValue: 'labelValue',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIDatasetAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  action: 'action',
+  userId: 'userId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AIStreamSessionScalarFieldEnum = {
@@ -189,11 +284,32 @@ exports.AIProviderType = exports.$Enums.AIProviderType = {
   LOCAL: 'LOCAL'
 };
 
+exports.AIDatasetType = exports.$Enums.AIDatasetType = {
+  TEXT: 'TEXT',
+  JSON: 'JSON',
+  CONVERSATION: 'CONVERSATION',
+  EMBEDDING: 'EMBEDDING'
+};
+
+exports.AIDatasetLabelType = exports.$Enums.AIDatasetLabelType = {
+  CLASSIFICATION: 'CLASSIFICATION',
+  EXTRACTION: 'EXTRACTION',
+  CORRECTION: 'CORRECTION'
+};
+
 exports.Prisma.ModelName = {
   AIProviderConfig: 'AIProviderConfig',
   AIRequestLog: 'AIRequestLog',
   AIMemory: 'AIMemory',
+  AIWorkflow: 'AIWorkflow',
   AIWorkflowRun: 'AIWorkflowRun',
+  AIWorkflowVersion: 'AIWorkflowVersion',
+  AIWorkflowLiveEvent: 'AIWorkflowLiveEvent',
+  AIDataset: 'AIDataset',
+  AIDatasetVersion: 'AIDatasetVersion',
+  AIDatasetRecord: 'AIDatasetRecord',
+  AIDatasetLabel: 'AIDatasetLabel',
+  AIDatasetAuditLog: 'AIDatasetAuditLog',
   AIStreamSession: 'AIStreamSession'
 };
 /**
@@ -225,7 +341,8 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.19.3",
@@ -243,13 +360,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AIProviderType {\n  OPENAI\n  AZURE_OPENAI\n  ANTHROPIC\n  LOCAL\n}\n\nmodel AIProviderConfig {\n  id        String         @id @default(cuid())\n  tenantId  String\n  provider  AIProviderType\n  modelName String\n  apiKey    String\n  baseUrl   String?\n  isActive  Boolean        @default(true)\n  priority  Int            @default(0)\n  createdAt DateTime       @default(now())\n  updatedAt DateTime       @updatedAt\n\n  @@index([tenantId])\n  @@index([provider])\n  @@index([tenantId, isActive, priority])\n  @@map(\"ai_provider_configs\")\n}\n\nmodel AIRequestLog {\n  id           String   @id @default(cuid())\n  tenantId     String\n  provider     String\n  modelName    String\n  prompt       String   @db.Text\n  response     String   @db.Text\n  tokensInput  Int      @default(0)\n  tokensOutput Int      @default(0)\n  latencyMs    Int      @default(0)\n  createdAt    DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([provider])\n  @@index([createdAt])\n  @@map(\"ai_request_logs\")\n}\n\nmodel AIMemory {\n  id         String   @id @default(cuid())\n  tenantId   String\n  memoryKey  String\n  value      Json\n  entityType String?\n  entityId   String?\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@unique([tenantId, memoryKey])\n  @@index([tenantId, entityType, entityId])\n  @@map(\"ai_memories\")\n}\n\nmodel AIWorkflowRun {\n  id        String   @id @default(cuid())\n  tenantId  String\n  trigger   String\n  status    String\n  steps     Json\n  result    Json?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([tenantId, trigger])\n  @@index([createdAt])\n  @@map(\"ai_workflow_runs\")\n}\n\nmodel AIStreamSession {\n  id        String   @id @default(cuid())\n  tenantId  String\n  sessionId String   @unique\n  task      String\n  context   Json\n  status    String\n  chunks    Json     @default(\"[]\")\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([tenantId])\n  @@map(\"ai_stream_sessions\")\n}\n",
-  "inlineSchemaHash": "c5bddde6a87b44ba11c7964d1d5e7f8bacdeeca92f358df84d420b7433bfe7bc",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AIProviderType {\n  OPENAI\n  AZURE_OPENAI\n  ANTHROPIC\n  LOCAL\n}\n\nmodel AIProviderConfig {\n  id        String         @id @default(cuid())\n  tenantId  String\n  provider  AIProviderType\n  modelName String\n  apiKey    String\n  baseUrl   String?\n  isActive  Boolean        @default(true)\n  priority  Int            @default(0)\n  createdAt DateTime       @default(now())\n  updatedAt DateTime       @updatedAt\n\n  @@index([tenantId])\n  @@index([provider])\n  @@index([tenantId, isActive, priority])\n  @@map(\"ai_provider_configs\")\n}\n\nmodel AIRequestLog {\n  id           String   @id @default(cuid())\n  tenantId     String\n  provider     String\n  modelName    String\n  prompt       String   @db.Text\n  response     String   @db.Text\n  tokensInput  Int      @default(0)\n  tokensOutput Int      @default(0)\n  latencyMs    Int      @default(0)\n  metadata     Json     @default(\"{}\")\n  createdAt    DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([provider])\n  @@index([createdAt])\n  @@map(\"ai_request_logs\")\n}\n\nmodel AIMemory {\n  id         String   @id @default(cuid())\n  tenantId   String\n  memoryKey  String\n  value      Json\n  entityType String?\n  entityId   String?\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@unique([tenantId, memoryKey])\n  @@index([tenantId, entityType, entityId])\n  @@map(\"ai_memories\")\n}\n\nmodel AIWorkflow {\n  id          String   @id @default(cuid())\n  tenantId    String\n  name        String\n  description String   @default(\"\")\n  isActive    Boolean  @default(false)\n  dryRun      Boolean  @default(false)\n  trigger     Json\n  conditions  Json     @default(\"[]\")\n  actions     Json     @default(\"[]\")\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  @@index([tenantId])\n  @@index([tenantId, isActive])\n  @@map(\"ai_workflows\")\n}\n\nmodel AIWorkflowRun {\n  id         String   @id @default(cuid())\n  tenantId   String\n  workflowId String?\n  trigger    String\n  status     String\n  steps      Json\n  result     Json?\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([tenantId, trigger])\n  @@index([tenantId, workflowId])\n  @@index([createdAt])\n  @@map(\"ai_workflow_runs\")\n}\n\nmodel AIWorkflowVersion {\n  id              String   @id @default(cuid())\n  tenantId        String\n  workflowId      String\n  versionNumber   Int\n  label           String?\n  definition      Json\n  createdByUserId String\n  createdAt       DateTime @default(now())\n\n  @@unique([workflowId, versionNumber])\n  @@index([workflowId])\n  @@index([tenantId, workflowId])\n  @@map(\"ai_workflow_versions\")\n}\n\nmodel AIWorkflowLiveEvent {\n  id           String   @id @default(cuid())\n  tenantId     String\n  workflowId   String?\n  workflowName String?\n  runId        String?\n  eventType    String\n  timestamp    DateTime @default(now())\n  payload      Json     @default(\"{}\")\n  durationMs   Int?\n  status       String?\n\n  @@index([tenantId])\n  @@index([workflowId])\n  @@index([timestamp])\n  @@index([tenantId, timestamp])\n  @@map(\"ai_workflow_live_events\")\n}\n\nenum AIDatasetType {\n  TEXT\n  JSON\n  CONVERSATION\n  EMBEDDING\n}\n\nenum AIDatasetLabelType {\n  CLASSIFICATION\n  EXTRACTION\n  CORRECTION\n}\n\nmodel AIDataset {\n  id              String        @id @default(cuid())\n  tenantId        String\n  name            String\n  description     String        @default(\"\")\n  type            AIDatasetType @default(TEXT)\n  tags            String[]      @default([])\n  createdByUserId String\n  createdAt       DateTime      @default(now())\n  updatedAt       DateTime      @updatedAt\n\n  versions  AIDatasetVersion[]\n  records   AIDatasetRecord[]\n  auditLogs AIDatasetAuditLog[]\n\n  @@index([tenantId])\n  @@index([tenantId, type])\n  @@map(\"ai_datasets\")\n}\n\nmodel AIDatasetVersion {\n  id              String   @id @default(cuid())\n  tenantId        String\n  datasetId       String\n  versionNumber   Int\n  recordCount     Int      @default(0)\n  embeddingModel  String?\n  createdByUserId String\n  createdAt       DateTime @default(now())\n\n  dataset AIDataset         @relation(fields: [datasetId], references: [id], onDelete: Cascade)\n  records AIDatasetRecord[]\n\n  @@unique([datasetId, versionNumber])\n  @@index([datasetId])\n  @@index([tenantId, datasetId])\n  @@map(\"ai_dataset_versions\")\n}\n\nmodel AIDatasetRecord {\n  id        String   @id @default(cuid())\n  tenantId  String\n  datasetId String\n  versionId String\n  input     Json\n  output    Json?\n  metadata  Json     @default(\"{}\")\n  embedding Json?\n  createdAt DateTime @default(now())\n\n  dataset AIDataset        @relation(fields: [datasetId], references: [id], onDelete: Cascade)\n  version AIDatasetVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)\n  labels  AIDatasetLabel[]\n\n  @@index([datasetId, versionId])\n  @@index([tenantId])\n  @@map(\"ai_dataset_records\")\n}\n\nmodel AIDatasetLabel {\n  id              String             @id @default(cuid())\n  tenantId        String\n  recordId        String\n  labelType       AIDatasetLabelType\n  labelValue      Json\n  createdByUserId String\n  createdAt       DateTime           @default(now())\n\n  record AIDatasetRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)\n\n  @@index([recordId])\n  @@index([tenantId])\n  @@map(\"ai_dataset_labels\")\n}\n\nmodel AIDatasetAuditLog {\n  id        String   @id @default(cuid())\n  tenantId  String\n  datasetId String\n  action    String\n  userId    String\n  metadata  Json     @default(\"{}\")\n  createdAt DateTime @default(now())\n\n  dataset AIDataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)\n\n  @@index([datasetId])\n  @@index([tenantId, datasetId])\n  @@index([createdAt])\n  @@map(\"ai_dataset_audit_logs\")\n}\n\nmodel AIStreamSession {\n  id        String   @id @default(cuid())\n  tenantId  String\n  sessionId String   @unique\n  task      String\n  context   Json\n  status    String\n  chunks    Json     @default(\"[]\")\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([tenantId])\n  @@map(\"ai_stream_sessions\")\n}\n",
+  "inlineSchemaHash": "804c314006eb19594790171d6163a8d1bc04dd25db411f4eca184c5eb93923c9",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"AIProviderConfig\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"enum\",\"type\":\"AIProviderType\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"apiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"baseUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"priority\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_provider_configs\"},\"AIRequestLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"prompt\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"response\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tokensInput\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tokensOutput\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"latencyMs\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_request_logs\"},\"AIMemory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"memoryKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"entityType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_memories\"},\"AIWorkflowRun\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"trigger\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"steps\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"result\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_workflow_runs\"},\"AIStreamSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"task\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"context\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"chunks\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_stream_sessions\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"AIProviderConfig\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"enum\",\"type\":\"AIProviderType\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"apiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"baseUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"priority\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_provider_configs\"},\"AIRequestLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"prompt\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"response\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tokensInput\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tokensOutput\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"latencyMs\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_request_logs\"},\"AIMemory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"memoryKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"entityType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_memories\"},\"AIWorkflow\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"dryRun\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"trigger\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"conditions\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"actions\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_workflows\"},\"AIWorkflowRun\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"trigger\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"steps\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"result\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_workflow_runs\"},\"AIWorkflowVersion\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"versionNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"label\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"definition\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_workflow_versions\"},\"AIWorkflowLiveEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"workflowName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"runId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"eventType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"timestamp\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"payload\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"durationMs\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":\"ai_workflow_live_events\"},\"AIDataset\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"AIDatasetType\"},{\"name\":\"tags\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"versions\",\"kind\":\"object\",\"type\":\"AIDatasetVersion\",\"relationName\":\"AIDatasetToAIDatasetVersion\"},{\"name\":\"records\",\"kind\":\"object\",\"type\":\"AIDatasetRecord\",\"relationName\":\"AIDatasetToAIDatasetRecord\"},{\"name\":\"auditLogs\",\"kind\":\"object\",\"type\":\"AIDatasetAuditLog\",\"relationName\":\"AIDatasetToAIDatasetAuditLog\"}],\"dbName\":\"ai_datasets\"},\"AIDatasetVersion\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"datasetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"versionNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"recordCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"embeddingModel\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"dataset\",\"kind\":\"object\",\"type\":\"AIDataset\",\"relationName\":\"AIDatasetToAIDatasetVersion\"},{\"name\":\"records\",\"kind\":\"object\",\"type\":\"AIDatasetRecord\",\"relationName\":\"AIDatasetRecordToAIDatasetVersion\"}],\"dbName\":\"ai_dataset_versions\"},\"AIDatasetRecord\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"datasetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"versionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"input\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"output\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"embedding\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"dataset\",\"kind\":\"object\",\"type\":\"AIDataset\",\"relationName\":\"AIDatasetToAIDatasetRecord\"},{\"name\":\"version\",\"kind\":\"object\",\"type\":\"AIDatasetVersion\",\"relationName\":\"AIDatasetRecordToAIDatasetVersion\"},{\"name\":\"labels\",\"kind\":\"object\",\"type\":\"AIDatasetLabel\",\"relationName\":\"AIDatasetLabelToAIDatasetRecord\"}],\"dbName\":\"ai_dataset_records\"},\"AIDatasetLabel\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"recordId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labelType\",\"kind\":\"enum\",\"type\":\"AIDatasetLabelType\"},{\"name\":\"labelValue\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"record\",\"kind\":\"object\",\"type\":\"AIDatasetRecord\",\"relationName\":\"AIDatasetLabelToAIDatasetRecord\"}],\"dbName\":\"ai_dataset_labels\"},\"AIDatasetAuditLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"datasetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"dataset\",\"kind\":\"object\",\"type\":\"AIDataset\",\"relationName\":\"AIDatasetToAIDatasetAuditLog\"}],\"dbName\":\"ai_dataset_audit_logs\"},\"AIStreamSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"task\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"context\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"chunks\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"ai_stream_sessions\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

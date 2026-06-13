@@ -43,6 +43,7 @@ model AIRequestLog {
   tokensInput  Int      @default(0)
   tokensOutput Int      @default(0)
   latencyMs    Int      @default(0)
+  metadata     Json     @default("{}")
   createdAt    DateTime @default(now())
 
   @@index([tenantId])
@@ -66,19 +67,179 @@ model AIMemory {
   @@map("ai_memories")
 }
 
+model AIWorkflow {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  description String   @default("")
+  isActive    Boolean  @default(false)
+  dryRun      Boolean  @default(false)
+  trigger     Json
+  conditions  Json     @default("[]")
+  actions     Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, isActive])
+  @@map("ai_workflows")
+}
+
 model AIWorkflowRun {
-  id        String   @id @default(cuid())
-  tenantId  String
-  trigger   String
-  status    String
-  steps     Json
-  result    Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  tenantId   String
+  workflowId String?
+  trigger    String
+  status     String
+  steps      Json
+  result     Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([tenantId, trigger])
+  @@index([tenantId, workflowId])
   @@index([createdAt])
   @@map("ai_workflow_runs")
+}
+
+model AIWorkflowVersion {
+  id              String   @id @default(cuid())
+  tenantId        String
+  workflowId      String
+  versionNumber   Int
+  label           String?
+  definition      Json
+  createdByUserId String
+  createdAt       DateTime @default(now())
+
+  @@unique([workflowId, versionNumber])
+  @@index([workflowId])
+  @@index([tenantId, workflowId])
+  @@map("ai_workflow_versions")
+}
+
+model AIWorkflowLiveEvent {
+  id           String   @id @default(cuid())
+  tenantId     String
+  workflowId   String?
+  workflowName String?
+  runId        String?
+  eventType    String
+  timestamp    DateTime @default(now())
+  payload      Json     @default("{}")
+  durationMs   Int?
+  status       String?
+
+  @@index([tenantId])
+  @@index([workflowId])
+  @@index([timestamp])
+  @@index([tenantId, timestamp])
+  @@map("ai_workflow_live_events")
+}
+
+enum AIDatasetType {
+  TEXT
+  JSON
+  CONVERSATION
+  EMBEDDING
+}
+
+enum AIDatasetLabelType {
+  CLASSIFICATION
+  EXTRACTION
+  CORRECTION
+}
+
+model AIDataset {
+  id              String        @id @default(cuid())
+  tenantId        String
+  name            String
+  description     String        @default("")
+  type            AIDatasetType @default(TEXT)
+  tags            String[]      @default([])
+  createdByUserId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  versions AIDatasetVersion[]
+  records  AIDatasetRecord[]
+  auditLogs AIDatasetAuditLog[]
+
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("ai_datasets")
+}
+
+model AIDatasetVersion {
+  id              String   @id @default(cuid())
+  tenantId        String
+  datasetId       String
+  versionNumber   Int
+  recordCount     Int      @default(0)
+  embeddingModel  String?
+  createdByUserId String
+  createdAt       DateTime @default(now())
+
+  dataset AIDataset         @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  records AIDatasetRecord[]
+
+  @@unique([datasetId, versionNumber])
+  @@index([datasetId])
+  @@index([tenantId, datasetId])
+  @@map("ai_dataset_versions")
+}
+
+model AIDatasetRecord {
+  id        String   @id @default(cuid())
+  tenantId  String
+  datasetId String
+  versionId String
+  input     Json
+  output    Json?
+  metadata  Json     @default("{}")
+  embedding Json?
+  createdAt DateTime @default(now())
+
+  dataset AIDataset       @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  version AIDatasetVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  labels  AIDatasetLabel[]
+
+  @@index([datasetId, versionId])
+  @@index([tenantId])
+  @@map("ai_dataset_records")
+}
+
+model AIDatasetLabel {
+  id              String             @id @default(cuid())
+  tenantId        String
+  recordId        String
+  labelType       AIDatasetLabelType
+  labelValue      Json
+  createdByUserId String
+  createdAt       DateTime           @default(now())
+
+  record AIDatasetRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@index([recordId])
+  @@index([tenantId])
+  @@map("ai_dataset_labels")
+}
+
+model AIDatasetAuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  datasetId String
+  action    String
+  userId    String
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  dataset AIDataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@index([datasetId])
+  @@index([tenantId, datasetId])
+  @@index([createdAt])
+  @@map("ai_dataset_audit_logs")
 }
 
 model AIStreamSession {

@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AIAuditLog {
+  id               String   @id @default(cuid())
+  tenantId         String
+  userId           String?
+  apiKeyId         String?
+  action           String
+  modelId          String?
+  requestMetadata  Json     @default("{}")
+  responseMetadata Json     @default("{}")
+  timestamp        DateTime @default(now())
+  piiDetected      Boolean  @default(false)
+  redacted         Boolean  @default(false)
+
+  @@index([tenantId, timestamp])
+  @@index([tenantId, action])
+  @@index([tenantId, modelId])
+  @@map("ai_audit_logs")
+}
+
+model AIAccessPolicy {
+  id           String   @id @default(cuid())
+  tenantId     String
+  modelId      String
+  allowedRoles Json     @default("[]")
+  allowedUsers Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, modelId])
+  @@index([tenantId])
+  @@map("ai_access_policies")
+}
+
+model AIPIIIncident {
+  id           String    @id @default(cuid())
+  tenantId     String
+  modelId      String?
+  piiType      String
+  originalText String
+  redactedText String
+  detectedAt   DateTime  @default(now())
+  resolvedAt   DateTime?
+
+  @@index([tenantId, detectedAt])
+  @@index([tenantId, resolvedAt])
+  @@map("ai_pii_incidents")
+}
+
+model AISecurePromptStore {
+  id               String   @id @default(cuid())
+  tenantId         String
+  modelId          String?
+  promptHash       String
+  responseHash     String?
+  redactedPrompt   String
+  redactedResponse String?
+  createdAt        DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@map("ai_secure_prompt_store")
+}

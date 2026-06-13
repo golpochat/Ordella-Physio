@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AITraceSpan {
+  id           String    @id @default(cuid())
+  traceId      String
+  spanId       String
+  parentSpanId String?
+  tenantId     String
+  service      String
+  operation    String
+  startTime    DateTime  @default(now())
+  endTime      DateTime?
+  durationMs   Int?
+  metadata     Json      @default("{}")
+  status       String    @default("OK")
+
+  @@index([tenantId, traceId])
+  @@index([tenantId, service])
+  @@index([tenantId, startTime])
+  @@map("ai_trace_spans")
+}
+
+model AILogEvent {
+  id        String   @id @default(cuid())
+  tenantId  String
+  service   String
+  level     String
+  message   String
+  metadata  Json     @default("{}")
+  timestamp DateTime @default(now())
+
+  @@index([tenantId, timestamp])
+  @@index([tenantId, service])
+  @@index([tenantId, level])
+  @@map("ai_log_events")
+}
+
+model AIMetricPoint {
+  id         String   @id @default(cuid())
+  tenantId   String
+  modelId    String?
+  region     String?
+  metricType String
+  value      Float
+  timestamp  DateTime @default(now())
+
+  @@index([tenantId, metricType, timestamp])
+  @@index([tenantId, modelId])
+  @@index([tenantId, region])
+  @@map("ai_metric_points")
+}
+
+model AIBottleneckAlert {
+  id         String    @id @default(cuid())
+  tenantId   String
+  alertType  String
+  entity     String
+  severity   String
+  message    String
+  metadata   Json      @default("{}")
+  detectedAt DateTime  @default(now())
+  resolvedAt DateTime?
+
+  @@index([tenantId, detectedAt])
+  @@map("ai_bottleneck_alerts")
+}

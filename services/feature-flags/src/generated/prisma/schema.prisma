@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FeatureFlagType {
+  BOOLEAN
+  PERCENTAGE
+  VARIANT
+}
+
+enum ExperimentStatus {
+  DRAFT
+  RUNNING
+  PAUSED
+  COMPLETED
+}
+
+model FeatureFlag {
+  id        String          @id @default(cuid())
+  tenantId  String
+  key       String
+  type      FeatureFlagType @default(BOOLEAN)
+  variants  Json            @default("[]")
+  rollout   Json            @default("{}")
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+  @@map("feature_flags")
+}
+
+model Experiment {
+  id             String           @id @default(cuid())
+  tenantId       String
+  name           String
+  description    String           @default("")
+  variants       Json             @default("[]")
+  targetAudience Json             @default("{}")
+  status         ExperimentStatus @default(DRAFT)
+  metricsTracked Json             @default("[]")
+  experimentType String           @default("AB")
+  modelKey       String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  assignments ExperimentAssignment[]
+  events      ExperimentEvent[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("experiments")
+}
+
+model ExperimentAssignment {
+  id           String   @id @default(cuid())
+  experimentId String
+  tenantId     String
+  userId       String?
+  variant      String
+  assignedAt   DateTime @default(now())
+
+  experiment Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+
+  @@unique([experimentId, userId])
+  @@index([experimentId])
+  @@index([tenantId, userId])
+  @@map("experiment_assignments")
+}
+
+model ExperimentEvent {
+  id           String   @id @default(cuid())
+  experimentId String
+  tenantId     String
+  userId       String?
+  variant      String
+  eventType    String
+  payload      Json     @default("{}")
+  recordedAt   DateTime @default(now())
+
+  experiment Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+
+  @@index([experimentId, eventType])
+  @@index([tenantId, recordedAt])
+  @@map("experiment_events")
+}

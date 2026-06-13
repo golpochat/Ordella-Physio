@@ -13,6 +13,9 @@
 @import "./navigation.css";
 @import "./dashboard-global.css";
 @import "./auth.css";
+@import "./automation.css";
+@import "./datasets.css";
+@import "./training.css";
 
 @font-face {
   font-family: "Inter";

@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AIDeploymentStatus {
+  DEPLOYING
+  ACTIVE
+  FAILED
+  ROLLED_BACK
+}
+
+enum AIRegionHealth {
+  HEALTHY
+  DEGRADED
+  UNHEALTHY
+}
+
+model AIModelDeployment {
+  id                   String             @id @default(cuid())
+  tenantId             String
+  modelId              String
+  version              String
+  regions              Json               @default("[]")
+  rollout              Json               @default("{}")
+  health               Json               @default("{}")
+  status               AIDeploymentStatus @default(DEPLOYING)
+  artifactLocation     String             @default("")
+  previousDeploymentId String?
+  pipeline             Json               @default("[]")
+  failoverRegion       String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@unique([tenantId, modelId, version])
+  @@index([tenantId])
+  @@index([modelId])
+  @@index([tenantId, modelId])
+  @@index([status])
+  @@map("ai_model_deployments")
+}
+
+model AIDeploymentMetric {
+  id              String   @id @default(cuid())
+  tenantId        String
+  modelId         String
+  version         String
+  region          String
+  timestamp       DateTime @default(now())
+  requests        Int      @default(0)
+  latencyMs       Float    @default(0)
+  errorRate       Float    @default(0)
+  tokenThroughput Float    @default(0)
+  memoryUsageMb   Float    @default(0)
+  cpuLoad         Float    @default(0)
+  rolloutPercent  Int      @default(0)
+  canaryStable    Boolean  @default(true)
+
+  @@index([tenantId, modelId, version])
+  @@index([modelId, region, timestamp])
+  @@map("ai_deployment_metrics")
+}

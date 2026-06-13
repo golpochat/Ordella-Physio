@@ -38,6 +38,15 @@ export function aiProviderNotFoundError(message = "AI provider configuration not
   });
 }
 
+export function aiWorkflowNotFoundError(message = "Workflow not found.") {
+  return new HttpError({
+    statusCode: 404,
+    code: ERROR_CODES.AI.WORKFLOW_NOT_FOUND,
+    message,
+    metadata: { error: "WORKFLOW_NOT_FOUND" },
+  });
+}
+
 export function aiForbiddenError(message = "You do not have permission to use AI features.") {
   return new HttpError({
     statusCode: 403,

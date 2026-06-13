@@ -1,0 +1,433 @@
+.training-job-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.training-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.training-status-pill {
+  display: inline-flex;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(100, 116, 139, 0.15);
+}
+
+.training-status-success {
+  background: rgba(34, 197, 94, 0.15);
+  color: #15803d;
+}
+
+.training-status-failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #b91c1c;
+}
+
+.training-status-running {
+  background: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
+}
+
+.training-logs-panel {
+  margin-top: 1rem;
+}
+
+.training-logs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 24rem;
+  overflow: auto;
+}
+
+.training-logs-list li {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.04);
+  font-size: 0.875rem;
+}
+
+.training-log-error {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.training-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.training-metric-card {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.training-metric-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.training-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.training-tab {
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border, #d6dbe3);
+  background: transparent;
+  cursor: pointer;
+}
+
+.training-tab-active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.training-model-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.training-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.training-details-grid dt {
+  font-size: 0.75rem;
+  color: var(--muted-foreground, #64748b);
+}
+
+.training-details-grid dd {
+  margin: 0.25rem 0 0;
+}
+
+.training-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.training-dashboard-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.training-dashboard-section h3,
+.training-dashboard-overview h3 {
+  margin: 0 0 0.5rem;
+}
+
+.training-dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.training-chart h4 {
+  margin: 0 0 0.75rem;
+}
+
+.training-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  min-height: 160px;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.training-chart-bar-wrap {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 1.5rem;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.training-chart-bar {
+  width: 100%;
+  min-height: 4px;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.training-chart-bar-loss {
+  background: rgba(239, 68, 68, 0.65);
+}
+
+.training-chart-bar-accuracy {
+  background: rgba(34, 197, 94, 0.65);
+}
+
+.training-chart-label {
+  font-size: 0.7rem;
+  color: var(--muted-foreground, #64748b);
+}
+
+.training-comparison-table {
+  overflow: auto;
+}
+
+.training-comparison-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.training-comparison-table th,
+.training-comparison-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border, #d6dbe3);
+  vertical-align: top;
+  text-align: left;
+}
+
+.training-comparison-best {
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.training-evaluation-page,
+.training-promotion-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.training-scorecard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.training-scorecard-tile {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border, #d6dbe3);
+}
+
+.training-scorecard-green {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.training-scorecard-yellow {
+  background: rgba(234, 179, 8, 0.12);
+}
+
+.training-scorecard-red {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.training-scorecard-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.training-scorecard-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.training-scorecard-columns ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.training-promotion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.training-promotion-warnings {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(234, 179, 8, 0.12);
+}
+
+.training-rollout-slider {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.training-canary-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.training-drift-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.training-drift-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.training-drift-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.training-drift-summary-card {
+  padding: 1rem;
+  border: 1px solid var(--border, #d6dbe3);
+  border-radius: 0.5rem;
+}
+
+.training-drift-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.training-drift-metrics-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.training-drift-timeline-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.training-drift-timeline-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border, #d6dbe3);
+  border-radius: 0.5rem;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.training-drift-timeline-item.is-selected {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.training-drift-event-details {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.training-drift-mitigation {
+  padding-top: 0.5rem;
+}
+
+.training-deployment-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.training-deployment-status-card,
+.training-deployment-health-panel,
+.training-deployment-metrics {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+.training-deployment-pipeline {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.training-deployment-pipeline li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.training-deployment-failover-warning {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.deployment-rollout-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 10rem;
+}
+
+.deployment-health-healthy { color: #16a34a; }
+.deployment-health-degraded { color: #ca8a04; }
+.deployment-health-unhealthy { color: #dc2626; }
+
+.deployment-health-pill {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.deployment-latency-heatmap {
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .training-form-grid,
+  .training-details-grid,
+  .training-dashboard-charts,
+  .training-scorecard-grid,
+  .training-scorecard-columns,
+  .training-canary-metrics,
+  .training-drift-overview,
+  .training-drift-summary-grid,
+  .training-drift-metrics-charts {
+    grid-template-columns: 1fr;
+  }
+}

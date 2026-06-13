@@ -12,9 +12,16 @@ export class AuthEventPublisher implements OnModuleInit, OnModuleDestroy {
   private eventBus: EventBus | null = null;
 
   async onModuleInit() {
-    this.eventBus = createEventBus();
-    await this.eventBus.connect();
-    this.logger.log("Auth event publisher connected to NATS");
+    try {
+      this.eventBus = createEventBus();
+      await this.eventBus.connect();
+      this.logger.log("Auth event publisher connected to NATS");
+    } catch (error) {
+      this.eventBus = null;
+      this.logger.warn(
+        `NATS unavailable; auth events will not be published (${error instanceof Error ? error.message : String(error)})`,
+      );
+    }
   }
 
   async onModuleDestroy() {

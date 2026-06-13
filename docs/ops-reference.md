@@ -16,7 +16,7 @@ cd infrastructure/deployment-layer
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml up -d --build
+docker compose -f docker-compose.dev.yml up -d --build
 ```
 
 Or use the helper script:
@@ -29,34 +29,34 @@ Or use the helper script:
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml down
+docker compose -f docker-compose.dev.yml down
 ```
 
 ## Restart all services
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml restart
+docker compose -f docker-compose.dev.yml restart
 ```
 
 ## View logs for all services
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml logs -f
+docker compose -f docker-compose.dev.yml logs -f
 ```
 
 ## View logs for a specific service
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml logs -f <service-name>
+docker compose -f docker-compose.dev.yml logs -f <service-name>
 ```
 
 Example:
 
 ```bash
-docker compose -f docker-compose.local.yml logs -f api-gateway
+docker compose -f docker-compose.dev.yml logs -f api-gateway
 ```
 
 ---
@@ -67,43 +67,43 @@ docker compose -f docker-compose.local.yml logs -f api-gateway
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml build
+docker compose -f docker-compose.dev.yml build
 ```
 
 ## Rebuild all services (no cache)
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml build --no-cache
+docker compose -f docker-compose.dev.yml build --no-cache
 ```
 
 ## Rebuild + restart everything
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml up -d --build --force-recreate
+docker compose -f docker-compose.dev.yml up -d --build --force-recreate
 ```
 
 ## Rebuild a single service
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml build <service-name>
-docker compose -f docker-compose.local.yml up -d --no-deps --force-recreate <service-name>
+docker compose -f docker-compose.dev.yml build <service-name>
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate <service-name>
 ```
 
 Example:
 
 ```bash
-docker compose -f docker-compose.local.yml build auth-service
-docker compose -f docker-compose.local.yml up -d --no-deps --force-recreate auth-service
+docker compose -f docker-compose.dev.yml build auth-service
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate auth-service
 ```
 
 ## Restart a single service
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml restart <service-name>
+docker compose -f docker-compose.dev.yml restart <service-name>
 ```
 
 ---
@@ -149,7 +149,7 @@ cd infrastructure/deployment-layer
 If migrate reports that the schema exists but `_prisma_migrations` is missing, either reset volumes (`docker compose down -v` — **destroys data**) or apply the missing SQL manually, for example:
 
 ```bash
-docker exec -i ordella_local_postgres psql -U physio -d ordella_auth -c \
+docker exec -i ordella-physio-db psql -U physio -d ordella_auth -c \
   'ALTER TABLE users ADD COLUMN IF NOT EXISTS "isActive" BOOLEAN NOT NULL DEFAULT true;'
 ```
 
@@ -161,8 +161,8 @@ This stops the stack and **removes all Docker volumes** (Postgres, Redis, NATS, 
 
 ```bash
 cd infrastructure/deployment-layer
-docker compose -f docker-compose.local.yml down -v
-docker compose -f docker-compose.local.yml up -d --build
+docker compose -f docker-compose.dev.yml down -v
+docker compose -f docker-compose.dev.yml up -d --build
 ```
 
 Then re-run migrations (see above).
@@ -254,19 +254,19 @@ cd infrastructure/deployment-layer
 cd infrastructure/deployment-layer
 
 # 0. Ensure auth schema includes PATIENT + PHARMACY roles
-docker compose -f docker-compose.local.yml run --rm --no-deps auth-service \
+docker compose -f docker-compose.dev.yml run --rm --no-deps auth-service \
   sh -c "pnpm exec prisma db push --skip-generate"
 
 # 1. Demo clinic + staff records
-docker compose -f docker-compose.local.yml run --rm --no-deps tenant-service \
+docker compose -f docker-compose.dev.yml run --rm --no-deps tenant-service \
   sh -c "pnpm exec prisma db seed"
 
 # 2. Auth users (all roles)
-docker compose -f docker-compose.local.yml run --rm --no-deps auth-service \
+docker compose -f docker-compose.dev.yml run --rm --no-deps auth-service \
   sh -c "pnpm exec prisma db seed"
 
 # 3. Patient profiles (patient1 + patient2)
-docker compose -f docker-compose.local.yml run --rm --no-deps patient-service \
+docker compose -f docker-compose.dev.yml run --rm --no-deps patient-service \
   sh -c "pnpm exec prisma db seed"
 ```
 
@@ -283,7 +283,7 @@ After a full database reset (`docker compose down -v`), re-run migrations (secti
 The seed script restarts `auth-service` so the running container picks up the `PATIENT` and `PHARMACY` role enum. If you seed manually, run:
 
 ```bash
-docker compose -f docker-compose.local.yml up -d --no-deps --force-recreate auth-service
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate auth-service
 ```
 
 ---

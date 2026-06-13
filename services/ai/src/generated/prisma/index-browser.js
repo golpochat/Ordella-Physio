@@ -144,6 +144,7 @@ exports.Prisma.AIRequestLogScalarFieldEnum = {
   tokensInput: 'tokensInput',
   tokensOutput: 'tokensOutput',
   latencyMs: 'latencyMs',
+  metadata: 'metadata',
   createdAt: 'createdAt'
 };
 
@@ -158,15 +159,109 @@ exports.Prisma.AIMemoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AIWorkflowScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  isActive: 'isActive',
+  dryRun: 'dryRun',
+  trigger: 'trigger',
+  conditions: 'conditions',
+  actions: 'actions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AIWorkflowRunScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  workflowId: 'workflowId',
   trigger: 'trigger',
   status: 'status',
   steps: 'steps',
   result: 'result',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AIWorkflowVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  versionNumber: 'versionNumber',
+  label: 'label',
+  definition: 'definition',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIWorkflowLiveEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  workflowName: 'workflowName',
+  runId: 'runId',
+  eventType: 'eventType',
+  timestamp: 'timestamp',
+  payload: 'payload',
+  durationMs: 'durationMs',
+  status: 'status'
+};
+
+exports.Prisma.AIDatasetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  tags: 'tags',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AIDatasetVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  versionNumber: 'versionNumber',
+  recordCount: 'recordCount',
+  embeddingModel: 'embeddingModel',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIDatasetRecordScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  versionId: 'versionId',
+  input: 'input',
+  output: 'output',
+  metadata: 'metadata',
+  embedding: 'embedding',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIDatasetLabelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  recordId: 'recordId',
+  labelType: 'labelType',
+  labelValue: 'labelValue',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AIDatasetAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  action: 'action',
+  userId: 'userId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AIStreamSessionScalarFieldEnum = {
@@ -217,11 +312,32 @@ exports.AIProviderType = exports.$Enums.AIProviderType = {
   LOCAL: 'LOCAL'
 };
 
+exports.AIDatasetType = exports.$Enums.AIDatasetType = {
+  TEXT: 'TEXT',
+  JSON: 'JSON',
+  CONVERSATION: 'CONVERSATION',
+  EMBEDDING: 'EMBEDDING'
+};
+
+exports.AIDatasetLabelType = exports.$Enums.AIDatasetLabelType = {
+  CLASSIFICATION: 'CLASSIFICATION',
+  EXTRACTION: 'EXTRACTION',
+  CORRECTION: 'CORRECTION'
+};
+
 exports.Prisma.ModelName = {
   AIProviderConfig: 'AIProviderConfig',
   AIRequestLog: 'AIRequestLog',
   AIMemory: 'AIMemory',
+  AIWorkflow: 'AIWorkflow',
   AIWorkflowRun: 'AIWorkflowRun',
+  AIWorkflowVersion: 'AIWorkflowVersion',
+  AIWorkflowLiveEvent: 'AIWorkflowLiveEvent',
+  AIDataset: 'AIDataset',
+  AIDatasetVersion: 'AIDatasetVersion',
+  AIDatasetRecord: 'AIDatasetRecord',
+  AIDatasetLabel: 'AIDatasetLabel',
+  AIDatasetAuditLog: 'AIDatasetAuditLog',
   AIStreamSession: 'AIStreamSession'
 };
 

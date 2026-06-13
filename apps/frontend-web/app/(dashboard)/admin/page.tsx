@@ -11,9 +11,14 @@ export default function AdminDashboardPage() {
           title="Admin Dashboard"
           description="Tenant administration, staff management, and organization settings."
         />
-        <Button type="button" variant="outline" asChild>
-          <Link href="/admin/revenue">Revenue analytics</Link>
-        </Button>
+        <div className="automation-builder-actions">
+          <Button type="button" variant="outline" asChild>
+            <Link href="/admin/ai/dashboard">AI platform</Link>
+          </Button>
+          <Button type="button" variant="outline" asChild>
+            <Link href="/admin/revenue">Revenue analytics</Link>
+          </Button>
+        </div>
       </div>
     </RoleGuard>
   );

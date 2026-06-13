@@ -6,8 +6,7 @@ Production-ready deployment scaffolding for the **ordella-physio** monorepo. Sup
 
 ```
 infrastructure/deployment-layer/
-├── docker-compose.local.yml      # Full local stack
-├── docker-compose.override.yml   # Optional dev overrides
+├── docker-compose.full.yml       # Source template for full stack (repo root docker-compose.yml)
 ├── k8s/
 │   ├── base/                     # Shared Kubernetes manifests
 │   └── overlays/
@@ -38,6 +37,7 @@ infrastructure/deployment-layer/
 | notification-service  | 3062 |
 | ai-notes-service      | 3063 |
 | ai-service            | 3075 |
+| ai-training-service   | 3076 |
 | frontend-web          | 3010 |
 
 ## Local Development (Docker Compose)
@@ -50,16 +50,19 @@ infrastructure/deployment-layer/
 ### Quick Start
 
 ```bash
-cd infrastructure/deployment-layer
+# From repository root
+cp infrastructure/deployment-layer/.env.local.example infrastructure/deployment-layer/.env.local
 
-# Copy and customize environment
-cp .env.local.example .env.local
-
-# Start the full stack
-./scripts/deploy-local.sh
+# Lightweight dev (recommended)
+./infrastructure/deployment-layer/scripts/deploy-local.sh
 # or
-docker compose -f docker-compose.local.yml up -d --build
+docker compose -f docker-compose.dev.yml up -d
+
+# Full stack (all microservices)
+docker compose up -d
 ```
+
+See [docs/docker-rules.md](../../docs/docker-rules.md) for Docker standards.
 
 ### Endpoints
 
@@ -75,8 +78,8 @@ docker compose -f docker-compose.local.yml up -d --build
 ### Stop / Reset
 
 ```bash
-docker compose -f docker-compose.local.yml down
-docker compose -f docker-compose.local.yml down -v   # remove volumes
+docker compose -f docker-compose.dev.yml down
+docker compose -f docker-compose.dev.yml down -v   # remove dev volumes
 ```
 
 ## Staging Deployment (Kubernetes)
@@ -217,6 +220,6 @@ Mount production config files from `infrastructure/global-metrics-monitoring-lay
 
 ## Notes
 
-- Postgres and NATS are included in `docker-compose.local.yml` as required dependencies; add managed DB/messaging for K8s production.
+- Postgres and NATS are included in root `docker-compose.yml` as required dependencies; add managed DB/messaging for K8s production.
 - Health probes use `/health` — align probe paths if services expose different endpoints.
 - Ingress annotations assume NGINX; switch to Traefik annotations if using the gateway-load-balancer Traefik deployment instead.

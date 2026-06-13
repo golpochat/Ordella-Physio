@@ -1,0 +1,23 @@
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { SecurityGuardsModule } from "@ordella/security";
+import { AiGatewayModule } from "@/ai-gateway.module";
+import { DatabaseModule } from "@/database/database.module";
+import { configureAiGatewayMiddleware } from "@/middleware";
+
+@Module({
+  imports: [
+    SecurityGuardsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [".env", ".env.local"],
+    }),
+    DatabaseModule,
+    AiGatewayModule,
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    configureAiGatewayMiddleware(consumer);
+  }
+}

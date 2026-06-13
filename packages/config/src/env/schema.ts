@@ -225,6 +225,15 @@ export const gatewayServiceUrlsSchema = z.object({
   SEARCH_INDEX_SERVICE_URL: z.string().url(),
   SUBSCRIPTION_BILLING_SERVICE_URL: z.string().url(),
   AI_SERVICE_URL: z.string().url(),
+  AI_TRAINING_SERVICE_URL: z.string().url(),
+  AI_MONITORING_SERVICE_URL: z.string().url(),
+  AI_DEPLOY_SERVICE_URL: z.string().url(),
+  FEATURE_FLAGS_SERVICE_URL: z.string().url(),
+  AI_GATEWAY_SERVICE_URL: z.string().url(),
+  AI_COST_SERVICE_URL: z.string().url(),
+  AI_SECURITY_SERVICE_URL: z.string().url(),
+  AI_OBSERVABILITY_SERVICE_URL: z.string().url(),
+  AI_AGENTS_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({

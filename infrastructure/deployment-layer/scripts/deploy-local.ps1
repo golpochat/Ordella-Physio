@@ -12,7 +12,8 @@ if (-not (Test-Path ".env.local")) {
 }
 
 Write-Host "Starting Ordella Physio local stack..."
-docker compose -f docker-compose.local.yml up -d --build
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $DeployDir)
+docker compose -f (Join-Path $RepoRoot "docker-compose.dev.yml") up -d
 
 Write-Host ""
 Write-Host "Running database migrations..."

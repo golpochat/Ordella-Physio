@@ -8,7 +8,7 @@ Centralized, multi-tenant, distributed logging for the **ordella-physio** cluste
 cd infrastructure/global-logging-layer
 
 # Ensure the shared Docker network exists
-# docker compose -f ../../infrastructure/deployment-layer/docker-compose.local.yml up -d
+# docker compose -f ../../docker-compose.dev.yml up -d
 
 docker compose up -d
 ```

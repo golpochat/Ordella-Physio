@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AIAgent {
+  id              String   @id @default(cuid())
+  tenantId        String
+  name            String
+  description     String?
+  modelId         String
+  tools           Json     @default("[]")
+  systemPrompt    String
+  maxSteps        Int      @default(5)
+  createdByUserId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  runs            AIAgentRun[]
+
+  @@index([tenantId])
+  @@map("ai_agents")
+}
+
+model AIAgentTool {
+  id           String   @id @default(cuid())
+  tenantId     String
+  name         String
+  type         String
+  config       Json     @default("{}")
+  inputSchema  Json     @default("{}")
+  outputSchema Json     @default("{}")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, name])
+  @@index([tenantId, isActive])
+  @@map("ai_agent_tools")
+}
+
+model AIAgentRun {
+  id          String   @id @default(cuid())
+  agentId     String
+  tenantId    String
+  input       String
+  steps       Json     @default("[]")
+  finalOutput String?
+  status      String   @default("RUNNING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  agent       AIAgent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, agentId])
+  @@index([tenantId, status])
+  @@map("ai_agent_runs")
+}

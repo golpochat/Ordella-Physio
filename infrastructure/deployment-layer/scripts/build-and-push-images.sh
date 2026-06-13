@@ -10,18 +10,18 @@ GIT_SHA="$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null || echo "loc
 TAG="${IMAGE_TAG:-${ENVIRONMENT}-${GIT_SHA}}"
 
 declare -A SERVICES=(
-  ["api-gateway"]="services/api-gateway/Dockerfile"
-  ["auth-service"]="services/auth-service/Dockerfile"
-  ["tenant-service"]="services/tenant-service/Dockerfile"
-  ["patient-service"]="services/patient-service/Dockerfile"
-  ["appointment-service"]="services/appointment-service/Dockerfile"
-  ["notes-service"]="services/notes-service/Dockerfile"
-  ["billing-service"]="services/billing-service/Dockerfile"
-  ["payment-service"]="services/payment-service/Dockerfile"
-  ["communication-service"]="services/communication-service/Dockerfile"
-  ["reporting-service"]="services/reporting-service/Dockerfile"
-  ["event-bus-service"]="services/event-bus-service/Dockerfile"
-  ["frontend-web"]="apps/frontend-web/Dockerfile"
+  ["api-gateway"]="services/api-gateway"
+  ["auth-service"]="services/auth-service"
+  ["tenant-service"]="services/tenant-service"
+  ["patient-service"]="services/patient-service"
+  ["appointment-service"]="services/appointment-service"
+  ["notes-service"]="services/notes-service"
+  ["billing-service"]="services/billing-service"
+  ["payment-service"]="services/payment-service"
+  ["communication-service"]="services/communication-service"
+  ["reporting-service"]="services/reporting-service"
+  ["event-bus-service"]="services/event-bus-service"
+  ["frontend-web"]="apps/frontend-web"
 )
 
 echo "Building and pushing images to ${REGISTRY}"
@@ -30,16 +30,18 @@ echo "Tag: ${TAG}"
 echo ""
 
 for name in "${!SERVICES[@]}"; do
-  dockerfile="${SERVICES[$name]}"
+  context="${SERVICES[$name]}"
   image="${REGISTRY}/${name}:${TAG}"
   latest="${REGISTRY}/${name}:${ENVIRONMENT}"
 
   echo "Building ${name}..."
   docker build \
-    -f "${REPO_ROOT}/${dockerfile}" \
+    --target production \
+    --build-context workspace="${REPO_ROOT}" \
+    -f "${REPO_ROOT}/${context}/Dockerfile" \
     -t "${image}" \
     -t "${latest}" \
-    "${REPO_ROOT}"
+    "${REPO_ROOT}/${context}"
 
   echo "Pushing ${image}..."
   docker push "${image}"

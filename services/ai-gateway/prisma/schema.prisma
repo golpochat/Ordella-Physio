@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AIGatewayKey {
+  id                String    @id @default(cuid())
+  tenantId          String
+  name              String
+  keyHash           String    @unique
+  keyPrefix         String    @default("")
+  scopes            Json      @default("[]")
+  rateLimitProfileId String?
+  budgetProfileId   String?
+  isActive          Boolean   @default(true)
+  isFlagged         Boolean   @default(false)
+  isThrottled       Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastUsedAt        DateTime?
+  revokedAt         DateTime?
+
+  usageEvents AIUsageEvent[]
+
+  @@index([tenantId])
+  @@index([tenantId, isActive])
+  @@map("ai_gateway_keys")
+}
+
+model AIRateLimit {
+  id                String  @id @default(cuid())
+  tenantId          String?
+  name              String
+  requestsPerMinute Int     @default(60)
+  requestsPerHour   Int     @default(1000)
+  requestsPerDay    Int     @default(10000)
+  tokensPerMinute   Int     @default(100000)
+  tokensPerDay      Int     @default(1000000)
+  burstLimit        Int     @default(20)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([tenantId])
+  @@map("ai_rate_limits")
+}
+
+model AIBudget {
+  id                   String   @id @default(cuid())
+  tenantId             String   @unique
+  monthlyTokenBudget   Int      @default(1000000)
+  monthlyCostBudget    Float    @default(100)
+  softLimitPercentage  Int      @default(80)
+  hardLimitPercentage  Int      @default(100)
+  currentTokensUsed    Int      @default(0)
+  currentCostUsed      Float    @default(0)
+  periodStart          DateTime @default(now())
+  periodEnd            DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("ai_budgets")
+}
+
+model AIUsageEvent {
+  id               String   @id @default(cuid())
+  tenantId         String
+  gatewayKeyId     String?
+  modelId          String?
+  tokensPrompt     Int      @default(0)
+  tokensCompletion Int      @default(0)
+  cost             Float    @default(0)
+  latencyMs        Int      @default(0)
+  success          Boolean  @default(true)
+  timestamp        DateTime @default(now())
+  metadata         Json     @default("{}")
+
+  gatewayKey AIGatewayKey? @relation(fields: [gatewayKeyId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, timestamp])
+  @@index([gatewayKeyId])
+  @@index([tenantId, modelId])
+  @@map("ai_usage_events")
+}

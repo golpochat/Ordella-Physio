@@ -44,6 +44,22 @@ export const PERMISSIONS = {
   "subscription.admin": ["SYSTEM", "OWNER", "ADMIN"],
   "ai.use": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
   "ai.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.dataset.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
+  "ai.dataset.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.dataset.label": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST"],
+  "ai.training.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST"],
+  "ai.training.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.model.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
+  "ai.model.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.admin": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.evaluation.run": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.promotion.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "ai.drift.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST"],
+  "ai.drift.mitigate": ["SYSTEM", "OWNER", "ADMIN"],
+  "automation.view": ["SYSTEM", "OWNER", "ADMIN", "STAFF"],
+  "automation.manage": ["SYSTEM", "OWNER", "ADMIN"],
+  "automation.monitor": ["SYSTEM", "OWNER", "ADMIN"],
+  "automation.versioning": ["SYSTEM", "OWNER", "ADMIN"],
 } as const satisfies Record<string, SecurityRole[]>;
 
 export type AuthPermission = keyof typeof PERMISSIONS;

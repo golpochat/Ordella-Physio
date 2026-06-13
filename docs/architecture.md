@@ -30,21 +30,21 @@ Ordella Physio is a Turborepo monorepo with three frontend apps, nine backend mi
 
 ## Monorepo Layout
 
-| Path | Purpose |
-|------|---------|
-| `apps/web` | Next.js 14 marketing site |
-| `apps/app` | Next.js 14 authenticated dashboard |
-| `services/api-gateway` | NestJS API gateway routing to services |
-| `services/*` | Domain microservices (Express + TypeScript) |
-| `packages/ui` | Shared React UI (Tailwind) |
-| `packages/shared` | DTOs, types, event contracts |
-| `packages/config` | ESLint, Prettier, TS configs |
-| `infrastructure/deployment-layer` | Docker Compose and Kubernetes deployment |
-| `infrastructure/gateway-load-balancer` | Traefik load balancer and routing |
-| `infrastructure/global-caching-layer` | Redis caching layer |
-| `infrastructure/global-logging-layer` | Loki and Promtail logging |
-| `infrastructure/global-metrics-monitoring-layer` | Prometheus, Grafana, and Tempo |
-| `infrastructure/developer-tooling-layer` | Linting, formatting, and CI templates |
+| Path                                             | Purpose                                     |
+| ------------------------------------------------ | ------------------------------------------- |
+| `apps/web`                                       | Next.js 14 marketing site                   |
+| `apps/app`                                       | Next.js 14 authenticated dashboard          |
+| `services/api-gateway`                           | NestJS API gateway routing to services      |
+| `services/*`                                     | Domain microservices (Express + TypeScript) |
+| `packages/ui`                                    | Shared React UI (Tailwind)                  |
+| `packages/shared`                                | DTOs, types, event contracts                |
+| `packages/config`                                | ESLint, Prettier, TS configs                |
+| `infrastructure/deployment-layer`                | Docker Compose and Kubernetes deployment    |
+| `infrastructure/gateway-load-balancer`           | Traefik load balancer and routing           |
+| `infrastructure/global-caching-layer`            | Redis caching layer                         |
+| `infrastructure/global-logging-layer`            | Loki and Promtail logging                   |
+| `infrastructure/global-metrics-monitoring-layer` | Prometheus, Grafana, and Tempo              |
+| `infrastructure/developer-tooling-layer`         | Linting, formatting, and CI templates       |
 
 ## Service Boundaries
 
@@ -69,16 +69,16 @@ Defined in `@ordella/shared/events`:
 
 ## Technology Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 14, React 18, Tailwind CSS |
-| API Gateway | Express, http-proxy-middleware |
-| Services | Express, TypeScript |
-| Monorepo | Turborepo, pnpm workspaces |
+| Layer              | Technology                                  |
+| ------------------ | ------------------------------------------- |
+| Frontend           | Next.js 14, React 18, Tailwind CSS          |
+| API Gateway        | Express, http-proxy-middleware              |
+| Services           | Express, TypeScript                         |
+| Monorepo           | Turborepo, pnpm workspaces                  |
 | Database (planned) | PostgreSQL per service or schema-per-tenant |
-| Cache (planned) | Redis |
-| Payments | Stripe |
-| Containerization | Docker, docker-compose |
+| Cache (planned)    | Redis                                       |
+| Payments           | Stripe                                      |
+| Containerization   | Docker, docker-compose                      |
 
 ## Security
 
@@ -91,3 +91,75 @@ Defined in `@ordella/shared/events`:
 
 - **Local**: `pnpm dev` via Turborepo; full stack via `docker compose`
 - **Production** (future): Kubernetes with Helm, ingress to gateway, managed PostgreSQL
+
+1️⃣ Final Master Architecture Diagram (all components)
+Here’s a text/ASCII architecture diagram that matches everything we’ve defined so far.
+
+                         ┌───────────────────────────────────────────┐
+                         │               CLIENT LAYER                │
+                         │  - Web App (Tenant UI + Admin UI)         │
+                         │  - Internal Tools                         │
+                         └───────────────────────────────────────────┘
+                                           │
+                                           ▼
+                         ┌───────────────────────────────────────────┐
+                         │             AI GATEWAY LAYER              │
+                         │  - AI Gateway & Rate Limiting             │
+                         │  - API Keys & Scopes                      │
+                         │  - Token & Cost Budgets                   │
+                         │  - Abuse Detection                        │
+                         └───────────────────────────────────────────┘
+                                           │
+                                           ▼
+
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│ CORE AI PLATFORM SERVICES │
+│ │
+│ ┌───────────────────────┐ ┌───────────────────────┐ ┌─────────────────────────┐ │
+│ │ AIService │ │ AITrainingService │ │ AI Deploy Service │ │
+│ │ - Inference Router │ │ - Training Jobs │ │ - Model Deployment │ │
+│ │ - Provider Registry │ │ - Experiments │ │ - Multi-Region Serving │ │
+│ │ - Feature Flags (A/B) │ │ - Evaluation Suite │ │ - Canary Rollout │ │
+│ │ - Drift Integration │ │ - Promotion Workflow │ │ - Health & Failover │ │
+│ └───────────────────────┘ └───────────────────────┘ └─────────────────────────┘ │
+│ │
+│ ┌───────────────────────────────┐ ┌───────────────────────────────┐ │
+│ │ Dataset Manager │ │ AI Monitoring & Drift │ │
+│ │ - Datasets, Versions │ │ - Drift Detection (data, │ │
+│ │ - Records, Labels │ │ concept, embedding, perf) │ │
+│ │ - Embeddings │ │ - Drift Events & Metrics │ │
+│ └───────────────────────────────┘ └───────────────────────────────┘ │
+│ │
+│ ┌───────────────────────────────┐ ┌───────────────────────────────┐ │
+│ │ Cost & Budget Service │ │ Security & Compliance │ │
+│ │ - Cost Profiles │ │ - Audit Logs │ │
+│ │ - Usage Aggregates │ │ - PII Detection & Redaction │ │
+│ │ - Budgets & Alerts │ │ - Access Policies │ │
+│ └───────────────────────────────┘ └───────────────────────────────┘ │
+│ │
+│ ┌───────────────────────────────┐ │
+│ │ Observability & Telemetry │ │
+│ │ - Traces (spans) │ │
+│ │ - Logs │ │
+│ │ - Metrics & Heatmaps │ │
+│ │ - Bottleneck Detection │ │
+│ └───────────────────────────────┘ │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+
+                                           │
+                                           ▼
+                         ┌───────────────────────────────────────────┐
+                         │           EXTERNAL AI PROVIDERS           │
+                         │  - OpenAI / Azure OpenAI / Anthropic      │
+                         │  - Local Models (LLM, Embeddings)         │
+                         └───────────────────────────────────────────┘
+
+                                           │
+                                           ▼
+                         ┌───────────────────────────────────────────┐
+                         │           STORAGE & INFRA LAYER           │
+                         │  - DB (Postgres)                          │
+                         │  - Object Storage (S3)                    │
+                         │  - Caches (Redis)                         │
+                         │  - Message Queues / Workers               │
+                         └───────────────────────────────────────────┘

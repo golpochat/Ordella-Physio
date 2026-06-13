@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AITrainingModelType {
+  LLM
+  EMBEDDING
+}
+
+enum AITrainingProvider {
+  OPENAI
+  AZURE
+  LOCAL
+}
+
+enum AITrainingJobStatus {
+  QUEUED
+  RUNNING
+  FAILED
+  COMPLETED
+}
+
+enum AIModelRegistryStatus {
+  DRAFT
+  PUBLISHED
+  DEPRECATED
+}
+
+enum AITrainingExperimentStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum AIModelPromotionStage {
+  STAGING
+  PRODUCTION
+  DEPRECATED
+}
+
+model AITrainingJob {
+  id                   String              @id @default(cuid())
+  tenantId             String
+  datasetId            String
+  datasetVersionId     String
+  modelType            AITrainingModelType
+  baseModel            String
+  trainingProvider     AITrainingProvider
+  status               AITrainingJobStatus @default(QUEUED)
+  hyperparameters      Json                @default("{}")
+  trainingConfig       Json                @default("{}")
+  logs                 Json                @default("[]")
+  metrics              Json                @default("{}")
+  providerJobId        String?
+  trainingFileLocation String?
+  outputModelId        String?
+  resumeCheckpointId   String?
+  createdByUserId      String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  registryModels AIModelRegistry[]
+  experiments    AITrainingExperiment[]
+  checkpoints    AITrainingCheckpoint[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([datasetId])
+  @@map("ai_training_jobs")
+}
+
+model AIModelEvaluation {
+  id               String   @id @default(cuid())
+  tenantId         String
+  modelId          String
+  datasetId        String
+  metrics          Json     @default("{}")
+  evaluationReport Json     @default("{}")
+  createdAt        DateTime @default(now())
+
+  model AIModelRegistry @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([modelId])
+  @@index([modelId, createdAt])
+  @@map("ai_model_evaluations")
+}
+
+model AIModelPromotion {
+  id                String                @id @default(cuid())
+  tenantId          String
+  modelId           String                @unique
+  stage             AIModelPromotionStage @default(STAGING)
+  rolloutPercentage Int                   @default(0)
+  canaryHistory     Json                  @default("[]")
+  promotedByUserId  String
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  model AIModelRegistry @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, stage])
+  @@map("ai_model_promotions")
+}
+
+model AITrainingExperiment {
+  id              String                     @id @default(cuid())
+  tenantId        String
+  trainingJobId   String
+  experimentName  String
+  hyperparameters Json                       @default("{}")
+  metrics         Json                       @default("{}")
+  trainingCurve   Json                       @default("[]")
+  status          AITrainingExperimentStatus @default(RUNNING)
+  label           String?
+  startedAt       DateTime                   @default(now())
+  finishedAt      DateTime?
+  createdByUserId String
+
+  trainingJob AITrainingJob          @relation(fields: [trainingJobId], references: [id], onDelete: Cascade)
+  checkpoints AITrainingCheckpoint[]
+
+  @@index([trainingJobId])
+  @@index([tenantId])
+  @@map("ai_training_experiments")
+}
+
+model AITrainingCheckpoint {
+  id               String   @id @default(cuid())
+  tenantId         String
+  trainingJobId    String
+  experimentId     String?
+  checkpointNumber Int
+  fileLocation     String
+  metricsSnapshot  Json     @default("{}")
+  createdAt        DateTime @default(now())
+
+  trainingJob AITrainingJob         @relation(fields: [trainingJobId], references: [id], onDelete: Cascade)
+  experiment  AITrainingExperiment? @relation(fields: [experimentId], references: [id], onDelete: SetNull)
+
+  @@unique([trainingJobId, checkpointNumber])
+  @@index([trainingJobId])
+  @@map("ai_training_checkpoints")
+}
+
+model AIModelRegistry {
+  id               String                @id @default(cuid())
+  tenantId         String
+  modelName        String
+  version          String
+  baseModel        String
+  trainingJobId    String
+  trainingProvider AITrainingProvider
+  fileLocation     String
+  metadata         Json                  @default("{}")
+  status           AIModelRegistryStatus @default(DRAFT)
+  createdAt        DateTime              @default(now())
+
+  trainingJob AITrainingJob       @relation(fields: [trainingJobId], references: [id], onDelete: Cascade)
+  evaluations AIModelEvaluation[]
+  promotion   AIModelPromotion?
+
+  @@unique([tenantId, modelName, version])
+  @@index([tenantId])
+  @@index([trainingJobId])
+  @@map("ai_model_registry")
+}

@@ -1,0 +1,209 @@
+name: ordella-physio
+
+# Lightweight local development — essential services only.
+# Usage: docker compose -f docker-compose.dev.yml up -d
+# Rebuild only when Dockerfiles change: docker compose -f docker-compose.dev.yml build <service>
+
+x-jwt-secret: &jwt-secret ${JWT_ACCESS_SECRET:-change-me-local-jwt-secret-min-32-chars}
+x-postgres-user: &postgres-user ${POSTGRES_USER:-physio}
+x-postgres-password: &postgres-password ${POSTGRES_PASSWORD:-physio}
+x-gateway-urls: &gateway-urls
+  AUTH_SERVICE_URL: http://core-service:3051
+  TENANT_SERVICE_URL: http://tenant-service:3052
+  PATIENT_SERVICE_URL: http://patient-service:3053
+  APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+  NOTES_SERVICE_URL: http://notes-service:3055
+  BILLING_SERVICE_URL: http://billing-service:3056
+  PAYMENT_SERVICE_URL: http://payment-service:3057
+  COMMUNICATION_SERVICE_URL: http://communication-service:3058
+  REPORTING_SERVICE_URL: http://reporting-service:3059
+  MESSAGING_SERVICE_URL: http://messaging-service:3061
+  NOTIFICATION_SERVICE_URL: http://notification-service:3062
+  AI_NOTES_SERVICE_URL: http://ai-notes-service:3063
+  MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
+  ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
+  ORGANIZATION_SERVICE_URL: http://organization-service:3066
+  TERMINAL_SERVICE_URL: http://terminal-service:3067
+  USER_ROLE_SERVICE_URL: http://user-role-service:3068
+  STAFF_SERVICE_URL: http://staff-service:3069
+  AUDIT_SERVICE_URL: http://audit-service:3070
+  FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
+  NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
+  SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
+  SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
+  AI_SERVICE_URL: http://ai-service:3075
+  AI_TRAINING_SERVICE_URL: http://ai-training-service:3076
+  AI_MONITORING_SERVICE_URL: http://ai-monitoring-service:3077
+  AI_DEPLOY_SERVICE_URL: http://ai-deploy-service:3078
+  FEATURE_FLAGS_SERVICE_URL: http://feature-flags-service:3079
+  AI_GATEWAY_SERVICE_URL: http://ai-gateway-service:3080
+  AI_COST_SERVICE_URL: http://ai-cost-service:3081
+  AI_SECURITY_SERVICE_URL: http://ai-security-service:3082
+  AI_OBSERVABILITY_SERVICE_URL: http://ai-observability-service:3083
+  AI_AGENTS_SERVICE_URL: http://ai-agents-service:3084
+
+services:
+  api-gateway:
+    container_name: ordella-physio-api-gateway
+    build:
+      context: ./
+      dockerfile: services/api-gateway/Dockerfile
+    image: ordella-physio-api-gateway:latest
+    ports:
+      - "${API_GATEWAY_PORT:-3049}:3049"
+    environment:
+      PORT: 3049
+      JWT_SECRET: *jwt-secret
+      JWT_ACCESS_SECRET: *jwt-secret
+      <<: *gateway-urls
+      CORS_ORIGIN: "*"
+      GATEWAY_RATE_LIMIT_IP: 5000
+      GATEWAY_RATE_LIMIT_TENANT: 10000
+    depends_on:
+      - core-service
+      - db
+      - redis
+    networks:
+      - ordella-physio-network
+
+  core-service:
+    container_name: ordella-physio-core-service
+    build:
+      context: ./
+      dockerfile: services/auth-service/Dockerfile
+    image: ordella-physio-core-service:latest
+    environment:
+      PORT: 3051
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_auth?schema=public
+      JWT_SECRET: *jwt-secret
+      JWT_ACCESS_SECRET: *jwt-secret
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ordella-physio-network
+
+  frontend:
+    container_name: ordella-physio-frontend
+    build:
+      context: ./
+      dockerfile: apps/frontend-web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
+        NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
+    image: ordella-physio-frontend:latest
+    ports:
+      - "${FRONTEND_WEB_PORT:-3010}:3010"
+    environment:
+      PORT: 3010
+      DISABLE_API_RATE_LIMIT: "true"
+      NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
+      API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
+      NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
+      DEFAULT_TENANT_ID: ${DEFAULT_TENANT_ID:-demo-tenant}
+      NEXTAUTH_URL: http://localhost:3010
+      NEXTAUTH_SECRET: *jwt-secret
+    depends_on:
+      - api-gateway
+    networks:
+      - ordella-physio-network
+
+  db:
+    container_name: ordella-physio-db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - ordella-physio-db-data:/var/lib/postgresql/data
+      - ./infrastructure/deployment-layer/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U physio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ordella-physio-network
+
+  redis:
+    container_name: ordella-physio-redis
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - ordella-physio-network
+
+# ---------------------------------------------------------
+# OPTIONAL SERVICES (DISABLED BY DEFAULT)
+# Uncomment only when needed
+# ---------------------------------------------------------
+#  tenant-service:
+#    container_name: ordella-physio-tenant-service
+#    build:
+#      context: ./
+#      dockerfile: services/tenant-service/Dockerfile
+#    image: ordella-physio-tenant-service:latest
+#    environment:
+#      PORT: 3052
+#      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_tenant?schema=public
+#      JWT_ACCESS_SECRET: change-me-local-jwt-secret-min-32-chars
+#      AUTH_SERVICE_URL: http://core-service:3051
+#    depends_on:
+#      - db
+#      - core-service
+#    networks:
+#      - ordella-physio-network
+
+#  patient-service:
+#    container_name: ordella-physio-patient-service
+#    build:
+#      context: ./
+#      dockerfile: services/patient-service/Dockerfile
+#    image: ordella-physio-patient-service:latest
+#    environment:
+#      PORT: 3053
+#      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_patient?schema=public
+#      JWT_ACCESS_SECRET: change-me-local-jwt-secret-min-32-chars
+#      TENANT_SERVICE_URL: http://tenant-service:3052
+#    depends_on:
+#      - db
+#      - tenant-service
+#    networks:
+#      - ordella-physio-network
+
+#  search-index-service:
+#    container_name: ordella-physio-search-index-service
+#    build:
+#      context: ./
+#      dockerfile: services/search-index/Dockerfile
+#    image: ordella-physio-search-index-service:latest
+#    networks:
+#      - ordella-physio-network
+
+#  notification-service:
+#    container_name: ordella-physio-notification-service
+#    build:
+#      context: ./
+#      dockerfile: services/notification-service/Dockerfile
+#    image: ordella-physio-notification-service:latest
+#    networks:
+#      - ordella-physio-network
+
+#  nats:
+#    container_name: ordella-physio-nats
+#    image: nats:2.10-alpine
+#    networks:
+#      - ordella-physio-network
+
+# ---------------------------------------------------------
+# NETWORKS & VOLUMES
+# ---------------------------------------------------------
+networks:
+  ordella-physio-network:
+    name: ordella-physio-network
+    driver: bridge
+
+volumes:
+  ordella-physio-db-data:

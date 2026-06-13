@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AICostProfile {
+  id          String    @id @default(cuid())
+  modelId     String
+  provider    String
+  pricing     Json
+  effectiveFrom DateTime @default(now())
+  effectiveTo   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([modelId])
+  @@index([modelId, effectiveFrom])
+  @@map("ai_cost_profiles")
+}
+
+model AICostUsageAggregate {
+  id                   String   @id @default(cuid())
+  tenantId             String
+  period               String
+  periodStart          DateTime
+  periodEnd            DateTime
+  totalTokensPrompt    Int      @default(0)
+  totalTokensCompletion Int     @default(0)
+  totalCost            Float    @default(0)
+  breakdownByModel     Json     @default("{}")
+  breakdownByFeature   Json     @default("{}")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([tenantId, period, periodStart])
+  @@index([tenantId, period])
+  @@map("ai_cost_usage_aggregates")
+}
+
+model AICostAlert {
+  id         String    @id @default(cuid())
+  tenantId   String
+  type       String
+  severity   String
+  message    String
+  metadata   Json      @default("{}")
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, resolvedAt])
+  @@map("ai_cost_alerts")
+}
+
+model AICostBudget {
+  id                   String   @id @default(cuid())
+  tenantId             String   @unique
+  monthlyTokenBudget   Int      @default(1000000)
+  monthlyCostBudget    Float    @default(100)
+  softLimitPercentage  Int      @default(80)
+  hardLimitPercentage  Int      @default(100)
+  currentTokensUsed    Int      @default(0)
+  currentCostUsed      Float    @default(0)
+  periodStart          DateTime @default(now())
+  periodEnd            DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("ai_cost_budgets")
+}
+
+model AICostUsageEvent {
+  id               String   @id @default(cuid())
+  tenantId         String
+  modelId          String?
+  feature          String?
+  tokensPrompt     Int      @default(0)
+  tokensCompletion Int      @default(0)
+  cost             Float    @default(0)
+  timestamp        DateTime @default(now())
+  metadata         Json     @default("{}")
+
+  @@index([tenantId, timestamp])
+  @@index([tenantId, modelId])
+  @@index([tenantId, feature])
+  @@map("ai_cost_usage_events")
+}

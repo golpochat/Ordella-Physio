@@ -2,10 +2,10 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEPLOY_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
-COMPOSE_FILE="${DEPLOY_DIR}/docker-compose.local.yml"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
+COMPOSE_FILE="${COMPOSE_FILE:-${REPO_ROOT}/docker-compose.yml}"
 
-cd "${DEPLOY_DIR}"
+cd "${REPO_ROOT}"
 
 echo "==> Syncing auth schema (adds PATIENT + PHARMACY roles if missing)..."
 docker compose -f "${COMPOSE_FILE}" run --rm --no-deps auth-service \

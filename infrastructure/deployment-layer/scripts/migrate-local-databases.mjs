@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Run Prisma migrate deploy for every service in the local Docker stack.
- * Uses docker compose run so migrations always hit ordella_local_postgres (not host Postgres).
+ * Run Prisma migrate deploy for services in the local Docker stack.
+ * Uses repo-root compose files (docker-compose.dev.yml by default).
  */
 import { spawnSync } from "node:child_process";
 import { readdirSync, statSync } from "node:fs";
@@ -10,12 +10,24 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, "../../..");
-const deployDir = join(__dirname, "..");
-const composeFile = "docker-compose.local.yml";
+const composeFile =
+  process.env.COMPOSE_FILE || join(repoRoot, "docker-compose.dev.yml");
+const isDev = composeFile.includes("dev");
+const postgresService = isDev ? "db" : "postgres";
 
 /** Compose service name -> repo folder under services/ (when they differ). */
 const SERVICE_DIR_OVERRIDES = {
+  "core-service": "auth-service",
   "ai-service": "ai",
+  "ai-training-service": "ai-training",
+  "ai-monitoring-service": "ai-monitoring",
+  "ai-deploy-service": "ai-deploy",
+  "feature-flags-service": "feature-flags",
+  "ai-gateway-service": "ai-gateway",
+  "ai-cost-service": "ai-cost",
+  "ai-security-service": "ai-security",
+  "ai-observability-service": "ai-observability",
+  "ai-agents-service": "ai-agents",
   "audit-service": "audit",
   "file-storage-service": "file-storage",
   "notification-provider-service": "notification-provider",
@@ -23,7 +35,7 @@ const SERVICE_DIR_OVERRIDES = {
   "subscription-billing-service": "subscription-billing",
 };
 
-const PRISMA_SERVICES = [
+const FULL_PRISMA_SERVICES = [
   "auth-service",
   "tenant-service",
   "patient-service",
@@ -37,6 +49,15 @@ const PRISMA_SERVICES = [
   "notification-service",
   "ai-notes-service",
   "ai-service",
+  "ai-training-service",
+  "ai-monitoring-service",
+  "ai-deploy-service",
+  "feature-flags-service",
+  "ai-gateway-service",
+  "ai-cost-service",
+  "ai-security-service",
+  "ai-observability-service",
+  "ai-agents-service",
   "marketplace-service",
   "enterprise-service",
   "organization-service",
@@ -50,9 +71,13 @@ const PRISMA_SERVICES = [
   "subscription-billing-service",
 ];
 
+const DEV_PRISMA_SERVICES = ["core-service"];
+
+const PRISMA_SERVICES = isDev ? DEV_PRISMA_SERVICES : FULL_PRISMA_SERVICES;
+
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
-    cwd: deployDir,
+    cwd: repoRoot,
     stdio: options.silent ? "pipe" : "inherit",
     shell: false,
     encoding: "utf8",
@@ -106,9 +131,20 @@ function listMigrationNames(service) {
   }
 }
 
-/** Databases added after the initial postgres volume was created. */
 const ENSURE_DATABASES = [
+  "ordella_auth",
+  "ordella_tenant",
+  "ordella_patient",
   "ordella_ai",
+  "ordella_ai_training",
+  "ordella_ai_monitoring",
+  "ordella_ai_deploy",
+  "ordella_feature_flags",
+  "ordella_ai_gateway",
+  "ordella_ai_cost",
+  "ordella_ai_security",
+  "ordella_ai_observability",
+  "ordella_ai_agents",
   "ordella_audit",
   "ordella_file_storage",
   "ordella_notification_provider",
@@ -126,7 +162,7 @@ function ensureDatabasesExist() {
         composeFile,
         "exec",
         "-T",
-        "postgres",
+        postgresService,
         "psql",
         "-U",
         "physio",
@@ -152,18 +188,18 @@ function ensurePostgresRunning() {
     "ps",
     "--status",
     "running",
-    "postgres",
+    postgresService,
   ]);
 
   if (code !== 0) {
-    console.log("\nStarting postgres...");
+    console.log(`\nStarting ${postgresService}...`);
     const up = run("docker", [
       "compose",
       "-f",
       composeFile,
       "up",
       "-d",
-      "postgres",
+      postgresService,
     ]);
     if (up.code !== 0) return up.code;
   }
@@ -175,7 +211,7 @@ function ensurePostgresRunning() {
     composeFile,
     "exec",
     "-T",
-    "postgres",
+    postgresService,
     "pg_isready",
     "-U",
     "physio",
@@ -237,9 +273,8 @@ function migrateService(service) {
 }
 
 if (ensurePostgresRunning() !== 0) {
-  console.error("Postgres is not available. Start the stack first:");
-  console.error("  cd infrastructure/deployment-layer");
-  console.error(`  docker compose -f ${composeFile} up -d`);
+  console.error("Postgres is not available. Start the dev stack first:");
+  console.error("  docker compose -f docker-compose.dev.yml up -d");
   process.exit(1);
 }
 

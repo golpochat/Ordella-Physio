@@ -53,8 +53,8 @@ export class CopilotController {
   @Get("workflows")
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions(PERMISSIONS.AI_USE)
-  listWorkflows() {
-    return this.workflowOrchestrator.listWorkflows();
+  listWorkflows(@CurrentUser() user: AuthenticatedAiUser) {
+    return this.workflowOrchestrator.listWorkflows(user.tenantId);
   }
 
   @Get("memory")

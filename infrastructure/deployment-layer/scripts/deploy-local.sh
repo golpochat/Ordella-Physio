@@ -13,7 +13,7 @@ if [[ ! -f .env.local ]]; then
 fi
 
 echo "Starting Ordella Physio local stack..."
-docker compose -f docker-compose.local.yml up -d --build
+docker compose -f "${DEPLOY_DIR}/../../docker-compose.dev.yml" up -d
 
 echo ""
 echo "Running database migrations..."
@@ -23,5 +23,3 @@ echo ""
 echo "Local stack is up."
 echo "  API Gateway:  http://localhost:${API_GATEWAY_PORT:-3049}"
 echo "  Frontend Web: http://localhost:${FRONTEND_WEB_PORT:-3010}"
-echo "  Grafana:      http://localhost:${GRAFANA_PORT:-3030}"
-echo "  Prometheus:   http://localhost:${PROMETHEUS_PORT:-9090}"
