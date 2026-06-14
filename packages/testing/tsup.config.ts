@@ -18,6 +18,7 @@ export default defineConfig({
     "@nestjs/testing",
     "express",
     "jest",
+    "jsonwebtoken",
     "reflect-metadata",
     "rxjs",
     "supertest",

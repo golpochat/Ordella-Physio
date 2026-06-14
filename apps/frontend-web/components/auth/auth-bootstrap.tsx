@@ -4,7 +4,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { PageLoading } from "@/components/patient-portal/page-state";
 import { SystemRouteEnforcer } from "@/components/navigation/system-route-enforcer";
-import { isPublicPath, syncTenantFromSession, validateStoredSession } from "@/lib/session-manager";
+import {
+  ensureFreshAccessToken,
+  isPublicPath,
+  PROACTIVE_REFRESH_CHECK_MS,
+  syncTenantFromSession,
+  validateStoredSession,
+} from "@/lib/session-manager";
 import { getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
 
@@ -33,6 +39,32 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
 
     return () => {
       active = false;
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    const refreshIfNeeded = () => {
+      void ensureFreshAccessToken();
+    };
+
+    refreshIfNeeded();
+    const intervalId = window.setInterval(refreshIfNeeded, PROACTIVE_REFRESH_CHECK_MS);
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshIfNeeded();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [isAuthenticated]);
 

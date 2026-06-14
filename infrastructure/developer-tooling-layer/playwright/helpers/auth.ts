@@ -1,16 +1,21 @@
 import type { Page } from "@playwright/test";
 
-/**
- * Auth helper placeholder for E2E flows.
- * Wire to API Gateway auth or NextAuth session bootstrap when implementing tests.
- */
-export async function loginAsPlaceholder(page: Page, role: "admin" | "clinic" | "therapist" | "patient" = "clinic") {
+const tenantId = process.env.TEST_TENANT_ID ?? "demo-tenant";
+const adminEmail = process.env.TEST_ADMIN_EMAIL ?? "e2e-admin@ordella.dev";
+const adminPassword = process.env.TEST_ADMIN_PASSWORD ?? "ClinicAdmin123!";
+
+export async function loginAsClinicAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByLabel("Email").fill(`${role}@example.com`);
-  await page.getByLabel("Password").fill("changeme");
+  await page.locator("#email").fill(adminEmail);
+  await page.locator("#password").fill(adminPassword);
   await page.getByRole("button", { name: /sign in/i }).click();
+  await page.waitForURL((url) => !url.pathname.includes("/login"), {
+    timeout: 30_000,
+  });
 }
 
-export async function logoutPlaceholder(page: Page) {
-  await page.goto("/");
+export async function logout(page: Page) {
+  await page.goto("/login");
 }
+
+export { tenantId, adminEmail, adminPassword };

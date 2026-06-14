@@ -2,6 +2,7 @@
 
 import { TherapistBillingList } from "@/components/therapist-portal/billing-list";
 import { ListPage } from "@/components/dashboard/ListPage";
+import { PortalReadOnlyBadge } from "@/components/navigation/PortalRoleGate";
 import { useTherapistBilling } from "@/hooks/useTherapistPortal";
 
 export default function TherapistBillingPage() {
@@ -11,6 +12,7 @@ export default function TherapistBillingPage() {
     <ListPage
       title="Billing"
       subtitle="View patient invoices and payment status."
+      action={<PortalReadOnlyBadge />}
       isLoading={isLoading}
       isError={isError}
       onRetry={() => void refetch()}

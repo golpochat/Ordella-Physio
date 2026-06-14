@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import { normalizeEntity, normalizePaginatedList } from "@/lib/clinic-api-normalize";
 import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   StaffAppointment,
@@ -14,10 +15,8 @@ import type {
 
 export type StaffApiClient = ReturnType<typeof createApiClient>;
 
-export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[] {
-  if (!response) return [];
-  if (Array.isArray(response)) return response;
-  return response.data ?? [];
+export function normalizeList<T>(response: { data: T[]; items?: T[] } | T[] | undefined): T[] {
+  return normalizePaginatedList(response);
 }
 
 export function createStaffPortalApi(api: StaffApiClient) {
@@ -37,8 +36,8 @@ export function createStaffPortalApi(api: StaffApiClient) {
     },
 
     async getPatient(id: string) {
-      const response = await api.get<{ patient: StaffPatient }>("patient", `/${id}`);
-      return response.patient;
+      const response = await api.get<{ patient: StaffPatient } | StaffPatient>("patient", `/${id}`);
+      return normalizeEntity(response)!;
     },
 
     listBilling() {

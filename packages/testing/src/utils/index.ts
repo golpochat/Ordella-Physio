@@ -24,3 +24,11 @@ export {
   randomPhone,
   type HttpResponseLike,
 } from "./test-helpers";
+export { prismaTestClient, type PrismaTestClientHandle, type PrismaTestClientOptions } from "./prisma-test-client";
+export { authenticatedRequest, publicRequest, type AuthenticatedRequestOptions } from "./supertest-auth";
+export { allowAllGuard, denyAllGuard, overrideGuards } from "../helpers/guard-overrides";
+export {
+  attachMockUser,
+  DEFAULT_TEST_USER,
+  type MockTestUser,
+} from "../helpers/mock-user.middleware";

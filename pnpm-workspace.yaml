@@ -1,10 +1,12 @@
 packages:
   - "apps/*"
+  - "backend"
   - "services/*"
   - "packages/*"
   - "packages/config/*"
   - "shared/*"
   - "infrastructure/*"
+  - "infrastructure/developer-tooling-layer/workflow-tests"
 
 overrides:
   "@react-navigation/native": "7.0.14"

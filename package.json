@@ -8,7 +8,12 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test --parallel",
     "test:cov": "turbo run test:cov",
+    "test:cov:report": "node scripts/testing/coverage-report.mjs",
     "test:watch": "turbo run test:watch",
+    "test:e2e": "pnpm --filter @ordella/developer-tooling-layer test:e2e",
+    "test:workflow": "pnpm --filter @ordella/workflow-tests test",
+    "test:all": "pnpm test && pnpm test:workflow && pnpm test:e2e",
+    "seed:test-data": "node scripts/seed-test-data.mjs",
     "clean": "turbo run clean && rimraf node_modules",
     "db:migrate:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs"
   },

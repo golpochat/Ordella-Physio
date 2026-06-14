@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { StaffRepository } from "@/staff/staff.repository";
 import { TenantEventPublisher } from "@/events/tenant-event.publisher";
 import type { CreateStaffDto } from "@/tenants/dto/create-staff.dto";
@@ -40,6 +40,15 @@ export class StaffService {
   async listStaff(tenantId: string) {
     const staff = await this.staffRepository.findByTenant(tenantId);
     return toStaffListResponse(staff);
+  }
+
+  async getStaff(tenantId: string, staffId: string) {
+    const staff = await this.staffRepository.findById(tenantId, staffId);
+    if (!staff) {
+      throw new NotFoundException("Staff member not found.");
+    }
+
+    return toStaffResponse(staff);
   }
 
   async updateRole(tenantId: string, staffId: string, dto: UpdateStaffRoleDto, actorRole: string) {

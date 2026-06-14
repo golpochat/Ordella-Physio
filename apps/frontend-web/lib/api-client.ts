@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import {
   attemptTokenRefresh,
+  ensureFreshAccessToken,
   getApiErrorCode,
   handleApiAuthError,
   redirectToForbidden,
@@ -72,8 +73,13 @@ function isSelfProfileRequest(
 export function createApiClient(getContext: () => ApiClientContext) {
   async function request<T>(options: ApiClientOptions): Promise<T> {
     const { service, path = "", params, context, headers, jsonBody, formData, unwrapData, suppressForbiddenRedirect, ...init } = options;
-    const session = { ...getContext(), ...context };
+    let session = { ...getContext(), ...context };
     const correlationId = session.correlationId ?? uuidv4();
+
+    if (session.accessToken) {
+      await ensureFreshAccessToken();
+      session = { ...getContext(), ...context };
+    }
 
     const roles =
       session.roles?.map((role) => mapAuthRoleToPortalRole(role)) ??

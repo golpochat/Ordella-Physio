@@ -148,6 +148,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
         title: "Main",
         items: [
           item("dashboard", "Home", "/therapist"),
+          item("calendar", "Schedule", "/therapist/schedule", ["therapist"]),
           item("calendar", "Appointments", "/therapist/appointments", ["therapist"]),
           item("patients", "Patients", "/therapist/patients", ["therapist"]),
           item("notes", "Notes", "/therapist/notes", ["therapist"]),
@@ -229,21 +230,8 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
     settingsHref: "/patient/profile",
     sections: [
       {
-        title: "Care",
-        items: [
-          item("dashboard", "Home", "/patient"),
-          item("calendar", "Appointments", "/patient/appointments", ["patient"]),
-          item("billing", "Billing", "/patient/billing", ["patient"]),
-          item("notes", "Notes", "/patient/notes", ["patient"]),
-        ],
-      },
-      {
-        title: "Account",
-        items: [
-          item("messages", "Messages", "/patient/messages"),
-          item("notifications", "Notifications", "/patient/notifications"),
-          item("settings", "Profile", "/patient/profile"),
-        ],
+        title: "Profile",
+        items: [item("settings", "Profile viewer", "/patient/profile", ["patient"])],
       },
     ],
   },

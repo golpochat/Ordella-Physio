@@ -23,7 +23,7 @@ export function getPortalForRole(role: string): string {
     case "SYSTEM":
       return "/super-admin";
     case "ADMIN":
-      return "/admin";
+      return "/clinic";
     case "CLINIC_ADMIN":
       return "/clinic";
     case "THERAPIST":

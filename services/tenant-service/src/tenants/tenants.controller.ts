@@ -208,6 +208,12 @@ export class TenantsController {
     return this.tenantsService.listStaff(tenantId);
   }
 
+  @Get(":tenantId/staff/:staffId")
+  @UseGuards(JwtGuard, TenantMatchGuard, TenantGuard)
+  getStaff(@Param("tenantId") tenantId: string, @Param("staffId") staffId: string) {
+    return this.tenantsService.getStaff(tenantId, staffId);
+  }
+
   @Patch(":tenantId/staff/:staffId")
   @UseGuards(JwtGuard, TenantMatchGuard, RoleGuard, TenantGuard)
   @RequireRoles("OWNER", "ADMIN")

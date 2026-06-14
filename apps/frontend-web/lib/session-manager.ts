@@ -4,6 +4,7 @@ import { PUBLIC_ROUTES } from "@/lib/constants";
 import { resolveUserRoles } from "@/lib/rbac";
 import { isSystemUser } from "@/lib/auth/roleRedirect";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
+import { isAccessTokenExpiringSoon } from "@/lib/token-expiry";
 import { getRefreshToken } from "@/lib/utils/authStorage";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
@@ -11,6 +12,12 @@ import { useUiStore } from "@/store/ui.store";
 
 let redirectingToLogin = false;
 let refreshInFlight: Promise<boolean> | null = null;
+
+/** Refresh access tokens this many ms before JWT expiry (default 15m TTL). */
+export const ACCESS_TOKEN_REFRESH_BUFFER_MS = 120_000;
+
+/** Background check interval while the user is signed in. */
+export const PROACTIVE_REFRESH_CHECK_MS = 30_000;
 
 export function getApiErrorCode(payload: unknown): string | null {
   if (!payload || typeof payload !== "object") {
@@ -127,6 +134,15 @@ export async function attemptTokenRefresh(): Promise<boolean> {
   return refreshInFlight;
 }
 
+export async function ensureFreshAccessToken(): Promise<void> {
+  const accessToken = useAuthStore.getState().accessToken;
+  if (!accessToken || !isAccessTokenExpiringSoon(accessToken, ACCESS_TOKEN_REFRESH_BUFFER_MS)) {
+    return;
+  }
+
+  await attemptTokenRefresh();
+}
+
 export function redirectToForbidden(): void {
   if (typeof window === "undefined") {
     return;
@@ -191,8 +207,15 @@ export async function validateStoredSession(): Promise<boolean> {
     return attemptTokenRefresh();
   }
 
+  if (isAccessTokenExpiringSoon(accessToken, ACCESS_TOKEN_REFRESH_BUFFER_MS)) {
+    const refreshed = await attemptTokenRefresh();
+    if (refreshed) {
+      return true;
+    }
+  }
+
   try {
-    await authClient.me(accessToken);
+    await authClient.me(useAuthStore.getState().accessToken ?? accessToken);
     return true;
   } catch (error) {
     if (error instanceof ApiError && error.status === 401 && storedRefreshToken) {

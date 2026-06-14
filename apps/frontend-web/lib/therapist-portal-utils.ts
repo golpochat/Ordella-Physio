@@ -37,6 +37,60 @@ export function partitionTherapistAppointments(appointments: TherapistAppointmen
   return { today, upcoming: upcomingExcludingToday, past };
 }
 
+export function getWeekStart(date: Date): Date {
+  const start = new Date(date);
+  const day = start.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  start.setDate(start.getDate() + diff);
+  start.setHours(0, 0, 0, 0);
+  return start;
+}
+
+export function shiftWeek(weekStart: Date, deltaWeeks: number): Date {
+  const next = new Date(weekStart);
+  next.setDate(next.getDate() + deltaWeeks * 7);
+  return next;
+}
+
+export type WeekScheduleDay = {
+  key: string;
+  label: string;
+  isToday: boolean;
+  appointments: TherapistAppointment[];
+};
+
+export function buildWeekSchedule(
+  appointments: TherapistAppointment[],
+  weekStart: Date,
+): { days: WeekScheduleDay[] } {
+  const days: WeekScheduleDay[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  for (let index = 0; index < 7; index += 1) {
+    const dayStart = new Date(weekStart);
+    dayStart.setDate(dayStart.getDate() + index);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+
+    const dayAppointments = appointments
+      .filter((appointment) => {
+        const start = new Date(appointment.startTime);
+        return start >= dayStart && start < dayEnd && appointment.status !== "CANCELLED";
+      })
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+
+    days.push({
+      key: dayStart.toISOString().slice(0, 10),
+      label: dayStart.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+      isToday: dayStart.getTime() === today.getTime(),
+      appointments: dayAppointments,
+    });
+  }
+
+  return { days };
+}
+
 export function getPatientDisplayName(patient: {
   firstName: string;
   lastName: string;

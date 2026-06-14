@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import { normalizeEntity } from "@/lib/clinic-api-normalize";
 import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
   CreateTherapistNotePayload,
@@ -33,8 +34,8 @@ export function createTherapistPortalApi(api: TherapistApiClient) {
     },
 
     async getPatient(id: string) {
-      const response = await api.get<{ patient: TherapistPatient }>("patient", `/${id}`);
-      return response.patient;
+      const response = await api.get<{ patient: TherapistPatient } | TherapistPatient>("patient", `/${id}`);
+      return normalizeEntity(response)!;
     },
 
     listNotes(params?: { therapistId?: string; patientId?: string; page?: number; limit?: number }) {

@@ -3,7 +3,9 @@ import { test, expect } from "@playwright/test";
 test.describe("Ordella Physio E2E scaffold", () => {
   test("home page loads", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /ordella physio/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /modern physiotherapy software/i }),
+    ).toBeVisible();
   });
 
   test("login page is reachable", async ({ page }) => {
@@ -11,8 +13,8 @@ test.describe("Ordella Physio E2E scaffold", () => {
     await expect(page.getByRole("heading", { name: /sign in/i })).toBeVisible();
   });
 
-  test("health placeholder navigation", async ({ page }) => {
+  test("marketing CTA navigation is visible", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("link", { name: /go to login/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /get started|book a demo/i }).first()).toBeVisible();
   });
 });

@@ -141,6 +141,10 @@ export class TenantsService {
     return this.staffService.listStaff(tenantId);
   }
 
+  getStaff(tenantId: string, staffId: string) {
+    return this.staffService.getStaff(tenantId, staffId);
+  }
+
   updateStaffRole(tenantId: string, staffId: string, dto: UpdateStaffRoleDto, actorRole: string) {
     return this.updateStaffRoleCommand.execute({ tenantId, staffId, dto, actorRole });
   }

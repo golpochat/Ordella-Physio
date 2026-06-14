@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { TENANT_HEADER, GATEWAY_PATHS, type ApiServiceKey } from "./constants";
 import { getDefaultTenantId } from "./tenant-config";
+import { proxyToClinicBackend, useClinicBackend, isClinicBackendService } from "./clinic-backend-proxy";
 
 const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   auth: GATEWAY_PATHS.auth,
@@ -82,6 +83,10 @@ export async function proxyToGateway(
   service: ApiServiceKey,
   pathSuffix = "",
 ): Promise<NextResponse> {
+  if (useClinicBackend() && isClinicBackendService(service)) {
+    return proxyToClinicBackend(request, service);
+  }
+
   const gatewayBase = getGatewayBaseUrl();
   const gatewayPrefix = SERVICE_GATEWAY_MAP[service];
   const apiPrefix = SERVICE_API_PREFIX[service];

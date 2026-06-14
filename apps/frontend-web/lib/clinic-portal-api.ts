@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import { normalizePaginatedList } from "@/lib/clinic-api-normalize";
 import type {
   ClinicAppointment,
   ClinicAppointmentListResponse,
@@ -462,10 +463,8 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
   };
 }
 
-export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[] {
-  if (!response) return [];
-  if (Array.isArray(response)) return response;
-  return response.data ?? [];
+export function normalizeList<T>(response: { data: T[]; items?: T[] } | T[] | undefined): T[] {
+  return normalizePaginatedList(response);
 }
 
 export function normalizeInvoiceListResponse(

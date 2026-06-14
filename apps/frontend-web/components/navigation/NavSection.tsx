@@ -3,6 +3,7 @@
 import { NavItem } from "@/components/navigation/NavItem";
 import type { NavSectionConfig } from "@/lib/portal-navigation";
 import type { PortalRole } from "@/lib/rbac";
+import { canAccessNavHref } from "@/lib/portal-capabilities";
 import { canAccessNavItem } from "@/lib/nav-roles";
 
 export type NavSectionProps = {
@@ -20,7 +21,9 @@ export function NavSection({
   collapsed = false,
   onNavigate,
 }: NavSectionProps) {
-  const visibleItems = items.filter((item) => canAccessNavItem(userRoles, item.roles));
+  const visibleItems = items.filter(
+    (item) => canAccessNavItem(userRoles, item.roles) && canAccessNavHref(item.href, userRoles),
+  );
 
   if (!visibleItems.length) {
     return null;

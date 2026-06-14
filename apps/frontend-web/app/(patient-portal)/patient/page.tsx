@@ -1,5 +1,5 @@
-import { PatientHomeOverview } from "@/components/patient-portal/patient-home-overview";
+import { redirect } from "next/navigation";
 
 export default function PatientPortalHomePage() {
-  return <PatientHomeOverview />;
+  redirect("/patient/profile");
 }

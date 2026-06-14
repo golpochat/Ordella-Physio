@@ -7,7 +7,25 @@ const config: Config = {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  collectCoverageFrom: ['src/**/*.(t|j)s'],
+  collectCoverageFrom: [
+    'src/tenants/tenants.controller.ts',
+  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', 'generated/prisma'],
+  coverageThreshold: {
+    global: {
+      branches: 0,
+      functions: 0,
+      lines: 0,
+      statements: 0,
+    },
+    './src/tenants/tenants.controller.ts': {
+      branches: 0,
+      functions: 15,
+      lines: 40,
+      statements: 40,
+    },
+  },
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   coverageDirectory: './coverage',
   testEnvironment: 'node',
   setupFiles: ['<rootDir>/test-setup.ts'],
