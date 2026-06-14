@@ -270,21 +270,9 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
   },
 ];
 
-export const PUBLIC_PATHS = [
-  "/health",
-  "/health/region",
-  "/metrics",
-  "/docs",
-  "/auth",
-  "/payments/webhook",
-  "/billing/webhook",
-  "/subscription-billing/stripe/webhook",
-  "/tenants/internal",
-  "/tenants/directory",
-  "/files/access",
-];
+export const SERVICE_HEALTH_PATHS = SERVICE_DEFINITIONS.map((service) => service.healthPath);
 
-export const SKIP_TENANT_PATHS = [
+const CORE_PUBLIC_PATHS = [
   "/health",
   "/health/region",
   "/metrics",
@@ -296,20 +284,12 @@ export const SKIP_TENANT_PATHS = [
   "/tenants/internal",
   "/tenants/directory",
   "/files/access",
-];
+] as const;
 
-export const PUBLIC_JWT_PATHS = [
-  "/health",
-  "/health/region",
-  "/metrics",
-  "/docs",
-  "/auth",
-  "/payments/webhook",
-  "/billing/webhook",
-  "/subscription-billing/stripe/webhook",
-  "/tenants/internal",
-  "/tenants/directory",
-  "/files/access",
-];
+export const PUBLIC_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS];
+
+export const SKIP_TENANT_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS];
+
+export const PUBLIC_JWT_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS];
 
 export const GATEWAY_SERVICE_NAME = "api-gateway";

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useApi } from "@/hooks/useApi";
 import {
   createSuperAdminPortalApi,
+  normalizeAuthAuditLogListResponse,
   normalizeTenantList,
   normalizeUserList,
   normalizeOrganizationList,
@@ -662,6 +663,10 @@ export function useAuthAuditLogs(filters: AuthAuditLogFilters) {
 
   return useQuery({
     queryKey: ["super-admin", "auth-audit-logs", filters],
-    queryFn: () => requireApi(portalApi).listAuditLogs(filters),
+    queryFn: async () =>
+      normalizeAuthAuditLogListResponse(
+        await requireApi(portalApi).listAuditLogs(filters),
+        filters.limit ?? 25,
+      ),
   });
 }

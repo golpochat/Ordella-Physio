@@ -73,6 +73,41 @@ export function normalizeUserList(
   return response.data ?? [];
 }
 
+export function normalizeAuthAuditLogListResponse(
+  response:
+    | AuthAuditLogListResponse
+    | AuthAuditLogListResponse["data"]
+    | { data: AuthAuditLogListResponse }
+    | undefined,
+  fallbackLimit = 25,
+): AuthAuditLogListResponse {
+  if (!response) {
+    return { data: [], total: 0, page: 1, limit: fallbackLimit };
+  }
+
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      total: response.length,
+      page: 1,
+      limit: response.length || fallbackLimit,
+    };
+  }
+
+  if ("total" in response && "page" in response && "limit" in response && Array.isArray(response.data)) {
+    return response;
+  }
+
+  if ("data" in response && response.data && typeof response.data === "object") {
+    return normalizeAuthAuditLogListResponse(
+      response.data as AuthAuditLogListResponse | AuthAuditLogListResponse["data"],
+      fallbackLimit,
+    );
+  }
+
+  return { data: [], total: 0, page: 1, limit: fallbackLimit };
+}
+
 export function normalizeOrganizationList(
   response:
     | PlatformOrganization[]
@@ -564,6 +599,7 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
           { service: "Patients", path: "/health", key: "patient" },
           { service: "Appointments", path: "/health", key: "appointment" },
           { service: "Billing", path: "/health", key: "billing" },
+          { service: "Notifications", path: "/health", key: "notifications" },
         ];
 
       const results = await Promise.all(
@@ -610,9 +646,12 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     listAuditLogs(params?: AuthAuditLogFilters) {
-      return api.get<AuthAuditLogListResponse>("auth", "/audit-logs", {
+      return api.get<
+        AuthAuditLogListResponse | { data: AuthAuditLogListResponse } | AuthAuditLogListResponse["data"]
+      >("auth", "/audit-logs", {
         params,
         context: GLOBAL_CONTEXT,
+        unwrapData: false,
       });
     },
   };

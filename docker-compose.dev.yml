@@ -63,9 +63,30 @@ services:
       GATEWAY_RATE_LIMIT_IP: 5000
       GATEWAY_RATE_LIMIT_TENANT: 10000
     depends_on:
-      - core-service
-      - db
-      - redis
+      core-service:
+        condition: service_started
+      tenant-service:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+      billing-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      notes-service:
+        condition: service_started
+      messaging-service:
+        condition: service_started
+      marketplace-service:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      nats:
+        condition: service_started
     networks:
       - ordella-physio-network
 
@@ -144,43 +165,226 @@ services:
     networks:
       - ordella-physio-network
 
+  tenant-service:
+    container_name: ordella-physio-tenant-service
+    build:
+      context: ./services/tenant-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-tenant-service:latest
+    environment:
+      PORT: 3052
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_tenant?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      AUTH_SERVICE_URL: http://core-service:3051
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      core-service:
+        condition: service_started
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  nats:
+    container_name: ordella-physio-nats
+    image: nats:2.10-alpine
+    command: ["-js", "-m", "8222"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    networks:
+      - ordella-physio-network
+
+  marketplace-service:
+    container_name: ordella-physio-marketplace-service
+    build:
+      context: ./services/marketplace-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-marketplace-service:latest
+    environment:
+      PORT: 3064
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_marketplace?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      MARKETPLACE_OAUTH_CALLBACK_URL: http://localhost:3049/marketplace/oauth/redirect
+      MARKETPLACE_FRONTEND_CALLBACK_URL: http://localhost:3010/clinic/marketplace/oauth/callback
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ordella-physio-network
+
+  patient-service:
+    container_name: ordella-physio-patient-service
+    build:
+      context: ./services/patient-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-patient-service:latest
+    environment:
+      PORT: 3053
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_patient?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  appointment-service:
+    container_name: ordella-physio-appointment-service
+    build:
+      context: ./services/appointment-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-appointment-service:latest
+    environment:
+      PORT: 3054
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_appointment?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      STAFF_SERVICE_URL: http://staff-service:3069
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  billing-service:
+    container_name: ordella-physio-billing-service
+    build:
+      context: ./services/billing-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-billing-service:latest
+    environment:
+      PORT: 3056
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_billing?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_local_dev_stripe_secret_key}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_local_dev_stripe_webhook_secret}
+      STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-price_local_starter}
+      STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO:-price_local_pro}
+      STRIPE_PRICE_ENTERPRISE: ${STRIPE_PRICE_ENTERPRISE:-price_local_enterprise}
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      FRONTEND_URL: http://localhost:3010
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  notification-service:
+    container_name: ordella-physio-notification-service
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-notification-service:latest
+    environment:
+      PORT: 3062
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_notification?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  notes-service:
+    container_name: ordella-physio-notes-service
+    build:
+      context: ./services/notes-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-notes-service:latest
+    environment:
+      PORT: 3055
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_notes?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  messaging-service:
+    container_name: ordella-physio-messaging-service
+    build:
+      context: ./services/messaging-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-messaging-service:latest
+    environment:
+      PORT: 3061
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_messaging?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+      NATS_URL: nats://nats:4222
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
+      redis:
+        condition: service_started
+      nats:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
 # ---------------------------------------------------------
 # OPTIONAL SERVICES (DISABLED BY DEFAULT)
 # Uncomment only when needed
 # ---------------------------------------------------------
-#  tenant-service:
-#    container_name: ordella-physio-tenant-service
-#    build:
-#      context: ./
-#      dockerfile: services/tenant-service/Dockerfile
-#    image: ordella-physio-tenant-service:latest
-#    environment:
-#      PORT: 3052
-#      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_tenant?schema=public
-#      JWT_ACCESS_SECRET: change-me-local-jwt-secret-min-32-chars
-#      AUTH_SERVICE_URL: http://core-service:3051
-#    depends_on:
-#      - db
-#      - core-service
-#    networks:
-#      - ordella-physio-network
-
-#  patient-service:
-#    container_name: ordella-physio-patient-service
-#    build:
-#      context: ./
-#      dockerfile: services/patient-service/Dockerfile
-#    image: ordella-physio-patient-service:latest
-#    environment:
-#      PORT: 3053
-#      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_patient?schema=public
-#      JWT_ACCESS_SECRET: change-me-local-jwt-secret-min-32-chars
-#      TENANT_SERVICE_URL: http://tenant-service:3052
-#    depends_on:
-#      - db
-#      - tenant-service
-#    networks:
-#      - ordella-physio-network
 
 #  search-index-service:
 #    container_name: ordella-physio-search-index-service
@@ -188,21 +392,6 @@ services:
 #      context: ./
 #      dockerfile: services/search-index/Dockerfile
 #    image: ordella-physio-search-index-service:latest
-#    networks:
-#      - ordella-physio-network
-
-#  notification-service:
-#    container_name: ordella-physio-notification-service
-#    build:
-#      context: ./
-#      dockerfile: services/notification-service/Dockerfile
-#    image: ordella-physio-notification-service:latest
-#    networks:
-#      - ordella-physio-network
-
-#  nats:
-#    container_name: ordella-physio-nats
-#    image: nats:2.10-alpine
 #    networks:
 #      - ordella-physio-network
 
