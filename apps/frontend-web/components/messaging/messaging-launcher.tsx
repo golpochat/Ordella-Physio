@@ -11,6 +11,7 @@ import {
   ModalTitle,
 } from "@/components/ui/modal";
 import { useUnreadMessageCount } from "@/hooks/useMessaging";
+import { isMessagingAvailable } from "@/lib/clinic-backend-client-scope";
 import { useUiStore } from "@/store/ui.store";
 
 export function MessagingLauncher() {
@@ -18,6 +19,10 @@ export function MessagingLauncher() {
   const setOpen = useUiStore((state) => state.setMessagingPanelOpen);
   const unreadQuery = useUnreadMessageCount();
   const unreadCount = unreadQuery.data ?? 0;
+
+  if (!isMessagingAvailable()) {
+    return null;
+  }
 
   return (
     <>

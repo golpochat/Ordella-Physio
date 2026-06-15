@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useApi } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import { shouldUseTenantScopedApi } from "@/lib/auth/portal-scope";
+import { isMessagingAvailable } from "@/lib/clinic-backend-client-scope";
 import { createMessagingApi } from "@/lib/messaging-api";
 import type { CreateConversationPayload, MessagingMessage } from "@/lib/messaging-types";
 import { useAuthStore } from "@/store/auth.store";
@@ -39,7 +40,7 @@ function canQueryMessaging(
   userId: string | null,
   tenantScoped: boolean,
 ) {
-  return tenantScoped && Boolean(tenantId && userId);
+  return isMessagingAvailable() && tenantScoped && Boolean(tenantId && userId);
 }
 
 export function useUnreadMessageCount() {

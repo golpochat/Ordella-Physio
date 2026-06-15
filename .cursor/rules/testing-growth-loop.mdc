@@ -1,0 +1,35 @@
+---
+description: Test growth loop for new endpoints, bug fixes, and workflows
+globs:
+  - services/**/src/**/*.ts
+  - services/**/test/**/*.ts
+  - infrastructure/developer-tooling-layer/workflow-tests/**/*.ts
+---
+
+# Test Growth Loop (Phase 3+)
+
+When changing HTTP handlers or cross-service flows:
+
+## New endpoint
+- Add **1–3** tests in the owning service's `test/*.service.e2e.spec.ts` (or extend existing `*.api.spec.ts`).
+- Cover at minimum: happy path, auth failure (no/bad token), validation failure.
+- For tenant-scoped routes: add wrong-tenant isolation when feasible.
+- Reuse `@ordella/testing` factories (`tenantFactory`, `userFactory`, `jwtFactory`) — do not inline random IDs.
+
+## Bug fix
+- Add a regression test that fails without the fix.
+- Name the test after the bug symptom, not the implementation.
+
+## Cross-service workflow
+- Extend `infrastructure/developer-tooling-layer/workflow-tests` — not per-service e2e.
+- Workflow tests own multi-hop flows; service e2e owns single-service endpoint contracts.
+
+## Generation discipline
+- Work **service-by-service, controller-by-controller** — never bulk-generate all endpoints at once.
+- Prefer fewer high-signal tests over shallow coverage inflation.
+- Assert HTTP status, response body shape, and side effects (DB/events) where applicable.
+
+## Before merge
+- `pnpm test` must pass for affected packages.
+- New critical-service endpoints should not lower coverage below jest `coverageThreshold`.
+- Run `node scripts/testing/coverage-report.mjs` after `pnpm test:cov` when touching critical services.

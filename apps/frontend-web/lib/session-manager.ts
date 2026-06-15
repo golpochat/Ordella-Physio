@@ -1,10 +1,12 @@
 import { authClient } from "@/lib/auth-client";
 import { ApiError } from "@/lib/api-client";
+import { getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { PUBLIC_ROUTES } from "@/lib/constants";
 import { resolveUserRoles } from "@/lib/rbac";
 import { isSystemUser } from "@/lib/auth/roleRedirect";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { isAccessTokenExpiringSoon } from "@/lib/token-expiry";
+import { getAccessToken } from "@/lib/utils/authStorage";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 import { useUiStore } from "@/store/ui.store";
@@ -91,6 +93,19 @@ export function redirectToLogin(reason?: string): void {
   window.location.assign(loginUrl);
 }
 
+export function clearStaleAuthOnPublicPath(): void {
+  if (typeof window === "undefined" || !isPublicPath(window.location.pathname)) {
+    return;
+  }
+
+  const hasPersistedSession =
+    useAuthStore.getState().isAuthenticated || getStoredIsAuthenticated();
+
+  if (hasPersistedSession && !getAccessToken()) {
+    clearAuthSession();
+  }
+}
+
 export async function attemptTokenRefresh(): Promise<boolean> {
   if (refreshInFlight) {
     return refreshInFlight;
@@ -112,6 +127,16 @@ export async function attemptTokenRefresh(): Promise<boolean> {
       syncTenantFromSession();
       return true;
     } catch (error) {
+      if (
+        error instanceof ApiError &&
+        error.status === 401 &&
+        typeof window !== "undefined" &&
+        isPublicPath(window.location.pathname)
+      ) {
+        clearAuthSession();
+        return false;
+      }
+
       if (isTokenReuseError(error)) {
         clearAuthSession();
         redirectToLogin("token-reuse-detected");
@@ -180,6 +205,11 @@ export async function handleApiAuthError(status: number, error?: unknown): Promi
 }
 
 export async function validateStoredSession(): Promise<boolean> {
+  if (typeof window !== "undefined" && isPublicPath(window.location.pathname)) {
+    clearStaleAuthOnPublicPath();
+    return false;
+  }
+
   const { accessToken, isAuthenticated, user } = useAuthStore.getState();
 
   if (!isAuthenticated || !user) {

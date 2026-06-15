@@ -9,6 +9,7 @@ import {
 } from "@/lib/session-manager";
 import { useUiStore } from "@/store/ui.store";
 import { API_ROUTES, AUTHORIZATION_HEADER, CORRELATION_ID_HEADER, TENANT_HEADER } from "./constants";
+import { isGatewayOnlyWhenClinicBackend } from "./clinic-backend-client-scope";
 import { isSystemRole, isSystemUser, mapAuthRoleToPortalRole } from "./auth/roleRedirect";
 
 export class ApiError extends Error {
@@ -112,12 +113,16 @@ export function createApiClient(getContext: () => ApiClientContext) {
 
     if (!response.ok) {
       if (response.status === 401 && !options._retried) {
-        const refreshed = await attemptTokenRefresh();
-        if (refreshed) {
-          return request<T>({ ...options, _retried: true });
-        }
+        // Gateway-only services use a different JWT when clinic-backend mode is active.
+        // A 401 there does not mean the clinic session is invalid — do not sign the user out.
+        if (!isGatewayOnlyWhenClinicBackend(service)) {
+          const refreshed = await attemptTokenRefresh();
+          if (refreshed) {
+            return request<T>({ ...options, _retried: true });
+          }
 
-        await handleApiAuthError(response.status, payload);
+          await handleApiAuthError(response.status, payload);
+        }
       }
 
       if (response.status === 403) {

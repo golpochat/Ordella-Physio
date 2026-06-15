@@ -42,7 +42,7 @@ export function TenantSelector({ value, onChange }: TenantSelectorProps) {
     return (
       <div className="space-y-2">
         <Label htmlFor="tenantId">Clinic / tenant</Label>
-        <Input id="tenantId" disabled placeholder="Loading tenants..." />
+        <Input id="tenantId" disabled placeholder="Loading tenants..." value={value || ""} readOnly />
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function TenantSelector({ value, onChange }: TenantSelectorProps) {
         <select
           id="tenantId"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          value={value}
+          value={value || ""}
           onChange={(event) => onChange(event.target.value)}
           required
         >
@@ -76,7 +76,7 @@ export function TenantSelector({ value, onChange }: TenantSelectorProps) {
       <Label htmlFor="tenantId">Clinic / tenant ID</Label>
       <Input
         id="tenantId"
-        value={value}
+        value={value || ""}
         onChange={(event) => onChange(event.target.value)}
         placeholder="demo-tenant"
         required

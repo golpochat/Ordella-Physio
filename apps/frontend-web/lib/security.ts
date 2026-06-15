@@ -1,4 +1,4 @@
-import { sanitizeInput } from "@ordella/security";
+import { sanitizeInput } from "@/lib/escape";
 
 const MAX_LENGTHS = {
   name: 120,

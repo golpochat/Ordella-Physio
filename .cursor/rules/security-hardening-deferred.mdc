@@ -22,10 +22,12 @@ The main hardening pass (P0–P2) is **complete**. Do not re-implement finished 
 **Trigger:** Clinic backend gains real file-upload endpoints.
 
 **Already built:**
+
 - `backend/src/modules/security/virus-scan.service.ts`
 - `backend/src/modules/security/file-upload.ts` → `validateAndScanUpload()`
 
 **Todo when uploads ship:**
+
 - Call `validateAndScanUpload()` in the upload handler(s) before persisting files
 - Set `CLAMAV_HOST` + `CLAMAV_REQUIRED=true` in production `.env`
 - Add e2e test: clean file passes, EICAR/test signature rejected
@@ -37,6 +39,7 @@ The main hardening pass (P0–P2) is **complete**. Do not re-implement finished 
 **Already built:** Manual rotation via `JWT_SECRET_PREVIOUS` / `JWT_REFRESH_SECRET_PREVIOUS` in `backend/src/utils/jwt.ts`.
 
 **Todo:**
+
 - Runbook or script to rotate secrets with overlap window
 - Optional: cron/job + secret manager integration (Vault, AWS SM, etc.)
 - Test that tokens signed with previous secret still verify during overlap

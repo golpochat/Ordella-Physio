@@ -1,15 +1,15 @@
-import { randomBytes } from "node:crypto";
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
   getSession,
+} from "@/lib/auth/session-middleware";
+import {
   hasValidTenant,
   isGuardedPortalPath,
   isPublicMiddlewarePath,
   resolveAllowedPortalPrefix,
   resolveMiddlewarePortalHome,
-} from "@/lib/auth/session";
+} from "@/lib/auth/session-routing";
 import { checkRateLimit } from "@/lib/rate-limit/store";
 import { buildContentSecurityPolicy } from "@/lib/security/csp";
 import { NONCE_HEADER } from "@/lib/security/nonce";
@@ -18,7 +18,12 @@ const RATE_LIMIT = Number(process.env.API_RATE_LIMIT ?? 120);
 const WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_DISABLED = process.env.DISABLE_API_RATE_LIMIT === "true";
 
-const RATE_LIMIT_EXEMPT_PREFIXES = ["/api/next-auth/", "/api/health", "/api/csrf"];
+const RATE_LIMIT_EXEMPT_PREFIXES = [
+  "/api/auth/",
+  "/api/next-auth/",
+  "/api/health",
+  "/api/csrf",
+];
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -30,7 +35,9 @@ function getClientIp(request: NextRequest): string {
 }
 
 function isExemptApiPath(pathname: string): boolean {
-  return RATE_LIMIT_EXEMPT_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  return RATE_LIMIT_EXEMPT_PREFIXES.some((prefix) =>
+    pathname.startsWith(prefix),
+  );
 }
 
 function applyStaticCacheHeaders(response: NextResponse) {
@@ -38,10 +45,24 @@ function applyStaticCacheHeaders(response: NextResponse) {
   return response;
 }
 
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  let binary = "";
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary);
+}
+
 function applyPageSecurityHeaders(request: NextRequest): NextResponse {
-  const nonce = randomBytes(16).toString("base64");
+  const isDev = process.env.NODE_ENV === "development";
+  const nonce = isDev ? undefined : generateNonce();
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(NONCE_HEADER, nonce);
+
+  if (nonce) {
+    requestHeaders.set(NONCE_HEADER, nonce);
+  }
 
   const response = NextResponse.next({
     request: { headers: requestHeaders },
@@ -87,14 +108,14 @@ function redirectToPortalHome(request: NextRequest, pathname: string) {
   return NextResponse.redirect(url);
 }
 
-function enforcePortalRbac(request: NextRequest) {
+async function enforcePortalRbac(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!isGuardedPortalPath(pathname) || isPublicMiddlewarePath(pathname)) {
     return null;
   }
 
-  const session = getSession(request);
+  const session = await getSession(request);
 
   if (!session?.user) {
     return redirectToLogin(request);
@@ -112,7 +133,10 @@ function enforcePortalRbac(request: NextRequest) {
   }
 
   if (!pathname.startsWith(allowedPrefix)) {
-    return redirectToPortalHome(request, resolveMiddlewarePortalHome(role, roles));
+    return redirectToPortalHome(
+      request,
+      resolveMiddlewarePortalHome(role, roles),
+    );
   }
 
   return null;
@@ -144,7 +168,7 @@ export async function middleware(request: NextRequest) {
     return applyStaticCacheHeaders(NextResponse.next());
   }
 
-  const portalGuard = enforcePortalRbac(request);
+  const portalGuard = await enforcePortalRbac(request);
   if (portalGuard) {
     return portalGuard;
   }

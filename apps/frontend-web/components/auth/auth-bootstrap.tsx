@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { PageLoading } from "@/components/patient-portal/page-state";
 import { SystemRouteEnforcer } from "@/components/navigation/system-route-enforcer";
 import {
+  clearStaleAuthOnPublicPath,
   ensureFreshAccessToken,
   isPublicPath,
   PROACTIVE_REFRESH_CHECK_MS,
@@ -12,7 +13,10 @@ import {
   validateStoredSession,
 } from "@/lib/session-manager";
 import { syncSessionCookieFromUser } from "@/lib/auth/session-cookie-client";
-import { getStoredAuthUser, getStoredIsAuthenticated } from "@/lib/auth-storage";
+import {
+  getStoredAuthUser,
+  getStoredIsAuthenticated,
+} from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
 
 export function AuthBootstrap({ children }: { children: ReactNode }) {
@@ -20,32 +24,49 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [ready, setReady] = useState(false);
 
+  // Validate session once per sign-in — not on every client navigation.
   useEffect(() => {
     let active = true;
 
-    async function bootstrap() {
-      syncTenantFromSession();
-      syncSessionCookieFromUser(useAuthStore.getState().user ?? getStoredAuthUser());
+    async function validateSession() {
+      if (isPublicPath(window.location.pathname)) {
+        return;
+      }
 
       const hasSession = isAuthenticated || getStoredIsAuthenticated();
       if (hasSession) {
         await validateStoredSession();
       }
+    }
 
+    void validateSession().finally(() => {
       if (active) {
         setReady(true);
       }
-    }
-
-    void bootstrap();
+    });
 
     return () => {
       active = false;
     };
   }, [isAuthenticated]);
 
+  // Keep middleware cookie in sync when navigating; avoid re-validating /me each time.
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (isPublicPath(pathname)) {
+      clearStaleAuthOnPublicPath();
+      setReady(true);
+      return;
+    }
+
+    syncTenantFromSession();
+    syncSessionCookieFromUser(
+      useAuthStore.getState().user ?? getStoredAuthUser(),
+    );
+    setReady(true);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isAuthenticated || isPublicPath(pathname)) {
       return;
     }
 
@@ -54,7 +75,10 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
     };
 
     refreshIfNeeded();
-    const intervalId = window.setInterval(refreshIfNeeded, PROACTIVE_REFRESH_CHECK_MS);
+    const intervalId = window.setInterval(
+      refreshIfNeeded,
+      PROACTIVE_REFRESH_CHECK_MS,
+    );
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -68,7 +92,7 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, pathname]);
 
   if (!ready && !isPublicPath(pathname)) {
     return (

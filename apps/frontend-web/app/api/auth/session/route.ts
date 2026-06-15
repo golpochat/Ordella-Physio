@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
   response.cookies.set(
     SESSION_COOKIE_NAME,
-    signSessionPayload(body.session),
+    await signSessionPayload(body.session),
     getSecureCookieOptions(SESSION_MAX_AGE_SECONDS),
   );
 

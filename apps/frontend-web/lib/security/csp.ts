@@ -50,7 +50,10 @@ export type CspOptions = {
 };
 
 export function buildContentSecurityPolicy(options: CspOptions = {}): string {
-  const useNonce = Boolean(options.nonce) && process.env.DISABLE_NONCE_CSP !== "true";
+  // Nonce + 'unsafe-inline' together cause browsers to ignore unsafe-inline, which breaks
+  // Next.js dev hydration scripts. Use nonce only in production.
+  const useNonce =
+    !isDev && Boolean(options.nonce) && process.env.DISABLE_NONCE_CSP !== "true";
   const scriptSrc = ["'self'"];
 
   if (useNonce && options.nonce) {
@@ -59,10 +62,6 @@ export function buildContentSecurityPolicy(options: CspOptions = {}): string {
     scriptSrc.push("'unsafe-inline'", "'unsafe-eval'");
   } else {
     scriptSrc.push("'unsafe-inline'");
-  }
-
-  if (isDev) {
-    scriptSrc.push("'unsafe-eval'");
   }
 
   for (const origin of analyticsScriptOrigins) {
