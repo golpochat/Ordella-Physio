@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import { createReportingApi } from "@/lib/reporting-api";
 import type {
@@ -43,11 +43,12 @@ export function useReportingApi() {
 export function useReportHistory() {
   const reportingApi = useReportingApi();
   const { tenantId } = useTenant();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: reportsQueryKey(tenantId),
     queryFn: () => reportingApi.list({ limit: 50 }),
-    enabled: Boolean(tenantId),
+    enabled: Boolean(tenantId && authReady),
     refetchInterval: (query) => {
       const hasActive = query.state.data?.items.some((report) =>
         ["pending", "processing"].includes(report.status),
@@ -104,11 +105,12 @@ export function usePatientReport(filters?: PatientReportQuery) {
 export function useReportingKpi(filters?: Pick<ReportFilters, "startDate" | "endDate">) {
   const reportingApi = useReportingApi();
   const { tenantId } = useTenant();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["reporting", "kpi", tenantId, filters?.startDate, filters?.endDate],
     queryFn: () => reportingApi.getKpi(filters),
-    enabled: Boolean(tenantId),
+    enabled: Boolean(tenantId && authReady),
   });
 }
 

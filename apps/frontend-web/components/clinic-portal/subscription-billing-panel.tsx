@@ -75,7 +75,10 @@ export function ClinicSubscriptionBillingPanel() {
       <Card>
         <CardHeader>
           <CardTitle>Platform Subscription</CardTitle>
-          <CardDescription>Manage your clinic&apos;s Ordella Physio plan via Stripe.</CardDescription>
+          <CardDescription>
+            Manage your clinic&apos;s Ordella Physio plan via Stripe.
+            {status === "none" ? " (not configured in local clinic-backend mode)" : ""}
+          </CardDescription>
         </CardHeader>
         <CardBody className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">

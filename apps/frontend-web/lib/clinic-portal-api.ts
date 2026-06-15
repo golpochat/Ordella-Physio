@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import { isClinicBackendClient, getClinicBackendSubscriptionStub } from "@/lib/clinic-backend-normalize";
 import { normalizePaginatedList } from "@/lib/clinic-api-normalize";
 import type {
   ClinicAppointment,
@@ -84,11 +85,22 @@ import type {
 
 export type ClinicApiClient = ReturnType<typeof createApiClient>;
 
+const EMPTY_LOCATION_LIST: ClinicLocationListResponse = {
+  data: [],
+  pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+};
+
 export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
   const staffBase = `/${tenantId}/staff`;
 
   return {
     listStaff() {
+      if (isClinicBackendClient()) {
+        return api.get<ClinicStaffMember[] | { data: unknown }>("staffMember", "", {
+          unwrapData: false,
+        });
+      }
+
       return api.get<ClinicStaffMember[]>("tenant", staffBase);
     },
 
@@ -262,6 +274,10 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
     },
 
     listLocations(params?: ClinicLocationListFilters) {
+      if (isClinicBackendClient()) {
+        return Promise.resolve(EMPTY_LOCATION_LIST);
+      }
+
       return api.get<ClinicLocationListResponse>("tenant", `/${tenantId}/locations`, {
         params,
         unwrapData: false,
@@ -371,22 +387,48 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
     },
 
     getSubscription() {
+      if (isClinicBackendClient()) {
+        return Promise.resolve(getClinicBackendSubscriptionStub(tenantId));
+      }
+
       return api.get<ClinicStripeSubscription>("billing", "/subscription");
     },
 
     listStripeInvoices() {
+      if (isClinicBackendClient()) {
+        return Promise.resolve([]);
+      }
+
       return api.get<ClinicStripeInvoice[]>("billing", "/stripe-invoices");
     },
 
     createSubscription(payload: CreateClinicSubscriptionPayload) {
+      if (isClinicBackendClient()) {
+        return Promise.reject(
+          new Error("Platform subscription billing is not available in clinic-backend mode."),
+        );
+      }
+
       return api.post<ClinicStripeSubscription>("billing", "/create-subscription", payload);
     },
 
     cancelSubscription(payload: CancelClinicSubscriptionPayload) {
+      if (isClinicBackendClient()) {
+        return Promise.reject(
+          new Error("Platform subscription billing is not available in clinic-backend mode."),
+        );
+      }
+
       return api.post<ClinicStripeSubscription>("billing", "/cancel-subscription", payload);
     },
 
     createCustomerPortal(returnUrl?: string) {
+      if (isClinicBackendClient()) {
+        return Promise.reject(
+          new Error("Stripe customer portal is not available in clinic-backend mode."),
+        );
+      }
+
       return api.post<{ url: string }>("billing", "/customer-portal", {
         returnUrl,
       });
@@ -510,6 +552,31 @@ export function normalizeInvoiceListResponse(
   };
 }
 
+type BackendAppointmentRecord = ClinicAppointment & {
+  patient?: { id: string; firstName: string; lastName: string };
+  therapist?: { id: string; user?: { firstName: string; lastName: string } };
+};
+
+function mapAppointmentListItem(item: BackendAppointmentRecord) {
+  const therapistUser = item.therapist?.user;
+
+  return {
+    ...item,
+    patient: item.patient ?? {
+      id: item.patientId,
+      firstName: "Unknown",
+      lastName: "Patient",
+    },
+    staff: {
+      id: item.therapist?.id ?? item.therapistId,
+      firstName: therapistUser?.firstName ?? "Unknown",
+      lastName: therapistUser?.lastName ?? "Staff",
+    },
+    location: item.locationId ? { id: item.locationId, name: item.locationId } : null,
+    appointmentType: item.type,
+  };
+}
+
 export function normalizeAppointmentListResponse(
   response: ClinicAppointmentListResponse | ClinicAppointment[] | undefined,
 ): ClinicAppointmentListResponse {
@@ -517,6 +584,33 @@ export function normalizeAppointmentListResponse(
     return {
       data: [],
       pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+    };
+  }
+
+  const nestedEnvelope =
+    !Array.isArray(response) &&
+    response.data &&
+    typeof response.data === "object" &&
+    !Array.isArray(response.data) &&
+    "items" in response.data
+      ? (response.data as {
+          items: ClinicAppointment[];
+          page?: number;
+          pageSize?: number;
+          total?: number;
+          totalPages?: number;
+        })
+      : null;
+
+  if (nestedEnvelope && Array.isArray(nestedEnvelope.items)) {
+    return {
+      data: nestedEnvelope.items.map((item) => mapAppointmentListItem(item)),
+      pagination: {
+        page: nestedEnvelope.page ?? 1,
+        limit: nestedEnvelope.pageSize ?? nestedEnvelope.items.length,
+        total: nestedEnvelope.total ?? nestedEnvelope.items.length,
+        totalPages: nestedEnvelope.totalPages ?? (nestedEnvelope.items.length > 0 ? 1 : 0),
+      },
     };
   }
 

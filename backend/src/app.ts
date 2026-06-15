@@ -23,6 +23,16 @@ export function createApp() {
   app.use(authMiddleware);
 
   app.use("/api", apiRouter);
+  app.get("/", (_req, res) => {
+    res.json({
+      service: "clinic-backend",
+      status: "ok",
+      message: "Ordella clinic API — use the frontend app for the UI.",
+      frontend: process.env.FRONTEND_URL ?? "http://localhost:3011",
+      health: "/health",
+      login: "POST /api/auth/login",
+    });
+  });
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
   });

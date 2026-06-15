@@ -4,7 +4,7 @@ import { ForbiddenError, UnauthorizedError } from "../utils/api-error";
 import { verifyAccessToken } from "../utils/jwt";
 import { resolveTenantByIdOrSlug } from "../utils/tenant-resolver";
 
-const PUBLIC_PATHS = ["/health", "/api/auth/login", "/api/auth/refresh"];
+const PUBLIC_PATHS = ["/", "/health", "/api/auth/login", "/api/auth/refresh"];
 
 function isPublicPath(path: string): boolean {
   return PUBLIC_PATHS.some((route) => path === route || path.startsWith(`${route}/`));

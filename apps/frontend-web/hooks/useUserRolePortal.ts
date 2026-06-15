@@ -2,7 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
+import { normalizeRoleListResponse } from "@/lib/clinic-backend-normalize";
 import { createUserRoleApi } from "@/lib/user-role-api";
 import type {
   ClinicRoleListFilters,
@@ -22,11 +23,13 @@ function requireUserRoleApi(api: ReturnType<typeof createUserRoleApi> | null) {
 
 export function useClinicRolesList(filters: ClinicRoleListFilters = {}) {
   const userRoleApi = useUserRoleApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "roles", "list", filters],
-    queryFn: () => requireUserRoleApi(userRoleApi).listRoles(filters),
-    enabled: Boolean(userRoleApi),
+    queryFn: async () =>
+      normalizeRoleListResponse(await requireUserRoleApi(userRoleApi).listRoles(filters)),
+    enabled: Boolean(userRoleApi && authReady),
   });
 }
 

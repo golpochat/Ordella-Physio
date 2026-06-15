@@ -1,4 +1,5 @@
 import type { createApiClient } from "@/lib/api-client";
+import { isClinicBackendClient } from "@/lib/clinic-backend-normalize";
 
 type TerminalApiClient = ReturnType<typeof createApiClient>;
 import type {
@@ -13,8 +14,17 @@ import type {
 } from "@/lib/terminal-portal-types";
 
 export function createTerminalApi(api: TerminalApiClient) {
+  const emptyList = (): ClinicTerminalListResponse => ({
+    data: [],
+    pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+  });
+
   return {
     listTerminals(params?: ClinicTerminalListFilters) {
+      if (isClinicBackendClient()) {
+        return Promise.resolve(emptyList());
+      }
+
       return api.get<ClinicTerminalListResponse>("terminal", "", {
         params,
         unwrapData: false,

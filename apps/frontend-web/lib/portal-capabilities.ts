@@ -110,12 +110,12 @@ export const PORTAL_NAV_CAPABILITIES: Record<string, PortalCapability> = {
   "/staff/billing": "billing:read",
   "/staff/notes": "notes:read",
   "/staff/reports": "reports:read",
+  "/therapist/today": "appointments:read",
+  "/therapist/upcoming": "schedule:read",
   "/therapist/appointments": "appointments:read",
-  "/therapist/schedule": "schedule:read",
   "/therapist/patients": "patients:read",
   "/therapist/billing": "billing:read",
-  "/therapist/notes": "notes:read",
-  "/therapist/reports": "reports:read",
+  "/therapist/notes": "notes:write",
   "/patient/profile": "profile:read",
 };
 

@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useClinicLocations, useClinicPatientsList } from "@/hooks/useClinicPortal";
 import { useClinicStaffMembersList } from "@/hooks/useClinicStaffMember";
-import type { ClinicAppointmentListFilters } from "@/lib/clinic-portal-types";
+import type {
+  ClinicStaffListItem,
+} from "@/lib/clinic-staff-member-types";
+import { coerceListData } from "@/lib/clinic-backend-normalize";
+import type { ClinicAppointmentListFilters, ClinicLocation, ClinicPatient } from "@/lib/clinic-portal-types";
 
 const APPOINTMENT_TYPE_OPTIONS = ["", "IN_PERSON", "TELEMEDICINE"] as const;
 const STATUS_OPTIONS = ["", "SCHEDULED", "CANCELLED", "COMPLETED", "NO_SHOW"] as const;
@@ -56,9 +60,11 @@ export function AppointmentListFilters({
   const staffQuery = useClinicStaffMembersList({ page: 1, limit: 100, status: "ACTIVE" });
   const locationsQuery = useClinicLocations();
 
-  const patients = patientsQuery.data?.data ?? [];
-  const staffMembers = staffQuery.data?.data ?? [];
-  const locations = (locationsQuery.data ?? []).filter((location) => location.status === "ACTIVE");
+  const patients = coerceListData<ClinicPatient>(patientsQuery.data?.data);
+  const staffMembers = coerceListData<ClinicStaffListItem>(staffQuery.data?.data);
+  const locations = coerceListData<ClinicLocation>(locationsQuery.data).filter(
+    (location) => location.status === "ACTIVE",
+  );
 
   return (
     <section className="user-list-filters">

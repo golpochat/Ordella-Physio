@@ -2,7 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
+import { normalizeStaffMemberListResponse } from "@/lib/clinic-backend-normalize";
 import { createClinicStaffMemberApi } from "@/lib/clinic-staff-member-api";
 import type {
   ClinicStaffConfigNamespace,
@@ -23,11 +24,15 @@ function requireStaffMemberApi(api: ReturnType<typeof createClinicStaffMemberApi
 
 export function useClinicStaffMembersList(filters: ClinicStaffListFilters = {}) {
   const staffMemberApi = useClinicStaffMemberApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "staff-members", "list", filters],
-    queryFn: () => requireStaffMemberApi(staffMemberApi).listStaffMembers(filters),
-    enabled: Boolean(staffMemberApi),
+    queryFn: async () =>
+      normalizeStaffMemberListResponse(
+        await requireStaffMemberApi(staffMemberApi).listStaffMembers(filters),
+      ),
+    enabled: Boolean(staffMemberApi && authReady),
   });
 }
 

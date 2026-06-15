@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+import { paginationSchema } from "../../utils/pagination";
+
+export const listUsersQuerySchema = paginationSchema.extend({
+  search: z.string().trim().optional(),
+  role: z.string().trim().optional(),
+  status: z.enum(["ACTIVE", "DISABLED"]).optional(),
+  sortBy: z.enum(["createdAt", "firstName", "lastName", "email", "role"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+});
+
+export const userIdParamSchema = z.object({
+  id: z.string().min(1),
+});
+
 export const loginSchema = z
   .object({
     tenantSlug: z.string().min(1).optional(),

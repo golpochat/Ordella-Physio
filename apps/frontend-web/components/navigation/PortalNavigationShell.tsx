@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/navigation/protected-route";
 import { RoleGuard } from "@/components/navigation/role-guard";
 import { Sidebar } from "@/components/navigation/Sidebar";
@@ -17,6 +18,8 @@ import { getPrimaryPortalRole } from "@/lib/nav-roles";
 import { TenantSuspendedBanner } from "@/components/tenants/TenantSuspendedBanner";
 import { useUiStore } from "@/store/ui.store";
 import { cn } from "@/lib/cn";
+
+const RBAC_APP_LAYOUT_PORTALS = new Set<PortalId>(["clinic", "staff", "therapist"]);
 
 export type PortalNavigationShellProps = {
   portalId: PortalId;
@@ -66,6 +69,25 @@ export function PortalNavigationShell({
 
   if (!hydrated) {
     return null;
+  }
+
+  if (RBAC_APP_LAYOUT_PORTALS.has(portalId)) {
+    return (
+      <ProtectedRoute>
+        <RoleGuard
+          allowedRoles={requireRoles && config.allowedRoles.length ? config.allowedRoles : undefined}
+        >
+          <AppLayout
+            portalId={portalId}
+            title={pageMeta.title}
+            subtitle={pageMeta.subtitle}
+            showSearch={portalId === "clinic"}
+          >
+            {children}
+          </AppLayout>
+        </RoleGuard>
+      </ProtectedRoute>
+    );
   }
 
   return (

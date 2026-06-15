@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type { createApiClient } from "@/lib/api-client";
+import { isClinicBackendClient } from "@/lib/clinic-backend-normalize";
 import { API_ROUTES, AUTHORIZATION_HEADER, CORRELATION_ID_HEADER, TENANT_HEADER } from "@/lib/constants";
 import type {
   AppointmentReportQuery,
@@ -34,12 +35,37 @@ type ReportingApiContext = {
 };
 
 export function createReportingApi(api: ReportingApiClient, getContext: () => ReportingApiContext) {
+  const emptyReportList = (): ReportListResponse => ({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 50,
+  });
+
+  const emptyKpi = (): MetricsKpiResponse => ({
+    totalAppointments: 0,
+    completedAppointments: 0,
+    cancelledAppointments: 0,
+    noShowAppointments: 0,
+    newPatients: 0,
+    revenue: 0,
+    outstandingBalance: 0,
+  });
+
   return {
     requestReport(type: ReportType, filters: ReportFilters) {
+      if (isClinicBackendClient()) {
+        return Promise.reject(new Error("Report requests are not available in clinic-backend mode."));
+      }
+
       return api.post<ReportRequest>("reporting", "/reports/request", { type, filters });
     },
 
     list(params?: { status?: string; type?: ReportType; page?: number; limit?: number }) {
+      if (isClinicBackendClient()) {
+        return Promise.resolve(emptyReportList());
+      }
+
       return api.get<ReportListResponse>("reporting", "/reports", { params });
     },
 
@@ -48,6 +74,10 @@ export function createReportingApi(api: ReportingApiClient, getContext: () => Re
     },
 
     getKpi(params?: { startDate?: string; endDate?: string }) {
+      if (isClinicBackendClient()) {
+        return Promise.resolve(emptyKpi());
+      }
+
       return api.get<MetricsKpiResponse>("reporting", "/metrics/kpi", { params });
     },
 

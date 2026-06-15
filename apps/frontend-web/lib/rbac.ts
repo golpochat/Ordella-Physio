@@ -2,6 +2,7 @@ import type { SecurityRole } from "@ordella/security";
 import { PERMISSIONS, roleHasPermission } from "./auth/permissions";
 import { DASHBOARD_ROUTES } from "./constants";
 import { getPortalForRoles, mapAuthRoleToPortalRole } from "./auth/roleRedirect";
+import { canAccessPortalNamespace } from "./routes";
 
 export type PortalRole = SecurityRole | "CLINIC_ADMIN" | "PATIENT" | "PHARMACY" | "USER";
 
@@ -21,39 +22,14 @@ export const ROUTE_ROLE_ACCESS: Record<string, PortalRole[]> = {
   [DASHBOARD_ROUTES.superAdmin]: ["SYSTEM"],
   [DASHBOARD_ROUTES.admin]: ["OWNER", "ADMIN"],
   "/admin/ai": ["OWNER", "ADMIN", "CLINIC_ADMIN"],
-  [DASHBOARD_ROUTES.clinic]: ["CLINIC_ADMIN"],
+  [DASHBOARD_ROUTES.clinic]: ["CLINIC_ADMIN", "ADMIN", "OWNER"],
   [DASHBOARD_ROUTES.therapist]: ["THERAPIST"],
   [DASHBOARD_ROUTES.patient]: ["PATIENT"],
   [DASHBOARD_ROUTES.pharmacy]: ["PHARMACY"],
   [DASHBOARD_ROUTES.staff]: ["STAFF"],
   [DASHBOARD_ROUTES.user]: ["USER"],
-  "/appointments": ["ADMIN", "STAFF", "THERAPIST", "PATIENT"],
-  "/patients": ["ADMIN", "STAFF", "THERAPIST"],
-  "/billing": ["ADMIN", "STAFF", "PATIENT"],
-  "/notes": ["ADMIN", "STAFF", "THERAPIST", "PATIENT"],
   "/settings": ["SYSTEM", "OWNER", "ADMIN", "STAFF", "THERAPIST", "PATIENT", "PHARMACY", "USER"],
 };
-
-const GENERIC_ROUTE_PREFIXES = new Set(["/appointments", "/patients", "/billing", "/notes"]);
-
-const PORTAL_ROUTE_PREFIXES = [
-  DASHBOARD_ROUTES.superAdmin,
-  DASHBOARD_ROUTES.admin,
-  DASHBOARD_ROUTES.clinic,
-  DASHBOARD_ROUTES.therapist,
-  DASHBOARD_ROUTES.patient,
-  DASHBOARD_ROUTES.pharmacy,
-  DASHBOARD_ROUTES.staff,
-  DASHBOARD_ROUTES.user,
-] as const;
-
-function getPortalRoutePrefix(pathname: string): string | null {
-  return (
-    PORTAL_ROUTE_PREFIXES.find(
-      (route) => pathname === route || pathname.startsWith(`${route}/`),
-    ) ?? null
-  );
-}
 
 export function hasRole(userRoles: PortalRole[], required: PortalRole | PortalRole[]): boolean {
   const requiredRoles = Array.isArray(required) ? required : [required];
@@ -84,21 +60,12 @@ export function hasPermission(
 }
 
 export function canAccessRoute(pathname: string, roles: PortalRole[]): boolean {
-  const portalPrefix = getPortalRoutePrefix(pathname);
+  if (!canAccessPortalNamespace(pathname, roles)) {
+    return false;
+  }
+
   const matches = Object.entries(ROUTE_ROLE_ACCESS).filter(([route]) => {
-    if (!(pathname === route || pathname.startsWith(`${route}/`))) {
-      return false;
-    }
-
-    if (
-      portalPrefix &&
-      route !== portalPrefix &&
-      GENERIC_ROUTE_PREFIXES.has(route)
-    ) {
-      return false;
-    }
-
-    return true;
+    return pathname === route || pathname.startsWith(`${route}/`);
   });
 
   if (!matches.length) {

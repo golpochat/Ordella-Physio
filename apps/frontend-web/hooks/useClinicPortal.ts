@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import {
   createClinicPortalApi,
@@ -13,11 +13,13 @@ import {
   normalizeStaffList,
   normalizeUserListResponse,
 } from "@/lib/clinic-portal-api";
+import { isClinicBackendClient, mapStaffListItemsToPortalMembers, normalizeStaffMemberListResponse, coerceListData } from "@/lib/clinic-backend-normalize";
 import type {
   CancelClinicSubscriptionPayload,
   CreateClinicLocationPayload,
   UpdateClinicLocationPayload,
   ClinicLocationListFilters,
+  ClinicLocation,
   ClinicLocationConfigNamespace,
   ClinicAppointmentListFilters,
   ClinicAppointmentCalendarFilters,
@@ -33,6 +35,7 @@ import type {
   CreateClinicSubscriptionPayload,
   CreateClinicStaffPayload,
   CreateClinicUserPayload,
+  ClinicStaffMember,
   UpdateClinicUserPayload,
   ChangePasswordPayload,
   ChangeClinicUserRolePayload,
@@ -77,11 +80,18 @@ function requireApi(api: ReturnType<typeof createClinicPortalApi> | null) {
 export function useClinicStaff() {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "staff", tenantId],
-    queryFn: async () => normalizeStaffList(await requireApi(clinicApi).listStaff()),
-    enabled: Boolean(tenantId && clinicApi),
+    queryFn: async () => {
+      const response = await requireApi(clinicApi).listStaff();
+      if (isClinicBackendClient()) {
+        return mapStaffListItemsToPortalMembers(normalizeStaffMemberListResponse(response).data);
+      }
+      return normalizeStaffList(response as ClinicStaffMember[] | undefined);
+    },
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 
@@ -336,6 +346,7 @@ export function useClinicAppointments() {
 export function useClinicAppointmentsList(filters: ClinicAppointmentListFilters = {}) {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "appointments", tenantId, filters],
@@ -343,7 +354,7 @@ export function useClinicAppointmentsList(filters: ClinicAppointmentListFilters 
       normalizeAppointmentListResponse(
         await requireApi(clinicApi).listAppointments(filters),
       ),
-    enabled: Boolean(tenantId && clinicApi),
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 
@@ -483,6 +494,7 @@ export function useClinicAppointmentCalendar(filters: ClinicAppointmentCalendarF
 export function useClinicLocations() {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "locations", tenantId, "active"],
@@ -492,20 +504,32 @@ export function useClinicLocations() {
         limit: 100,
         page: 1,
       });
-      return response.data ?? [];
+      return coerceListData<ClinicLocation>(response.data);
     },
-    enabled: Boolean(tenantId && clinicApi),
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 
 export function useClinicLocationsList(filters: ClinicLocationListFilters = {}) {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "locations", tenantId, "list", filters],
-    queryFn: () => requireApi(clinicApi).listLocations(filters),
-    enabled: Boolean(tenantId && clinicApi),
+    queryFn: async () => {
+      const response = await requireApi(clinicApi).listLocations(filters);
+      return {
+        data: coerceListData<ClinicLocation>(response.data),
+        pagination: response.pagination ?? {
+          page: filters.page ?? 1,
+          limit: filters.limit ?? 20,
+          total: 0,
+          totalPages: 0,
+        },
+      };
+    },
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 
@@ -721,17 +745,19 @@ export function useVoidClinicInvoice(invoiceId: string) {
 export function useClinicSubscription() {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "subscription", tenantId],
     queryFn: () => requireApi(clinicApi).getSubscription(),
-    enabled: Boolean(tenantId && clinicApi),
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 
 export function useClinicStripeInvoices() {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "stripe-invoices", tenantId],
@@ -739,7 +765,7 @@ export function useClinicStripeInvoices() {
       const invoices = await requireApi(clinicApi).listStripeInvoices();
       return Array.isArray(invoices) ? invoices : [];
     },
-    enabled: Boolean(tenantId && clinicApi),
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 
@@ -813,10 +839,12 @@ export function useClinicNote(id: string) {
 
 export function useClinicProfile() {
   const api = useApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["user", "me"],
     queryFn: () => api.get<UserProfile>("auth", "/users/me"),
+    enabled: authReady,
   });
 }
 
@@ -827,11 +855,12 @@ export function useMyProfile() {
 export function useClinicUsers(filters: ClinicUserListFilters = {}) {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "users", tenantId, filters],
     queryFn: async () => normalizeUserListResponse(await requireApi(clinicApi).listUsers(filters)),
-    enabled: Boolean(tenantId && clinicApi),
+    enabled: Boolean(tenantId && clinicApi && authReady),
   });
 }
 

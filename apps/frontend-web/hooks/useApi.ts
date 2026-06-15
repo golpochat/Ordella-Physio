@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createApiClient } from "@/lib/api-client";
 import { getApiClientContext } from "@/lib/api-session";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 import { useUiStore } from "@/store/ui.store";
+import { useTenant } from "@/hooks/useTenant";
 
 export function useApi() {
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -23,4 +24,18 @@ export function useApi() {
     userRoles,
     userTenantId,
   ]);
+}
+
+/** Wait for persisted auth + tenant before firing tenant-scoped API queries. */
+export function useQueryAuthReady(): boolean {
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { tenantId } = useTenant();
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  return hydrated && isAuthenticated && Boolean(accessToken) && Boolean(tenantId);
 }

@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { createTerminalApi } from "@/lib/terminal-api";
 import type {
   ClinicTerminalListFilters,
@@ -23,11 +23,12 @@ function requireTerminalApi(api: ReturnType<typeof createTerminalApi> | null) {
 
 export function useClinicTerminalsList(filters: ClinicTerminalListFilters = {}) {
   const terminalApi = useTerminalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["clinic", "terminals", "list", filters],
     queryFn: () => requireTerminalApi(terminalApi).listTerminals(filters),
-    enabled: Boolean(terminalApi),
+    enabled: Boolean(terminalApi && authReady),
   });
 }
 

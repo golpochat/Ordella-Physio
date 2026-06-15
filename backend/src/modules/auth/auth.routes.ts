@@ -2,8 +2,10 @@ import { Router } from "express";
 import { asyncHandler } from "../../utils/async-handler";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { requireAuth, requireTenant } from "../../middleware/tenant.middleware";
+import { policies } from "../rbac/policies";
 import { getCurrentUser, login, refresh, registerTenantUser, updateCurrentUser } from "./auth.service";
-import { loginSchema, refreshSchema, registerUserSchema, updateProfileSchema } from "./auth.validation";
+import { getTenantUser, listTenantUsers } from "./users.service";
+import { loginSchema, listUsersQuerySchema, refreshSchema, registerUserSchema, updateProfileSchema, userIdParamSchema } from "./auth.validation";
 
 export const authRouter = Router();
 
@@ -89,6 +91,30 @@ authRouter.put(
   asyncHandler(async (req, res) => {
     const user = await updateCurrentUser(req.user!.id, req.tenantId!, req.body);
     res.json({ data: { user: { ...user, role: user.roles[0] ?? "STAFF" } } });
+  }),
+);
+
+authRouter.get(
+  "/users",
+  requireTenant,
+  requireAuth,
+  policies.rbacRead,
+  validateRequest(listUsersQuerySchema, "query"),
+  asyncHandler(async (req, res) => {
+    const result = await listTenantUsers(req.tenantId!, req.query as never);
+    res.json(result);
+  }),
+);
+
+authRouter.get(
+  "/users/:id",
+  requireTenant,
+  requireAuth,
+  policies.rbacRead,
+  validateRequest(userIdParamSchema, "params"),
+  asyncHandler(async (req, res) => {
+    const user = await getTenantUser(req.tenantId!, String(req.params.id));
+    res.json({ data: user });
   }),
 );
 
