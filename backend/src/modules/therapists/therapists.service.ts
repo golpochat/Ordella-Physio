@@ -1,6 +1,5 @@
 import { buildPaginatedResponse } from "../../utils/pagination";
 import { hashPassword } from "../../utils/password";
-import { writeAuditLog } from "../utilities/audit.service";
 import { ensureDefaultRoles } from "../rbac/rbac.service";
 import {
   assertCanManageTherapists,
@@ -115,15 +114,6 @@ export async function createTherapist(
 
   const therapist = await createTherapistRecord(tenantId, user.id, data);
 
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.created",
-    entity: "Therapist",
-    entityId: therapist.id,
-    metadata: { email: data.email },
-  });
-
   return therapist;
 }
 
@@ -142,15 +132,6 @@ export async function updateTherapistAsAdmin(
     firstName,
     lastName,
     phone,
-  });
-
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.updated",
-    entity: "Therapist",
-    entityId: id,
-    metadata: { fields: Object.keys(data), scope: "admin" },
   });
 
   return updated;
@@ -175,15 +156,6 @@ export async function updateMyTherapistProfile(
     phone,
   });
 
-  await writeAuditLog({
-    tenantId,
-    userId: actor.userId,
-    action: "therapist.profile.updated",
-    entity: "Therapist",
-    entityId: therapist.id,
-    metadata: { fields: Object.keys(data), scope: "self" },
-  });
-
   return updated;
 }
 
@@ -195,14 +167,6 @@ export async function deleteTherapist(
 ) {
   assertCanManageTherapists(actor);
   const therapist = await deactivateTherapistRecord(tenantId, id);
-
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.deactivated",
-    entity: "Therapist",
-    entityId: id,
-  });
 
   return therapist;
 }
@@ -224,15 +188,6 @@ export async function setWorkingHours(
 
   const workingHours = await replaceWorkingHours(tenantId, therapistId, blocks);
 
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.working_hours.updated",
-    entity: "Therapist",
-    entityId: therapistId,
-    metadata: { blockCount: blocks.length },
-  });
-
   return workingHours;
 }
 
@@ -251,15 +206,6 @@ export async function addBlockedSlot(
 
   const slot = await createBlockedSlot(tenantId, therapistId, data);
 
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.blocked_slot.created",
-    entity: "TherapistBlockedSlot",
-    entityId: slot.id,
-    metadata: { therapistId },
-  });
-
   return slot;
 }
 
@@ -272,15 +218,6 @@ export async function removeBlockedSlot(
 ) {
   assertCanManageTherapists(actor);
   const slot = await deleteBlockedSlot(tenantId, therapistId, blockId);
-
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.blocked_slot.deleted",
-    entity: "TherapistBlockedSlot",
-    entityId: blockId,
-    metadata: { therapistId },
-  });
 
   return slot;
 }
@@ -309,15 +246,6 @@ export async function setServiceTypes(
   }
 
   const types = await replaceServiceTypes(tenantId, therapistId, serviceTypes);
-
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "therapist.service_types.updated",
-    entity: "Therapist",
-    entityId: therapistId,
-    metadata: { count: serviceTypes.length },
-  });
 
   return types;
 }

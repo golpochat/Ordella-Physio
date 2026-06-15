@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { PatientNoteEditor } from "@/components/patients/notes/PatientNoteEditor";
 import { PatientNotesList } from "@/components/patients/notes/PatientNotesList";
 import { useClinicPatient, useClinicPatientNotesList } from "@/hooks/useClinicPortal";
+import { useAuth } from "@/hooks/useAuth";
 import { WithPermission } from "@/lib/auth/withPermission";
 import { parsePatientNoteListErrors } from "@/lib/clinic-patient-api-errors";
 import type { ClinicPatientNote, ClinicPatientNoteListFilters } from "@/lib/clinic-portal-types";
 import { getPatientDisplayName } from "@/lib/clinic-portal-utils";
+import { can, Permission } from "@/lib/permissions";
 
 const DEFAULT_LIMIT = 20;
 
@@ -67,6 +69,7 @@ function buildSearchParams(filters: ClinicPatientNoteListFilters): URLSearchPara
 
 export default function ClinicPatientNotesPage({ params }: ClinicPatientNotesPageProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const filters = useMemo(() => readFilters(searchParams), [searchParams]);
@@ -128,7 +131,7 @@ export default function ClinicPatientNotesPage({ params }: ClinicPatientNotesPag
   };
 
   return (
-    <WithPermission permission="patient.notes">
+    <WithPermission permission="notes.read">
       <ListPage
         title={`Medical notes — ${patientName}`}
         subtitle="Clinical notes linked to this patient."
@@ -137,9 +140,11 @@ export default function ClinicPatientNotesPage({ params }: ClinicPatientNotesPag
             <Button asChild variant="ghost">
               <Link href={`/clinic/patients/${params.id}`}>&larr; Back to patient</Link>
             </Button>
-            <Button className="btn-primary" onClick={handleAddNote}>
-              Add note
-            </Button>
+            {can(user, Permission.NOTES_WRITE) ? (
+              <Button className="btn-primary" onClick={handleAddNote}>
+                Add note
+              </Button>
+            ) : null}
           </div>
         }
         isLoading={notesQuery.isLoading || patientQuery.isLoading}

@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import { UserStatusBadge } from "@/components/users/UserStatusBadge";
+import { useAuth } from "@/hooks/useAuth";
 import { getAvatarInitials, resolveAvatarUrl } from "@/lib/avatar-url";
 import type { ClinicUser, ClinicUserListFilters } from "@/lib/clinic-portal-types";
 import { cn } from "@/lib/cn";
+import { can, Permission } from "@/lib/permissions";
 
 const SORTABLE_COLUMNS: Array<{
   key: NonNullable<ClinicUserListFilters["sortBy"]>;
@@ -62,6 +64,8 @@ export function UserListTable({
   onPageChange,
   onSortChange,
 }: UserListTableProps) {
+  const { user: currentUser } = useAuth();
+  const canManageUsers = can(currentUser, Permission.USER_MANAGE);
   const totalPages = Math.max(1, pagination.totalPages || 1);
   const currentPage = pagination.page;
 
@@ -140,12 +144,16 @@ export function UserListTable({
                 <Link href={`/clinic/users/${user.id}`} className="dashboard-link">
                   View
                 </Link>
-                <Link href={`/clinic/users/${user.id}/edit`} className="dashboard-link">
-                  Edit
-                </Link>
-                <Link href={`/clinic/users/${user.id}/reset-password`} className="dashboard-link">
-                  Reset password
-                </Link>
+                {canManageUsers ? (
+                  <>
+                    <Link href={`/clinic/users/${user.id}/edit`} className="dashboard-link">
+                      Edit
+                    </Link>
+                    <Link href={`/clinic/users/${user.id}/reset-password`} className="dashboard-link">
+                      Reset password
+                    </Link>
+                  </>
+                ) : null}
               </div>
             </Row>
           );

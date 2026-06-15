@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { CSRF_HEADER_NAME, ensureCsrfToken } from "@/lib/auth/csrf";
 import {
   attemptTokenRefresh,
   ensureFreshAccessToken,
@@ -87,15 +88,22 @@ export function createApiClient(getContext: () => ApiClientContext) {
     const systemUser =
       isSystemRole(session.role ?? undefined) || (roles.length > 0 && isSystemUser(roles));
     const includeTenantHeader = Boolean(session.tenantId) && !systemUser;
+    const method = init.method?.toUpperCase() ?? "GET";
+    const csrfToken =
+      method !== "GET" && method !== "HEAD" && !session.accessToken
+        ? await ensureCsrfToken()
+        : null;
 
     const response = await fetch(buildServiceUrl(service, path, params), {
       ...init,
+      credentials: "include",
       body: formData ?? (jsonBody !== undefined ? JSON.stringify(jsonBody) : undefined),
       headers: {
         ...(formData ? {} : { "Content-Type": "application/json" }),
         [CORRELATION_ID_HEADER]: correlationId,
         ...(includeTenantHeader ? { [TENANT_HEADER]: session.tenantId! } : {}),
         ...(session.accessToken ? { [AUTHORIZATION_HEADER]: `Bearer ${session.accessToken}` } : {}),
+        ...(csrfToken ? { [CSRF_HEADER_NAME]: csrfToken } : {}),
         ...headers,
       },
     });

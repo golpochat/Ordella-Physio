@@ -1,12 +1,8 @@
-import {
-  clearTokens,
-  getAccessToken,
-  getRefreshToken,
-  setTokens,
-} from "@/lib/utils/authStorage";
+import { clearTokens, getAccessToken, setAccessToken, setTokens } from "@/lib/utils/authStorage";
+import { getStoredIsAuthenticated } from "@/lib/auth-storage";
 
-export { clearTokens, getAccessToken, getRefreshToken, setTokens };
+export { clearTokens, getAccessToken, setAccessToken, setTokens };
 
 export function hasRefreshSession(): boolean {
-  return Boolean(getRefreshToken());
+  return getStoredIsAuthenticated();
 }

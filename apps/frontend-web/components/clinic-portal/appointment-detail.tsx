@@ -2,11 +2,16 @@ import Link from "next/link";
 import { AppointmentStatusBadge } from "@/components/appointments/AppointmentStatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
 import { IfHasPermission } from "@/lib/auth/withPermission";
 import type { ClinicAppointment } from "@/lib/clinic-portal-types";
 import { formatPortalDateTime } from "@/lib/clinic-portal-utils";
+import { can, Permission } from "@/lib/permissions";
 
 export function ClinicAppointmentDetail({ appointment }: { appointment: ClinicAppointment }) {
+  const { user } = useAuth();
+  const canManageAppointments = can(user, Permission.APPOINTMENT_MANAGE);
+
   return (
     <Card>
       <CardHeader>
@@ -24,9 +29,11 @@ export function ClinicAppointmentDetail({ appointment }: { appointment: ClinicAp
             <Button asChild variant="outline" size="sm">
               <Link href={`/clinic/appointments/${appointment.id}/reminders`}>Reminders</Link>
             </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/clinic/appointments/${appointment.id}/edit`}>Edit appointment</Link>
-            </Button>
+            {canManageAppointments ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/clinic/appointments/${appointment.id}/edit`}>Edit appointment</Link>
+              </Button>
+            ) : null}
           </div>
         </div>
       </CardHeader>

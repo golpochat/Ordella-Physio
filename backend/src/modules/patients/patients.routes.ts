@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { asyncHandler } from "../../utils/async-handler";
+import { withAudit } from "../../middleware/audit";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { policies } from "../rbac/policies";
 import { statementsController } from "../statements/statements.controller";
@@ -38,7 +39,7 @@ patientsRouter.post(
   policies.patientStatements,
   validateRequest(patientIdParamSchema, "params"),
   validateRequest(emailServiceStatementSchema),
-  asyncHandler(statementsController.emailToPatient),
+  withAudit("email", "service_statement")(statementsController.emailToPatient),
 );
 
 patientsRouter.get(
@@ -60,22 +61,22 @@ patientsRouter.post(
   "/",
   policies.patientsWriteAdminStaff,
   validateRequest(createPatientSchema),
-  asyncHandler(patientsController.create),
+  withAudit("create", "patient")(patientsController.create),
 );
 
 patientsRouter.patch(
   "/:id",
-  policies.patientsWriteAdminStaff,
+  policies.patientsEdit,
   validateRequest(patientIdParamSchema, "params"),
   validateRequest(updatePatientSchema),
-  asyncHandler(patientsController.update),
+  withAudit("update", "patient")(patientsController.update),
 );
 
 patientsRouter.delete(
   "/:id",
   policies.patientsWriteAdminStaff,
   validateRequest(patientIdParamSchema, "params"),
-  asyncHandler(patientsController.remove),
+  withAudit("delete", "patient")(patientsController.remove),
 );
 
 export { patientsRouter };

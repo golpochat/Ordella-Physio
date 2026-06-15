@@ -1,120 +1,96 @@
-import { authorize } from "../../middleware/rbac.middleware";
-import { PERMISSIONS } from "./permissions";
+import { composePolicy, Permission, requirePermission, requireAny } from "../../middleware/permissions";
+import { denyRoles, requireRoles } from "../../middleware/rbac.middleware";
 import { ROLES } from "./roles";
-import { MODULE_PERMISSION_MAP, MODULES } from "./permission-maps";
 
-const denyPatient = [ROLES.PATIENT] as const;
-const denyPatientClinician = [ROLES.PATIENT, ROLES.CLINICIAN] as const;
+const denyPatient = denyRoles(ROLES.PATIENT);
+const denyPatientClinician = denyRoles(ROLES.PATIENT, ROLES.CLINICIAN);
 
-/** Central route authorization policies — compose role + permission checks per module. */
+/** Central route authorization policies — permission guards with role blocks. */
 export const policies = {
   // --- Patients ---
-  patientsRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.PATIENTS].read],
-  }),
-  patientsWriteAdminStaff: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.PATIENTS].write],
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-  }),
+  patientsRead: composePolicy(denyPatient, requirePermission(Permission.PATIENT_VIEW)),
+  patientsWriteAdminStaff: composePolicy(
+    denyPatient,
+    requirePermission(Permission.PATIENT_MANAGE),
+  ),
+  patientsEdit: composePolicy(denyPatient, requirePermission(Permission.PATIENT_EDIT)),
 
   // --- Appointments ---
-  appointmentsRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.APPOINTMENTS].read],
-  }),
-  appointmentsWrite: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.APPOINTMENTS].write],
-  }),
+  appointmentsRead: composePolicy(
+    denyPatient,
+    requireAny([Permission.PATIENT_VIEW, Permission.APPOINTMENT_MANAGE, "appointments:read"]),
+  ),
+  appointmentsWrite: composePolicy(denyPatient, requirePermission(Permission.APPOINTMENT_MANAGE)),
 
   // --- Therapists / Clinicians directory ---
-  therapistsRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.THERAPISTS].read],
-  }),
-  therapistsAdmin: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.THERAPISTS].write],
-    roles: [ROLES.ADMIN],
-  }),
-  therapistSelfUpdate: authorize({
-    denyRoles: [...denyPatient],
-    roles: [ROLES.CLINICIAN],
-  }),
+  therapistsRead: composePolicy(
+    denyPatient,
+    requireAny([Permission.PATIENT_VIEW, "therapists:read"]),
+  ),
+  therapistsAdmin: composePolicy(
+    denyPatient,
+    requirePermission(Permission.USER_MANAGE),
+  ),
+  therapistSelfUpdate: composePolicy(denyPatient, requireRoles(ROLES.CLINICIAN)),
 
-  // --- Staff ---
-  staffAdmin: authorize({
-    denyRoles: [...denyPatientClinician],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.STAFF].write],
-    roles: [ROLES.ADMIN],
-  }),
-  staffSelfRead: authorize({
-    denyRoles: [...denyPatientClinician],
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-  }),
+  // --- Staff / terminals ---
+  staffAdmin: composePolicy(
+    denyPatientClinician,
+    requirePermission(Permission.TERMINAL_MANAGE),
+  ),
+  staffSelfRead: composePolicy(
+    denyPatientClinician,
+    requireAny([Permission.USER_MANAGE, "staff:read", "staff:write"]),
+  ),
 
   // --- Billing ---
-  billingRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.BILLING].read],
-  }),
-  billingWrite: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.BILLING].write],
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-  }),
+  billingRead: composePolicy(
+    denyPatient,
+    requireAny([Permission.BILLING_MANAGE, "billing:read"]),
+  ),
+  billingWrite: composePolicy(denyPatient, requirePermission(Permission.BILLING_MANAGE)),
 
   // --- Notes ---
-  notesRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.NOTES].read],
-  }),
-  notesWrite: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.NOTES].write],
-  }),
+  notesRead: composePolicy(denyPatient, requirePermission(Permission.NOTES_READ)),
+  notesWrite: composePolicy(denyPatient, requirePermission(Permission.NOTES_WRITE)),
 
   // --- Reports ---
-  reportsRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.REPORTS].read],
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-  }),
+  reportsRead: composePolicy(
+    denyPatient,
+    requirePermission(Permission.REPORTING_VIEW),
+  ),
 
   // --- Patient service statements (PDF / email) ---
-  patientStatements: authorize({
-    denyRoles: [...denyPatientClinician],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.STATEMENTS].write],
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-  }),
+  patientStatements: composePolicy(
+    denyPatientClinician,
+    requirePermission(Permission.BILLING_MANAGE),
+  ),
 
   // --- Notifications ---
-  notificationsRead: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.NOTIFICATIONS].read],
-  }),
-  notificationsWrite: authorize({
-    denyRoles: [...denyPatient],
-    permissions: [MODULE_PERMISSION_MAP[MODULES.NOTIFICATIONS].write],
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-  }),
+  notificationsRead: composePolicy(
+    denyPatient,
+    requireAny([Permission.PATIENT_VIEW, "notifications:read"]),
+  ),
+  notificationsWrite: composePolicy(
+    denyPatient,
+    requirePermission(Permission.USER_MANAGE),
+  ),
 
-  // --- RBAC & audit ---
-  rbacRead: authorize({
-    denyRoles: [...denyPatient, ROLES.CLINICIAN],
-    permissions: [PERMISSIONS.RBAC_READ],
-    roles: [ROLES.ADMIN],
-  }),
-  rbacWrite: authorize({
-    denyRoles: [...denyPatient, ROLES.CLINICIAN],
-    permissions: [PERMISSIONS.RBAC_WRITE],
-    roles: [ROLES.ADMIN],
-  }),
-  auditRead: authorize({
-    denyRoles: [...denyPatient, ROLES.CLINICIAN],
-    permissions: [PERMISSIONS.AUDIT_READ],
-    roles: [ROLES.ADMIN],
-  }),
+  // --- RBAC, users, roles, settings ---
+  rbacRead: composePolicy(
+    denyPatientClinician,
+    requireAny([Permission.USER_MANAGE, Permission.ROLE_MANAGE, "rbac:read"]),
+  ),
+  rbacWrite: composePolicy(
+    denyPatientClinician,
+    requireAny([Permission.ROLE_MANAGE, Permission.USER_MANAGE, "rbac:write"]),
+  ),
+  auditRead: composePolicy(
+    denyPatientClinician,
+    requireAny([Permission.REPORTING_READ, "audit:read"]),
+  ),
+  settingsManage: composePolicy(
+    denyPatientClinician,
+    requireAny([Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE]),
+  ),
 };

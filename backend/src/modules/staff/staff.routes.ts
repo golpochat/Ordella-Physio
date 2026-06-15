@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { asyncHandler } from "../../utils/async-handler";
-import { validateRequest } from "../../middleware/validate.middleware";
-import { policies } from "../rbac/policies";
+import { withAudit } from "../../middleware/audit";
+import { validateRequest } from "../../middleware/validate.middleware";import { policies } from "../rbac/policies";
 import { staffController } from "./staff.controller";
 import {
   adminUpdateStaffSchema,
@@ -31,10 +31,10 @@ staffRouter.get(
 
 staffRouter.put(
   "/:id/roles",
-  policies.staffAdmin,
+  policies.rbacWrite,
   validateRequest(staffIdParamSchema, "params"),
   validateRequest(assignStaffRolesSchema),
-  asyncHandler(staffController.assignRoles),
+  withAudit("update", "staff_roles")(staffController.assignRoles),
 );
 
 staffRouter.get(
@@ -48,7 +48,7 @@ staffRouter.post(
   "/",
   policies.staffAdmin,
   validateRequest(createStaffSchema),
-  asyncHandler(staffController.create),
+  withAudit("create", "staff")(staffController.create),
 );
 
 staffRouter.patch(
@@ -56,14 +56,13 @@ staffRouter.patch(
   policies.staffAdmin,
   validateRequest(staffIdParamSchema, "params"),
   validateRequest(adminUpdateStaffSchema),
-  asyncHandler(staffController.update),
+  withAudit("update", "staff")(staffController.update),
 );
 
 staffRouter.delete(
   "/:id",
   policies.staffAdmin,
   validateRequest(staffIdParamSchema, "params"),
-  asyncHandler(staffController.remove),
+  withAudit("delete", "staff")(staffController.remove),
 );
-
 export { staffRouter };

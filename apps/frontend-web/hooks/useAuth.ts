@@ -13,7 +13,6 @@ import { getApiErrorMessage } from "@/lib/api-error";
 import { resolveUserRoles } from "@/lib/rbac";
 import { getPortalForRole, isSystemUser, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
 import { clearAuthSession, syncTenantFromSession } from "@/lib/session-manager";
-import { getRefreshToken } from "@/lib/utils/authStorage";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
@@ -35,14 +34,18 @@ function normalizeAuthResponse(response: AuthTokensResponse): AuthTokensResponse
 
 export function useAuth() {
   const router = useRouter();
-  const { accessToken, refreshToken, user, isAuthenticated, setSession, updateTokens } = useAuthStore();
+  const { accessToken, user, isAuthenticated, setSession, updateTokens } = useAuthStore();
   const { tenant, setTenant, clearTenant } = useTenantStore();
 
   const applySession = useCallback(
     (response: AuthTokensResponse, tenantName?: string) => {
       const normalized = normalizeAuthResponse(response);
 
-      setSession(normalized);
+      setSession({
+        accessToken: normalized.accessToken,
+        refreshToken: normalized.refreshToken,
+        user: normalized.user,
+      });
 
       if (isSystemUser(normalized.user.roles)) {
         clearTenant();
@@ -91,34 +94,30 @@ export function useAuth() {
   );
 
   const logout = useCallback(async () => {
-    const activeRefreshToken = refreshToken ?? getRefreshToken();
-    if (activeRefreshToken) {
+    if (accessToken) {
       await authClient
         .logout({
-          accessToken: accessToken ?? "",
-          refreshToken: activeRefreshToken,
+          accessToken,
           tenantId: user?.tenantId ?? tenant?.id,
         })
         .catch(() => undefined);
     }
     clearAuthSession();
     router.push("/login");
-  }, [accessToken, refreshToken, router, tenant?.id, user?.tenantId]);
+  }, [accessToken, router, tenant?.id, user?.tenantId]);
 
   const refresh = useCallback(async () => {
-    const activeRefreshToken = refreshToken ?? getRefreshToken();
-    if (!activeRefreshToken) {
-      return;
-    }
-    const response = normalizeAuthResponse(await authClient.refresh(activeRefreshToken));
-    setSession(response);
+    const response = normalizeAuthResponse(await authClient.refresh());
+    setSession({
+      accessToken: response.accessToken,
+      user: response.user,
+    });
     syncTenantFromSession();
-    updateTokens(response.accessToken, response.refreshToken);
-  }, [refreshToken, setSession, updateTokens]);
+    updateTokens(response.accessToken);
+  }, [setSession, updateTokens]);
 
   return {
     accessToken,
-    refreshToken,
     user,
     tenant,
     isAuthenticated,

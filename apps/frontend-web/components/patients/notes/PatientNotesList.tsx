@@ -19,6 +19,8 @@ import {
   type ClinicPatientNoteListFilters,
   type ClinicPatientNoteType,
 } from "@/lib/clinic-portal-types";
+import { useAuth } from "@/hooks/useAuth";
+import { can, Permission } from "@/lib/permissions";
 
 const NOTE_TYPE_LABELS: Record<ClinicPatientNoteType, string> = {
   GENERAL: "General",
@@ -76,6 +78,9 @@ export function PatientNotesList({
   onPageChange,
   onEditNote,
 }: PatientNotesListProps) {
+  const { user } = useAuth();
+  const canReadNotes = can(user, Permission.NOTES_READ);
+  const canWriteNotes = can(user, Permission.NOTES_WRITE);
   const [viewNote, setViewNote] = useState<ClinicPatientNote | null>(null);
   const totalPages = Math.max(1, pagination.totalPages || 1);
   const currentPage = pagination.page;
@@ -193,16 +198,20 @@ export function PatientNotesList({
               <div className="dashboard-cell-muted">{formatStaffLabel(note.staffId)}</div>
               <div className="dashboard-cell-muted">{formatCreatedAt(note.createdAt)}</div>
               <div className="user-list-actions">
-                <button
-                  type="button"
-                  className="dashboard-link"
-                  onClick={() => setViewNote(note)}
-                >
-                  View
-                </button>
-                <button type="button" className="dashboard-link" onClick={() => onEditNote(note)}>
-                  Edit
-                </button>
+                {canReadNotes ? (
+                  <button
+                    type="button"
+                    className="dashboard-link"
+                    onClick={() => setViewNote(note)}
+                  >
+                    View
+                  </button>
+                ) : null}
+                {canWriteNotes ? (
+                  <button type="button" className="dashboard-link" onClick={() => onEditNote(note)}>
+                    Edit
+                  </button>
+                ) : null}
               </div>
             </Row>
           ))}
@@ -248,15 +257,17 @@ export function PatientNotesList({
                 <Button variant="outline" onClick={() => setViewNote(null)}>
                   Close
                 </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setViewNote(null);
-                    onEditNote(viewNote);
-                  }}
-                >
-                  Edit
-                </Button>
+                {canWriteNotes ? (
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      setViewNote(null);
+                      onEditNote(viewNote);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                ) : null}
               </ModalFooter>
             </>
           ) : null}

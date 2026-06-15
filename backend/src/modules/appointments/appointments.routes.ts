@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { asyncHandler } from "../../utils/async-handler";
+import { withAudit } from "../../middleware/audit";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { policies } from "../rbac/policies";
 import { appointmentsController } from "./appointments.controller";
@@ -44,7 +45,7 @@ appointmentsRouter.post(
   "/",
   policies.appointmentsWrite,
   validateRequest(createAppointmentSchema),
-  asyncHandler(appointmentsController.create),
+  withAudit("create", "appointment")(appointmentsController.create),
 );
 
 appointmentsRouter.patch(
@@ -52,7 +53,7 @@ appointmentsRouter.patch(
   policies.appointmentsWrite,
   validateRequest(appointmentIdParamSchema, "params"),
   validateRequest(updateAppointmentSchema),
-  asyncHandler(appointmentsController.update),
+  withAudit("update", "appointment")(appointmentsController.update),
 );
 
 appointmentsRouter.patch(
@@ -60,7 +61,7 @@ appointmentsRouter.patch(
   policies.appointmentsWrite,
   validateRequest(appointmentIdParamSchema, "params"),
   validateRequest(transitionStatusSchema),
-  asyncHandler(appointmentsController.transitionStatus),
+  withAudit("update", "appointment_status")(appointmentsController.transitionStatus),
 );
 
 appointmentsRouter.post(
@@ -68,14 +69,14 @@ appointmentsRouter.post(
   policies.appointmentsWrite,
   validateRequest(appointmentIdParamSchema, "params"),
   validateRequest(deleteAppointmentSchema),
-  asyncHandler(appointmentsController.cancel),
+  withAudit("cancel", "appointment")(appointmentsController.cancel),
 );
 
 appointmentsRouter.post(
   "/:id/complete",
   policies.appointmentsWrite,
   validateRequest(appointmentIdParamSchema, "params"),
-  asyncHandler(appointmentsController.complete),
+  withAudit("complete", "appointment")(appointmentsController.complete),
 );
 
 appointmentsRouter.delete(
@@ -83,7 +84,7 @@ appointmentsRouter.delete(
   policies.appointmentsWrite,
   validateRequest(appointmentIdParamSchema, "params"),
   validateRequest(deleteAppointmentSchema),
-  asyncHandler(appointmentsController.remove),
+  withAudit("delete", "appointment")(appointmentsController.remove),
 );
 
 export { appointmentsRouter };

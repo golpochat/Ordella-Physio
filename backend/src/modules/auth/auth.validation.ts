@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { paginationSchema } from "../../utils/pagination";
+import { strongPasswordSchema } from "../../utils/password-policy";
 
 export const listUsersQuerySchema = paginationSchema.extend({
   search: z.string().trim().optional(),
@@ -18,8 +19,8 @@ export const loginSchema = z
   .object({
     tenantSlug: z.string().min(1).optional(),
     tenantId: z.string().min(1).optional(),
-    email: z.string().email(),
-    password: z.string().min(8),
+    email: z.string().email().transform((value) => value.toLowerCase()),
+    password: z.string().min(8).max(128),
   })
   .refine((value) => Boolean(value.tenantSlug || value.tenantId), {
     message: "tenantSlug or tenantId is required",
@@ -30,17 +31,35 @@ export const refreshSchema = z.object({
   refreshToken: z.string().min(1),
 });
 
+export const logoutSchema = z.object({
+  refreshToken: z.string().min(1).optional(),
+  accessTokenJti: z.string().min(1).optional(),
+  accessTokenExp: z.number().int().positive().optional(),
+});
+
+export const forgotPasswordSchema = z
+  .object({
+    tenantSlug: z.string().min(1).optional(),
+    tenantId: z.string().min(1).optional(),
+    email: z.string().email().transform((value) => value.toLowerCase()),
+  })
+  .refine((value) => Boolean(value.tenantSlug || value.tenantId), {
+    message: "tenantSlug or tenantId is required",
+    path: ["tenantSlug"],
+  });
+
 export const registerUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  email: z.string().email().transform((value) => value.toLowerCase()),
+  password: strongPasswordSchema,
+  firstName: z.string().trim().max(100).optional(),
+  lastName: z.string().trim().max(100).optional(),
   roleName: z.enum(["ADMIN", "THERAPIST", "STAFF"]).optional(),
 });
 
 export const updateProfileSchema = z.object({
   firstName: z.string().trim().max(100).optional(),
   lastName: z.string().trim().max(100).optional(),
-  email: z.string().email().optional(),
+  email: z.string().email().transform((value) => value.toLowerCase()).optional(),
   phone: z.string().trim().max(30).optional(),
+  password: strongPasswordSchema.optional(),
 });

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
 import type { AuthPermission } from "@/lib/auth/permissions";
-import { userHasPermission } from "@/lib/auth/permissions";
+import { can, canAll, type PermissionValue } from "@/lib/permissions";
 import { getStoredAuthUser, getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
 
@@ -34,7 +34,7 @@ export function WithPermission({
 
   const user = storeUser ?? (hydrated ? getStoredAuthUser() : null);
   const authenticated = isAuthenticated || (hydrated ? getStoredIsAuthenticated() : false);
-  const allowed = authenticated && userHasPermission(user, permission);
+  const allowed = authenticated && can(user, permission);
 
   useEffect(() => {
     if (!hydrated) {
@@ -92,7 +92,7 @@ export function IfHasPermission({
   }, []);
 
   const user = storeUser ?? (hydrated ? getStoredAuthUser() : null);
-  if (!hydrated || !userHasPermission(user, permission)) {
+  if (!hydrated || !can(user, permission)) {
     return null;
   }
 
@@ -120,7 +120,7 @@ export function WithAllPermissions({
   const user = storeUser ?? (hydrated ? getStoredAuthUser() : null);
   const authenticated = isAuthenticated || (hydrated ? getStoredIsAuthenticated() : false);
   const allowed =
-    authenticated && permissions.every((permission) => userHasPermission(user, permission));
+    authenticated && permissions.every((permission) => can(user, permission as PermissionValue));
 
   useEffect(() => {
     if (!hydrated) {

@@ -15,6 +15,7 @@ import {
   useReportingKpi,
   useRequestReport,
 } from "@/hooks/useReports";
+import { useAuth } from "@/hooks/useAuth";
 import {
   canGenerateReports,
   getReportTypeOptions,
@@ -23,6 +24,7 @@ import {
 import type { PortalRole } from "@/lib/rbac";
 import type { ReportFormat, ReportType } from "@/lib/reporting-types";
 import { formatPatientDateTime } from "@/lib/patient-portal-utils";
+import { can, Permission } from "@/lib/permissions";
 
 const SELECT_CLASS =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm";
@@ -44,9 +46,11 @@ function defaultDateRange() {
 }
 
 export function ReportingCenter({ roles, title = "Reports", description }: ReportingCenterProps) {
+  const { user } = useAuth();
   const mode = getReportingMode(roles);
   const reportOptions = getReportTypeOptions(roles);
-  const canGenerate = canGenerateReports(mode);
+  const canGenerate = canGenerateReports(mode) && can(user, Permission.REPORTING_VIEW);
+  const canExportReports = can(user, Permission.REPORTING_VIEW);
   const defaults = defaultDateRange();
 
   const [reportType, setReportType] = useState<ReportType>(reportOptions[0]?.value ?? "appointments_summary");
@@ -289,7 +293,7 @@ export function ReportingCenter({ roles, title = "Reports", description }: Repor
                     <td className="px-3 py-3">{formatPatientDateTime(report.createdAt)}</td>
                     <td className="px-3 py-3">{report.filters.format ?? "json"}</td>
                     <td className="px-3 py-3 text-right">
-                      {report.status === "completed" ? (
+                      {report.status === "completed" && canExportReports ? (
                         <div className="flex justify-end gap-2">
                           <Button
                             size="sm"

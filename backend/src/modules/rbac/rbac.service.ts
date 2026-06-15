@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { NotFoundError } from "../../utils/api-error";
-import { auditCreate, type AuditContext } from "../utilities/audit.service";
+import { expandCanonicalPermissions } from "../../middleware/permissions";
 import { DEFAULT_ROLE_DEFINITIONS } from "./permissions";
 
 export async function ensureDefaultRoles(tenantId: string): Promise<void> {
@@ -41,17 +41,13 @@ export async function getUserRolesAndPermissions(userId: string, tenantId: strin
   });
 
   const roles = assignments.map((assignment) => assignment.role.name);
-  const permissions = [...new Set(assignments.flatMap((assignment) => assignment.role.permissions))];
+  const rawPermissions = [...new Set(assignments.flatMap((assignment) => assignment.role.permissions))];
+  const permissions = expandCanonicalPermissions(rawPermissions);
 
   return { roles, permissions };
 }
 
-export async function assignRole(
-  tenantId: string,
-  userId: string,
-  roleId: string,
-  audit?: AuditContext,
-) {
+export async function assignRole(tenantId: string, userId: string, roleId: string) {
   const role = await prisma.role.findFirst({ where: { id: roleId, tenantId } });
   if (!role) {
     throw new NotFoundError("Role not found");
@@ -63,14 +59,6 @@ export async function assignRole(
     update: {},
     include: { role: true },
   });
-
-  if (audit) {
-    await auditCreate(audit, "UserRole", `${userId}:${roleId}`, {
-      userId,
-      roleId,
-      roleName: role.name,
-    });
-  }
 
   return assignment;
 }

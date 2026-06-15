@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { asyncHandler } from "../../utils/async-handler";
+import { withAudit } from "../../middleware/audit";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { policies } from "../rbac/policies";
 import { therapistsController } from "./therapists.controller";
@@ -31,7 +32,7 @@ therapistsRouter.patch(
   "/me",
   policies.therapistSelfUpdate,
   validateRequest(selfUpdateTherapistSchema),
-  asyncHandler(therapistsController.updateMe),
+  withAudit("update", "therapist")(therapistsController.updateMe),
 );
 
 therapistsRouter.get(
@@ -54,7 +55,7 @@ therapistsRouter.put(
   policies.therapistsAdmin,
   validateRequest(therapistIdParamSchema, "params"),
   validateRequest(workingHoursSchema),
-  asyncHandler(therapistsController.setWorkingHours),
+  withAudit("update", "therapist_schedule")(therapistsController.setWorkingHours),
 );
 
 therapistsRouter.post(
@@ -62,14 +63,14 @@ therapistsRouter.post(
   policies.therapistsAdmin,
   validateRequest(therapistIdParamSchema, "params"),
   validateRequest(createBlockedSlotSchema),
-  asyncHandler(therapistsController.addBlockedSlot),
+  withAudit("create", "blocked_slot")(therapistsController.addBlockedSlot),
 );
 
 therapistsRouter.delete(
   "/:id/schedule/blocked-slots/:blockId",
   policies.therapistsAdmin,
   validateRequest(blockedSlotIdParamSchema, "params"),
-  asyncHandler(therapistsController.removeBlockedSlot),
+  withAudit("delete", "blocked_slot")(therapistsController.removeBlockedSlot),
 );
 
 therapistsRouter.get(
@@ -84,7 +85,7 @@ therapistsRouter.put(
   policies.therapistsAdmin,
   validateRequest(therapistIdParamSchema, "params"),
   validateRequest(serviceTypesSchema),
-  asyncHandler(therapistsController.setServiceTypes),
+  withAudit("update", "therapist_service_types")(therapistsController.setServiceTypes),
 );
 
 therapistsRouter.get(
@@ -98,7 +99,7 @@ therapistsRouter.post(
   "/",
   policies.therapistsAdmin,
   validateRequest(createTherapistSchema),
-  asyncHandler(therapistsController.create),
+  withAudit("create", "therapist")(therapistsController.create),
 );
 
 therapistsRouter.patch(
@@ -106,14 +107,14 @@ therapistsRouter.patch(
   policies.therapistsAdmin,
   validateRequest(therapistIdParamSchema, "params"),
   validateRequest(adminUpdateTherapistSchema),
-  asyncHandler(therapistsController.update),
+  withAudit("update", "therapist")(therapistsController.update),
 );
 
 therapistsRouter.delete(
   "/:id",
   policies.therapistsAdmin,
   validateRequest(therapistIdParamSchema, "params"),
-  asyncHandler(therapistsController.remove),
+  withAudit("delete", "therapist")(therapistsController.remove),
 );
 
 export { therapistsRouter };

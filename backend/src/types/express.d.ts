@@ -6,6 +6,7 @@ export type JwtPayload = {
   email: string;
   roles: string[];
   permissions: string[];
+  tv?: number;
 };
 
 export type AuthenticatedUser = JwtPayload & {

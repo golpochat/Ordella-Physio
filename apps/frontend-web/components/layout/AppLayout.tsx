@@ -19,6 +19,7 @@ import {
   navIconByLabel,
   type NavRoleKey,
 } from "@/components/layout/nav-config";
+import { filterNavItems } from "@/lib/permissions";
 import { useUiStore } from "@/store/ui.store";
 import { cn } from "@/lib/cn";
 
@@ -200,7 +201,10 @@ export function AppLayout({
 
   const navRole = resolveNavRole(user);
   const userRoles = getUserPortalRoles(user);
-  const menu = navRole ? navConfig[navRole] : [];
+  const menu = useMemo(
+    () => (navRole ? filterNavItems(navConfig[navRole], user) : []),
+    [navRole, user],
+  );
 
   const brandTitle = navRole ? NAV_BRAND_TITLE[navRole] : "Ordella";
   const profileHref = navRole ? NAV_PROFILE_HREF[navRole] : "/login";

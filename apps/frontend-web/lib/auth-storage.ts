@@ -1,5 +1,5 @@
 import type { AuthUser } from "@/store/auth.store";
-import { getAccessToken, getRefreshToken } from "@/lib/utils/authStorage";
+import { getAccessToken } from "@/lib/utils/authStorage";
 
 const AUTH_STORAGE_KEY = "ordella-auth";
 
@@ -42,15 +42,11 @@ export function getStoredAccessToken(): string | null {
   return getAccessToken() ?? readPersistedAuthState()?.accessToken ?? null;
 }
 
-export function getStoredRefreshToken(): string | null {
-  return getRefreshToken() ?? readPersistedAuthState()?.refreshToken ?? null;
-}
-
 export function getStoredIsAuthenticated(): boolean {
   if (typeof window === "undefined") {
     return false;
   }
 
   const state = readPersistedAuthState();
-  return Boolean(state?.isAuthenticated && state?.user && getStoredRefreshToken());
+  return Boolean(state?.isAuthenticated && state?.user);
 }

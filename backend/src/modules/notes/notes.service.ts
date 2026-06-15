@@ -1,7 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { NotFoundError } from "../../utils/api-error";
 import { buildPaginatedResponse, getPagination, type PaginationInput } from "../../utils/pagination";
-import { auditCreate, type AuditContext } from "../utilities/audit.service";
 
 export async function listNotes(tenantId: string, patientId: string, pagination: PaginationInput) {
   const where = { tenantId, patientId };
@@ -59,7 +58,6 @@ export async function createNote(
     title?: string;
     content: string;
   },
-  audit?: AuditContext,
 ) {
   const patient = await prisma.patient.findFirst({ where: { id: data.patientId, tenantId } });
   if (!patient) throw new NotFoundError("Patient not found");
@@ -74,13 +72,6 @@ export async function createNote(
       content: data.content,
     },
   });
-
-  if (audit) {
-    await auditCreate(audit, "Note", note.id, {
-      patientId: data.patientId,
-      type: note.type,
-    });
-  }
 
   return note;
 }

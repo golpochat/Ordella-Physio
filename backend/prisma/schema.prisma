@@ -146,8 +146,12 @@ model User {
   lastName     String?
   phone        String?
   status       UserStatus @default(ACTIVE)
-  lastLoginAt  DateTime?
-  createdAt    DateTime   @default(now())
+  lastLoginAt       DateTime?
+  lockedUntil       DateTime?
+  failedLoginCount  Int        @default(0)
+  tokenVersion      Int        @default(0)
+  passwordChangedAt DateTime?
+  createdAt         DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
   roles         UserRole[]
@@ -440,4 +444,30 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@map("audit_logs")
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ipAddress String
+  tenantId  String?
+  success   Boolean  @default(false)
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([email, ipAddress, createdAt])
+  @@index([tenantId, createdAt])
+  @@map("login_attempts")
+}
+
+model RevokedToken {
+  jti       String   @id
+  userId    String
+  tenantId  String?
+  expiresAt DateTime
+  revokedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("revoked_tokens")
 }

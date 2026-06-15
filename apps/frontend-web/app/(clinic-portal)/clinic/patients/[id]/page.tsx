@@ -54,7 +54,7 @@ export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailP
     patient && data ? { ...data, patient } : data ?? null;
 
   return (
-    <>
+    <WithPermission permission="patient.view">
       <Button asChild variant="ghost">
         <Link href="/clinic/patients">&larr; Back to patients</Link>
       </Button>
@@ -80,6 +80,6 @@ export default function ClinicPatientDetailPage({ params }: ClinicPatientDetailP
         </CopilotEntityProvider>
       ) : null}
       {!isLoading && !isError && !detail ? <PageError message="Patient not found." /> : null}
-    </>
+    </WithPermission>
   );
 }

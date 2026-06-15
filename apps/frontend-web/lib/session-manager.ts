@@ -5,7 +5,6 @@ import { resolveUserRoles } from "@/lib/rbac";
 import { isSystemUser } from "@/lib/auth/roleRedirect";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { isAccessTokenExpiringSoon } from "@/lib/token-expiry";
-import { getRefreshToken } from "@/lib/utils/authStorage";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 import { useUiStore } from "@/store/ui.store";
@@ -98,18 +97,12 @@ export async function attemptTokenRefresh(): Promise<boolean> {
   }
 
   refreshInFlight = (async () => {
-    const refreshToken = useAuthStore.getState().refreshToken ?? getRefreshToken();
-    if (!refreshToken) {
-      return false;
-    }
-
     try {
-      const response = await authClient.refresh(refreshToken);
+      const response = await authClient.refresh();
       const roles = resolveUserRoles(response.user);
 
       useAuthStore.getState().setSession({
         accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
         user: {
           ...response.user,
           roles,
@@ -187,10 +180,9 @@ export async function handleApiAuthError(status: number, error?: unknown): Promi
 }
 
 export async function validateStoredSession(): Promise<boolean> {
-  const { accessToken, refreshToken, isAuthenticated, user } = useAuthStore.getState();
-  const storedRefreshToken = refreshToken ?? getRefreshToken();
+  const { accessToken, isAuthenticated, user } = useAuthStore.getState();
 
-  if (!isAuthenticated || !user || !storedRefreshToken) {
+  if (!isAuthenticated || !user) {
     return false;
   }
 
@@ -218,7 +210,7 @@ export async function validateStoredSession(): Promise<boolean> {
     await authClient.me(useAuthStore.getState().accessToken ?? accessToken);
     return true;
   } catch (error) {
-    if (error instanceof ApiError && error.status === 401 && storedRefreshToken) {
+    if (error instanceof ApiError && error.status === 401) {
       const refreshed = await attemptTokenRefresh();
       if (refreshed) {
         return true;

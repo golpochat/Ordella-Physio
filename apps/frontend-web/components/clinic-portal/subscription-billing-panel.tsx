@@ -12,8 +12,10 @@ import {
   useClinicSubscription,
   useCreateClinicSubscription,
 } from "@/hooks/useClinicPortal";
+import { useAuth } from "@/hooks/useAuth";
 import type { ClinicSubscriptionPlan } from "@/lib/clinic-portal-types";
 import { formatCurrency, formatPortalDate } from "@/lib/clinic-portal-utils";
+import { can, Permission } from "@/lib/permissions";
 
 const PLANS: { id: ClinicSubscriptionPlan; label: string; description: string }[] = [
   { id: "STARTER", label: "Starter", description: "Single location, core scheduling" },
@@ -22,6 +24,8 @@ const PLANS: { id: ClinicSubscriptionPlan; label: string; description: string }[
 ];
 
 export function ClinicSubscriptionBillingPanel() {
+  const { user } = useAuth();
+  const canManageBilling = can(user, Permission.BILLING_MANAGE);
   const subscriptionQuery = useClinicSubscription();
   const invoicesQuery = useClinicStripeInvoices();
   const createSubscription = useCreateClinicSubscription();
@@ -102,52 +106,56 @@ export function ClinicSubscriptionBillingPanel() {
                     <p className="font-medium">{plan.label}</p>
                     <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
-                  <Button
-                    variant={currentPlan === plan.id ? "secondary" : "primary"}
-                    disabled={createSubscription.isPending || currentPlan === plan.id}
-                    onClick={() => void handleChangePlan(plan.id)}
-                  >
-                    {currentPlan === plan.id ? "Current plan" : currentPlan ? "Switch plan" : "Subscribe"}
-                  </Button>
+                  {canManageBilling ? (
+                    <Button
+                      variant={currentPlan === plan.id ? "secondary" : "primary"}
+                      disabled={createSubscription.isPending || currentPlan === plan.id}
+                      onClick={() => void handleChangePlan(plan.id)}
+                    >
+                      {currentPlan === plan.id ? "Current plan" : currentPlan ? "Switch plan" : "Subscribe"}
+                    </Button>
+                  ) : null}
                 </CardBody>
               </Card>
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              disabled={customerPortal.isPending || !subscription?.stripeCustomerId}
-              onClick={() => void handleOpenPortal()}
-            >
-              Manage payment method (Stripe Portal)
-            </Button>
-            {subscription?.subscription ? (
-              <>
-                <Button
-                  variant="outline"
-                  disabled={cancelSubscription.isPending}
-                  onClick={() => void handleCancel(false)}
-                >
-                  Cancel at period end
-                </Button>
-                <Button
-                  variant="destructive"
-                  disabled={cancelSubscription.isPending}
-                  onClick={() => void handleCancel(true)}
-                >
-                  Cancel immediately
-                </Button>
-              </>
-            ) : (
+          {canManageBilling ? (
+            <div className="flex flex-wrap gap-2">
               <Button
-                disabled={createSubscription.isPending}
-                onClick={() => void handleChangePlan("STARTER")}
+                variant="outline"
+                disabled={customerPortal.isPending || !subscription?.stripeCustomerId}
+                onClick={() => void handleOpenPortal()}
               >
-                Start Starter plan
+                Manage payment method (Stripe Portal)
               </Button>
-            )}
-          </div>
+              {subscription?.subscription ? (
+                <>
+                  <Button
+                    variant="outline"
+                    disabled={cancelSubscription.isPending}
+                    onClick={() => void handleCancel(false)}
+                  >
+                    Cancel at period end
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    disabled={cancelSubscription.isPending}
+                    onClick={() => void handleCancel(true)}
+                  >
+                    Cancel immediately
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  disabled={createSubscription.isPending}
+                  onClick={() => void handleChangePlan("STARTER")}
+                >
+                  Start Starter plan
+                </Button>
+              )}
+            </div>
+          ) : null}
         </CardBody>
       </Card>
 

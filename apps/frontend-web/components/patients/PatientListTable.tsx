@@ -4,8 +4,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { useAuth } from "@/hooks/useAuth";
 import type { ClinicPatient, ClinicPatientListFilters } from "@/lib/clinic-portal-types";
 import { cn } from "@/lib/cn";
+import { can, Permission } from "@/lib/permissions";
 
 const SORTABLE_COLUMNS: Array<{
   key: NonNullable<ClinicPatientListFilters["sortBy"]>;
@@ -70,6 +72,8 @@ export function PatientListTable({
   onPageChange,
   onSortChange,
 }: PatientListTableProps) {
+  const { user } = useAuth();
+  const canEditPatient = can(user, Permission.PATIENT_EDIT);
   const totalPages = Math.max(1, pagination.totalPages || 1);
   const currentPage = pagination.page;
 
@@ -142,9 +146,11 @@ export function PatientListTable({
               <Link href={`/clinic/patients/${patient.id}`} className="dashboard-link">
                 View
               </Link>
-              <Link href={`/clinic/patients/${patient.id}/edit`} className="dashboard-link">
-                Edit
-              </Link>
+              {canEditPatient ? (
+                <Link href={`/clinic/patients/${patient.id}/edit`} className="dashboard-link">
+                  Edit
+                </Link>
+              ) : null}
             </div>
           </Row>
         ))}

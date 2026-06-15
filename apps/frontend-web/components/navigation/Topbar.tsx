@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUiStore } from "@/store/ui.store";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/cn";
+import { can, canAny, Permission } from "@/lib/permissions";
 
 export type TopbarProps = {
   title: string;
@@ -42,6 +43,13 @@ export function Topbar({
   }, []);
 
   const initials = user?.email?.slice(0, 2).toUpperCase() ?? "OR";
+  const canManageSettings = canAny(user, [Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE]);
+
+  const menuItems = [
+    { label: "Profile", href: profileHref },
+    ...(canManageSettings ? [{ label: "Settings", href: settingsHref }] : []),
+    { label: "Sign out", onSelect: () => void logout(), destructive: true },
+  ];
 
   return (
     <header className={cn("topbar", scrolled && "topbar-scrolled")}>
@@ -94,11 +102,7 @@ export function Topbar({
               </Avatar>
             </button>
           }
-          items={[
-            { label: "Profile", href: profileHref },
-            { label: "Settings", href: settingsHref },
-            { label: "Sign out", onSelect: () => void logout(), destructive: true },
-          ]}
+          items={menuItems}
         />
       </div>
     </header>

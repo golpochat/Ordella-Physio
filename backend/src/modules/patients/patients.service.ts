@@ -1,5 +1,4 @@
 import { buildPaginatedResponse } from "../../utils/pagination";
-import { auditCreate, auditDelete, auditUpdate } from "../utilities/audit.service";
 import { PatientEmailConflictError, PatientInactiveError } from "./patients.errors";
 import { mapPatientProfile } from "./patients.mapper";
 import {
@@ -67,13 +66,6 @@ export async function createPatient(tenantId: string, userId: string, data: Crea
 
   const patient = await createPatientRecord(tenantId, data);
 
-  await auditCreate(
-    { tenantId, userId, },
-    "Patient",
-    patient.id,
-    { email: patient.email, name: `${patient.firstName} ${patient.lastName}` },
-  );
-
   return patient;
 }
 
@@ -87,15 +79,11 @@ export async function updatePatient(
 
   const patient = await updatePatientRecord(tenantId, id, data);
 
-  await auditUpdate({ tenantId, userId }, "Patient", id, { fields: Object.keys(data) });
-
   return patient;
 }
 
 export async function deletePatient(tenantId: string, userId: string, id: string) {
   const patient = await deactivatePatientRecord(tenantId, id);
-
-  await auditDelete({ tenantId, userId }, "Patient", id);
 
   return patient;
 }

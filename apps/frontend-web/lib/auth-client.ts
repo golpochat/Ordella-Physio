@@ -32,7 +32,12 @@ export type MessageResponse = {
 
 export type AuthTokensResponse = {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
+  user: AuthUser;
+};
+
+export type RefreshSessionResponse = {
+  accessToken: string;
   user: AuthUser;
 };
 
@@ -64,6 +69,7 @@ export const authClient = {
   login(payload: LoginPayload) {
     return fetcher<LoginResponse>(`${API_ROUTES.auth}/login`, {
       method: "POST",
+      credentials: "include",
       body: JSON.stringify(payload),
     });
   },
@@ -133,22 +139,22 @@ export const authClient = {
     });
   },
 
-  refresh(refreshToken: string) {
-    return fetcher<AuthTokensResponse>(`${API_ROUTES.auth}/refresh`, {
+  refresh() {
+    return fetcher<RefreshSessionResponse>(`${API_ROUTES.auth}/refresh`, {
       method: "POST",
-      body: JSON.stringify({ refreshToken }),
+      credentials: "include",
     });
   },
 
-  logout(payload: { accessToken: string; refreshToken: string; tenantId?: string }) {
+  logout(payload: { accessToken: string; tenantId?: string }) {
     const tenantId = payload.tenantId ?? getDefaultTenantId();
     return fetcher<void>(`${API_ROUTES.auth}/logout`, {
       method: "POST",
+      credentials: "include",
       headers: {
         Authorization: `Bearer ${payload.accessToken}`,
         ...(tenantId ? { [TENANT_HEADER]: tenantId } : {}),
       },
-      body: JSON.stringify({ refreshToken: payload.refreshToken }),
     });
   },
 

@@ -6,7 +6,6 @@ import {
   notifyAppointmentCancellation,
   notifyAppointmentConfirmation,
 } from "../notifications/notifications.dispatch";
-import { writeAuditLog } from "../utilities/audit.service";
 import {
   assertCanReadAppointment,
   assertCanWriteAppointment,
@@ -112,19 +111,6 @@ export async function createAppointment(
 
   const appointment = await createAppointmentRecord(tenantId, { ...data, therapistId });
 
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "appointment.created",
-    entity: "Appointment",
-    entityId: appointment.id,
-    metadata: {
-      patientId: data.patientId,
-      therapistId,
-      startTime: data.startTime.toISOString(),
-    },
-  });
-
   notifyAppointmentConfirmation(tenantId, appointment.id, userId);
 
   return appointment;
@@ -179,15 +165,6 @@ export async function updateAppointment(
     endTime,
   });
 
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "appointment.updated",
-    entity: "Appointment",
-    entityId: id,
-    metadata: { fields: Object.keys(data) },
-  });
-
   return appointment;
 }
 
@@ -212,15 +189,6 @@ export async function transitionAppointmentStatus(
     status,
     ...(status === "CANCELLED" && cancellationReason ? { cancellationReason } : {}),
     ...statusTimestampPatch(status),
-  });
-
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: `appointment.status.${status.toLowerCase()}`,
-    entity: "Appointment",
-    entityId: id,
-    metadata: { from: existing.status, to: status, cancellationReason },
   });
 
   if (status === "COMPLETED") {
@@ -318,14 +286,6 @@ export async function deleteAppointment(
   }
 
   await deleteAppointmentRecord(tenantId, id);
-
-  await writeAuditLog({
-    tenantId,
-    userId,
-    action: "appointment.deleted",
-    entity: "Appointment",
-    entityId: id,
-  });
 
   return { id, deleted: true };
 }

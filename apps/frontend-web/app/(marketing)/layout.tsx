@@ -5,6 +5,7 @@ import PageTransition from "@/components/marketing/PageTransition";
 import ScrollProgress from "@/components/marketing/ScrollProgress";
 import ErrorBoundary from "@/components/marketing/ErrorBoundary";
 import ExitIntent from "@/components/marketing/ExitIntent";
+import { getRequestNonce } from "@/lib/security/nonce";
 import { FunnelTracker } from "./analytics/FunnelTracker";
 import { MarketingAnalytics } from "./analytics/MarketingAnalytics";
 import { MarketingReliability } from "./analytics/MarketingReliability";
@@ -35,10 +36,12 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+  const nonce = getRequestNonce();
+
   return (
     <div className="marketing-site flex min-h-screen flex-col bg-background">
-      <MarketingAnalytics />
-      <MarketingReliability />
+      <MarketingAnalytics nonce={nonce} />
+      <MarketingReliability nonce={nonce} />
       <FunnelTracker />
       <ExitIntent />
       <ErrorBoundary>

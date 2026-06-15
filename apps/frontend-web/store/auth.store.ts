@@ -1,88 +1,81 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { clearTokens, getAccessToken, getRefreshToken, setTokens } from "@/lib/utils/authStorage";
-import type { PortalRole } from "@/lib/rbac";
-
-export type AuthUser = {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  tenantId: string;
-  role: PortalRole;
-  roles: PortalRole[];
-  permissions: string[];
-};
-
-type AuthState = {
-  accessToken: string | null;
-  refreshToken: string | null;
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  setSession: (payload: {
-    accessToken: string;
-    refreshToken: string;
-    user: AuthUser;
-  }) => void;
-  updateTokens: (accessToken: string, refreshToken?: string) => void;
-  clearSession: () => void;
-};
-
-const initialState = {
-  accessToken: null,
-  refreshToken: null,
-  user: null,
-  isAuthenticated: false,
-};
-
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      ...initialState,
-      setSession: ({ accessToken, refreshToken, user }) => {
-        setTokens(accessToken, refreshToken);
-        set({
-          accessToken,
-          refreshToken,
-          user,
-          isAuthenticated: true,
-        });
-      },
-      updateTokens: (accessToken, refreshToken) => {
-        const nextRefreshToken = refreshToken ?? useAuthStore.getState().refreshToken;
-        if (nextRefreshToken) {
-          setTokens(accessToken, nextRefreshToken);
-        } else {
-          setTokens(accessToken, getRefreshToken() ?? "");
-        }
-
-        set((state) => ({
-          accessToken,
-          refreshToken: refreshToken ?? state.refreshToken,
-        }));
-      },
-      clearSession: () => {
-        clearTokens();
-        set(initialState);
-      },
-    }),
-    {
-      name: "ordella-auth",
-      partialize: (state) => ({
-        refreshToken: state.refreshToken,
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-      }),
-      onRehydrateStorage: () => (state) => {
-        if (!state) {
-          return;
-        }
-
-        const accessToken = getAccessToken();
-        const refreshToken = state.refreshToken ?? getRefreshToken();
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
-      },
-    },
-  ),
-);
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { eraseSessionCookie, writeSessionCookie } from "@/lib/auth/session-cookie-client";
+import { clearTokens, getAccessToken, setAccessToken } from "@/lib/utils/authStorage";
+import type { PortalRole } from "@/lib/rbac";
+
+export type AuthUser = {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  tenantId: string;
+  role: PortalRole;
+  roles: PortalRole[];
+  permissions: string[];
+};
+
+type AuthState = {
+  accessToken: string | null;
+  user: AuthUser | null;
+  isAuthenticated: boolean;
+  setSession: (payload: {
+    accessToken: string;
+    /** Used once to set the HttpOnly cookie — never stored client-side. */
+    refreshToken?: string;
+    user: AuthUser;
+  }) => void;
+  updateTokens: (accessToken: string) => void;
+  clearSession: () => void;
+};
+
+const initialState = {
+  accessToken: null,
+  user: null,
+  isAuthenticated: false,
+};
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      setSession: ({ accessToken, refreshToken, user }) => {
+        setAccessToken(accessToken);
+        void writeSessionCookie(user, refreshToken);
+        set({
+          accessToken,
+          user,
+          isAuthenticated: true,
+        });
+      },
+      updateTokens: (accessToken) => {
+        setAccessToken(accessToken);
+        set({ accessToken });
+      },
+      clearSession: () => {
+        clearTokens();
+        void eraseSessionCookie();
+        set(initialState);
+      },
+    }),
+    {
+      name: "ordella-auth",
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) {
+          return;
+        }
+
+        state.accessToken = getAccessToken();
+
+        if (state.user && state.isAuthenticated) {
+          void writeSessionCookie(state.user);
+        }
+      },
+    },
+  ),
+);
+

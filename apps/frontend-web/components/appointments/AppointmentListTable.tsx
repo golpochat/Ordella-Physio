@@ -4,12 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { useAuth } from "@/hooks/useAuth";
 import type {
   ClinicAppointmentListFilters,
   ClinicAppointmentListItem,
 } from "@/lib/clinic-portal-types";
 import { formatPortalDateTime } from "@/lib/clinic-portal-utils";
 import { cn } from "@/lib/cn";
+import { can, Permission } from "@/lib/permissions";
 
 const SORTABLE_COLUMNS: Array<{
   key: NonNullable<ClinicAppointmentListFilters["sortBy"]>;
@@ -58,6 +60,8 @@ export function AppointmentListTable({
   onPageChange,
   onSortChange,
 }: AppointmentListTableProps) {
+  const { user } = useAuth();
+  const canManageAppointments = can(user, Permission.APPOINTMENT_MANAGE);
   const totalPages = Math.max(1, pagination.totalPages || 1);
   const currentPage = pagination.page;
 
@@ -134,9 +138,11 @@ export function AppointmentListTable({
               <Link href={`/clinic/appointments/${appointment.id}`} className="dashboard-link">
                 View
               </Link>
-              <Link href={`/clinic/appointments/${appointment.id}/edit`} className="dashboard-link">
-                Edit
-              </Link>
+              {canManageAppointments ? (
+                <Link href={`/clinic/appointments/${appointment.id}/edit`} className="dashboard-link">
+                  Edit
+                </Link>
+              ) : null}
             </div>
           </Row>
         ))}

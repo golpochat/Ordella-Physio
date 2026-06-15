@@ -645,6 +645,31 @@ services:
     networks:
       - ordella-physio-network
 
+  clinic-backend-backup-cron:
+    profiles: ["backup"]
+    container_name: ordella-clinic-backend-backup-cron
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - ordella-clinic-backend-backups:/app/backups
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@clinic-backend-db:5432/clinic_backend?schema=public
+      BACKUP_ENCRYPTION_KEY: ${BACKUP_ENCRYPTION_KEY:-dev-backup-encryption-key-min-32-chars}
+      BACKUP_OUTPUT_DIR: /app/backups
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-30}
+      BACKUP_CRON_SCHEDULE: ${BACKUP_CRON_SCHEDULE:-0 2 * * *}
+    depends_on:
+      clinic-backend-db:
+        condition: service_healthy
+    command: >
+      sh -c "apk add --no-cache postgresql-client openssl
+      && mkdir -p /app/backups
+      && echo \"$${BACKUP_CRON_SCHEDULE} /app/scripts/backup-run.sh\" > /etc/crontabs/root
+      && crond -f -l 2"
+    networks:
+      - ordella-physio-network
+
 # ---------------------------------------------------------
 # NETWORKS & VOLUMES
 # ---------------------------------------------------------
@@ -656,3 +681,4 @@ networks:
 volumes:
   ordella-physio-db-data:
   ordella-clinic-backend-db-data:
+  ordella-clinic-backend-backups:

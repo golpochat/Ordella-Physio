@@ -37,7 +37,6 @@ describe.sequential("clinic backend integration", () => {
   function authed() {
     return {
       Authorization: `Bearer ${accessToken}`,
-      "x-tenant-id": tenantId,
     };
   }
 
@@ -50,14 +49,15 @@ describe.sequential("clinic backend integration", () => {
 
   it("creates a patient", async (ctx) => {
     if (!dbReady) return ctx.skip();
+    const unique = Date.now();
     const response = await request(app)
       .post("/api/patients")
       .set(authed())
       .send({
         firstName: "Integration",
         lastName: "Patient",
-        email: "integration.patient@example.com",
-        phone: "+353870000001",
+        email: `integration.patient.${unique}@example.com`,
+        phone: `+3538700${String(unique).slice(-5)}`,
       });
 
     expect(response.status).toBe(201);
@@ -75,9 +75,10 @@ describe.sequential("clinic backend integration", () => {
 
   it("schedules an appointment", async (ctx) => {
     if (!dbReady) return ctx.skip();
+    const unique = Date.now();
     const start = new Date();
-    start.setDate(start.getDate() + 2);
-    start.setHours(14, 0, 0, 0);
+    start.setDate(start.getDate() + 10 + (unique % 14));
+    start.setHours(10 + (unique % 6), unique % 60, 0, 0);
     const end = new Date(start);
     end.setMinutes(end.getMinutes() + 45);
 

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { asyncHandler } from "../../utils/async-handler";
+import { withAudit } from "../../middleware/audit";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { policies } from "../rbac/policies";
 import { billingController } from "./billing.controller";
@@ -64,7 +65,7 @@ billingRouter.post(
   "/invoices",
   policies.billingWrite,
   validateRequest(createInvoiceSchema),
-  asyncHandler(billingController.createInvoice),
+  withAudit("create", "invoice")(billingController.createInvoice),
 );
 
 billingRouter.patch(
@@ -72,21 +73,21 @@ billingRouter.patch(
   policies.billingWrite,
   validateRequest(invoiceIdParamSchema, "params"),
   validateRequest(updateInvoiceSchema),
-  asyncHandler(billingController.updateInvoice),
+  withAudit("update", "invoice")(billingController.updateInvoice),
 );
 
 billingRouter.post(
   "/invoices/:id/issue",
   policies.billingWrite,
   validateRequest(invoiceIdParamSchema, "params"),
-  asyncHandler(billingController.issueInvoice),
+  withAudit("issue", "invoice")(billingController.issueInvoice),
 );
 
 billingRouter.post(
   "/invoices/:id/void",
   policies.billingWrite,
   validateRequest(invoiceIdParamSchema, "params"),
-  asyncHandler(billingController.voidInvoice),
+  withAudit("void", "invoice")(billingController.voidInvoice),
 );
 
 billingRouter.post(
@@ -94,7 +95,7 @@ billingRouter.post(
   policies.billingWrite,
   validateRequest(invoiceIdParamSchema, "params"),
   validateRequest(recordPaymentSchema),
-  asyncHandler(billingController.recordPayment),
+  withAudit("create", "payment")(billingController.recordPayment),
 );
 
 billingRouter.post(
@@ -102,5 +103,5 @@ billingRouter.post(
   policies.billingWrite,
   validateRequest(invoiceIdParamSchema, "params"),
   validateRequest(recordPaymentSchema),
-  asyncHandler(billingController.recordPayment),
+  withAudit("create", "payment")(billingController.recordPayment),
 );

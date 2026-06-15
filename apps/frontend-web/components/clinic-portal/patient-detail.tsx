@@ -7,14 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PatientStatusBadge } from "@/components/patients/PatientStatusBadge";
 import { useDeleteClinicPatient } from "@/hooks/useClinicPortal";
+import { useAuth } from "@/hooks/useAuth";
 import { IfHasPermission } from "@/lib/auth/withPermission";
 import type { ClinicPatientDetailResponse } from "@/lib/clinic-portal-types";
 import { formatPortalDate, getPatientDisplayName } from "@/lib/clinic-portal-utils";
+import { can, Permission } from "@/lib/permissions";
 
 export function ClinicPatientDetail({ detail }: { detail: ClinicPatientDetailResponse }) {
   const router = useRouter();
+  const { user } = useAuth();
   const deletePatient = useDeleteClinicPatient();
   const { patient, insurance } = detail;
+  const canEditPatient = can(user, Permission.PATIENT_EDIT);
+  const canManagePatient = can(user, Permission.PATIENT_MANAGE);
+  const canReadNotes = can(user, Permission.NOTES_READ);
+  const canViewAttachments = can(user, Permission.PATIENT_ATTACHMENTS);
 
   const addressParts = [
     patient.addressLine1,
@@ -35,20 +42,26 @@ export function ClinicPatientDetail({ detail }: { detail: ClinicPatientDetailRes
               <PatientStatusBadge status={patient.status} />
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline">
-                <Link href={`/clinic/patients/${patient.id}/notes`}>Medical notes</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/clinic/patients/${patient.id}/attachments`}>Attachments</Link>
-              </Button>
+              {canReadNotes ? (
+                <Button asChild variant="outline">
+                  <Link href={`/clinic/patients/${patient.id}/notes`}>Medical notes</Link>
+                </Button>
+              ) : null}
+              {canViewAttachments ? (
+                <Button asChild variant="outline">
+                  <Link href={`/clinic/patients/${patient.id}/attachments`}>Attachments</Link>
+                </Button>
+              ) : null}
               <IfHasPermission permission="audit.view">
                 <Button asChild variant="outline">
                   <Link href={`/clinic/patients/${patient.id}/audit`}>View audit log</Link>
                 </Button>
               </IfHasPermission>
-              <Button asChild>
-                <Link href={`/clinic/patients/${patient.id}/edit`}>Edit</Link>
-              </Button>
+              {canEditPatient ? (
+                <Button asChild>
+                  <Link href={`/clinic/patients/${patient.id}/edit`}>Edit</Link>
+                </Button>
+              ) : null}
             </div>
           </div>
         </CardHeader>
@@ -106,24 +119,26 @@ export function ClinicPatientDetail({ detail }: { detail: ClinicPatientDetailRes
       </Card>
 
       <div className="flex flex-wrap gap-3">
-        <Button
-          variant="destructive"
-          disabled={deletePatient.isPending}
-          onClick={() => {
-            if (!window.confirm("Delete this patient record?")) {
-              return;
-            }
-            deletePatient.mutate(patient.id, {
-              onSuccess: () => {
-                toast.success("Patient deleted");
-                router.push("/clinic/patients");
-              },
-              onError: () => toast.error("Failed to delete patient"),
-            });
-          }}
-        >
-          Delete patient
-        </Button>
+        {canManagePatient ? (
+          <Button
+            variant="destructive"
+            disabled={deletePatient.isPending}
+            onClick={() => {
+              if (!window.confirm("Delete this patient record?")) {
+                return;
+              }
+              deletePatient.mutate(patient.id, {
+                onSuccess: () => {
+                  toast.success("Patient deleted");
+                  router.push("/clinic/patients");
+                },
+                onError: () => toast.error("Failed to delete patient"),
+              });
+            }}
+          >
+            Delete patient
+          </Button>
+        ) : null}
         <Button asChild variant="outline">
           <Link href="/clinic/patients">Back to patients</Link>
         </Button>

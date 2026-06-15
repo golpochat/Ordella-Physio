@@ -10,9 +10,11 @@ import { EntityIndexSearchBox } from "@/components/search/EntityIndexSearchBox";
 import { PatientListFilters } from "@/components/patients/PatientListFilters";
 import { PatientListTable } from "@/components/patients/PatientListTable";
 import { useClinicPatientsList } from "@/hooks/useClinicPortal";
+import { useAuth } from "@/hooks/useAuth";
 import { WithPermission } from "@/lib/auth/withPermission";
 import { parsePatientListErrors } from "@/lib/clinic-patient-api-errors";
 import type { ClinicPatientListFilters } from "@/lib/clinic-portal-types";
+import { can, Permission } from "@/lib/permissions";
 
 const DEFAULT_LIMIT = 20;
 
@@ -87,6 +89,7 @@ function buildSearchParams(filters: ClinicPatientListFilters): URLSearchParams {
 
 export default function ClinicPatientsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const filters = useMemo(() => readFilters(searchParams), [searchParams]);
@@ -184,14 +187,16 @@ export default function ClinicPatientsPage() {
   };
 
   return (
-    <WithPermission permission="patient.manage">
+    <WithPermission permission="patient.view">
       <ListPage
         title="Patients"
         subtitle="Manage patient records for your clinic."
         action={
-          <Button asChild className="btn-primary">
-            <Link href="/clinic/patients/new">Register patient</Link>
-          </Button>
+          can(user, Permission.PATIENT_MANAGE) ? (
+            <Button asChild className="btn-primary">
+              <Link href="/clinic/patients/new">Register patient</Link>
+            </Button>
+          ) : undefined
         }
         isLoading={isLoading}
         isError={isError}

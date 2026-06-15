@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { API_ROUTES, TENANT_HEADER, type ApiServiceKey } from "./constants";
-import { getDefaultTenantId } from "./tenant-config";
 
 const PROXY_STRIP_REQUEST_HEADERS = [
   "host",
@@ -238,12 +237,8 @@ export async function proxyToClinicBackend(
     headers.delete(name);
   }
 
-  if (!headers.get(TENANT_HEADER)) {
-    const defaultTenantId = getDefaultTenantId();
-    if (defaultTenantId) {
-      headers.set(TENANT_HEADER, defaultTenantId);
-    }
-  }
+  // Clinic backend binds tenant from the JWT — never forward client tenant headers.
+  headers.delete(TENANT_HEADER);
 
   if (service === "reporting") {
     const reportingResponse = await handleReportingClinicBackendProxy(request, backendBase, headers);

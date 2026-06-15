@@ -11,7 +11,8 @@ import {
   syncTenantFromSession,
   validateStoredSession,
 } from "@/lib/session-manager";
-import { getStoredIsAuthenticated } from "@/lib/auth-storage";
+import { syncSessionCookieFromUser } from "@/lib/auth/session-cookie-client";
+import { getStoredAuthUser, getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
 
 export function AuthBootstrap({ children }: { children: ReactNode }) {
@@ -24,6 +25,7 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
 
     async function bootstrap() {
       syncTenantFromSession();
+      syncSessionCookieFromUser(useAuthStore.getState().user ?? getStoredAuthUser());
 
       const hasSession = isAuthenticated || getStoredIsAuthenticated();
       if (hasSession) {

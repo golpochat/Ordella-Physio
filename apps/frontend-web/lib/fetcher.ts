@@ -27,9 +27,10 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
 }
 
 export async function fetcher<T>(path: string, options: FetcherOptions = {}): Promise<T> {
-  const { params, headers, ...init } = options;
+  const { params, headers, credentials, ...init } = options;
   const response = await fetch(buildUrl(path, params), {
     ...init,
+    credentials: credentials ?? (path.startsWith("/api/auth") ? "include" : "same-origin"),
     headers: {
       "Content-Type": "application/json",
       ...(getDefaultTenantId() && path.startsWith("/api/auth")

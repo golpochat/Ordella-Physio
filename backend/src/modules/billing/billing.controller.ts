@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { auditContextFromRequest } from "../utilities/audit.service";
 import {
   createInvoice,
   generateInvoicePdfBuffer,
@@ -49,11 +48,7 @@ export const billingController = {
   },
 
   createInvoice: async (req: Request, res: Response) => {
-    const invoice = await createInvoice(
-      req.tenantId!,
-      req.body as CreateInvoiceBody,
-      auditContextFromRequest(req),
-    );
+    const invoice = await createInvoice(req.tenantId!, req.body as CreateInvoiceBody);
     res.status(201).json({ data: invoice });
   },
 
@@ -62,26 +57,17 @@ export const billingController = {
       req.tenantId!,
       String(req.params.id),
       req.body as UpdateInvoiceBody,
-      auditContextFromRequest(req),
     );
     res.json({ data: invoice });
   },
 
   issueInvoice: async (req: Request, res: Response) => {
-    const invoice = await issueInvoice(
-      req.tenantId!,
-      String(req.params.id),
-      auditContextFromRequest(req),
-    );
+    const invoice = await issueInvoice(req.tenantId!, String(req.params.id));
     res.json({ data: invoice });
   },
 
   voidInvoice: async (req: Request, res: Response) => {
-    const invoice = await voidInvoice(
-      req.tenantId!,
-      String(req.params.id),
-      auditContextFromRequest(req),
-    );
+    const invoice = await voidInvoice(req.tenantId!, String(req.params.id));
     res.json({ data: invoice });
   },
 
@@ -90,7 +76,6 @@ export const billingController = {
       req.tenantId!,
       String(req.params.id),
       req.body as RecordPaymentBody,
-      auditContextFromRequest(req),
     );
     res.status(201).json({ data: payment });
   },

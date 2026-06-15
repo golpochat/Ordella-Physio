@@ -109,7 +109,6 @@ export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
   const setSession = useAuthStore((state) => state.setSession);
   const accessToken = useAuthStore((state) => state.accessToken);
-  const refreshToken = useAuthStore((state) => state.refreshToken);
   const user = useAuthStore((state) => state.user);
 
   return useMutation({
@@ -117,10 +116,9 @@ export function useUpdateUserProfile() {
       requireApi(userApi).updateProfile(payload),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["user-portal", "profile"] });
-      if (user && accessToken && refreshToken) {
+      if (user && accessToken) {
         setSession({
           accessToken,
-          refreshToken,
           user: {
             ...user,
             email: response.user.email ?? user.email,

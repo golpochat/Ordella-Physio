@@ -1,6 +1,5 @@
 import { buildPaginatedResponse } from "../../utils/pagination";
 import { hashPassword } from "../../utils/password";
-import { writeAuditLog } from "../utilities/audit.service";
 import { ensureDefaultRoles } from "../rbac/rbac.service";
 import {
   assertCanManageStaff,
@@ -120,15 +119,6 @@ export async function createStaffMember(
   const user = await createStaffUser(tenantId, data, await hashPassword(data.password), roleIds);
   const staff = await createStaffRecord(tenantId, user.id, data);
 
-  await writeAuditLog({
-    tenantId,
-    userId: adminUserId,
-    action: "staff.created",
-    entity: "Staff",
-    entityId: staff.id,
-    metadata: { email: data.email, roles: roleNames },
-  });
-
   return mapStaffProfile(staff);
 }
 
@@ -145,15 +135,6 @@ export async function updateStaffMember(
   const { firstName, lastName, phone, ...profileData } = data;
   const staff = await updateStaffRecord(tenantId, id, profileData, { firstName, lastName, phone });
 
-  await writeAuditLog({
-    tenantId,
-    userId: adminUserId,
-    action: "staff.updated",
-    entity: "Staff",
-    entityId: id,
-    metadata: { fields: Object.keys(data) },
-  });
-
   return mapStaffProfile(staff);
 }
 
@@ -165,14 +146,6 @@ export async function deleteStaffMember(
 ) {
   assertCanManageStaff(actor);
   const staff = await deactivateStaffRecord(tenantId, id);
-
-  await writeAuditLog({
-    tenantId,
-    userId: adminUserId,
-    action: "staff.deactivated",
-    entity: "Staff",
-    entityId: id,
-  });
 
   return mapStaffProfile(staff);
 }
@@ -195,15 +168,6 @@ export async function assignStaffRoles(
   await replaceUserRoles(staff.userId, roleIds);
 
   const assignments = await getUserRoleAssignments(staff.userId, tenantId);
-
-  await writeAuditLog({
-    tenantId,
-    userId: adminUserId,
-    action: "staff.roles.updated",
-    entity: "Staff",
-    entityId: staffId,
-    metadata: { roleNames },
-  });
 
   return {
     staffId,

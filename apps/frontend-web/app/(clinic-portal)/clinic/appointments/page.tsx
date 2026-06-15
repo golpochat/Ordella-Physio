@@ -10,9 +10,11 @@ import { AppointmentListTable } from "@/components/appointments/AppointmentListT
 import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
 import { useClinicAppointmentsList } from "@/hooks/useClinicPortal";
+import { useAuth } from "@/hooks/useAuth";
 import { WithPermission } from "@/lib/auth/withPermission";
 import { parseAppointmentListErrors } from "@/lib/appointment-api-errors";
 import type { ClinicAppointmentListFilters } from "@/lib/clinic-portal-types";
+import { can, Permission } from "@/lib/permissions";
 
 const DEFAULT_LIMIT = 20;
 
@@ -104,6 +106,7 @@ function buildSearchParams(filters: ClinicAppointmentListFilters): URLSearchPara
 
 export default function ClinicAppointmentsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const filters = useMemo(() => readFilters(searchParams), [searchParams]);
@@ -227,7 +230,7 @@ export default function ClinicAppointmentsPage() {
   };
 
   return (
-    <WithPermission permission="appointment.manage">
+    <WithPermission permission="patient.view">
       <ListPage
         title="Appointments"
         subtitle="View and manage clinic appointments."
@@ -236,9 +239,11 @@ export default function ClinicAppointmentsPage() {
             <Button asChild variant="outline">
               <Link href="/clinic/appointments/calendar">Calendar view</Link>
             </Button>
-            <Button asChild>
-              <Link href="/clinic/appointments/new">Schedule appointment</Link>
-            </Button>
+            {can(user, Permission.APPOINTMENT_MANAGE) ? (
+              <Button asChild>
+                <Link href="/clinic/appointments/new">Schedule appointment</Link>
+              </Button>
+            ) : null}
           </div>
         }
         isLoading={isLoading}

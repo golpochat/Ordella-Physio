@@ -1,12 +1,10 @@
 import type { NavIconName } from "@/components/navigation/NavIcon";
+import { Permission, type NavItemWithPermission } from "@/lib/permissions";
 import { adminRoutes, staffRoutes, therapistRoutes } from "@/lib/routes";
 
 export type NavRoleKey = "admin" | "staff" | "therapist";
 
-export type NavConfigItem = {
-  label: string;
-  href: string;
-};
+export type NavConfigItem = NavItemWithPermission;
 
 export const navIconByLabel: Record<string, NavIconName> = {
   Overview: "dashboard",
@@ -33,36 +31,36 @@ export const navIconByLabel: Record<string, NavIconName> = {
 export const navConfig: Record<NavRoleKey, NavConfigItem[]> = {
   admin: [
     { label: "Overview", href: adminRoutes.overview },
-    { label: "Patients", href: adminRoutes.patients },
-    { label: "Appointments", href: adminRoutes.appointments },
-    { label: "Therapists", href: adminRoutes.therapists },
-    { label: "Staff", href: adminRoutes.staff },
-    { label: "Billing", href: adminRoutes.billing },
-    { label: "Notes", href: adminRoutes.notes },
-    { label: "Users", href: adminRoutes.users },
-    { label: "Roles", href: adminRoutes.roles },
-    { label: "Locations", href: adminRoutes.locations },
-    { label: "Terminals", href: adminRoutes.terminals },
-    { label: "Reports", href: adminRoutes.reports },
-    { label: "Audit logs", href: adminRoutes.auditLogs },
-    { label: "Settings", href: adminRoutes.settings },
+    { label: "Patients", href: adminRoutes.patients, permission: Permission.PATIENT_VIEW },
+    { label: "Appointments", href: adminRoutes.appointments, permission: Permission.APPOINTMENT_MANAGE },
+    { label: "Therapists", href: adminRoutes.therapists, permission: Permission.PATIENT_VIEW },
+    { label: "Staff", href: adminRoutes.staff, permission: Permission.USER_MANAGE },
+    { label: "Billing", href: adminRoutes.billing, permission: Permission.BILLING_MANAGE },
+    { label: "Notes", href: adminRoutes.notes, permission: Permission.NOTES_READ },
+    { label: "Users", href: adminRoutes.users, permission: Permission.USER_MANAGE },
+    { label: "Roles", href: adminRoutes.roles, permission: Permission.ROLE_MANAGE },
+    { label: "Locations", href: adminRoutes.locations, permission: Permission.TENANT_MANAGE },
+    { label: "Terminals", href: adminRoutes.terminals, permission: Permission.TERMINAL_MANAGE },
+    { label: "Reports", href: adminRoutes.reports, permission: Permission.REPORTING_VIEW },
+    { label: "Audit logs", href: adminRoutes.auditLogs, permission: Permission.REPORTING_READ },
+    { label: "Settings", href: adminRoutes.settings, anyOf: [Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE] },
   ],
   staff: [
     { label: "Overview", href: staffRoutes.overview },
-    { label: "Patients", href: staffRoutes.patients },
-    { label: "Appointments", href: staffRoutes.appointments },
-    { label: "Billing", href: staffRoutes.billing },
-    { label: "Reports", href: staffRoutes.reports },
-    { label: "Notes", href: staffRoutes.notes },
+    { label: "Patients", href: staffRoutes.patients, permission: Permission.PATIENT_VIEW },
+    { label: "Appointments", href: staffRoutes.appointments, permission: Permission.PATIENT_VIEW },
+    { label: "Billing", href: staffRoutes.billing, permission: Permission.BILLING_MANAGE },
+    { label: "Reports", href: staffRoutes.reports, permission: Permission.REPORTING_VIEW },
+    { label: "Notes", href: staffRoutes.notes, permission: Permission.NOTES_READ },
   ],
   therapist: [
     { label: "Dashboard", href: therapistRoutes.dashboard },
-    { label: "Today", href: therapistRoutes.today },
-    { label: "Upcoming", href: therapistRoutes.upcoming },
-    { label: "Patients", href: therapistRoutes.patients },
-    { label: "Notes", href: therapistRoutes.notes },
+    { label: "Today", href: therapistRoutes.today, permission: Permission.APPOINTMENT_MANAGE },
+    { label: "Upcoming", href: therapistRoutes.upcoming, permission: Permission.APPOINTMENT_MANAGE },
+    { label: "Patients", href: therapistRoutes.patients, permission: Permission.PATIENT_VIEW },
+    { label: "Notes", href: therapistRoutes.notes, permission: Permission.NOTES_READ },
     { label: "Profile", href: therapistRoutes.profile },
-    { label: "Billing", href: therapistRoutes.billing },
+    { label: "Billing", href: therapistRoutes.billing, permission: Permission.BILLING_MANAGE },
   ],
 };
 

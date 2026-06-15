@@ -1,3 +1,5 @@
+import { sanitizeInput } from "@ordella/security";
+
 const MAX_LENGTHS = {
   name: 120,
   email: 254,
@@ -6,11 +8,7 @@ const MAX_LENGTHS = {
 } as const;
 
 export function sanitizeString(value: string, maxLength = 5000): string {
-  return value
-    .replace(/[<>]/g, "")
-    .replace(/[\u0000-\u001F\u007F]/g, "")
-    .trim()
-    .slice(0, maxLength);
+  return sanitizeInput(value).slice(0, maxLength);
 }
 
 export function isValidEmail(email: string): boolean {

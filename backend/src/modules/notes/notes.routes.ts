@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 import { asyncHandler } from "../../utils/async-handler";
+import { withAudit } from "../../middleware/audit";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { policies } from "../rbac/policies";
-import { auditContextFromRequest } from "../utilities/audit.service";
 import { createNote, getNoteById, listAllNotes, listNotes } from "./notes.service";
 import {
   createNoteSchema,
@@ -49,8 +49,8 @@ notesRouter.post(
   "/",
   policies.notesWrite,
   validateRequest(createNoteSchema),
-  asyncHandler(async (req, res) => {
-    const note = await createNote(req.tenantId!, req.user!.id, req.body, auditContextFromRequest(req));
+  withAudit("create", "note")(async (req, res) => {
+    const note = await createNote(req.tenantId!, req.user!.id, req.body);
     res.status(201).json({ data: note });
   }),
 );

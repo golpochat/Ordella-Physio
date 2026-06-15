@@ -9,7 +9,8 @@ import { notesRouter } from "../modules/notes";
 import { reportsRouter } from "../modules/reports";
 import { notificationsRouter } from "../modules/notifications";
 import { rbacRouter } from "../modules/rbac";
-import { requireAuth, requireTenant } from "../middleware/tenant.middleware";
+import { authMiddleware, requireAuth } from "../middleware/tenant.middleware";
+import { requireTenant } from "../middleware/tenant";
 import { asyncHandler } from "../utils/async-handler";
 import { listAuditLogs } from "../modules/utilities/audit.service";
 import { policies } from "../modules/rbac/policies";
@@ -23,7 +24,7 @@ apiRouter.get("/health", (_req, res) => {
 apiRouter.use("/auth", authRouter);
 
 const tenantScoped = Router();
-tenantScoped.use(requireTenant, requireAuth);
+tenantScoped.use(authMiddleware, requireAuth, requireTenant);
 
 tenantScoped.use("/patients", patientsRouter);
 tenantScoped.use("/appointments", appointmentsRouter);
