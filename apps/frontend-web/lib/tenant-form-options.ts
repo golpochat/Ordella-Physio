@@ -13,7 +13,13 @@ export const TENANT_TIMEZONE_OPTIONS = [
   "Australia/Sydney",
 ] as const;
 
-export const TENANT_CURRENCY_OPTIONS = ["USD", "GBP", "EUR", "CAD", "AUD"] as const;
+export const TENANT_CURRENCY_OPTIONS = [
+  "USD",
+  "GBP",
+  "EUR",
+  "CAD",
+  "AUD",
+] as const;
 
 export const LOCATION_COUNTRY_OPTIONS = [
   { value: "GB", label: "United Kingdom" },

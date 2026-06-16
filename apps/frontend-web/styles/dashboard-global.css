@@ -280,6 +280,25 @@
   text-align: center;
 }
 
+.dashboard-portal .tenant-trial-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.875rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.dashboard-portal .tenant-trial-banner-expired {
+  background: #fff7ed;
+  border-bottom-color: #fed7aa;
+  color: #c2410c;
+}
+
 .dashboard-portal .tenant-create-form {
   display: flex;
   flex-direction: column;

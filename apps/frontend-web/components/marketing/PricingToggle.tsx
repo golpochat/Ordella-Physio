@@ -1,45 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { getMaxYearlySavingsPercent } from "@/lib/pricing-plans";
 
 export type PricingToggleProps = {
+  yearly: boolean;
   onChange: (yearly: boolean) => void;
 };
 
-export function PricingToggle({ onChange }: PricingToggleProps) {
-  const [yearly, setYearly] = useState(false);
+export function PricingToggle({ yearly, onChange }: PricingToggleProps) {
+  const savingsPercent = getMaxYearlySavingsPercent();
 
-  const handleToggle = () => {
-    const next = !yearly;
-    setYearly(next);
-    onChange(next);
-  };
+  const optionClass = (active: boolean) =>
+    cn(
+      "min-w-[5.5rem] rounded-full px-4 py-2 text-sm font-medium transition-colors",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
+      active
+        ? "bg-brand-primary text-white shadow-sm"
+        : "text-slate-700 hover:text-brand-dark",
+    );
 
   return (
-    <div className="mb-xl flex items-center justify-center gap-md">
-      <span className={cn("text-sm", !yearly ? "font-semibold text-foreground" : "text-brand-gray")}>
-        Monthly
-      </span>
-
-      <button
-        type="button"
-        onClick={handleToggle}
-        aria-label={yearly ? "Switch to monthly billing" : "Switch to yearly billing"}
-        aria-pressed={yearly}
-        className="ripple cursor-pointer relative h-8 w-16 rounded-full bg-brand-light transition-all"
-      >
-        <div
-          className={cn(
-            "absolute top-1 h-6 w-6 rounded-full bg-brand-primary transition-all",
-            yearly ? "left-9" : "left-1",
-          )}
-        />
-      </button>
-
-      <span className={cn("text-sm", yearly ? "font-semibold text-foreground" : "text-brand-gray")}>
-        Yearly
-      </span>
+    <div
+      className="mb-xl flex flex-col items-center justify-center gap-3"
+      role="group"
+      aria-label="Billing period"
+    >
+      <div className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-sm">
+        <button
+          type="button"
+          className={optionClass(!yearly)}
+          aria-pressed={!yearly}
+          onClick={() => onChange(false)}
+        >
+          Monthly
+        </button>
+        <button
+          type="button"
+          className={optionClass(yearly)}
+          aria-pressed={yearly}
+          onClick={() => onChange(true)}
+        >
+          Yearly
+        </button>
+      </div>
+      {yearly && savingsPercent > 0 ? (
+        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+          Save {savingsPercent}%
+        </span>
+      ) : null}
     </div>
   );
+}
+
+export function usePricingPeriod(defaultYearly = true) {
+  const [yearly, setYearly] = useState(defaultYearly);
+  return { yearly, billingCycle: yearly ? ("yearly" as const) : ("monthly" as const), setYearly };
 }

@@ -67,8 +67,8 @@ export default function Navbar() {
           <Link href="/login" prefetch className="nav-link">
             Log in
           </Link>
-          <Link href="/signup" prefetch className="nav-cta">
-            Sign Up
+          <Link href="/start-trial" prefetch className="nav-cta">
+            Start Free Trial
           </Link>
         </div>
 
@@ -109,12 +109,12 @@ export default function Navbar() {
               Log in
             </Link>
             <Link
-              href="/signup"
+              href="/start-trial"
               prefetch
               className="nav-cta nav-cta-block"
               onClick={() => setOpen(false)}
             >
-              Sign Up
+              Start Free Trial
             </Link>
           </div>
         </nav>

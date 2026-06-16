@@ -20,6 +20,7 @@ const RATE_LIMIT_DISABLED = process.env.DISABLE_API_RATE_LIMIT === "true";
 
 const RATE_LIMIT_EXEMPT_PREFIXES = [
   "/api/auth/",
+  "/api/onboarding/",
   "/api/next-auth/",
   "/api/health",
   "/api/csrf",

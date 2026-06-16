@@ -3,63 +3,54 @@
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
 import { CtaLink } from "@/components/marketing/CtaLink";
-import { ExperimentCta } from "@/components/marketing/ExperimentCta";
 import {
   marketingButtonPrimaryClass,
   marketingButtonSecondaryClass,
 } from "@/lib/marketing-ui";
+import type { BillingCycle, PlanId } from "@/lib/pricing-plans";
+import { buildCheckoutHref } from "@/lib/pricing-plans";
 
 export type PricingCardCtaProps = {
-  title: string;
-  ctaHref?: string;
-  ctaLabel?: string;
+  planId: PlanId;
+  billingCycle: BillingCycle;
   popular?: boolean;
-  experimentId?: string;
+  isEnterprise?: boolean;
 };
 
 export function PricingCardCta({
-  title,
-  ctaHref = "/contact",
-  ctaLabel = "Get Started",
+  planId,
+  billingCycle,
   popular = false,
-  experimentId,
+  isEnterprise = false,
 }: PricingCardCtaProps) {
   const primaryClass = cn(marketingButtonPrimaryClass, "w-full");
   const secondaryClass = cn(marketingButtonSecondaryClass, "w-full");
 
-  if (experimentId) {
+  if (isEnterprise) {
     return (
-      <ExperimentCta
-        experimentId={experimentId}
-        location="pricing_card"
-        className="w-full"
-        variantA={{
-          href: ctaHref,
-          label: `${title} - Get started`,
-          children: "Get Started",
-          buttonClassName: popular ? primaryClass : secondaryClass,
-          buttonVariant: popular ? "primary" : "outline",
-        }}
-        variantB={{
-          href: ctaHref,
-          label: `${title} - Book a demo`,
-          children: "Book a Demo",
-          buttonClassName: popular ? primaryClass : secondaryClass,
-          buttonVariant: popular ? "primary" : "outline",
-        }}
-      />
+      <Button asChild className={secondaryClass} variant="outline">
+        <CtaLink href="/contact" location="pricing_card" label="Enterprise - Contact sales">
+          Contact sales
+        </CtaLink>
+      </Button>
     );
   }
 
+  const trialHref = buildCheckoutHref(planId, billingCycle, "trial");
+  const checkoutHref = buildCheckoutHref(planId, billingCycle, "checkout");
+
   return (
-    <Button
-      asChild
-      className={popular ? primaryClass : secondaryClass}
-      variant={popular ? "primary" : "outline"}
-    >
-      <CtaLink href={ctaHref} location="pricing_card" label={`${title} - ${ctaLabel}`}>
-        {ctaLabel}
-      </CtaLink>
-    </Button>
+    <div className="flex flex-col gap-3">
+      <Button asChild className={popular ? primaryClass : secondaryClass} variant={popular ? "primary" : "outline"}>
+        <CtaLink href={trialHref} location="pricing_card" label={`${planId} - Start free trial`}>
+          Start Free Trial
+        </CtaLink>
+      </Button>
+      <Button asChild className={secondaryClass} variant="outline">
+        <CtaLink href={checkoutHref} location="pricing_card" label={`${planId} - Continue to checkout`}>
+          Continue to Checkout
+        </CtaLink>
+      </Button>
+    </div>
   );
 }

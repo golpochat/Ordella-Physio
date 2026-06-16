@@ -3,7 +3,10 @@ import { CtaLink } from "@/components/marketing/CtaLink";
 import { AboutSection } from "@/components/marketing/AboutSection";
 import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
 import { ScrollReveal } from "@/components/marketing/scroll-reveal";
-import { marketingButtonPrimaryClass, marketingHeading } from "@/lib/marketing-ui";
+import {
+  marketingButtonPrimaryClass,
+  marketingHeading,
+} from "@/lib/marketing-ui";
 import { cn } from "@/lib/cn";
 import { TeamCard } from "@/components/marketing/TeamCard";
 import { TimelineItem } from "@/components/marketing/TimelineItem";
@@ -12,7 +15,8 @@ import { generateSEO, pageUrl } from "../seo";
 
 export const metadata = generateSEO({
   title: "About",
-  description: "Learn about the mission, values, and team behind Ordella Physio.",
+  description:
+    "Learn about the mission, values, and team behind Ordella Physio.",
   url: pageUrl("/about"),
 });
 
@@ -29,9 +33,10 @@ export default function AboutPage() {
         subtitle="To empower physiotherapy clinics with a unified, intelligent platform that simplifies operations and elevates patient care."
       >
         <p className="max-w-3xl text-brand-gray">
-          We believe clinics deserve software that works the way they do — intuitive, reliable, and
-          built around real workflows. Ordella Physio brings together appointments, notes, billing,
-          communication, and analytics into one seamless experience.
+          We believe clinics deserve software that works the way they do —
+          intuitive, reliable, and built around real workflows. Ordella Physio
+          brings together appointments, notes, billing, communication, and
+          analytics into one seamless experience.
         </p>
       </AboutSection>
 
@@ -98,9 +103,17 @@ export default function AboutPage() {
 
       <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
-          <h2 className={cn("mb-md", marketingHeading.h2)}>Ready to join the journey?</h2>
-          <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>
-            Let&apos;s modernize your clinic with a platform built for the future.
+          <h2 className={cn("mb-md", marketingHeading.h2)}>
+            Ready to join the journey?
+          </h2>
+          <p
+            className={cn(
+              "mx-auto mb-xl max-w-xl text-lg",
+              marketingHeading.body,
+            )}
+          >
+            Let&apos;s modernize your clinic with a platform built for the
+            future.
           </p>
           <Button asChild size="lg" className={marketingButtonPrimaryClass}>
             <CtaLink href="/contact" location="about" label="Get started">

@@ -18,6 +18,8 @@ import { writeAuditLog } from "../utilities/audit.service";
 
 import { resolveTenantByIdOrSlug } from "../../utils/tenant-resolver";
 
+import { assertTenantAllowsAccess, syncTenantTrialStatus } from "../onboarding/trial.service";
+
 import { assertLoginNotLocked, recordLoginAttempt } from "../security/brute-force.service";
 
 import {
@@ -32,7 +34,7 @@ import {
 
 
 
-async function buildAuthResponse(userId: string, tenantId: string, email: string) {
+export async function buildAuthResponse(userId: string, tenantId: string, email: string) {
 
   const [{ roles, permissions }, tokenVersion] = await Promise.all([
 
@@ -86,158 +88,176 @@ async function buildAuthResponse(userId: string, tenantId: string, email: string
 
 
 
-export async function login(input: {
+export type LoginResult =
+  | Awaited<ReturnType<typeof buildAuthResponse>>
+  | {
+      requiresTenantSelection: true;
+      tenants: Array<{ id: string; name: string; slug: string }>;
+    };
 
-  tenantSlug?: string;
-
-  tenantId?: string;
-
+async function completeLoginForUser(input: {
+  user: { id: string; email: string; passwordHash: string; tenantId: string };
+  tenant: { id: string; status: string };
   email: string;
-
   password: string;
-
   ipAddress?: string;
-
   userAgent?: string;
-
 }) {
-
-  const tenant = await resolveTenant(input.tenantSlug, input.tenantId);
-
-  if (!tenant || tenant.status !== "ACTIVE") {
-
-    await recordLoginAttempt({
-
-      email: input.email,
-
-      ipAddress: input.ipAddress,
-
-      tenantId: tenant?.id,
-
-      success: false,
-
-      reason: "invalid_tenant",
-
-    });
-
-    throw new UnauthorizedError("Invalid credentials");
-
-  }
-
-
+  const tenant = await syncTenantTrialStatus(input.tenant.id);
+  assertTenantAllowsAccess(tenant, {
+    allowTrialExpired: tenant.status === "TRIAL_EXPIRED",
+    allowRegistered: tenant.status === "REGISTERED",
+  });
 
   await assertLoginNotLocked({
-
     email: input.email,
-
     ipAddress: input.ipAddress,
-
     tenantId: tenant.id,
-
   });
 
-
-
-  const user = await prisma.user.findUnique({
-
-    where: { tenantId_email: { tenantId: tenant.id, email: input.email.toLowerCase() } },
-
-  });
-
-
-
-  if (!user || user.status !== "ACTIVE") {
-
-    await recordLoginAttempt({
-
-      email: input.email,
-
-      ipAddress: input.ipAddress,
-
-      tenantId: tenant.id,
-
-      success: false,
-
-      reason: "invalid_user",
-
-    });
-
-    throw new UnauthorizedError("Invalid credentials");
-
-  }
-
-
-
-  const valid = await verifyPassword(input.password, user.passwordHash);
-
+  const valid = await verifyPassword(input.password, input.user.passwordHash);
   if (!valid) {
-
     await recordLoginAttempt({
-
       email: input.email,
-
       ipAddress: input.ipAddress,
-
       tenantId: tenant.id,
-
-      userId: user.id,
-
+      userId: input.user.id,
       success: false,
-
       reason: "invalid_password",
-
     });
-
     throw new UnauthorizedError("Invalid credentials");
-
   }
-
-
 
   await recordLoginAttempt({
-
     email: input.email,
-
     ipAddress: input.ipAddress,
-
     tenantId: tenant.id,
-
-    userId: user.id,
-
+    userId: input.user.id,
     success: true,
-
   });
-
-
 
   await prisma.user.update({
-
-    where: { id: user.id },
-
+    where: { id: input.user.id },
     data: { lastLoginAt: new Date() },
-
   });
-
-
 
   await writeAuditLog({
-
     tenantId: tenant.id,
-
-    userId: user.id,
-
+    userId: input.user.id,
     action: "auth.login",
-
     ipAddress: input.ipAddress,
-
     userAgent: input.userAgent,
-
   });
 
+  return buildAuthResponse(input.user.id, tenant.id, input.user.email);
+}
 
+export async function login(input: {
+  tenantSlug?: string;
+  tenantId?: string;
+  email: string;
+  password: string;
+  ipAddress?: string;
+  userAgent?: string;
+}): Promise<LoginResult> {
+  const email = input.email.toLowerCase();
 
-  return buildAuthResponse(user.id, tenant.id, user.email);
+  await assertLoginNotLocked({
+    email,
+    ipAddress: input.ipAddress,
+    tenantId: input.tenantId,
+  });
 
+  if (input.tenantSlug || input.tenantId) {
+    const tenant = await resolveTenant(input.tenantSlug, input.tenantId);
+    if (!tenant) {
+      await recordLoginAttempt({
+        email,
+        ipAddress: input.ipAddress,
+        success: false,
+        reason: "invalid_tenant",
+      });
+      throw new UnauthorizedError("Invalid credentials");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { tenantId_email: { tenantId: tenant.id, email } },
+    });
+
+    if (!user || user.status !== "ACTIVE") {
+      await recordLoginAttempt({
+        email,
+        ipAddress: input.ipAddress,
+        tenantId: tenant.id,
+        success: false,
+        reason: "invalid_user",
+      });
+      throw new UnauthorizedError("Invalid credentials");
+    }
+
+    return completeLoginForUser({
+      user,
+      tenant,
+      email,
+      password: input.password,
+      ipAddress: input.ipAddress,
+      userAgent: input.userAgent,
+    });
+  }
+
+  const candidates = await prisma.user.findMany({
+    where: { email, status: "ACTIVE" },
+    include: { tenant: true },
+  });
+
+  if (candidates.length === 0) {
+    await recordLoginAttempt({
+      email,
+      ipAddress: input.ipAddress,
+      success: false,
+      reason: "invalid_user",
+    });
+    throw new UnauthorizedError("Invalid credentials");
+  }
+
+  const validMatches = [];
+  for (const candidate of candidates) {
+    if (await verifyPassword(input.password, candidate.passwordHash)) {
+      validMatches.push(candidate);
+    }
+  }
+
+  if (validMatches.length === 0) {
+    await recordLoginAttempt({
+      email,
+      ipAddress: input.ipAddress,
+      tenantId: candidates[0]?.tenantId,
+      success: false,
+      reason: "invalid_password",
+    });
+    throw new UnauthorizedError("Invalid credentials");
+  }
+
+  if (validMatches.length > 1) {
+    return {
+      requiresTenantSelection: true,
+      tenants: validMatches.map((entry) => ({
+        id: entry.tenant.id,
+        name: entry.tenant.name,
+        slug: entry.tenant.slug,
+      })),
+    };
+  }
+
+  const user = validMatches[0]!;
+  return completeLoginForUser({
+    user,
+    tenant: user.tenant,
+    email,
+    password: input.password,
+    ipAddress: input.ipAddress,
+    userAgent: input.userAgent,
+  });
 }
 
 

@@ -24,6 +24,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   MFA_NOT_ENABLED: "MFA is not enabled for this account.",
   MFA_ALREADY_ENABLED: "MFA is already active.",
   FORBIDDEN: "You do not have permission to perform this action.",
+  CSRF_VALIDATION_FAILED: "CSRF validation failed. Please refresh the page and try again.",
   UNAUTHORIZED: "Authentication required.",
   TENANT_MISMATCH: "You cannot access resources from another tenant.",
   INVALID_REFRESH_TOKEN: "Your session expired. Please sign in again.",
@@ -31,7 +32,10 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   TOKEN_REVOKED: "This session is no longer valid.",
 };
 
-export function resolveAuthErrorMessage(payload: unknown, fallback: string): string {
+export function resolveAuthErrorMessage(
+  payload: unknown,
+  fallback: string,
+): string {
   if (!payload || typeof payload !== "object") {
     return fallback;
   }

@@ -26,7 +26,9 @@ export function PricingFAQ() {
             key={faq.q}
             className="rounded-lg border bg-card p-xl shadow-soft"
           >
-            <h3 className="mb-xs font-display text-xl font-semibold text-foreground">{faq.q}</h3>
+            <h3 className="mb-xs font-display text-xl font-semibold text-foreground">
+              {faq.q}
+            </h3>
             <p className="text-brand-gray">{faq.a}</p>
           </div>
         ))}

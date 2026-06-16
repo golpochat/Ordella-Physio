@@ -6,6 +6,7 @@ export const AUTHORIZATION_HEADER = "authorization";
 
 export const API_ROUTES = {
   auth: "/api/auth",
+  onboarding: "/api/onboarding",
   tenant: "/api/tenant",
   patient: "/api/patient",
   appointment: "/api/appointment",
@@ -54,6 +55,7 @@ export const GATEWAY_PATHS = {
   notificationProviders: "/notification-providers",
   searchIndex: "/search-index",
   subscriptionBilling: "/subscription-billing",
+  onboarding: "/onboarding",
 } as const;
 
 export type ApiServiceKey = keyof typeof API_ROUTES;
@@ -84,6 +86,9 @@ export const PUBLIC_ROUTES = [
   "/login",
   "/signup",
   "/register",
+  "/checkout",
+  "/subscribe",
+  "/start-trial",
   "/forgot-password",
   "/reset-password",
   "/verify-email",

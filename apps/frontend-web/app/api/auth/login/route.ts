@@ -47,30 +47,39 @@ export async function POST(request: Request) {
     });
   }
 
-  const data = (payload as { data?: LoginUpstreamData })?.data;
-  if (!data?.accessToken || !data.refreshToken || !data.user) {
+  const data = (payload as { data?: LoginUpstreamData | { requiresTenantSelection: true; tenants: unknown[] } })?.data;
+  if (!data) {
+    return NextResponse.json({ error: { message: "Invalid login response" } }, { status: 502 });
+  }
+
+  if ("requiresTenantSelection" in data && data.requiresTenantSelection) {
+    return NextResponse.json({ data });
+  }
+
+  const authData = data as LoginUpstreamData;
+  if (!authData.accessToken || !authData.refreshToken || !authData.user) {
     return NextResponse.json({ error: { message: "Invalid login response" } }, { status: 502 });
   }
 
   const response = NextResponse.json({
     data: {
-      accessToken: data.accessToken,
-      user: data.user,
+      accessToken: authData.accessToken,
+      user: authData.user,
     },
   });
 
   response.cookies.set(
     REFRESH_COOKIE_NAME,
-    data.refreshToken,
+    authData.refreshToken,
     getSecureCookieOptions(REFRESH_MAX_AGE_SECONDS),
   );
 
   const sessionPayload: SessionCookiePayload = {
     user: {
-      id: data.user.id,
-      role: data.user.roles?.[0] ?? data.user.role ?? "STAFF",
-      tenantId: data.user.tenantId,
-      roles: data.user.roles,
+      id: authData.user.id,
+      role: authData.user.roles?.[0] ?? authData.user.role ?? "STAFF",
+      tenantId: authData.user.tenantId,
+      roles: authData.user.roles,
     },
   };
 

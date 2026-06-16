@@ -1,4 +1,5 @@
 import { ApiError } from "./api-client";
+import { CSRF_HEADER_NAME, ensureCsrfToken } from "@/lib/auth/csrf";
 import { resolveAuthErrorMessage } from "./auth-error-messages";
 import { TENANT_HEADER } from "./constants";
 import { redirectToForbidden } from "./session-manager";
@@ -9,7 +10,10 @@ export type FetcherOptions = RequestInit & {
 };
 
 function buildUrl(path: string, params?: FetcherOptions["params"]): string {
-  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "http://localhost");
+  const url = new URL(
+    path,
+    typeof window !== "undefined" ? window.location.origin : "http://localhost",
+  );
 
   if (params) {
     for (const [key, value] of Object.entries(params)) {
@@ -26,16 +30,47 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
   return resolveAuthErrorMessage(payload, fallback);
 }
 
-export async function fetcher<T>(path: string, options: FetcherOptions = {}): Promise<T> {
+function hasAuthorizationHeader(headers?: HeadersInit): boolean {
+  if (!headers) {
+    return false;
+  }
+
+  if (headers instanceof Headers) {
+    return Boolean(headers.get("Authorization") ?? headers.get("authorization"));
+  }
+
+  if (Array.isArray(headers)) {
+    return headers.some(
+      ([key, value]) => key.toLowerCase() === "authorization" && Boolean(value),
+    );
+  }
+
+  return Object.entries(headers).some(
+    ([key, value]) => key.toLowerCase() === "authorization" && Boolean(value),
+  );
+}
+
+export async function fetcher<T>(
+  path: string,
+  options: FetcherOptions = {},
+): Promise<T> {
   const { params, headers, credentials, ...init } = options;
+  const method = (init.method ?? "GET").toUpperCase();
+  const csrfToken =
+    method !== "GET" && method !== "HEAD" && !hasAuthorizationHeader(headers)
+      ? await ensureCsrfToken()
+      : null;
+
   const response = await fetch(buildUrl(path, params), {
     ...init,
-    credentials: credentials ?? (path.startsWith("/api/auth") ? "include" : "same-origin"),
+    credentials:
+      credentials ?? (path.startsWith("/api/auth") ? "include" : "same-origin"),
     headers: {
       "Content-Type": "application/json",
       ...(getDefaultTenantId() && path.startsWith("/api/auth")
         ? { [TENANT_HEADER]: getDefaultTenantId()! }
         : {}),
+      ...(csrfToken ? { [CSRF_HEADER_NAME]: csrfToken } : {}),
       ...headers,
     },
   });
@@ -54,7 +89,11 @@ export async function fetcher<T>(path: string, options: FetcherOptions = {}): Pr
     );
   }
 
-  if (payload && typeof payload === "object" && "data" in (payload as Record<string, unknown>)) {
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "data" in (payload as Record<string, unknown>)
+  ) {
     return (payload as { data: T }).data;
   }
 

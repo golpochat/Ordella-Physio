@@ -1,7 +1,10 @@
 import { ExperimentCta } from "@/components/marketing/ExperimentCta";
 import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
 import { ScrollReveal } from "@/components/marketing/scroll-reveal";
-import { marketingButtonPrimaryClass, marketingHeading } from "@/lib/marketing-ui";
+import {
+  marketingButtonPrimaryClass,
+  marketingHeading,
+} from "@/lib/marketing-ui";
 import { cn } from "@/lib/cn";
 import { SolutionCard } from "@/components/marketing/SolutionCard";
 import { SolutionSection } from "@/components/marketing/SolutionSection";
@@ -87,10 +90,17 @@ export default function SolutionsPage() {
 
       <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
-          <h2 className={cn("mb-md", marketingHeading.h2)}>Ready to streamline your clinic?</h2>
-          <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>
-            Discover how Ordella Physio can transform your clinic&apos;s workflows and patient
-            experience.
+          <h2 className={cn("mb-md", marketingHeading.h2)}>
+            Ready to streamline your clinic?
+          </h2>
+          <p
+            className={cn(
+              "mx-auto mb-xl max-w-xl text-lg",
+              marketingHeading.body,
+            )}
+          >
+            Discover how Ordella Physio can transform your clinic&apos;s
+            workflows and patient experience.
           </p>
           <ExperimentCta
             experimentId="solutions_cta"

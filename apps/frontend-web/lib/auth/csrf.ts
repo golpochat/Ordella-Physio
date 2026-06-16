@@ -48,3 +48,9 @@ export async function ensureCsrfToken(): Promise<string | null> {
 export function clearCsrfTokenCache(): void {
   cachedCsrfToken = null;
 }
+
+export function validateBffCsrf(request: Request, cookieToken?: string | null): boolean {
+  const headerToken = request.headers.get(CSRF_HEADER_NAME);
+  const resolvedCookieToken = cookieToken ?? readCsrfTokenFromDocument();
+  return Boolean(resolvedCookieToken && headerToken && resolvedCookieToken === headerToken);
+}

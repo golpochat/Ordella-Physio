@@ -2,7 +2,16 @@ import { isSystemRole, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
 
 import type { MiddlewareSession } from "./session-types";
 
-const PUBLIC_ROUTE_PREFIXES = ["/login", "/auth"] as const;
+const PUBLIC_ROUTE_PREFIXES = [
+  "/login",
+  "/auth",
+  "/register",
+  "/checkout",
+  "/subscribe",
+  "/start-trial",
+  "/signup",
+  "/forgot-password",
+] as const;
 
 export function resolveMiddlewarePortalHome(role: string, roles?: string[]): string {
   const resolved = roles?.length

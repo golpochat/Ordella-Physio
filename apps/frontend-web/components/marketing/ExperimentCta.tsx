@@ -59,7 +59,12 @@ export function ExperimentCta({
   className,
 }: ExperimentCtaProps) {
   return (
-    <div className={cn(className?.includes("w-full") ? "flex w-full" : "inline-flex", className)}>
+    <div
+      className={cn(
+        className?.includes("w-full") ? "flex w-full" : "inline-flex",
+        className,
+      )}
+    >
       <Experiment
         id={experimentId}
         A={renderVariant(variantA, location, experimentId, "A", size)}

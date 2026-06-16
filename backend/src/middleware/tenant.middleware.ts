@@ -14,7 +14,19 @@ import { resolveTenantByIdOrSlug } from "../utils/tenant-resolver";
 
 
 
-const PUBLIC_PATHS = ["/", "/health", "/api/health", "/api/auth/login", "/api/auth/refresh", "/api/auth/csrf", "/api/auth/forgot-password"];
+const PUBLIC_PATHS = [
+  "/",
+  "/health",
+  "/api/health",
+  "/api/auth/login",
+  "/api/auth/refresh",
+  "/api/auth/csrf",
+  "/api/auth/forgot-password",
+  "/api/onboarding/start-trial",
+  "/api/onboarding/register",
+  "/api/onboarding/config",
+  "/api/onboarding/checkout/preview",
+];
 
 
 

@@ -11,7 +11,15 @@ export const CSRF_HEADER_NAME = "x-csrf-token";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
-const CSRF_EXEMPT_PREFIXES = ["/api/auth/login", "/api/auth/refresh", "/api/auth/csrf", "/api/health"];
+const CSRF_EXEMPT_PREFIXES = [
+  "/api/auth/login",
+  "/api/auth/refresh",
+  "/api/auth/csrf",
+  "/api/health",
+  "/api/onboarding/register",
+  "/api/onboarding/start-trial",
+  "/api/onboarding/checkout/preview",
+];
 
 function hasBearerAuth(req: Request): boolean {
   return Boolean(req.headers.authorization?.startsWith("Bearer "));

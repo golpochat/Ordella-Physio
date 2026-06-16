@@ -1,10 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { TENANT_HEADER, GATEWAY_PATHS, type ApiServiceKey } from "./constants";
 import { getDefaultTenantId } from "./tenant-config";
-import { proxyToClinicBackend, useClinicBackend, isClinicBackendService } from "./clinic-backend-proxy";
+import {
+  proxyToClinicBackend,
+  useClinicBackend,
+  isClinicBackendService,
+} from "./clinic-backend-proxy";
 
 const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   auth: GATEWAY_PATHS.auth,
+  onboarding: GATEWAY_PATHS.onboarding,
   tenant: GATEWAY_PATHS.tenant,
   patient: GATEWAY_PATHS.patient,
   appointment: GATEWAY_PATHS.appointment,
@@ -31,6 +36,7 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   auth: "/api/auth",
+  onboarding: "/api/onboarding",
   tenant: "/api/tenant",
   patient: "/api/patient",
   appointment: "/api/appointment",
@@ -108,7 +114,9 @@ export async function proxyToGateway(
   }
 
   const body =
-    request.method === "GET" || request.method === "HEAD" ? undefined : await request.arrayBuffer();
+    request.method === "GET" || request.method === "HEAD"
+      ? undefined
+      : await request.arrayBuffer();
 
   const upstream = await fetch(targetUrl, {
     method: request.method,

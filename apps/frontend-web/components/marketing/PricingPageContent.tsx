@@ -1,61 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PricingCard } from "@/components/marketing/PricingCard";
 import { PricingComparison } from "@/components/marketing/PricingComparison";
 import { PricingFAQ } from "@/components/marketing/PricingFAQ";
-import { PricingToggle } from "@/components/marketing/PricingToggle";
+import { PricingToggle, usePricingPeriod } from "@/components/marketing/PricingToggle";
 import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
+import { PRICING_PLANS, type PlanId } from "@/lib/pricing-plans";
+import { authClient } from "@/lib/auth-client";
+
+const PLAN_ORDER: PlanId[] = ["starter", "pro", "enterprise"];
 
 export function PricingPageContent() {
-  const [yearly, setYearly] = useState(false);
+  const { yearly, billingCycle, setYearly } = usePricingPeriod(true);
+  const [trialDays, setTrialDays] = useState<number | null>(null);
 
-  const prices = {
-    starter: yearly ? 19 : 24,
-    pro: yearly ? 39 : 49,
-    enterprise: yearly ? 79 : 99,
-  };
+  useEffect(() => {
+    void authClient
+      .getOnboardingConfig()
+      .then((config) => setTrialDays(config.trialDurationDays))
+      .catch(() => setTrialDays(14));
+  }, []);
 
   return (
     <div className="bg-background pb-2xl pt-2xl max-sm:pb-xl max-sm:pt-xl">
       <MarketingPageHero
-        title="Simple, transparent pricing"
-        description="Choose the plan that fits your clinic. No hidden fees. No contracts. All prices in Euro (€)."
+        title="Pricing that grows with your clinic."
+        description="Transparent Euro pricing. Choose a free trial or go straight to checkout. No setup fees. Cancel anytime."
       />
 
       <div className="marketing-container">
-        <PricingToggle onChange={setYearly} />
+        <PricingToggle yearly={yearly} onChange={setYearly} />
 
-        <section className="pricing-cards grid grid-cols-1 gap-lg md:grid-cols-3 md:items-center">
-          <PricingCard
-            title="Starter"
-            price={prices.starter}
-            features={["Appointments", "Patient Records", "Clinical Notes"]}
-          />
-
-          <PricingCard
-            title="Pro"
-            price={prices.pro}
-            popular
-            ctaExperimentId="pricing_pro_cta"
-            features={[
-              "Everything in Starter",
-              "Billing & Invoicing",
-              "Analytics",
-              "Messaging",
-            ]}
-          />
-
-          <PricingCard
-            title="Enterprise"
-            price={prices.enterprise}
-            features={[
-              "Everything in Pro",
-              "Multi-location",
-              "Advanced Permissions",
-              "Priority Support",
-            ]}
-          />
+        <section className="pricing-cards grid grid-cols-1 gap-lg md:grid-cols-3 md:items-stretch">
+          {PLAN_ORDER.map((planId) => {
+            const plan = PRICING_PLANS[planId];
+            return (
+              <PricingCard
+                key={planId}
+                planId={planId}
+                name={plan.name}
+                description={plan.description}
+                billingCycle={billingCycle}
+                features={plan.features}
+                popular={plan.highlighted}
+                trialDays={trialDays ?? undefined}
+                isEnterprise={planId === "enterprise"}
+              />
+            );
+          })}
         </section>
       </div>
 

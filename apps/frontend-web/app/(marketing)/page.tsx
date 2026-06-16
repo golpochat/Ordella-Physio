@@ -6,9 +6,17 @@ import { HomeSection } from "@/components/marketing/HomeSection";
 import { HomeTestimonial } from "@/components/marketing/HomeTestimonial";
 import { HomeWorkflow } from "@/components/marketing/HomeWorkflow";
 import { ScrollReveal } from "@/components/marketing/scroll-reveal";
-import { marketingButtonPrimaryClass, marketingHeading } from "@/lib/marketing-ui";
+import {
+  marketingButtonPrimaryClass,
+  marketingHeading,
+} from "@/lib/marketing-ui";
 import { cn } from "@/lib/cn";
-import { generateSEO, pageUrl, softwareApplicationJsonLd, withJsonLd } from "./seo";
+import {
+  generateSEO,
+  pageUrl,
+  softwareApplicationJsonLd,
+  withJsonLd,
+} from "./seo";
 
 export const metadata = withJsonLd(
   generateSEO({
@@ -105,12 +113,21 @@ export default function MarketingHomePage() {
           <h2 id="home-cta-title" className={cn("mb-md", marketingHeading.h2)}>
             Ready to modernize your clinic?
           </h2>
-          <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>
-            Start your journey with Ordella Physio and experience a unified, intelligent clinic
-            platform.
+          <p
+            className={cn(
+              "mx-auto mb-xl max-w-xl text-lg",
+              marketingHeading.body,
+            )}
+          >
+            Start your journey with Ordella Physio and experience a unified,
+            intelligent clinic platform.
           </p>
           <Button asChild size="lg" className={marketingButtonPrimaryClass}>
-            <CtaLink href="/contact" location="home_cta" label="Contact us to get started">
+            <CtaLink
+              href="/contact"
+              location="home_cta"
+              label="Contact us to get started"
+            >
               Contact us to get started
             </CtaLink>
           </Button>

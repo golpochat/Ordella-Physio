@@ -27,4 +27,5 @@ export const MARKETING_FOOTER_PRODUCT_LINKS: MarketingNavLink[] = [
   { href: "/features", label: "Features" },
   { href: "/solutions", label: "Solutions" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/start-trial", label: "Start Free Trial" },
 ];

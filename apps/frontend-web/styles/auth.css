@@ -103,3 +103,12 @@
   justify-content: center;
   gap: 0.5rem;
 }
+
+.auth-select {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--background, #fff);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+}

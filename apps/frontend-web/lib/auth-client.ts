@@ -9,6 +9,114 @@ export type LoginPayload = {
   tenantId?: string;
 };
 
+export type RegisterWorkspacePayload = {
+  clinicName: string;
+  email: string;
+  password: string;
+  plan: "starter" | "pro" | "enterprise";
+  billingCycle: "monthly" | "yearly";
+  intent: "trial" | "checkout";
+};
+
+export type StartTrialPayload = {
+  clinicName: string;
+  email: string;
+  password: string;
+  plan?: "starter" | "pro" | "enterprise";
+  billingCycle?: "monthly" | "yearly";
+};
+
+export type CheckoutPreviewPayload = {
+  plan: "starter" | "pro";
+  billingCycle: "monthly" | "yearly";
+  billingCountry: string;
+};
+
+export type CompleteCheckoutPayload = {
+  plan: "starter" | "pro";
+  billingCycle: "monthly" | "yearly";
+  billingCountry: string;
+  billingStreet: string;
+  billingCity: string;
+  billingPostal: string;
+  companyName?: string;
+  cardholderName: string;
+  cardNumber: string;
+  cardExpiry: string;
+  cardCvc: string;
+};
+
+export type OnboardingConfig = {
+  trialDurationDays: number;
+  vatCountries: Array<{ code: string; label: string; rate: number }>;
+  plans: string[];
+};
+
+export type CheckoutPreview = {
+  plan: string;
+  billingCycle: "monthly" | "yearly";
+  monthlyEquivalent: number;
+  baseAmount: number;
+  billingCountry: string;
+  billingCountryLabel: string;
+  vatRate: number;
+  vatAmount: number;
+  totalAmount: number;
+  renewalLabel: string;
+};
+
+export type TenantProfile = {
+  id: string;
+  name: string;
+  address?: string | null;
+  city?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
+  timezone?: string | null;
+  logoUrl?: string | null;
+  vatNumber?: string | null;
+  profileCompletion: Record<string, boolean>;
+  profileCompletionPercent: number;
+};
+
+export type TenantLoginOption = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type TenantSelectionResponse = {
+  requiresTenantSelection: true;
+  tenants: TenantLoginOption[];
+};
+
+export type StartTrialResponse = AuthTokensResponse & {
+  tenant: {
+    id: string;
+    name: string;
+    slug: string;
+    status: string;
+    trialStart: string | null;
+    trialEnd: string | null;
+    subscriptionPlan: string | null;
+  };
+  intent?: "trial" | "checkout";
+  billingCycle?: "monthly" | "yearly";
+  plan?: string;
+};
+
+export type RegisterWorkspaceResponse = StartTrialResponse;
+
+export type TenantTrialInfo = {
+  status: string;
+  trialStart: string | null;
+  trialEnd: string | null;
+  trialDaysRemaining: number | null;
+  trialExpired: boolean;
+  subscriptionPlan: string | null;
+  trialDurationDays: number;
+};
+
 export type RegisterPayload = {
   email: string;
   password: string;
@@ -47,7 +155,13 @@ export type MfaRequiredResponse = {
   tenantId: string;
 };
 
-export type LoginResponse = AuthTokensResponse | MfaRequiredResponse;
+export type LoginResponse = AuthTokensResponse | MfaRequiredResponse | TenantSelectionResponse;
+
+export function isTenantSelectionResponse(
+  response: LoginResponse,
+): response is TenantSelectionResponse {
+  return "requiresTenantSelection" in response && response.requiresTenantSelection === true;
+}
 
 export type MfaSetupResponse = {
   qrCode: string;
@@ -101,6 +215,74 @@ export const authClient = {
       method: "POST",
       headers: { [TENANT_HEADER]: payload.tenantId },
       body: JSON.stringify({ userId: payload.userId, token: payload.token }),
+    });
+  },
+
+  registerWorkspace(payload: RegisterWorkspacePayload) {
+    return fetcher<RegisterWorkspaceResponse>(`${API_ROUTES.onboarding}/register`, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getOnboardingConfig() {
+    return fetcher<OnboardingConfig>(`${API_ROUTES.onboarding}/config`);
+  },
+
+  previewCheckout(payload: CheckoutPreviewPayload) {
+    return fetcher<CheckoutPreview>(`${API_ROUTES.onboarding}/checkout/preview`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  completeCheckout(accessToken: string, tenantId: string, payload: CompleteCheckoutPayload) {
+    return fetcher<unknown>(`${API_ROUTES.onboarding}/checkout/complete`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        [TENANT_HEADER]: tenantId,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getTenantProfile(accessToken: string, tenantId: string) {
+    return fetcher<TenantProfile>(`${API_ROUTES.tenant}/profile`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        [TENANT_HEADER]: tenantId,
+      },
+    });
+  },
+
+  updateTenantProfile(
+    accessToken: string,
+    tenantId: string,
+    payload: Partial<TenantProfile> & { profileCompletion?: Record<string, boolean> },
+  ) {
+    return fetcher<TenantProfile>(`${API_ROUTES.tenant}/profile`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        [TENANT_HEADER]: tenantId,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  startTrial(payload: StartTrialPayload) {
+    return fetcher<StartTrialResponse>(`${API_ROUTES.onboarding}/start-trial`, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getTenantTrial(accessToken: string) {
+    return fetcher<TenantTrialInfo>(`${API_ROUTES.tenant}/trial`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
   },
 

@@ -1,26 +1,23 @@
-const COMPARISON_ROWS = [
-  { label: "Appointments", starter: true, pro: true, enterprise: true },
-  { label: "Patient Records", starter: true, pro: true, enterprise: true },
-  { label: "Clinical Notes", starter: true, pro: true, enterprise: true },
-  { label: "Billing & Invoicing", starter: false, pro: true, enterprise: true },
-  { label: "Analytics", starter: false, pro: true, enterprise: true },
-  { label: "Multi-location", starter: false, pro: false, enterprise: true },
-] as const;
+import { PRICING_COMPARISON_ROWS } from "@/lib/pricing-plans";
 
-function CheckCell({ included }: { included: boolean }) {
-  return (
-    <td className="py-md text-center">
-      {included ? (
-        <span className="font-medium text-brand-primary" aria-label="Included">
-          ✔
-        </span>
-      ) : (
-        <span className="text-brand-gray" aria-label="Not included">
-          —
-        </span>
-      )}
-    </td>
-  );
+function ComparisonCell({ value }: { value: boolean | string }) {
+  if (typeof value === "boolean") {
+    return (
+      <td className="py-md text-center">
+        {value ? (
+          <span className="font-medium text-brand-primary" aria-label="Included">
+            ✔
+          </span>
+        ) : (
+          <span className="text-brand-gray" aria-label="Not included">
+            —
+          </span>
+        )}
+      </td>
+    );
+  }
+
+  return <td className="py-md text-center text-sm text-foreground">{value}</td>;
 }
 
 export function PricingComparison() {
@@ -41,12 +38,12 @@ export function PricingComparison() {
             </tr>
           </thead>
           <tbody>
-            {COMPARISON_ROWS.map((row) => (
-              <tr key={row.label} className="border-b last:border-b-0">
-                <td className="py-md pl-lg text-foreground">{row.label}</td>
-                <CheckCell included={row.starter} />
-                <CheckCell included={row.pro} />
-                <CheckCell included={row.enterprise} />
+            {PRICING_COMPARISON_ROWS.map((row) => (
+              <tr key={row.feature} className="border-b last:border-b-0">
+                <td className="py-md pl-lg text-foreground">{row.feature}</td>
+                <ComparisonCell value={row.starter} />
+                <ComparisonCell value={row.pro} />
+                <ComparisonCell value={row.enterprise} />
               </tr>
             ))}
           </tbody>

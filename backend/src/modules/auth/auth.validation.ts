@@ -15,17 +15,12 @@ export const userIdParamSchema = z.object({
   id: z.string().min(1),
 });
 
-export const loginSchema = z
-  .object({
-    tenantSlug: z.string().min(1).optional(),
-    tenantId: z.string().min(1).optional(),
-    email: z.string().email().transform((value) => value.toLowerCase()),
-    password: z.string().min(8).max(128),
-  })
-  .refine((value) => Boolean(value.tenantSlug || value.tenantId), {
-    message: "tenantSlug or tenantId is required",
-    path: ["tenantSlug"],
-  });
+export const loginSchema = z.object({
+  tenantSlug: z.string().min(1).optional(),
+  tenantId: z.string().min(1).optional(),
+  email: z.string().email().transform((value) => value.toLowerCase()),
+  password: z.string().min(8).max(128),
+});
 
 export const refreshSchema = z.object({
   refreshToken: z.string().min(1),
@@ -37,16 +32,11 @@ export const logoutSchema = z.object({
   accessTokenExp: z.number().int().positive().optional(),
 });
 
-export const forgotPasswordSchema = z
-  .object({
-    tenantSlug: z.string().min(1).optional(),
-    tenantId: z.string().min(1).optional(),
-    email: z.string().email().transform((value) => value.toLowerCase()),
-  })
-  .refine((value) => Boolean(value.tenantSlug || value.tenantId), {
-    message: "tenantSlug or tenantId is required",
-    path: ["tenantSlug"],
-  });
+export const forgotPasswordSchema = z.object({
+  tenantSlug: z.string().min(1).optional(),
+  tenantId: z.string().min(1).optional(),
+  email: z.string().email().transform((value) => value.toLowerCase()),
+});
 
 export const registerUserSchema = z.object({
   email: z.string().email().transform((value) => value.toLowerCase()),

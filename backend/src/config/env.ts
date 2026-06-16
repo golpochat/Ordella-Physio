@@ -59,6 +59,7 @@ const envSchema = z
     SMTP_USER: z.string().optional(),
     SMTP_PASS: z.string().optional(),
     SMTP_FROM: z.string().default("noreply@ordella.local"),
+    TRIAL_DURATION_DAYS: z.coerce.number().int().min(1).max(90).default(14),
   })
   .superRefine((value, ctx) => {
     if (value.NODE_ENV === "production") {

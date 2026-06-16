@@ -8,8 +8,11 @@ datasource db {
 }
 
 enum TenantStatus {
+  REGISTERED
   ACTIVE
   SUSPENDED
+  TRIALING
+  TRIAL_EXPIRED
 }
 
 enum UserStatus {
@@ -93,29 +96,85 @@ enum NotificationStatus {
 }
 
 model Tenant {
-  id        String       @id @default(cuid())
-  name      String
-  slug      String       @unique
-  code      String       @unique
-  status    TenantStatus @default(ACTIVE)
-  timezone  String       @default("UTC")
-  currency  String       @default("GBP")
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id               String       @id @default(cuid())
+  name             String
+  slug             String       @unique
+  code             String       @unique
+  status           TenantStatus @default(ACTIVE)
+  timezone         String       @default("UTC")
+  currency         String       @default("GBP")
+  country          String?
+  address          String?
+  city             String?
+  postalCode       String?
+  logoUrl          String?
+  vatNumber        String?
+  subscriptionPlan String?
+  trialStart       DateTime?
+  trialEnd         DateTime?
+  profileCompletion Json?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  users         User[]
-  roles         Role[]
-  patients      Patient[]
-  therapists    Therapist[]
-  staff         Staff[]
-  appointments  Appointment[]
-  invoices      Invoice[]
-  payments      Payment[]
-  notes         Note[]
-  notifications Notification[]
-  auditLogs     AuditLog[]
+  users                  User[]
+  roles                  Role[]
+  patients               Patient[]
+  therapists             Therapist[]
+  staff                  Staff[]
+  appointments           Appointment[]
+  invoices               Invoice[]
+  payments               Payment[]
+  notes                  Note[]
+  notifications          Notification[]
+  auditLogs              AuditLog[]
+  platformSubscription   PlatformSubscription?
 
   @@map("tenants")
+}
+
+model PlatformSubscription {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  planId             String
+  billingCycle       String
+  baseAmount         Decimal  @db.Decimal(10, 2)
+  vatRate            Decimal  @db.Decimal(5, 2)
+  vatAmount          Decimal  @db.Decimal(10, 2)
+  totalAmount        Decimal  @db.Decimal(10, 2)
+  billingCountry     String
+  billingStreet      String?
+  billingCity        String?
+  billingPostal      String?
+  companyName        String?
+  cardholderName     String?
+  currency           String   @default("EUR")
+  status             String   @default("active")
+  currentPeriodStart DateTime @default(now())
+  currentPeriodEnd   DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  invoices PlatformInvoice[]
+
+  @@map("platform_subscriptions")
+}
+
+model PlatformInvoice {
+  id             String               @id @default(cuid())
+  subscriptionId String
+  subscription   PlatformSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  periodStart    DateTime
+  periodEnd      DateTime
+  baseAmount     Decimal              @db.Decimal(10, 2)
+  vatRate        Decimal              @db.Decimal(5, 2)
+  vatAmount      Decimal              @db.Decimal(10, 2)
+  totalAmount    Decimal              @db.Decimal(10, 2)
+  currency       String               @default("EUR")
+  issuedAt       DateTime             @default(now())
+
+  @@index([subscriptionId])
+  @@map("platform_invoices")
 }
 
 model Role {

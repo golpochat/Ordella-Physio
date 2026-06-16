@@ -86,8 +86,8 @@ export const PRICING_TIERS: PricingTier[] = [
       "Basic billing",
       "Email support",
     ],
-    cta: "Start free trial",
-    ctaHref: "/register",
+    cta: "Start Free Trial",
+    ctaHref: "/start-trial?plan=starter",
   },
   {
     id: "pro",
@@ -106,8 +106,8 @@ export const PRICING_TIERS: PricingTier[] = [
     ],
     highlighted: true,
     recommended: true,
-    cta: "Get started",
-    ctaHref: "/register",
+    cta: "Start Free Trial",
+    ctaHref: "/start-trial?plan=pro",
   },
   {
     id: "enterprise",
@@ -145,12 +145,12 @@ export const PRICING_FAQ_ITEMS: FaqItem[] = [
   {
     question: "Is there a free trial?",
     answer:
-      "Yes. Starter and Pro plans include a 14-day free trial with full access to plan features. No credit card is required to start.",
+      "Yes. Starter and Pro include a configurable free trial with full plan access. No credit card is required to start.",
   },
   {
     question: "Can I switch between monthly and yearly billing?",
     answer:
-      "You can choose monthly or yearly billing at signup. Yearly plans are billed annually and include a 20% discount compared to monthly pricing.",
+      "Choose monthly or yearly on the pricing page. Yearly plans are billed annually and include a discount compared to monthly pricing.",
   },
   {
     question: "What happens when I outgrow my plan?",
@@ -171,34 +171,34 @@ export const PRICING_FAQ_ITEMS: FaqItem[] = [
 
 export const CORE_FEATURES: FeatureItem[] = [
   {
-    title: "Smart Scheduling",
-    description: "Manage appointments, reminders, and therapist availability in one place.",
+    title: "Enterprise Scheduling",
+    description: "Multi-therapist calendars, automated reminders, and waitlist management at scale.",
     icon: "calendar",
   },
   {
-    title: "Patient Management",
-    description: "Centralized patient profiles, history, and care pathways.",
+    title: "Unified Patient Records",
+    description: "Secure profiles, intake workflows, and longitudinal care history for every patient.",
     icon: "users",
   },
   {
-    title: "Clinical Notes",
-    description: "Structured SOAP notes, templates, and secure documentation.",
+    title: "Clinical Documentation",
+    description: "SOAP notes, treatment templates, and audit-ready documentation built for physiotherapy.",
     icon: "notes",
   },
   {
-    title: "Billing & Payments",
-    description: "Invoicing, payment tracking, and insurance-ready workflows.",
+    title: "Revenue Operations",
+    description: "Invoicing, payment tracking, and subscription billing designed for clinic finance teams.",
     icon: "billing",
   },
   {
-    title: "Analytics",
-    description: "Real-time insights into clinic performance and outcomes.",
+    title: "Operational Intelligence",
+    description: "Real-time dashboards for utilization, outcomes, and clinic performance KPIs.",
     icon: "activity",
   },
   {
-    title: "Role-Based Access",
-    description: "Tailored dashboards for admins, therapists, staff, and patients.",
-    icon: "settings",
+    title: "Tenant Isolation & RBAC",
+    description: "Enterprise-grade access controls with isolated data per clinic and role-based permissions.",
+    icon: "multitenant",
   },
 ];
 
@@ -213,24 +213,24 @@ export const PRODUCT_MODULES: ProductModule[] = [
 
 export const SOLUTIONS: SolutionItem[] = [
   {
-    title: "For Clinics",
-    audience: "Clinic Admins",
-    description: "Streamline operations, manage staff, and grow your practice with unified tools.",
+    title: "Clinic Operations",
+    audience: "Clinic Administrators",
+    description: "Launch in minutes with self-serve onboarding, staff management, and compliance-ready controls.",
   },
   {
-    title: "For Therapists",
-    audience: "Therapists",
-    description: "Focus on patient care with intuitive scheduling, notes, and caseload management.",
+    title: "Therapist Productivity",
+    audience: "Physiotherapists",
+    description: "Spend more time with patients using streamlined caseload, notes, and treatment planning tools.",
   },
   {
-    title: "For Staff",
-    audience: "Front Desk & Coordinators",
-    description: "Coordinate check-ins, scheduling, and billing with a workspace built for daily operations.",
+    title: "Front Desk Excellence",
+    audience: "Operations Staff",
+    description: "Coordinate arrivals, scheduling changes, and billing from one reliable front-office workspace.",
   },
   {
-    title: "For Patients",
+    title: "Patient Engagement",
     audience: "Patients",
-    description: "Book appointments, view invoices, and access care notes from a simple portal.",
+    description: "Offer modern self-service booking, visit history, and secure communication between appointments.",
   },
 ];
 

@@ -26,6 +26,7 @@ const CLINIC_BACKEND_PREFIX: Partial<Record<ApiServiceKey, string>> = {
   audit: "/api/audit-logs",
   notifications: "/api/notifications",
   staffMember: "/api/staff",
+  tenant: "/api/tenant",
   userRole: "/api/rbac",
 };
 

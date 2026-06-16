@@ -1,4 +1,3 @@
-import { ExperimentCta } from "@/components/marketing/ExperimentCta";
 import { CtaLink } from "@/components/marketing/CtaLink";
 import { ProductMockup } from "@/components/marketing/product-mockup";
 
@@ -8,39 +7,33 @@ export default function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="marketing-container hero-inner">
+        <p className="hero-eyebrow fade-in">Enterprise physiotherapy SaaS</p>
         <h1 id="hero-title" className="hero-title fade-in">
-          Modern physiotherapy software for clinics that want to grow
+          Run your clinic on one secure, enterprise-grade platform
         </h1>
 
         <p className="hero-subtitle fade-in-delayed">
-          Ordella Physio brings appointments, notes, billing, messaging, and analytics into one
-          clean, powerful platform — built for modern clinics.
+          Ordella Physio unifies scheduling, clinical notes, billing, and analytics for growing
+          physiotherapy organizations — with tenant isolation, role-based access, and a 14-day free
+          trial to get started today.
         </p>
 
         <div className="hero-cta-group fade-in-stagger">
-          <ExperimentCta
-            experimentId="hero_cta"
-            location="hero"
-            variantA={{
-              href: "/contact",
-              label: "Get started",
-              children: "Get Started",
-              buttonClassName: heroCtaPrimaryClass,
-            }}
-            variantB={{
-              href: "/contact",
-              label: "Book a demo",
-              children: "Book a Demo",
-              buttonClassName: heroCtaPrimaryClass,
-            }}
-          />
           <CtaLink
-            href="/product"
+            href="/start-trial"
             location="hero"
-            label="See product overview"
+            label="Start free trial"
+            className={heroCtaPrimaryClass}
+          >
+            Start Free Trial
+          </CtaLink>
+          <CtaLink
+            href="/pricing"
+            location="hero"
+            label="View pricing"
             className="hero-cta-secondary ripple"
           >
-            See Product
+            View Pricing
           </CtaLink>
         </div>
 

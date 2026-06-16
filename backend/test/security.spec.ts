@@ -83,7 +83,6 @@ describe.sequential("security auth flows", () => {
       const login = await request(app)
         .post("/api/auth/login")
         .send({
-          tenantSlug: "demo-clinic",
           email: "admin@demo-clinic.dev",
           password: "Admin123!",
         });
@@ -103,7 +102,6 @@ describe.sequential("security auth flows", () => {
       await request(app)
         .post("/api/auth/login")
         .send({
-          tenantSlug: "demo-clinic",
           email,
           password: "definitely-wrong-password",
         });
@@ -112,7 +110,6 @@ describe.sequential("security auth flows", () => {
     const blocked = await request(app)
       .post("/api/auth/login")
       .send({
-        tenantSlug: "demo-clinic",
         email,
         password: "definitely-wrong-password",
       });
@@ -128,7 +125,6 @@ describe.sequential("security auth flows", () => {
     const login = await request(app)
       .post("/api/auth/login")
       .send({
-        tenantSlug: "demo-clinic",
         email: "admin@demo-clinic.dev",
         password: "Admin123!",
       });

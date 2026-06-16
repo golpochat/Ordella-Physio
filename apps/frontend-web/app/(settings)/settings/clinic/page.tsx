@@ -9,7 +9,9 @@ export default function ClinicSettingsPage() {
           <CardTitle>Clinic profile</CardTitle>
         </CardHeader>
         <CardBody>
-          <p className="text-sm text-muted-foreground">Tenant-aware clinic configuration scaffold.</p>
+          <p className="text-sm text-muted-foreground">
+            Tenant-aware clinic configuration scaffold.
+          </p>
         </CardBody>
       </Card>
     </div>

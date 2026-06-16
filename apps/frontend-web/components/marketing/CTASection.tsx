@@ -16,8 +16,8 @@ const ctaOutlineClass = cn(
 );
 
 export function CTASection({
-  title = "Ready to transform your practice?",
-  description = "Join clinics already using Ordella Physio to deliver better patient care with less admin overhead.",
+  title = "Ready to launch your clinic on enterprise-grade software?",
+  description = "Start a 14-day free trial with full platform access. No credit card required.",
   showPricingLink = false,
 }: CTASectionProps) {
   return (
@@ -36,8 +36,8 @@ export function CTASection({
               "bg-primary-foreground text-primary hover:bg-primary-foreground/90",
             )}
           >
-            <CtaLink href="/register" location="cta_section" label="Get started">
-              Get Started
+            <CtaLink href="/start-trial" location="cta_section" label="Start free trial">
+              Start Free Trial
             </CtaLink>
           </Button>
           {showPricingLink ? (

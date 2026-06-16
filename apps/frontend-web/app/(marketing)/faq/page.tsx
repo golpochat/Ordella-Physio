@@ -4,7 +4,10 @@ import { FAQSection } from "@/components/marketing/FAQSection";
 import { MarketingPageHero } from "@/components/marketing/MarketingPageHero";
 import { ScrollReveal } from "@/components/marketing/scroll-reveal";
 import { cn } from "@/lib/cn";
-import { marketingButtonPrimaryClass, marketingHeading } from "@/lib/marketing-ui";
+import {
+  marketingButtonPrimaryClass,
+  marketingHeading,
+} from "@/lib/marketing-ui";
 import { generateSEO, pageUrl } from "../seo";
 
 export const metadata = generateSEO({
@@ -74,9 +77,17 @@ export default function FaqPage() {
 
       <section className="marketing-container mt-2xl py-2xl text-center max-sm:mt-xl max-sm:py-xl">
         <ScrollReveal>
-          <h2 className={cn("mb-md", marketingHeading.h2)}>Still have questions?</h2>
-          <p className={cn("mx-auto mb-xl max-w-xl text-lg", marketingHeading.body)}>
-            Our team is here to help you understand how Ordella Physio fits your clinic.
+          <h2 className={cn("mb-md", marketingHeading.h2)}>
+            Still have questions?
+          </h2>
+          <p
+            className={cn(
+              "mx-auto mb-xl max-w-xl text-lg",
+              marketingHeading.body,
+            )}
+          >
+            Our team is here to help you understand how Ordella Physio fits your
+            clinic.
           </p>
           <Button asChild size="lg" className={marketingButtonPrimaryClass}>
             <CtaLink href="/contact" location="faq" label="Contact us">

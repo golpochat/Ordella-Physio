@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { Loader2 } from "@ordella/shared-icons";
-import { TenantSelector } from "@/components/auth/tenant-selector";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { getDefaultTenantId } from "@/lib/tenant-config";
+import type { TenantLoginOption } from "@/lib/auth-client";
 
 export type LoginFormValues = {
   email: string;
@@ -15,8 +14,10 @@ export type LoginFormValues = {
 };
 
 export type LoginFormProps = {
-  onSubmit: (values: LoginFormValues & { tenantId: string }) => Promise<void>;
-  initialTenantId?: string;
+  onSubmit: (values: LoginFormValues & { tenantId?: string }) => Promise<void>;
+  tenantOptions?: TenantLoginOption[] | null;
+  onTenantSelect?: (tenantId: string) => void;
+  selectedTenantId?: string;
 };
 
 type FieldErrors = Partial<Record<keyof LoginFormValues, string>>;
@@ -41,8 +42,12 @@ function validate(values: LoginFormValues): FieldErrors {
   return errors;
 }
 
-export function LoginForm({ onSubmit, initialTenantId }: LoginFormProps) {
-  const [tenantId, setTenantId] = useState(initialTenantId ?? getDefaultTenantId() ?? "");
+export function LoginForm({
+  onSubmit,
+  tenantOptions,
+  onTenantSelect,
+  selectedTenantId,
+}: LoginFormProps) {
   const [values, setValues] = useState<LoginFormValues>({ email: "", password: "" });
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -59,14 +64,18 @@ export function LoginForm({ onSubmit, initialTenantId }: LoginFormProps) {
       return;
     }
 
-    if (!tenantId) {
-      setFormError("Please select a clinic before signing in.");
+    if (tenantOptions?.length && !selectedTenantId) {
+      setFormError("Select which clinic you want to sign in to.");
       return;
     }
 
     setSubmitting(true);
     try {
-      await onSubmit({ ...values, email: values.email.trim(), tenantId });
+      await onSubmit({
+        ...values,
+        email: values.email.trim(),
+        tenantId: selectedTenantId,
+      });
     } catch (error) {
       setFormError(getApiErrorMessage(error, "Unable to sign in. Please try again."));
     } finally {
@@ -78,7 +87,24 @@ export function LoginForm({ onSubmit, initialTenantId }: LoginFormProps) {
     <form className="auth-form-stack" onSubmit={handleSubmit} noValidate>
       {formError ? <p className="auth-form-error">{formError}</p> : null}
 
-      <TenantSelector value={tenantId} onChange={setTenantId} />
+      {tenantOptions?.length ? (
+        <div className="auth-field-stack">
+          <Label htmlFor="tenant">Clinic</Label>
+          <select
+            id="tenant"
+            className="auth-select"
+            value={selectedTenantId ?? ""}
+            onChange={(event) => onTenantSelect?.(event.target.value)}
+          >
+            <option value="">Select your clinic</option>
+            {tenantOptions.map((tenant) => (
+              <option key={tenant.id} value={tenant.id}>
+                {tenant.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
 
       <div className="auth-field-stack">
         <Label htmlFor="email">Email</Label>
@@ -105,7 +131,7 @@ export function LoginForm({ onSubmit, initialTenantId }: LoginFormProps) {
 
       <Button type="submit" className="auth-submit-button" disabled={submitting}>
         {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        {submitting ? "Signing in..." : "Sign in"}
+        {submitting ? "Signing in..." : "Log in"}
       </Button>
     </form>
   );

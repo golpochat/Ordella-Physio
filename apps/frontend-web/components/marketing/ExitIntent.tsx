@@ -70,7 +70,10 @@ export default function ExitIntent() {
         className="max-w-md rounded-lg bg-card p-2xl text-center shadow-medium"
         onClick={(event) => event.stopPropagation()}
       >
-        <h3 id="exit-intent-title" className="mb-md font-display text-2xl font-bold text-foreground">
+        <h3
+          id="exit-intent-title"
+          className="mb-md font-display text-2xl font-bold text-foreground"
+        >
           Leaving already?
         </h3>
         <p className="mb-xl text-brand-gray">

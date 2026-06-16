@@ -11,6 +11,8 @@ import { getUserPortalRoles } from "@/lib/nav-roles";
 import { getBrandAbbreviation } from "@/lib/nav-brand";
 import { mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
 import { TenantSuspendedBanner } from "@/components/tenants/TenantSuspendedBanner";
+import { TrialBanner } from "@/components/tenants/TrialBanner";
+import { RegisteredTenantBanner } from "@/components/tenants/RegisteredTenantBanner";
 import {
   NAV_BRAND_TITLE,
   NAV_PROFILE_HREF,
@@ -300,6 +302,8 @@ export function AppLayout({
         />
         <main className="dashboard-content">
           <TenantSuspendedBanner />
+          <RegisteredTenantBanner />
+          <TrialBanner />
           <div className="dashboard-page">{children}</div>
         </main>
       </div>

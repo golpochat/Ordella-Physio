@@ -29,24 +29,25 @@ export default function Footer({ showCta = true }: FooterProps) {
     >
       {showCta ? (
         <div className="footer-cta marketing-container mb-xl rounded-lg bg-card p-xl text-center shadow-soft max-sm:p-xl">
-          <h2 className={cn("mb-sm", marketingHeading.h3)}>Ready to modernize your clinic?</h2>
+          <h2 className={cn("mb-sm", marketingHeading.h3)}>Launch your clinic in minutes</h2>
           <p className={cn("mb-md", marketingHeading.body)}>
-            Join clinics using Ordella Physio to streamline operations and patient care.
+            Start a 14-day free trial and onboard your team with enterprise-grade security from day
+            one.
           </p>
           <ExperimentCta
             experimentId="footer_cta"
             location="footer"
             size="default"
             variantA={{
-              href: "/contact",
-              label: "Footer get started",
-              children: "Get Started",
+              href: "/start-trial",
+              label: "Footer start free trial",
+              children: "Start Free Trial",
               buttonClassName: marketingButtonPrimaryClass,
             }}
             variantB={{
-              href: "/contact",
-              label: "Footer book a demo",
-              children: "Book a Demo",
+              href: "/pricing",
+              label: "Footer view pricing",
+              children: "View Pricing",
               buttonClassName: marketingButtonPrimaryClass,
             }}
           />
@@ -59,8 +60,8 @@ export default function Footer({ showCta = true }: FooterProps) {
             <MarketingLogo />
           </Link>
           <p className="max-w-sm text-brand-gray max-sm:mx-auto">
-            A modern, unified platform for physiotherapy clinics — built for clarity, efficiency,
-            and exceptional patient care.
+            Enterprise physiotherapy software with secure multi-tenant architecture, modern patient
+            workflows, and self-serve onboarding.
           </p>
         </div>
 

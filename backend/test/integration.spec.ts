@@ -17,7 +17,6 @@ describe.sequential("clinic backend integration", () => {
       const login = await request(app)
         .post("/api/auth/login")
         .send({
-          tenantSlug: "demo-clinic",
           email: "admin@demo-clinic.dev",
           password: "Admin123!",
         });

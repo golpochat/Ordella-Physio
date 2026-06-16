@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { authRouter } from "../modules/auth";
+import { onboardingRouter } from "../modules/onboarding";
+import { tenantRouter } from "../modules/tenant/tenant.routes";
 import { patientsRouter } from "../modules/patients";
 import { appointmentsRouter } from "../modules/appointments";
 import { therapistsRouter } from "../modules/therapists";
@@ -11,6 +13,7 @@ import { notificationsRouter } from "../modules/notifications";
 import { rbacRouter } from "../modules/rbac";
 import { authMiddleware, requireAuth } from "../middleware/tenant.middleware";
 import { requireTenant } from "../middleware/tenant";
+import { enforceTenantAccess } from "../middleware/tenant-access";
 import { asyncHandler } from "../utils/async-handler";
 import { listAuditLogs } from "../modules/utilities/audit.service";
 import { policies } from "../modules/rbac/policies";
@@ -22,9 +25,12 @@ apiRouter.get("/health", (_req, res) => {
 });
 
 apiRouter.use("/auth", authRouter);
+apiRouter.use("/onboarding", onboardingRouter);
 
 const tenantScoped = Router();
-tenantScoped.use(authMiddleware, requireAuth, requireTenant);
+tenantScoped.use(authMiddleware, requireAuth, requireTenant, enforceTenantAccess);
+
+tenantScoped.use("/tenant", tenantRouter);
 
 tenantScoped.use("/patients", patientsRouter);
 tenantScoped.use("/appointments", appointmentsRouter);

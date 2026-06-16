@@ -5,9 +5,13 @@ import { useRouter } from "next/navigation";
 import {
   authClient,
   isMfaRequiredResponse,
+  isTenantSelectionResponse,
   type AuthTokensResponse,
+  type CompleteCheckoutPayload,
   type LoginPayload,
-  type RegisterPayload,
+  type RegisterWorkspacePayload,
+  type StartTrialPayload,
+  type TenantSelectionResponse,
 } from "@/lib/auth-client";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { resolveUserRoles } from "@/lib/rbac";
@@ -59,9 +63,13 @@ export function useAuth() {
   );
 
   const login = useCallback(
-    async (payload: LoginPayload) => {
+    async (payload: LoginPayload): Promise<TenantSelectionResponse | void> => {
       try {
         const response = await authClient.login(payload);
+
+        if (isTenantSelectionResponse(response)) {
+          return response;
+        }
 
         if (isMfaRequiredResponse(response)) {
           const params = new URLSearchParams({
@@ -72,25 +80,80 @@ export function useAuth() {
           return;
         }
 
-        const session = applySession(response, payload.tenantId);
+        const session = applySession(response, response.user.tenantId);
         router.push(getPortalForRole(session.user.role));
       } catch (error) {
-        throw new Error(getApiErrorMessage(error, "Unable to sign in. Check your credentials and tenant."));
+        throw new Error(getApiErrorMessage(error, "Unable to sign in. Check your credentials."));
       }
     },
     [applySession, router],
   );
 
-  const register = useCallback(
-    async (payload: RegisterPayload) => {
+  const registerWorkspace = useCallback(
+    async (payload: RegisterWorkspacePayload) => {
       try {
-        const response = applySession(await authClient.register(payload), payload.tenantId);
-        router.push(getPortalForRole(response.user.role));
+        const result = await authClient.registerWorkspace(payload);
+        const { tenant: tenantInfo, intent, billingCycle, plan, ...auth } = result;
+        const session = applySession(auth, tenantInfo.name);
+
+        if (billingCycle && plan && (intent === "checkout" || intent === "trial")) {
+          const params = new URLSearchParams({
+            plan,
+            cycle: billingCycle,
+            intent,
+          });
+          router.push(`/checkout?${params.toString()}`);
+          return session;
+        }
+
+        router.push(getPortalForRole(session.user.role));
+        return session;
       } catch (error) {
-        throw new Error(getApiErrorMessage(error, "Unable to create account. Please try again."));
+        throw new Error(getApiErrorMessage(error, "Unable to create your clinic workspace."));
       }
     },
     [applySession, router],
+  );
+
+  const startTrial = useCallback(
+    async (payload: StartTrialPayload) => {
+      return registerWorkspace({
+        clinicName: payload.clinicName,
+        email: payload.email,
+        password: payload.password,
+        plan: payload.plan ?? "starter",
+        billingCycle: payload.billingCycle ?? "yearly",
+        intent: "trial",
+      });
+    },
+    [registerWorkspace],
+  );
+
+  const refresh = useCallback(async () => {
+    const response = normalizeAuthResponse(await authClient.refresh());
+    setSession({
+      accessToken: response.accessToken,
+      user: response.user,
+    });
+    syncTenantFromSession();
+    updateTokens(response.accessToken);
+  }, [setSession, updateTokens]);
+
+  const completeCheckout = useCallback(
+    async (payload: CompleteCheckoutPayload) => {
+      if (!accessToken || !user?.tenantId) {
+        throw new Error("You must be signed in to complete checkout.");
+      }
+
+      try {
+        await authClient.completeCheckout(accessToken, user.tenantId, payload);
+        await refresh();
+        router.push(getPortalForRole(user.role ?? "ADMIN"));
+      } catch (error) {
+        throw new Error(getApiErrorMessage(error, "Unable to complete payment."));
+      }
+    },
+    [accessToken, refresh, router, user],
   );
 
   const logout = useCallback(async () => {
@@ -106,23 +169,15 @@ export function useAuth() {
     router.push("/login");
   }, [accessToken, router, tenant?.id, user?.tenantId]);
 
-  const refresh = useCallback(async () => {
-    const response = normalizeAuthResponse(await authClient.refresh());
-    setSession({
-      accessToken: response.accessToken,
-      user: response.user,
-    });
-    syncTenantFromSession();
-    updateTokens(response.accessToken);
-  }, [setSession, updateTokens]);
-
   return {
     accessToken,
     user,
     tenant,
     isAuthenticated,
     login,
-    register,
+    registerWorkspace,
+    startTrial,
+    completeCheckout,
     logout,
     refresh,
   };

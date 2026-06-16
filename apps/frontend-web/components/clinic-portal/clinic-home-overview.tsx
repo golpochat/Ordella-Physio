@@ -16,6 +16,8 @@ import {
 import { partitionClinicAppointments } from "@/lib/clinic-portal-utils";
 import { isRateLimitError } from "@/lib/api-error";
 
+import { ProfileCompletionWizard } from "@/components/clinic-portal/profile-completion-wizard";
+
 export function ClinicHomeOverview() {
   const { displayName } = useClinicContext();
   const appointmentsQuery = useClinicAppointments();
@@ -71,6 +73,7 @@ export function ClinicHomeOverview() {
 
   return (
     <>
+      <ProfileCompletionWizard />
       <PageHeader
         title={`Welcome, ${displayName}`}
         subtitle="Manage therapists, patients, appointments, and clinic operations."
