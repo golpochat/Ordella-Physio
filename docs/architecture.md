@@ -1,165 +1,86 @@
 # Architecture — Ordella Physio
 
-## System Overview
+## System overview
 
-Ordella Physio is a Turborepo monorepo with three frontend apps, nine backend microservices, shared packages, and infrastructure tooling.
+Ordella Physio is a **pnpm + Turborepo** monorepo. Production traffic is consolidating on a single Next.js app with an optional **clinic monolith** (`backend/`) for local/simple deployments and a **microservice stack** behind **api-gateway** for Docker and scale-out.
 
 ```
-┌─────────────┐  ┌─────────────┐
-│  web :3000  │  │  app :3001  │
-│  Marketing  │  │  Dashboard  │
-└──────┬──────┘  └──────┬──────┘
-       │                │
-       └────────┬───────┘
-                ▼
-       ┌─────────────────┐
-       │  API Gateway    │
-       │     :4000       │
-       └────────┬────────┘
-                │
-    ┌───────────┼───────────┐
-    ▼           ▼           ▼
- auth:4001  tenant:4002  patient:4003
-    │           │           │
- appointment  notes     billing
-   :4004      :4005      :4006
-    │           │           │
- payment    communication  reporting
-   :4007      :4008        :4009
+┌──────────────────────────────────────────────────────────────┐
+│  apps/frontend-web :3010                                     │
+│  Marketing · Auth/Checkout · Clinic/Therapist/Staff/       │
+│  Patient/Pharmacy/Super-admin/Organization portals           │
+│  BFF: /api/* → gateway or clinic-backend                      │
+└───────────────────────────┬──────────────────────────────────┘
+                            │
+         ┌──────────────────┴──────────────────┐
+         ▼                                     ▼
+┌─────────────────┐                 ┌─────────────────────┐
+│ clinic-backend  │                 │ api-gateway :3049   │
+│ (optional) :4000│                 │ NestJS HTTP proxy   │
+│ onboarding,     │                 └──────────┬──────────┘
+│ legacy routes   │                            │
+└─────────────────┘                 ┌──────────┴──────────┐
+                                    ▼                     ▼
+                            auth · tenant · patient   billing · org
+                            appointment · notes · …   (35+ services)
 ```
 
-## Monorepo Layout
+**Billing truth:** platform Stripe subscriptions and webhooks live in **`billing-service`** only. See [billing-architecture.md](./billing-architecture.md). `subscription-billing-service` is deprecated.
 
-| Path                                             | Purpose                                     |
-| ------------------------------------------------ | ------------------------------------------- |
-| `apps/web`                                       | Next.js 14 marketing site                   |
-| `apps/app`                                       | Next.js 14 authenticated dashboard          |
-| `services/api-gateway`                           | NestJS API gateway routing to services      |
-| `services/*`                                     | Domain microservices (Express + TypeScript) |
-| `packages/ui`                                    | Shared React UI (Tailwind)                  |
-| `packages/shared`                                | DTOs, types, event contracts                |
-| `packages/config`                                | ESLint, Prettier, TS configs                |
-| `infrastructure/deployment-layer`                | Docker Compose and Kubernetes deployment    |
-| `infrastructure/gateway-load-balancer`           | Traefik load balancer and routing           |
-| `infrastructure/global-caching-layer`            | Redis caching layer                         |
-| `infrastructure/global-logging-layer`            | Loki and Promtail logging                   |
-| `infrastructure/global-metrics-monitoring-layer` | Prometheus, Grafana, and Tempo              |
-| `infrastructure/developer-tooling-layer`         | Linting, formatting, and CI templates       |
+**Dual backend switch:** `USE_CLINIC_BACKEND=true` routes many portal BFF calls to the monolith; Docker dev defaults to gateway + microservices. Onboarding in gateway mode is proxied to `CLINIC_BACKEND_URL` (`/api/onboarding/*`).
 
-## Service Boundaries
+## Monorepo layout
 
-Each microservice owns its domain data and exposes REST APIs. Cross-service communication uses:
+| Path | Purpose |
+|------|---------|
+| `apps/frontend-web` | Unified web app (marketing + all portals + BFF) |
+| `apps/web`, `apps/app`, `apps/admin-dashboard`, `apps/marketing-site` | **Deprecated** — see each `DEPRECATED.md` |
+| `backend/` | Express clinic monolith (onboarding, legacy clinic APIs) |
+| `services/api-gateway` | NestJS gateway → microservices |
+| `services/*` | Domain microservices (NestJS / Express + Prisma) |
+| `packages/shared` | Shared types, billing truth, integrations |
+| `packages/config` | Env schemas, service URL config |
+| `packages/security`, `packages/validation` | RBAC, guards, Zod DTOs |
+| `infrastructure/deployment-layer` | Docker Compose, K8s manifests |
+| `docs/` | Architecture, ops, billing, audit tracker |
 
-1. **Synchronous**: API Gateway → service HTTP calls
-2. **Asynchronous** (planned): Domain events via message broker (Redis Streams / RabbitMQ)
+## Service boundaries
 
-### Event Contracts
+Each microservice owns its database schema (Postgres). Cross-service calls are **synchronous HTTP** via api-gateway. Async domain events use **NATS JetStream** where wired (see `packages/shared` event contracts).
 
-Defined in `@ordella/shared/events`:
+### Key platform services
 
-- `appointment.created`, `appointment.cancelled`
-- `invoice.created`, `payment.succeeded`
-- `reminder.sent`
+| Service | Port (Docker) | Responsibility |
+|---------|---------------|----------------|
+| core-service (auth) | 3051 | Users, JWT, roles |
+| tenant-service | 3052 | Tenants, trials, billing context sync |
+| billing-service | 3056 | Clinical invoices + **platform Stripe** |
+| organization-service | 3066 | Organizations, org-level billing metadata |
+| ai-notes-service | 3063 | AI note generation + usage metering |
+| file-storage-service | 3071 | Uploads, signed URLs, optional ClamAV |
 
-## Multi-Tenancy
+## Multi-tenancy
 
-- Every request carries a `tenantId` (from JWT)
-- Services enforce tenant scoping at the data layer
-- Shared auth service issues tokens with tenant + role claims
+- JWT carries `tenantId`, role, and permissions.
+- Gateway forwards `x-tenant-id` (and user headers) to services.
+- `SYSTEM` role bypasses tenant scoping for super-admin routes.
 
-## Technology Stack
+## Technology stack
 
-| Layer              | Technology                                  |
-| ------------------ | ------------------------------------------- |
-| Frontend           | Next.js 14, React 18, Tailwind CSS          |
-| API Gateway        | Express, http-proxy-middleware              |
-| Services           | Express, TypeScript                         |
-| Monorepo           | Turborepo, pnpm workspaces                  |
-| Database (planned) | PostgreSQL per service or schema-per-tenant |
-| Cache (planned)    | Redis                                       |
-| Payments           | Stripe                                      |
-| Containerization   | Docker, docker-compose                      |
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 14, React 18, Tailwind |
+| API gateway | NestJS |
+| Services | NestJS / Express, TypeScript, Prisma |
+| Monorepo | Turborepo, pnpm workspaces |
+| Data | PostgreSQL per service |
+| Cache / rate limit | Redis, Upstash (frontend) |
+| Payments | Stripe (billing-service) |
+| Observability | Prometheus, Grafana, Loki (infra layers) |
 
-## Security
+## Related docs
 
-- Helmet + CORS on all services
-- JWT access tokens (15 min) + refresh tokens (7 days)
-- RBAC enforced at gateway and service level
-- Secrets via environment variables / external secret store
-
-## Deployment
-
-- **Local**: `pnpm dev` via Turborepo; full stack via `docker compose`
-- **Production** (future): Kubernetes with Helm, ingress to gateway, managed PostgreSQL
-
-1️⃣ Final Master Architecture Diagram (all components)
-Here’s a text/ASCII architecture diagram that matches everything we’ve defined so far.
-
-                         ┌───────────────────────────────────────────┐
-                         │               CLIENT LAYER                │
-                         │  - Web App (Tenant UI + Admin UI)         │
-                         │  - Internal Tools                         │
-                         └───────────────────────────────────────────┘
-                                           │
-                                           ▼
-                         ┌───────────────────────────────────────────┐
-                         │             AI GATEWAY LAYER              │
-                         │  - AI Gateway & Rate Limiting             │
-                         │  - API Keys & Scopes                      │
-                         │  - Token & Cost Budgets                   │
-                         │  - Abuse Detection                        │
-                         └───────────────────────────────────────────┘
-                                           │
-                                           ▼
-
-┌───────────────────────────────────────────────────────────────────────────────────────┐
-│ CORE AI PLATFORM SERVICES │
-│ │
-│ ┌───────────────────────┐ ┌───────────────────────┐ ┌─────────────────────────┐ │
-│ │ AIService │ │ AITrainingService │ │ AI Deploy Service │ │
-│ │ - Inference Router │ │ - Training Jobs │ │ - Model Deployment │ │
-│ │ - Provider Registry │ │ - Experiments │ │ - Multi-Region Serving │ │
-│ │ - Feature Flags (A/B) │ │ - Evaluation Suite │ │ - Canary Rollout │ │
-│ │ - Drift Integration │ │ - Promotion Workflow │ │ - Health & Failover │ │
-│ └───────────────────────┘ └───────────────────────┘ └─────────────────────────┘ │
-│ │
-│ ┌───────────────────────────────┐ ┌───────────────────────────────┐ │
-│ │ Dataset Manager │ │ AI Monitoring & Drift │ │
-│ │ - Datasets, Versions │ │ - Drift Detection (data, │ │
-│ │ - Records, Labels │ │ concept, embedding, perf) │ │
-│ │ - Embeddings │ │ - Drift Events & Metrics │ │
-│ └───────────────────────────────┘ └───────────────────────────────┘ │
-│ │
-│ ┌───────────────────────────────┐ ┌───────────────────────────────┐ │
-│ │ Cost & Budget Service │ │ Security & Compliance │ │
-│ │ - Cost Profiles │ │ - Audit Logs │ │
-│ │ - Usage Aggregates │ │ - PII Detection & Redaction │ │
-│ │ - Budgets & Alerts │ │ - Access Policies │ │
-│ └───────────────────────────────┘ └───────────────────────────────┘ │
-│ │
-│ ┌───────────────────────────────┐ │
-│ │ Observability & Telemetry │ │
-│ │ - Traces (spans) │ │
-│ │ - Logs │ │
-│ │ - Metrics & Heatmaps │ │
-│ │ - Bottleneck Detection │ │
-│ └───────────────────────────────┘ │
-└───────────────────────────────────────────────────────────────────────────────────────┘
-
-                                           │
-                                           ▼
-                         ┌───────────────────────────────────────────┐
-                         │           EXTERNAL AI PROVIDERS           │
-                         │  - OpenAI / Azure OpenAI / Anthropic      │
-                         │  - Local Models (LLM, Embeddings)         │
-                         └───────────────────────────────────────────┘
-
-                                           │
-                                           ▼
-                         ┌───────────────────────────────────────────┐
-                         │           STORAGE & INFRA LAYER           │
-                         │  - DB (Postgres)                          │
-                         │  - Object Storage (S3)                    │
-                         │  - Caches (Redis)                         │
-                         │  - Message Queues / Workers               │
-                         └───────────────────────────────────────────┘
+- [billing-architecture.md](./billing-architecture.md)
+- [ops-reference.md](./ops-reference.md)
+- [implementation-audit-tracker.md](./implementation-audit-tracker.md)
+- [master-index.md](./master-index.md)

@@ -14,72 +14,6 @@ import type {
 
 export type PharmacyApiClient = ReturnType<typeof createApiClient>;
 
-const PLACEHOLDER_PRESCRIPTIONS: PharmacyPrescription[] = [
-  {
-    id: "rx-1001",
-    patientId: "patient-1",
-    patientName: "Sample Patient",
-    medication: "Ibuprofen 400mg",
-    dosage: "1 tablet twice daily",
-    status: "PENDING",
-    requestedAt: new Date().toISOString(),
-    appointmentId: null,
-  },
-  {
-    id: "rx-1002",
-    patientId: "patient-2",
-    patientName: "Jane Doe",
-    medication: "Physiotherapy gel",
-    dosage: "Apply topically 3x daily",
-    status: "APPROVED",
-    requestedAt: new Date(Date.now() - 86_400_000).toISOString(),
-    appointmentId: "appt-1",
-  },
-  {
-    id: "rx-1003",
-    patientId: "patient-3",
-    patientName: "John Smith",
-    medication: "Muscle relaxant",
-    dosage: "1 capsule at bedtime",
-    status: "DISPENSED",
-    requestedAt: new Date(Date.now() - 172_800_000).toISOString(),
-    appointmentId: "appt-2",
-  },
-];
-
-const PLACEHOLDER_FULFILLMENT: PharmacyFulfillmentOrder[] = [
-  {
-    id: "ful-2001",
-    prescriptionId: "rx-1002",
-    patientId: "patient-2",
-    patientName: "Jane Doe",
-    medication: "Physiotherapy gel",
-    status: "PREPARING",
-    appointmentId: "appt-1",
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "ful-2002",
-    prescriptionId: "rx-1003",
-    patientId: "patient-3",
-    patientName: "John Smith",
-    medication: "Muscle relaxant",
-    status: "READY",
-    appointmentId: "appt-2",
-    updatedAt: new Date(Date.now() - 43_200_000).toISOString(),
-  },
-  {
-    id: "ful-2003",
-    prescriptionId: "rx-1001",
-    patientId: "patient-1",
-    patientName: "Sample Patient",
-    medication: "Ibuprofen 400mg",
-    status: "QUEUED",
-    appointmentId: null,
-    updatedAt: new Date(Date.now() - 21_600_000).toISOString(),
-  },
-];
-
 export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[] {
   if (!response) return [];
   if (Array.isArray(response)) return response;
@@ -87,6 +21,18 @@ export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[]
 }
 
 export function createPharmacyPortalApi(api: PharmacyApiClient) {
+  async function pharmacyBffGet<T>(path: string): Promise<T> {
+    const response = await fetch(`/api/pharmacy${path}`, {
+      credentials: "include",
+      cache: "no-store",
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error((data as { message?: string } | null)?.message ?? "Pharmacy request failed.");
+    }
+    return data as T;
+  }
+
   return {
     listPatients(params?: { page?: number; limit?: number }) {
       return api.get<PharmacyPatientListResponse | PharmacyPatient[]>("patient", "", { params });
@@ -116,19 +62,19 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
     },
 
     listPrescriptions() {
-      return Promise.resolve(PLACEHOLDER_PRESCRIPTIONS);
+      return pharmacyBffGet<PharmacyPrescription[]>("/prescriptions");
     },
 
     getPrescription(id: string) {
-      return Promise.resolve(PLACEHOLDER_PRESCRIPTIONS.find((item) => item.id === id) ?? null);
+      return pharmacyBffGet<PharmacyPrescription | null>(`/prescriptions/${id}`);
     },
 
     listFulfillmentOrders() {
-      return Promise.resolve(PLACEHOLDER_FULFILLMENT);
+      return pharmacyBffGet<PharmacyFulfillmentOrder[]>("/fulfillment");
     },
 
     getFulfillmentOrder(id: string) {
-      return Promise.resolve(PLACEHOLDER_FULFILLMENT.find((item) => item.id === id) ?? null);
+      return pharmacyBffGet<PharmacyFulfillmentOrder | null>(`/fulfillment/${id}`);
     },
 
     getProfile() {

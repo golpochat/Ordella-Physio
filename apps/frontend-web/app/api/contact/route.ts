@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/auth/csrf";
 import { isSuspiciousBot, parseContactPayload } from "@/lib/security";
+import { deliverContactSubmission } from "@/lib/contact-form-delivery";
 
 function validateCsrf(request: Request): boolean {
   const cookieStore = cookies();
@@ -37,12 +38,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error }, { status });
   }
 
+  try {
+    await deliverContactSubmission(parsed.data);
+  } catch (error) {
+    console.error("[contact_form] delivery failed", error);
+    return NextResponse.json({ error: "Unable to deliver your message right now." }, { status: 502 });
+  }
+
   if (process.env.NODE_ENV !== "production") {
     console.info(
       JSON.stringify({
         level: "info",
         type: "contact_form",
         submittedAt: new Date().toISOString(),
+        clinicName: parsed.data.clinicName,
       }),
     );
   }

@@ -6,8 +6,7 @@ import { PlatformBillingOverview } from "@/components/super-admin-portal/billing
 import { usePlatformBilling } from "@/hooks/useSuperAdminPortal";
 
 export default function SuperAdminBillingPage() {
-  const { data, isLoading, isError, refetch } = usePlatformBilling();
-  const invoiceCount = Array.isArray(data) ? data.length : 0;
+  const { data: metrics, isLoading, isError, refetch } = usePlatformBilling();
 
   return (
     <ListPage
@@ -18,7 +17,7 @@ export default function SuperAdminBillingPage() {
       onRetry={() => void refetch()}
     >
       <Card>
-        <PlatformBillingOverview invoiceCount={invoiceCount} />
+        <PlatformBillingOverview metrics={metrics ?? null} />
       </Card>
     </ListPage>
   );

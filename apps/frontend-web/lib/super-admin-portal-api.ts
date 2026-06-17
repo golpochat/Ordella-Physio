@@ -54,6 +54,7 @@ import type {
   UpdatePlatformOrganizationConfigResponse,
   OrganizationListFilters,
   PlatformOrganizationListResponse,
+  PlatformBillingMetrics,
 } from "@/lib/super-admin-portal-types";
 import { BUILTIN_PLATFORM_ROLES } from "@/lib/super-admin-portal-utils";
 
@@ -616,7 +617,9 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     getBillingOverview() {
-      return Promise.resolve([]);
+      return api
+        .get<PlatformBillingMetrics>("billing", "/platform-metrics", { context: GLOBAL_CONTEXT })
+        .catch(() => null);
     },
 
     getReportingOverview() {

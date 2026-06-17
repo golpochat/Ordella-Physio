@@ -524,3 +524,15 @@ export type PlatformOrganizationListResponse = {
     totalPages: number;
   };
 };
+
+export type PlatformBillingMetrics = {
+  mrrCents: number;
+  activeSubscriptions: number;
+  activeTenantSubscriptions: number;
+  activeOrganizationSubscriptions: number;
+  paidInvoiceCount: number;
+  issuedInvoiceCount: number;
+  collectionsRatePercent: number | null;
+  currency: string;
+  source: "billing-service";
+};

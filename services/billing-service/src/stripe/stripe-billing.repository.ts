@@ -123,4 +123,26 @@ export class StripeBillingRepository {
       ? (normalized as StripeSubscriptionStatus)
       : "ACTIVE";
   }
+
+  listActiveTenantSubscriptions() {
+    return this.database.tenantStripeSubscription.findMany({
+      where: { status: { in: ["ACTIVE", "TRIALING"] } },
+      select: { plan: true, status: true },
+    });
+  }
+
+  listActiveOrganizationSubscriptions() {
+    return this.database.organizationStripeSubscription.findMany({
+      where: { status: { in: ["ACTIVE", "TRIALING"] } },
+      select: { plan: true, status: true },
+    });
+  }
+
+  countPaidInvoices() {
+    return this.database.invoice.count({ where: { status: "PAID" } });
+  }
+
+  countIssuedInvoices() {
+    return this.database.invoice.count({ where: { status: { in: ["ISSUED", "PAID"] } } });
+  }
 }

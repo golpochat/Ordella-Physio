@@ -45,6 +45,41 @@ export class StripeBillingService {
     return context;
   }
 
+  async getPlatformMetrics() {
+    const planMrrCents: Record<string, number> = {
+      STARTER: 4_900,
+      PROFESSIONAL: 14_900,
+      ENTERPRISE: 49_900,
+    };
+
+    const [tenantSubs, orgSubs, paidInvoices, issuedInvoices] = await Promise.all([
+      this.repository.listActiveTenantSubscriptions(),
+      this.repository.listActiveOrganizationSubscriptions(),
+      this.repository.countPaidInvoices(),
+      this.repository.countIssuedInvoices(),
+    ]);
+
+    const subscriptions = [...tenantSubs, ...orgSubs];
+    const mrrCents = subscriptions.reduce((total, sub) => {
+      return total + (planMrrCents[sub.plan] ?? 0);
+    }, 0);
+
+    const collectionsRate =
+      issuedInvoices > 0 ? Math.round((paidInvoices / issuedInvoices) * 100) : null;
+
+    return {
+      mrrCents,
+      activeSubscriptions: subscriptions.length,
+      activeTenantSubscriptions: tenantSubs.length,
+      activeOrganizationSubscriptions: orgSubs.length,
+      paidInvoiceCount: paidInvoices,
+      issuedInvoiceCount: issuedInvoices,
+      collectionsRatePercent: collectionsRate,
+      currency: "USD",
+      source: "billing-service" as const,
+    };
+  }
+
   async createCustomer(dto: CreateStripeCustomerInput) {
     const context = await this.requireBillingContext(dto.tenantId);
 

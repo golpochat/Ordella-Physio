@@ -97,4 +97,11 @@ export class StripeBillingController {
   ) {
     return this.stripeBillingService.createPlatformCheckoutSession(tenantId, dto);
   }
+
+  @Get("platform-metrics")
+  @UseGuards(JwtGuard, PermissionGuard)
+  @RequirePermissions("billing.analytics.view")
+  getPlatformMetrics() {
+    return this.stripeBillingService.getPlatformMetrics();
+  }
 }
