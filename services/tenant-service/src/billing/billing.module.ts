@@ -9,6 +9,7 @@ import { TenantBillingRepository } from "@/billing/tenant-billing.repository";
 import { TenantsModule } from "@/tenants/tenants.module";
 import { SubscriptionModule } from "@/subscription/subscription.module";
 import { OrganizationServiceClient } from "@/integrations/organization-service.client";
+import { BillingServiceClient } from "@/integrations/billing-service.client";
 import { JwtGuard } from "@/tenants/guards/jwt.guard";
 import { TenantMatchGuard } from "@/tenants/guards/tenant-match.guard";
 
@@ -21,6 +22,7 @@ import { TenantMatchGuard } from "@/tenants/guards/tenant-match.guard";
     TenantBillingService,
     TenantBillingRepository,
     OrganizationServiceClient,
+    BillingServiceClient,
     JwtGuard,
     TenantMatchGuard,
   ],

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { TenantBillingSyncDto } from "@/billing/dto/tenant-billing-sync.dto";
+import { BillingServiceClient } from "@/integrations/billing-service.client";
 import { OrganizationServiceClient } from "@/integrations/organization-service.client";
 import { TenantsRepository } from "@/tenants/tenants.repository";
 import { SubscriptionService } from "@/subscription/subscription.service";
@@ -10,6 +11,7 @@ export class InternalBillingService {
     private readonly tenantsRepository: TenantsRepository,
     private readonly subscriptionService: SubscriptionService,
     private readonly organizationServiceClient: OrganizationServiceClient,
+    private readonly billingServiceClient: BillingServiceClient,
   ) {}
 
   async syncLifecycle(dto: { tenantId: string; status: "ACTIVE" | "SUSPENDED" }) {
@@ -29,6 +31,7 @@ export class InternalBillingService {
     }
 
     const subscription = await this.subscriptionService.incrementAiNotesUsage(tenantId, amount);
+    await this.billingServiceClient.recordAiNotesUsageCharge(tenantId, amount);
     return {
       synced: true,
       tenantId,

@@ -1,7 +1,7 @@
 # Ordella Physio — Implementation Audit & Tracker
 
 > **Purpose:** Living reference for what is implemented, what appears on the website, gaps, and planned work.  
-> **Last updated:** 2026-06-17 (post Phase 3 monetization + hybrid billing)  
+> **Last updated:** 2026-06-17 (P1–P3 shipped; Stripe webhook smoke + AI notes metered billing path)  
 > **Primary frontend:** `apps/frontend-web` (port 3010)  
 > **Primary backends:** `backend/` (clinic monolith) + `services/*` (35 microservices via API gateway)
 
@@ -49,7 +49,7 @@ Ordella Physio runs on **two parallel backend paths**:
 
 The **live website** is **`apps/frontend-web`**. Legacy apps (`apps/web`, `apps/marketing-site`, `apps/app`, `apps/admin-dashboard`) are not deployed in Docker and largely duplicate older splits.
 
-**Overall:** Marketing + auth/onboarding + clinic portal core are implemented and wired. **Gateway-mode billing** (hybrid tenant/org truth, Stripe Checkout, webhook lifecycle) shipped 2026-06-17. **Super-admin atomic provisioning** (org → tenant → owner) shipped 2026-06-17. Large areas (AI platform, automation, marketplace, enterprise) exist as routes with partial backends. Remaining gaps: monolith Stripe path, pharmacy API, file uploads, super-admin revenue dashboards, and production Stripe key verification.
+**Overall:** Marketing + auth/onboarding + clinic portal core are implemented and wired. **Gateway-mode billing** (hybrid tenant/org truth, Stripe Checkout, webhook lifecycle) shipped 2026-06-17. **P1–P3 tracker work** shipped through 2026-06-17 (billing consolidation, org portal, pharmacy BFF, platform metrics, contact webhook). **Stripe test-key webhook smoke** verified via Stripe CLI (`201` on forwarded events). **Remaining:** full browser checkout E2E, AI notes invoice-item verification in Stripe Dashboard, ClamAV on production uploads, dedicated pharmacy service, Stripe-live MRR (vs plan estimates).
 
 ---
 
@@ -149,7 +149,7 @@ Routed via **api-gateway** (`:3049`). Dev compose runs **17** domain services + 
 | ------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------- | ------------------------------------------- |
 | Core                      | auth, tenant, organization, user-role, staff, audit, feature-flags, event-bus                 | Provisioning + org/tenant CRUD mostly complete          | Partial (super-admin)      | Ongoing — users list/create partial |
 | Clinical                  | patient, appointment, notes, terminal                                                         | Complete vs monolith                                    | ✅ Via BFF                  | Done                                        |
-| Billing                   | billing (primary), payment, subscription-billing (legacy overlap)                             | Hybrid truth, Checkout Session, webhooks, lifecycle sync | ⚠️                         | Partial — consolidate subscription-billing |
+| Billing                   | billing (primary), payment, subscription-billing (deprecated)                             | Hybrid truth, Checkout Session, webhooks, lifecycle sync, platform metrics | ⚠️                         | Partial — subscription-billing deprecated; Stripe-live MRR pending |
 | Comms                     | notification, notification-provider, communication, messaging                                 | Stubbed channels                                        | ✅ Topbar                   | Partial                                     |
 | Reporting & search        | reporting, search-index                                                                       | Placeholder exports, ES stub                            | ✅ Search topbar            | Partial                                     |
 | Integrations              | file-storage, marketplace                                                                     | Complete                                                | ✅ Clinic nav               | Done (nav)                                  |
@@ -169,10 +169,10 @@ Routed via **api-gateway** (`:3049`). Dev compose runs **17** domain services + 
 | Clinic portal     | ~110                          | ✅ Core in sidebar + API           | Done                                         |
 | Staff portal      | ~18                           | ✅ Live                            | Done                                         |
 | Therapist portal  | ~17                           | ✅ Live                            | Done                                         |
-| Super admin       | ~33                           | Provisioning wizard + org/tenant CRUD | Partial — MRR/revenue dashboards open |
-| Organization portal | 2+                          | `/organization/billing` (+ upgrade)   | Partial — billing only; no full org nav |
+| Super admin       | ~33                           | Provisioning + org/tenant CRUD + platform billing metrics | Partial — polish + Stripe-live MRR pending |
+| Organization portal | 2+                          | `/organization/billing` (+ upgrade + org shell/nav)   | Partial — billing-focused nav |
 | Patient portal    | ~10                           | ✅ Full nav                        | Done (nav) — **keep `/patient` APIs/routes** |
-| Pharmacy portal   | ~13                           | ⚠️ Prescriptions mock             | **Not started**                              |
+| Pharmacy portal   | ~13                           | ⚠️ BFF-derived prescriptions/fulfillment (not dedicated service) | In progress                                  |
 | User portal       | ~10                           | ✅ Live                            | Done                                         |
 | Legacy scaffolds  | `/patients`, `/billing`, etc. | ✅ Redirect to `/clinic/`*         | Done                                         |
 | Settings          | `/settings/*`                 | ✅ Delivery logs page added        | Partial                                      |
@@ -186,7 +186,7 @@ Routed via **api-gateway** (`:3049`). Dev compose runs **17** domain services + 
   ├─ trial + unauthenticated → /register → workspace API → /clinic or back to /checkout
   ├─ trial + authenticated → /clinic
   └─ paid (gateway/Docker) → Stripe Checkout Session → /checkout/success → /clinic
-  └─ paid (monolith USE_CLINIC_BACKEND) → completeCheckout (DB-only, no Stripe)
+  └─ paid (monolith, dev only) → Stripe Checkout via gateway BFF unless NEXT_PUBLIC_ALLOW_DB_CHECKOUT=true (DB fallback)
 ```
 
 ### Clinic sidebar (linked today)
@@ -203,19 +203,19 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | Capability                                     | On site? | Gap                                               | Priority | Tracker                                |
 | ---------------------------------------------- | -------- | ------------------------------------------------- | -------- | -------------------------------------- |
 | Pricing → checkout → register                  | ✅        | —                                                 | —        | Done                                   |
-| Paid checkout payment capture                  | ⚠️       | Gateway: Stripe Checkout; monolith: fake card → DB | P1       | Partial — verify with Stripe test keys |
+| Paid checkout payment capture                  | ⚠️       | Stripe Checkout + webhook smoke OK (CLI); full browser E2E pending | P1       | Partial — production keys + UI walkthrough |
 | Clinic billing Stripe UX                       | ⚠️       | Hybrid truth, org/clinic UI, webhook lifecycle     | P1       | Partial — see billing-architecture.md  |
 | Hybrid billing truth (`billingModel`)          | ✅        | Context API + migrations + UI routing              | P1       | Done (gateway mode)                    |
 | Super-admin atomic provisioning                | ✅        | Full wizard + rollback compensation                | P1       | Done                                   |
-| AI Notes usage metering                        | ⚠️       | `aiNotesUsageCount` incremented on generate        | P2       | Partial — no billing charge yet        |
+| AI Notes usage metering                        | ⚠️       | Usage counter + internal Stripe invoice-item sync (`STRIPE_PRICE_AI_NOTES`) | P2       | In progress — verify invoice emission end-to-end |
 | Password reset (monolith)                      | ✅        | Email + token routes                              | P1       | Done                                   |
 | AI / automation / marketplace / enterprise nav | ✅        | Clinic sidebar                                    | P2       | Done (nav)                             |
 | Patient portal full nav                        | ✅        | Appointments, billing, notes, messages            | P2       | Done — **keep `/patient` APIs/routes** |
 | `/settings/notifications/logs`                 | ✅        | Delivery logs page                                | P2       | Done                                   |
 | Legacy `/patients`, `/billing` scaffolds       | ✅        | Redirect to `/clinic/`*                           | P3       | Done                                   |
 | Notes edit/delete                              | ✅        | PATCH/DELETE on monolith                          | P3       | Done                                   |
-| Pharmacy real API                              | ⚠️       | Mock client                                       | P3       | Not started                            |
-| Super-admin MRR/revenue                        | ⚠️       | Depends on subscription-billing; billing-service is truth | P3       | Not started — pick one service     |
+| Pharmacy real API                              | ⚠️       | BFF derives from patient/appointment; no dedicated pharmacy service yet | P3       | In progress                          |
+| Super-admin MRR/revenue                        | ⚠️       | `billing-service` platform metrics are plan-estimated, not Stripe-live MRR | P3       | In progress                          |
 
 
 ---
@@ -246,7 +246,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | `docs/master-index.md`          | Blueprint + tracker link         | Partial refresh                 | OK                               |
 | `docs/billing-architecture.md`  | Billing modes                    | New 2026-06                     | OK                               |
 | `docs/runbooks/jwt-rotation.md` | Manual JWT rotation              | New 2026-06                     | OK                               |
-| `docs/architecture.md`          | Low                              | 9 services, old frontends       | **Not started** — archive/update |
+| `docs/architecture.md`          | Medium                           | Refreshed to current dual-backend + frontend-web-first model | Updated 2026-06-17 |
 
 
 ---
@@ -274,15 +274,16 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 - [x] Webhooks → tenant `ACTIVE` / `SUSPENDED` lifecycle sync (billing-service → tenant-service)
 - [x] Hybrid billing truth model (see Phase 1)
 - [x] AI notes usage counter (`aiNotesUsageCount` on tenant subscription)
-- [ ] **Verify end-to-end** with Stripe test keys + `stripe listen` webhook forwarding
-- [ ] Deprecate or redirect `subscription-billing-service` webhooks/UI to billing-service (dual stack risk)
-- [ ] Stripe Checkout/Elements for monolith `USE_CLINIC_BACKEND=true` path
-- [ ] AI Notes add-on billing (charge per usage under org-level platform billing)
+- [x] **Verify webhook forwarding** with Stripe test keys + `stripe listen` (fixture events → `201`)
+- [ ] **Verify end-to-end** browser checkout + tenant lifecycle in UI
+- [x] Deprecate or redirect `subscription-billing-service` webhooks/UI to billing-service (dual stack risk)
+- [x] Stripe-first checkout default even when `USE_CLINIC_BACKEND=true` (`NEXT_PUBLIC_ALLOW_DB_CHECKOUT` for dev fallback)
+- [ ] AI Notes add-on billing — invoice items via `STRIPE_PRICE_AI_NOTES` (code path shipped; dashboard verification pending)
 - [ ] Invoice line items / tax rates at scale (clinical billing already in billing-service)
 
 ### Phase 4 — Productize differentiators (P3+)
 
-- [ ] AI notes in therapist workflow (wire `ai-notes-service` into notes UI, not admin console first)
+- [x] AI notes in therapist workflow (`NotesEditor` + `AiNotesAssistant`)
 - [ ] Marketplace: one integration E2E (calendar or Zoom)
 - [x] Patient portal: appointments + billing read-only nav
 - [ ] Real search backend when volume warrants
@@ -298,7 +299,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 - [x] Atomic org → tenant → owner provisioning (`POST /super-admin/provisioning/full`)
 - [x] Owner assignment during tenant create (`ownerUserId` or `ownerEmail`)
 - [ ] Super-admin platform users CRUD polish (list filters, create form edge cases)
-- [ ] Super-admin MRR / revenue dashboard (single billing truth source)
+- [x] Super-admin MRR / revenue dashboard (billing-service platform metrics, plan-estimated)
 - [ ] E2E tests: provisioning rollback + billing checkout + webhook activation
 
 ---
@@ -321,11 +322,12 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | Organization portal nav | ✅ Dedicated org shell + nav |
 | AI notes therapist UX | ✅ Already in `NotesEditor` / `AiNotesAssistant` |
 | AI notes usage display | ✅ `aiNotesUsageCount` on billing context + clinic billing panel |
+| AI notes metered billing sync | ✅ `tenant-service` → `billing-service` internal invoice item (`STRIPE_PRICE_AI_NOTES`) |
 | File uploads + ClamAV | ⚠️ file-storage scans when `CLAMAV_HOST` set; compose docs added |
 
-**Still open (P2):** Stripe metered charge for AI notes add-on.
+**Still open (P2):** Confirm AI notes metered invoice items in Stripe dashboard during tenant/org billing cycles.
 
-### P3 — Later / scale ⚠️ (in progress locally — not pushed)
+### P3 — Later / scale ✅ (2026-06-17)
 
 | Item | Status |
 |------|--------|
@@ -387,6 +389,7 @@ flowchart TB
 | 2026-06-17 | P1 billing consolidation: deprecated subscription-billing-service, `/settings/billing` redirects, Stripe-first checkout, ops Stripe docs. |
 | 2026-06-17 | P2 completeness: gateway onboarding proxy, organization portal nav, AI notes usage on billing UI, ClamAV compose notes. |
 | 2026-06-17 | P3 (local): pharmacy BFF API, billing-service platform-metrics + super-admin MRR UI, architecture.md refresh, contact webhook delivery, workflow e2e stubs. |
+| 2026-06-17 | Stripe smoke run (test keys): Stripe CLI forwarding to `POST /billing/webhook` returned `201` on checkout/session/payment fixture events; added AI notes metered billing sync path (`tenant-service` internal usage → `billing-service` invoice item via `STRIPE_PRICE_AI_NOTES`). |
 
 
 ---
@@ -395,11 +398,11 @@ flowchart TB
 
 Trigger an audit pass when any of these land:
 
-- Stripe production keys configured and checkout smoke-tested
-- `subscription-billing-service` deprecated or merged into billing-service
-- File upload routes ship (ClamAV wiring)
-- Super-admin MRR/revenue dashboard
-- Pharmacy API replaces mock client
+- Full browser checkout E2E with production Stripe keys
+- File upload routes ship with ClamAV enabled in production
+- AI notes invoice items confirmed in Stripe Dashboard during billing cycles
+- Dedicated pharmacy service replaces BFF-derived data
+- Stripe-live MRR metrics replace plan-estimated aggregation
 
 **Docs to update alongside code:** [billing-architecture.md](./billing-architecture.md), [ops-reference.md](./ops-reference.md) (Stripe local dev), [master-index.md](./master-index.md).
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Post, UnauthorizedException, UseGuards } from "@nestjs/common";
 import {
   cancelStripeSubscriptionSchema,
   createCustomerPortalSchema,
@@ -103,5 +103,16 @@ export class StripeBillingController {
   @RequirePermissions("billing.analytics.view")
   getPlatformMetrics() {
     return this.stripeBillingService.getPlatformMetrics();
+  }
+
+  @Post("internal/ai-notes-usage")
+  syncAiNotesUsage(
+    @Headers("x-internal-service") serviceName: string | undefined,
+    @Body() dto: { tenantId: string; quantity?: number },
+  ) {
+    if (serviceName !== "tenant-service") {
+      throw new UnauthorizedException("Internal service authorization required");
+    }
+    return this.stripeBillingService.recordAiNotesUsageCharge(dto.tenantId, dto.quantity ?? 1);
   }
 }

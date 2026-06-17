@@ -16,6 +16,7 @@ function createBillingConfig() {
     stripePriceStarter: env.STRIPE_PRICE_STARTER,
     stripePricePro: env.STRIPE_PRICE_PRO,
     stripePriceEnterprise: env.STRIPE_PRICE_ENTERPRISE,
+    stripePriceAiNotes: env.STRIPE_PRICE_AI_NOTES,
     tenantServiceUrl: env.TENANT_SERVICE_URL,
     frontendUrl: env.FRONTEND_URL,
   } as const;

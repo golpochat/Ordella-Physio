@@ -80,6 +80,40 @@ export class StripeBillingService {
     };
   }
 
+  async recordAiNotesUsageCharge(tenantId: string, quantity: number) {
+    const resolved = await this.requireBillingAccount(tenantId);
+    const stripe = this.stripeClient.getClient();
+    const unitPrice = process.env.STRIPE_PRICE_AI_NOTES ?? "";
+
+    if (!unitPrice) {
+      return {
+        synced: false,
+        reason: "STRIPE_PRICE_AI_NOTES not configured",
+        tenantId,
+        quantity,
+      };
+    }
+
+    await stripe.invoiceItems.create({
+      customer: resolved.account.stripeCustomerId,
+      price: unitPrice,
+      quantity: Math.max(1, quantity),
+      description: `AI notes usage (${Math.max(1, quantity)} generation${quantity > 1 ? "s" : ""})`,
+      metadata: {
+        tenantId,
+        billingEntity: resolved.entity,
+        usageType: "ai_notes",
+      },
+    });
+
+    return {
+      synced: true,
+      tenantId,
+      quantity: Math.max(1, quantity),
+      billedTo: resolved.entity,
+    };
+  }
+
   async createCustomer(dto: CreateStripeCustomerInput) {
     const context = await this.requireBillingContext(dto.tenantId);
 

@@ -172,6 +172,7 @@ export const billingEnvSchema = coreEnvSchema.extend({
   STRIPE_PRICE_STARTER: z.string().optional(),
   STRIPE_PRICE_PRO: z.string().optional(),
   STRIPE_PRICE_ENTERPRISE: z.string().optional(),
+  STRIPE_PRICE_AI_NOTES: z.string().optional(),
   TENANT_SERVICE_URL: z.string().url().optional(),
   FRONTEND_URL: z.string().url().optional(),
 });

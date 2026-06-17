@@ -338,6 +338,7 @@ services:
       STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-price_local_starter}
       STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO:-price_local_pro}
       STRIPE_PRICE_ENTERPRISE: ${STRIPE_PRICE_ENTERPRISE:-price_local_enterprise}
+      STRIPE_PRICE_AI_NOTES: ${STRIPE_PRICE_AI_NOTES:-}
       TENANT_SERVICE_URL: http://tenant-service:3052
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
       FRONTEND_URL: http://localhost:3010
