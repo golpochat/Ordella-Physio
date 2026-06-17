@@ -40,7 +40,8 @@ Trial upgrade redirects:
 ## API
 
 - `GET /billing/billing-context` — resolves billing truth for the current tenant (via billing-service → tenant-service).
-- Stripe webhooks: `POST /billing/webhook` (billing-service), routed by customer metadata.
+- `POST /billing/checkout-session` — creates Stripe Checkout for paid onboarding (gateway mode).
+- Stripe webhooks: `POST /billing/webhook` (billing-service), routed by customer metadata; syncs tenant lifecycle (`ACTIVE`/`SUSPENDED`) for tenant-level billing.
 
 ## Related docs
 

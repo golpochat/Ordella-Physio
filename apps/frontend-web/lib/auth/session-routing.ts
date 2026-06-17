@@ -7,6 +7,7 @@ const PUBLIC_ROUTE_PREFIXES = [
   "/auth",
   "/register",
   "/checkout",
+  "/checkout/success",
   "/subscribe",
   "/start-trial",
   "/signup",

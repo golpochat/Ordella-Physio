@@ -13,6 +13,7 @@ import {
   buildTreatmentPlanPrompt,
 } from "@/ai/prompts/prompt-templates";
 import { AiProviderService } from "@/ai/providers/ai-provider.service";
+import { TenantUsageClient } from "@/integrations/tenant-usage.client";
 import {
   AI_DISCLAIMER,
   type AiNoteGenerateResult,
@@ -28,6 +29,7 @@ export class AiNotesService {
     private readonly repository: AiNotesRepository,
     private readonly contextGatherer: ContextGathererService,
     private readonly aiProvider: AiProviderService,
+    private readonly tenantUsageClient: TenantUsageClient,
   ) {}
 
   async generateNote(
@@ -75,6 +77,8 @@ export class AiNotesService {
       inputSummary: input.rawText?.slice(0, 500),
       output: parsed,
     });
+
+    await this.tenantUsageClient.incrementAiNotesUsage(tenantId);
 
     return {
       soap: parsed.soap,

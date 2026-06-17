@@ -12,6 +12,30 @@ export class InternalBillingService {
     private readonly organizationServiceClient: OrganizationServiceClient,
   ) {}
 
+  async syncLifecycle(dto: { tenantId: string; status: "ACTIVE" | "SUSPENDED" }) {
+    const tenant = await this.tenantsRepository.findById(dto.tenantId);
+    if (!tenant) {
+      throw new NotFoundException("Tenant not found");
+    }
+
+    await this.tenantsRepository.setStatus(dto.tenantId, dto.status);
+    return { synced: true, tenantId: dto.tenantId, status: dto.status };
+  }
+
+  async incrementAiNotesUsage(tenantId: string, amount = 1) {
+    const tenant = await this.tenantsRepository.findById(tenantId);
+    if (!tenant) {
+      throw new NotFoundException("Tenant not found");
+    }
+
+    const subscription = await this.subscriptionService.incrementAiNotesUsage(tenantId, amount);
+    return {
+      synced: true,
+      tenantId,
+      aiNotesUsageCount: subscription.aiNotesUsageCount,
+    };
+  }
+
   async syncBilling(dto: TenantBillingSyncDto) {
     const tenant = await this.tenantsRepository.findById(dto.tenantId);
     if (!tenant) {

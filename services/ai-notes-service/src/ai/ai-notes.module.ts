@@ -8,6 +8,7 @@ import { AiTenantGuard } from "@/ai/guards/ai-tenant.guard";
 import { JwtGuard } from "@/ai/guards/jwt.guard";
 import { AiProviderService } from "@/ai/providers/ai-provider.service";
 import { JwtStrategy } from "@/ai/strategies/jwt.strategy";
+import { TenantUsageClient } from "@/integrations/tenant-usage.client";
 
 @Module({
   imports: [PassportModule.register({ defaultStrategy: "jwt" })],
@@ -17,6 +18,7 @@ import { JwtStrategy } from "@/ai/strategies/jwt.strategy";
     AiNotesRepository,
     ContextGathererService,
     AiProviderService,
+    TenantUsageClient,
     JwtStrategy,
     JwtGuard,
     AiTenantGuard,

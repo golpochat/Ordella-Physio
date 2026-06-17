@@ -460,6 +460,23 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       });
     },
 
+    createCheckoutSession(payload: {
+      plan: string;
+      billingCycle?: "monthly" | "yearly";
+      successUrl?: string;
+      cancelUrl?: string;
+      email?: string;
+      name?: string;
+    }) {
+      if (isClinicBackendClient()) {
+        return Promise.reject(
+          new Error("Stripe checkout is not available in clinic-backend mode."),
+        );
+      }
+
+      return api.post<{ url: string; sessionId: string }>("billing", "/checkout-session", payload);
+    },
+
     listNotes(params?: { page?: number; limit?: number }) {
       return api.get<ClinicNoteListResponse | ClinicNote[]>("notes", "", { params });
     },

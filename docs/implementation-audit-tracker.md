@@ -75,8 +75,8 @@ The **live website** is **`apps/frontend-web`**. Legacy apps (`apps/web`, `apps/
 | VAT-aware paid summary | Preview + client helpers | Checkout summary | ✅ | Done |
 | Profile completion wizard | Tenant profile API | `/clinic` home | ✅ | Done |
 | CSRF on register/checkout BFF | BFF + fetcher | Auth flows | ✅ | Done (2026-06) |
-| Platform paid checkout (Stripe capture) | DB-only on monolith | Card form on checkout | ⚠️ | **Not started** |
-| Stripe subscription (in-portal upgrade) | Microservice + billing truth | `/clinic/billing`, `/organization/billing` | ⚠️ | **Partial** — tenant vs org routing live; Stripe keys required |
+| Platform paid checkout (Stripe capture) | Stripe Checkout Session via billing-service | Card form on checkout (monolith) / Stripe redirect (gateway) | ⚠️ | **Partial** — gateway uses Stripe Checkout; monolith DB-only |
+| Stripe subscription (in-portal upgrade) | Microservice + billing truth | `/clinic/billing`, `/organization/billing` | ⚠️ | **Partial** — live panel + Stripe keys required |
 
 ---
 
@@ -182,8 +182,8 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | Capability | On site? | Gap | Priority | Tracker |
 |------------|----------|-----|----------|---------|
 | Pricing → checkout → register | ✅ | — | — | Done |
-| Paid checkout payment capture | ⚠️ | Monolith DB-only | P1 | Not started |
-| Clinic billing Stripe UX | ⚠️ | Hybrid truth: tenant `/clinic/billing` vs org `/organization/billing` | P1 | Partial — see billing-architecture.md |
+| Paid checkout payment capture | ⚠️ | Stripe Checkout in gateway mode; monolith DB-only | P1 | Partial |
+| Clinic billing Stripe UX | ⚠️ | Hybrid truth + webhook lifecycle sync | P1 | Partial — see billing-architecture.md |
 | Password reset (monolith) | ✅ | Email + token routes | P1 | Done |
 | AI / automation / marketplace / enterprise nav | ✅ | Clinic sidebar | P2 | Done (nav) |
 | Patient portal full nav | ✅ | Appointments, billing, notes, messages | P2 | Done — **keep `/patient` APIs/routes** |
@@ -241,8 +241,9 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 
 ### Phase 3 — Complete monetization (P1–P2)
 
-- [ ] Stripe Checkout/Elements for platform onboarding + in-portal upgrades (gateway path exists; monolith DB-only)
-- [ ] Webhooks → tenant `ACTIVE` / suspension (verify subscription-billing deploy)
+- [x] Stripe Checkout for platform onboarding (gateway path via `POST /billing/checkout-session`)
+- [x] Webhooks → tenant `ACTIVE` / `SUSPENDED` lifecycle sync (billing-service → tenant-service)
+- [ ] Stripe Checkout/Elements for monolith `USE_CLINIC_BACKEND=true` path
 - [ ] Invoice line items / tax rates if needed at scale
 
 ### Phase 4 — Productize differentiators (P3+)
@@ -300,6 +301,7 @@ flowchart TB
 | 2026-06-16 | Phase 1 started: patient API/route preservation policy recorded; removed clinic billing Stripe placeholder; added notification delivery logs page. |
 | 2026-06-16 | Phases 1–2 + partial 4–5: monolith password reset, notes PATCH/DELETE, billing architecture doc, trial banner → checkout, clinic/patient/staff/therapist nav, legacy scaffold redirects, legacy app DEPRECATED.md, JWT rotation runbook, README/ops-reference updates. |
 | 2026-06-17 | Hybrid billing truth model: shared `billing-truth` types, org/tenant/billing-service migrations, `GET /billing/billing-context`, org-level Stripe accounts + webhooks, `/organization/billing` UI, clinic read-only when org-level, trial upgrade path routing. |
+| 2026-06-17 | Phase 3 monetization: Stripe Checkout Session for paid onboarding (gateway), webhook-driven tenant ACTIVE/SUSPENDED sync, AI notes usage counter via tenant-service internal API. |
 
 ---
 

@@ -8,6 +8,7 @@ import {
 import type {
   CancelStripeSubscriptionInput,
   CreateCustomerPortalInput,
+  CreatePlatformCheckoutSessionInput,
   CreateStripeCustomerInput,
   CreateStripeSubscriptionInput,
   UpdateStripePaymentMethodInput,
@@ -244,6 +245,55 @@ export class StripeBillingService {
     return { url: session.url };
   }
 
+  async createPlatformCheckoutSession(
+    tenantId: string,
+    dto: CreatePlatformCheckoutSessionInput,
+  ) {
+    const context = await this.requireBillingContext(tenantId);
+    const plan = this.normalizeCheckoutPlan(dto.plan);
+
+    await this.createCustomer({
+      tenantId,
+      email: dto.email,
+      name: dto.name,
+    });
+
+    const resolved = await this.requireBillingAccount(tenantId);
+    const stripe = this.stripeClient.getClient();
+    const priceId = this.stripeClient.getPriceIdForPlan(plan);
+    const frontend = this.stripeClient.getFrontendUrl();
+    const successUrl =
+      dto.successUrl ?? `${frontend}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl =
+      dto.cancelUrl ??
+      `${frontend}/checkout?intent=checkout&plan=${encodeURIComponent(dto.plan)}&cycle=${dto.billingCycle ?? "yearly"}`;
+
+    const metadata: Record<string, string> = {
+      plan,
+      tenantId,
+    };
+    if (context.organizationId) {
+      metadata.organizationId = context.organizationId;
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      customer: resolved.account.stripeCustomerId,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      client_reference_id: tenantId,
+      metadata,
+      subscription_data: { metadata },
+    });
+
+    if (!session.url) {
+      throw new BadRequestException("Stripe checkout session URL was not returned.");
+    }
+
+    return { url: session.url, sessionId: session.id };
+  }
+
   async handleTenantCreated(payload: { tenantId: string; name: string; slug: string }) {
     const context = await this.billingTruthClient.getContext(payload.tenantId);
     if (!context) {
@@ -280,6 +330,9 @@ export class StripeBillingService {
     }
 
     switch (event.type) {
+      case "checkout.session.completed":
+        await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
       case "customer.subscription.created":
       case "customer.subscription.updated":
         await this.handleSubscriptionChange(event.data.object as Stripe.Subscription);
@@ -597,6 +650,13 @@ export class StripeBillingService {
       plan: tenantAccount.subscription?.plan ?? "STARTER",
       subscriptionStatus: "canceled",
     });
+
+    const context = await this.billingTruthClient.getContext(tenantAccount.tenantId);
+    await this.syncTenantLifecycleFromStripe(
+      tenantAccount.tenantId,
+      "canceled",
+      context?.billingModel ?? "tenant-level",
+    );
   }
 
   private async handleInvoicePaid(invoice: Stripe.Invoice) {
@@ -624,6 +684,64 @@ export class StripeBillingService {
       plan: tenantAccount.subscription.plan,
       subscriptionStatus: "active",
     });
+
+    const context = await this.billingTruthClient.getContext(tenantAccount.tenantId);
+    await this.syncTenantLifecycleFromStripe(
+      tenantAccount.tenantId,
+      "active",
+      context?.billingModel ?? "tenant-level",
+    );
+  }
+
+  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+    const tenantId = session.client_reference_id ?? session.metadata?.tenantId;
+    if (!tenantId) {
+      return;
+    }
+
+    const context = await this.billingTruthClient.getContext(tenantId);
+    if (context && !isOrganizationLevelBilling(context.billingModel)) {
+      await this.tenantSync.syncLifecycle({ tenantId, status: "ACTIVE" });
+    }
+  }
+
+  private normalizeCheckoutPlan(plan: string): "STARTER" | "PROFESSIONAL" | "ENTERPRISE" {
+    const normalized = plan.toUpperCase();
+    if (normalized === "STARTER" || plan === "starter") {
+      return "STARTER";
+    }
+    if (normalized === "PRO" || normalized === "PROFESSIONAL" || plan === "pro") {
+      return "PROFESSIONAL";
+    }
+    if (normalized === "ENTERPRISE") {
+      return "ENTERPRISE";
+    }
+    throw new BadRequestException("Invalid checkout plan.");
+  }
+
+  private async syncTenantLifecycleFromStripe(
+    tenantId: string,
+    stripeStatus: string,
+    billingModel: BillingTruthContext["billingModel"] | string,
+  ) {
+    if (isOrganizationLevelBilling(billingModel)) {
+      return;
+    }
+
+    const normalized = stripeStatus.toLowerCase();
+    if (normalized === "active" || normalized === "trialing") {
+      await this.tenantSync.syncLifecycle({ tenantId, status: "ACTIVE" });
+      return;
+    }
+
+    if (
+      normalized === "past_due" ||
+      normalized === "canceled" ||
+      normalized === "unpaid" ||
+      normalized === "incomplete_expired"
+    ) {
+      await this.tenantSync.syncLifecycle({ tenantId, status: "SUSPENDED" });
+    }
   }
 
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
@@ -673,6 +791,13 @@ export class StripeBillingService {
       plan: tenantAccount.subscription.plan,
       subscriptionStatus: "past_due",
     });
+
+    const context = await this.billingTruthClient.getContext(tenantAccount.tenantId);
+    await this.syncTenantLifecycleFromStripe(
+      tenantAccount.tenantId,
+      "past_due",
+      context?.billingModel ?? "tenant-level",
+    );
   }
 
   private async applyOrganizationSubscriptionChange(
@@ -728,6 +853,13 @@ export class StripeBillingService {
       plan,
       subscriptionStatus: subscription.status,
     });
+
+    const context = await this.billingTruthClient.getContext(account.tenantId);
+    await this.syncTenantLifecycleFromStripe(
+      account.tenantId,
+      subscription.status,
+      context?.billingModel ?? "tenant-level",
+    );
   }
 
   private async requireBillingContext(tenantId: string): Promise<BillingTruthContext> {

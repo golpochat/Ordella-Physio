@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import {
   cancelStripeSubscriptionSchema,
   createCustomerPortalSchema,
+  createPlatformCheckoutSessionSchema,
   createStripeCustomerSchema,
   createStripeSubscriptionSchema,
   updateStripePaymentMethodSchema,
@@ -15,6 +16,7 @@ import type { CancelStripeSubscriptionInput } from "@/stripe/dto/cancel-subscrip
 import type { CreateCustomerPortalInput } from "@/stripe/dto/customer-portal.dto";
 import type { CreateStripeCustomerInput } from "@/stripe/dto/create-customer.dto";
 import type { CreateStripeSubscriptionInput } from "@/stripe/dto/create-subscription.dto";
+import type { CreatePlatformCheckoutSessionInput } from "@ordella/validation";
 import type { UpdateStripePaymentMethodInput } from "@/stripe/dto/update-payment-method.dto";
 
 @Controller("billing")
@@ -83,5 +85,16 @@ export class StripeBillingController {
   @UseZodValidation(createCustomerPortalSchema)
   createCustomerPortal(@TenantId() tenantId: string, @Body() dto: CreateCustomerPortalInput) {
     return this.stripeBillingService.createCustomerPortalSession(tenantId, dto);
+  }
+
+  @Post("checkout-session")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("billing.write")
+  @UseZodValidation(createPlatformCheckoutSessionSchema)
+  createCheckoutSession(
+    @TenantId() tenantId: string,
+    @Body() dto: CreatePlatformCheckoutSessionInput,
+  ) {
+    return this.stripeBillingService.createPlatformCheckoutSession(tenantId, dto);
   }
 }

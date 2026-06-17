@@ -9,12 +9,21 @@ export type TenantBillingSyncPayload = {
   subscriptionStatus?: string;
 };
 
+export type TenantLifecycleSyncPayload = {
+  tenantId: string;
+  status: "ACTIVE" | "SUSPENDED";
+};
+
 @Injectable()
 export class TenantSyncClient {
   private readonly logger = new Logger(TenantSyncClient.name);
 
+  private get baseUrl(): string | undefined {
+    return billingConfig.tenantServiceUrl ?? process.env.TENANT_SERVICE_URL;
+  }
+
   async syncBilling(payload: TenantBillingSyncPayload): Promise<void> {
-    const baseUrl = billingConfig.tenantServiceUrl ?? process.env.TENANT_SERVICE_URL;
+    const baseUrl = this.baseUrl;
     if (!baseUrl) {
       this.logger.warn("TENANT_SERVICE_URL not configured — skipping tenant billing sync");
       return;
@@ -37,6 +46,34 @@ export class TenantSyncClient {
     } catch (error) {
       this.logger.error(
         `Tenant billing sync error: ${error instanceof Error ? error.message : "unknown"}`,
+      );
+    }
+  }
+
+  async syncLifecycle(payload: TenantLifecycleSyncPayload): Promise<void> {
+    const baseUrl = this.baseUrl;
+    if (!baseUrl) {
+      this.logger.warn("TENANT_SERVICE_URL not configured — skipping tenant lifecycle sync");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/tenants/internal/lifecycle-sync`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Internal-Service": "billing-service",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        this.logger.error(`Tenant lifecycle sync failed (${response.status}): ${body}`);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Tenant lifecycle sync error: ${error instanceof Error ? error.message : "unknown"}`,
       );
     }
   }

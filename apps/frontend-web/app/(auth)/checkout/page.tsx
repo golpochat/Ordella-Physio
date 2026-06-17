@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { useApi } from "@/hooks/useApi";
+import { useTenant } from "@/hooks/useTenant";
 import { authClient } from "@/lib/auth-client";
+import { isClinicBackendClient } from "@/lib/clinic-backend-normalize";
+import { createClinicPortalApi } from "@/lib/clinic-portal-api";
 import {
   buildRegisterHref,
   computeCheckoutSummary,
@@ -54,6 +58,9 @@ export default function CheckoutPage() {
   const isEnterprise = rawPlan === "enterprise";
 
   const { isAuthenticated, user, accessToken, completeCheckout } = useAuth();
+  const api = useApi();
+  const { tenantId } = useTenant();
+  const useStripeCheckout = !isClinicBackendClient();
   const [trialDays, setTrialDays] = useState(14);
   const [vatCountries, setVatCountries] = useState(VAT_COUNTRIES);
   const [submitting, setSubmitting] = useState(false);
@@ -217,10 +224,12 @@ export default function CheckoutPage() {
     nextErrors.billingCity = validateBillingCity(form.billingCity) ?? undefined;
     nextErrors.billingPostal = validateBillingPostal(form.billingPostal) ?? undefined;
 
-    nextErrors.cardholderName = validateCardholderName(form.cardholderName) ?? undefined;
-    nextErrors.cardNumber = validateCardNumber(form.cardNumber) ?? undefined;
-    nextErrors.cardExpiry = validateExpiry(form.cardExpiry) ?? undefined;
-    nextErrors.cardCvc = validateCvc(form.cardCvc) ?? undefined;
+    if (!useStripeCheckout) {
+      nextErrors.cardholderName = validateCardholderName(form.cardholderName) ?? undefined;
+      nextErrors.cardNumber = validateCardNumber(form.cardNumber) ?? undefined;
+      nextErrors.cardExpiry = validateExpiry(form.cardExpiry) ?? undefined;
+      nextErrors.cardCvc = validateCvc(form.cardCvc) ?? undefined;
+    }
 
     setFieldErrors(nextErrors);
     return Object.values(nextErrors).every((value) => !value);
@@ -277,6 +286,29 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
+      if (useStripeCheckout) {
+        if (!api || !tenantId) {
+          throw new Error("Tenant context is required for Stripe checkout.");
+        }
+
+        const clinicApi = createClinicPortalApi(api, tenantId);
+        const origin = typeof window !== "undefined" ? window.location.origin : "";
+        const checkoutParams = searchParams.toString();
+        const session = await clinicApi.createCheckoutSession({
+          plan,
+          billingCycle,
+          email: user?.email,
+          name:
+            form.cardholderName.trim() ||
+            [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+            undefined,
+          successUrl: `${origin}/checkout/success`,
+          cancelUrl: `${origin}/checkout${checkoutParams ? `?${checkoutParams}` : ""}`,
+        });
+        window.location.href = session.url;
+        return;
+      }
+
       await completeCheckout({
         plan,
         billingCycle,
@@ -550,9 +582,19 @@ export default function CheckoutPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Payment Method</CardTitle>
-                    <CardDescription>Secure card payment for your subscription.</CardDescription>
+                    <CardDescription>
+                      {useStripeCheckout
+                        ? "You will complete payment securely on Stripe after continuing."
+                        : "Secure card payment for your subscription."}
+                    </CardDescription>
                   </CardHeader>
                   <CardBody className="auth-form-stack">
+                    {useStripeCheckout ? (
+                      <p className="text-sm text-muted-foreground">
+                        Card details are collected by Stripe. We never store your full card number.
+                      </p>
+                    ) : (
+                      <>
                     <div className="auth-field-stack">
                       <Label htmlFor="cardholderName">Cardholder name</Label>
                       <Input
@@ -685,6 +727,8 @@ export default function CheckoutPage() {
                         ) : null}
                       </div>
                     </div>
+                      </>
+                    )}
                   </CardBody>
                 </Card>
               </form>
@@ -741,8 +785,10 @@ export default function CheckoutPage() {
                       disabled={submitting}
                     >
                       {submitting
-                        ? "Processing payment…"
-                        : `Complete Payment — ${formatEuro(summary.totalAmount)}`}
+                        ? "Redirecting to Stripe…"
+                        : useStripeCheckout
+                          ? "Continue to Stripe Checkout"
+                          : `Complete Payment — ${formatEuro(summary.totalAmount)}`}
                     </Button>
                   </>
                 ) : null}
