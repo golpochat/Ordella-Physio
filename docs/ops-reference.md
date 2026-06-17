@@ -211,6 +211,24 @@ Copy the webhook signing secret into `STRIPE_WEBHOOK_SECRET` and restart `billin
 
 Paid checkout API: `POST /billing/checkout-session` (via BFF `/api/billing/checkout-session`).
 
+## Onboarding in gateway mode
+
+When the frontend runs with `USE_CLINIC_BACKEND=false`, onboarding BFF routes (`/api/onboarding/*`) are proxied from **api-gateway** to the monolith **clinic-backend** (`CLINIC_BACKEND_URL`, default `http://host.docker.internal:4000`).
+
+Start clinic-backend locally (or `docker compose --profile clinic-backend up -d clinic-backend`) before testing register / start-trial / checkout preview flows in Docker.
+
+## File uploads (ClamAV)
+
+`file-storage-service` scans uploads when `CLAMAV_HOST` is set. Optional local profile:
+
+```bash
+# Set on file-storage-service in compose or .env
+CLAMAV_HOST=clamav
+CLAMAV_PORT=3310
+```
+
+Without `CLAMAV_HOST`, uploads succeed without virus scanning (dev only).
+
 ---
 
 # 4. Sample Test Users (For QA & Development)

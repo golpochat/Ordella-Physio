@@ -855,6 +855,7 @@ export type BillingTruthContext = {
   subscriptionStatus: "ACTIVE" | "TRIALING" | "PAST_DUE" | "CANCELED" | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  aiNotesUsageCount: number;
 };
 
 export type ClinicStripeSubscription = {

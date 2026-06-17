@@ -45,6 +45,7 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     AI_SECURITY_SERVICE_URL: config.aiSecurityServiceUrl,
     AI_OBSERVABILITY_SERVICE_URL: config.aiObservabilityServiceUrl,
     AI_AGENTS_SERVICE_URL: config.aiAgentsServiceUrl,
+    CLINIC_BACKEND_URL: config.clinicBackendUrl,
   };
 
   return map[envKey];

@@ -47,6 +47,7 @@ export class BillingContextService {
       organizationSubscriptionStatus: organization?.subscriptionStatus ?? null,
       organizationStripeCustomerId: organization?.stripeCustomerId ?? null,
       organizationStripeSubscriptionId: organization?.stripeSubscriptionId ?? null,
+      aiNotesUsageCount: subscription?.aiNotesUsageCount ?? 0,
     });
   }
 }

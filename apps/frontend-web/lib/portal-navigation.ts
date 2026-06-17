@@ -5,6 +5,7 @@ import { adminRoutes, staffRoutes, therapistRoutes } from "@/lib/routes";
 export type PortalId =
   | "super-admin"
   | "clinic"
+  | "organization"
   | "therapist"
   | "staff"
   | "pharmacy"
@@ -111,6 +112,22 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
           item("reports", "Reports", adminRoutes.reports, ["admin"]),
           item("logs", "Audit logs", adminRoutes.auditLogs, ["admin"]),
           item("settings", "Settings", adminRoutes.settings, ["admin"]),
+        ],
+      },
+    ],
+  },
+  organization: {
+    id: "organization",
+    brandTitle: "Organization",
+    allowedRoles: ["CLINIC_ADMIN", "ADMIN", "OWNER"],
+    profileHref: "/clinic/settings",
+    settingsHref: "/clinic/settings",
+    sections: [
+      {
+        title: "Platform",
+        items: [
+          item("billing", "Billing", "/organization/billing", ["admin"]),
+          item("clinic", "Clinic portal", "/clinic", ["admin"]),
         ],
       },
     ],
@@ -279,6 +296,7 @@ export function getPortalPageMeta(
 
 export function resolvePortalIdFromPath(pathname: string): PortalId | null {
   if (pathname.startsWith("/super-admin")) return "super-admin";
+  if (pathname.startsWith("/organization")) return "organization";
   if (pathname.startsWith("/clinic")) return "clinic";
   if (pathname.startsWith("/therapist")) return "therapist";
   if (pathname.startsWith("/staff")) return "staff";

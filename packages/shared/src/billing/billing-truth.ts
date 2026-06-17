@@ -28,6 +28,7 @@ export type BillingTruthContext = {
   subscriptionStatus: PlatformSubscriptionStatus | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  aiNotesUsageCount: number;
 };
 
 export function normalizePlatformSubscriptionStatus(
@@ -76,6 +77,7 @@ export function buildBillingTruthContext(input: {
   organizationSubscriptionStatus?: string | null;
   organizationStripeCustomerId?: string | null;
   organizationStripeSubscriptionId?: string | null;
+  aiNotesUsageCount?: number;
 }): BillingTruthContext {
   const billingEntity = resolveBillingEntityType(input.billingModel);
   const organizationLevel = billingEntity === "organization";
@@ -107,5 +109,6 @@ export function buildBillingTruthContext(input: {
     subscriptionStatus,
     stripeCustomerId,
     stripeSubscriptionId,
+    aiNotesUsageCount: input.aiNotesUsageCount ?? 0,
   };
 }

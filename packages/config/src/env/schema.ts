@@ -253,6 +253,7 @@ export const gatewayEnvSchema = z.object({
   REGION_ENDPOINT_APAC: z.string().url().optional(),
   TENANT_SERVICE_URL: z.string().url(),
   REDIS_URL: z.string().url().optional(),
+  CLINIC_BACKEND_URL: z.string().url().default("http://host.docker.internal:4000"),
 }).merge(gatewayServiceUrlsSchema.omit({ TENANT_SERVICE_URL: true })).refine(
   (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
   { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },

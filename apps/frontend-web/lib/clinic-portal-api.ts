@@ -411,6 +411,7 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
           subscriptionStatus: null,
           stripeCustomerId: null,
           stripeSubscriptionId: null,
+          aiNotesUsageCount: 0,
         } satisfies import("@/lib/clinic-portal-types").BillingTruthContext);
       }
 

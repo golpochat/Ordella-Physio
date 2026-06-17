@@ -1,5 +1,5 @@
-import { ClinicPortalShell } from "@/components/clinic-portal/clinic-portal-shell";
+import { OrganizationPortalShell } from "@/components/organization-portal/organization-portal-shell";
 
 export default function OrganizationPortalLayout({ children }: { children: React.ReactNode }) {
-  return <ClinicPortalShell>{children}</ClinicPortalShell>;
+  return <OrganizationPortalShell>{children}</OrganizationPortalShell>;
 }

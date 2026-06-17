@@ -37,6 +37,7 @@ import { AUDIT_ROUTES } from "@/routes/audit.routes";
 import { FILE_STORAGE_ROUTES } from "@/routes/file-storage.routes";
 import { NOTIFICATION_PROVIDER_ROUTES } from "@/routes/notification-provider.routes";
 import { SEARCH_INDEX_ROUTES } from "@/routes/search-index.routes";
+import { ONBOARDING_ROUTES } from "@/routes/onboarding.routes";
 import { SUBSCRIPTION_BILLING_ROUTES } from "@/routes/subscription-billing.routes";
 import { TENANT_ROUTES } from "@/routes/tenant.routes";
 import { configureGatewayMiddleware, gatewayMiddlewareProviders } from "./middleware";
@@ -52,6 +53,10 @@ import { ProxyModule } from "./proxy/proxy.module";
 
 const proxyControllers = [
   createProxyController(AUTH_ROUTES.base, "AUTH_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController(ONBOARDING_ROUTES.base, "CLINIC_BACKEND_URL", {
     public: true,
     skipTenant: true,
   }),

@@ -60,7 +60,8 @@ export type ServiceEnvKey =
   | "AI_COST_SERVICE_URL"
   | "AI_SECURITY_SERVICE_URL"
   | "AI_OBSERVABILITY_SERVICE_URL"
-  | "AI_AGENTS_SERVICE_URL";
+  | "AI_AGENTS_SERVICE_URL"
+  | "CLINIC_BACKEND_URL";
 
 export type ServiceDefinition = {
   name: string;
@@ -278,6 +279,7 @@ const CORE_PUBLIC_PATHS = [
   "/metrics",
   "/docs",
   "/auth",
+  "/api/onboarding",
   "/payments/webhook",
   "/billing/webhook",
   "/subscription-billing/stripe/webhook",

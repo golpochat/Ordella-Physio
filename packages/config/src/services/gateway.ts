@@ -47,6 +47,7 @@ function createGatewayConfig() {
     aiSecurityServiceUrl: env.AI_SECURITY_SERVICE_URL,
     aiObservabilityServiceUrl: env.AI_OBSERVABILITY_SERVICE_URL,
     aiAgentsServiceUrl: env.AI_AGENTS_SERVICE_URL,
+    clinicBackendUrl: env.CLINIC_BACKEND_URL,
     gatewayTimeoutMs: env.GATEWAY_TIMEOUT_MS,
     gatewayRateLimitIp: env.GATEWAY_RATE_LIMIT_IP,
     gatewayRateLimitTenant: env.GATEWAY_RATE_LIMIT_TENANT,

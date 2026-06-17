@@ -11,6 +11,7 @@ import {
   useClinicStripeInvoices,
   useClinicSubscription,
   useCreateClinicSubscription,
+  useBillingContext,
 } from "@/hooks/useClinicPortal";
 import { useAuth } from "@/hooks/useAuth";
 import type { ClinicSubscriptionPlan } from "@/lib/clinic-portal-types";
@@ -29,6 +30,7 @@ export function ClinicSubscriptionBillingPanel({
   portalReturnPath?: string;
 }) {
   const { user } = useAuth();
+  const billingContextQuery = useBillingContext();
   const canManageBilling = can(user, Permission.BILLING_MANAGE);
   const subscriptionQuery = useClinicSubscription();
   const invoicesQuery = useClinicStripeInvoices();
@@ -160,6 +162,22 @@ export function ClinicSubscriptionBillingPanel({
               )}
             </div>
           ) : null}
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>AI Notes usage</CardTitle>
+          <CardDescription>
+            Clinical note generations this billing period. Metered add-on billing is tracked for
+            future Stripe invoicing.
+          </CardDescription>
+        </CardHeader>
+        <CardBody>
+          <p className="text-3xl font-semibold tabular-nums">
+            {billingContextQuery.data?.aiNotesUsageCount ?? 0}
+          </p>
+          <p className="text-sm text-muted-foreground">generations recorded for this tenant</p>
         </CardBody>
       </Card>
 
