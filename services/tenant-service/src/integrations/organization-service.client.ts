@@ -24,7 +24,7 @@ export class OrganizationServiceClient {
   private readonly logger = new Logger(OrganizationServiceClient.name);
 
   private get baseUrl(): string {
-    return process.env.ORGANIZATION_SERVICE_URL ?? "http://organization-service:3053";
+    return process.env.ORGANIZATION_SERVICE_URL ?? "http://organization-service:3066";
   }
 
   private mapOrganization(

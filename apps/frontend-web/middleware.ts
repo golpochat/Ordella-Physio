@@ -4,6 +4,7 @@ import {
   getSession,
 } from "@/lib/auth/session-middleware";
 import {
+  canAccessGuardedPath,
   hasValidTenant,
   isGuardedPortalPath,
   isPublicMiddlewarePath,
@@ -136,10 +137,12 @@ async function enforcePortalRbac(request: NextRequest) {
   }
 
   if (!pathname.startsWith(allowedPrefix)) {
-    return redirectToPortalHome(
-      request,
-      resolveMiddlewarePortalHome(role, roles),
-    );
+    if (!canAccessGuardedPath(pathname, role, roles)) {
+      return redirectToPortalHome(
+        request,
+        resolveMiddlewarePortalHome(role, roles),
+      );
+    }
   }
 
   return null;

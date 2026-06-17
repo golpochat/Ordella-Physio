@@ -55,6 +55,7 @@ export function isPublicMiddlewarePath(pathname: string): boolean {
 export function isGuardedPortalPath(pathname: string): boolean {
   const guardedPrefixes = [
     "/clinic",
+    "/organization",
     "/staff",
     "/therapist",
     "/super-admin",
@@ -67,6 +68,31 @@ export function isGuardedPortalPath(pathname: string): boolean {
   ];
 
   return guardedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
+export function canAccessGuardedPath(
+  pathname: string,
+  role: string,
+  roles?: string[],
+): boolean {
+  const allowedPrefix = resolveAllowedPortalPrefix(role, roles);
+  if (!allowedPrefix) {
+    return false;
+  }
+
+  if (pathname.startsWith(allowedPrefix)) {
+    return true;
+  }
+
+  const resolved = roles?.length
+    ? roles.map((entry) => mapAuthRoleToPortalRole(entry))
+    : [mapAuthRoleToPortalRole(role)];
+
+  const isClinicOperator = resolved.some(
+    (entry) => entry === "CLINIC_ADMIN" || entry === "ADMIN" || entry === "OWNER",
+  );
+
+  return isClinicOperator && pathname.startsWith("/organization");
 }
 
 export function sessionRequiresTenant(session: MiddlewareSession): boolean {

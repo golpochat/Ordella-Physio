@@ -12,7 +12,7 @@ export class OrganizationSyncClient {
   private readonly logger = new Logger(OrganizationSyncClient.name);
 
   async syncBilling(payload: OrganizationBillingSyncPayload): Promise<void> {
-    const baseUrl = process.env.ORGANIZATION_SERVICE_URL ?? "http://organization-service:3053";
+    const baseUrl = process.env.ORGANIZATION_SERVICE_URL ?? "http://organization-service:3066";
     if (!baseUrl) {
       this.logger.warn("ORGANIZATION_SERVICE_URL not configured — skipping organization billing sync");
       return;
