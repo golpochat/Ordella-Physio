@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useApi } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import { authClient } from "@/lib/auth-client";
-import { isClinicBackendClient } from "@/lib/clinic-backend-normalize";
+import { preferStripeCheckout, isMonolithDbCheckoutFallback } from "@/lib/billing-checkout-mode";
 import { createClinicPortalApi } from "@/lib/clinic-portal-api";
 import {
   buildRegisterHref,
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
   const { isAuthenticated, user, accessToken, completeCheckout } = useAuth();
   const api = useApi();
   const { tenantId } = useTenant();
-  const useStripeCheckout = !isClinicBackendClient();
+  const useStripeCheckout = preferStripeCheckout();
   const [trialDays, setTrialDays] = useState(14);
   const [vatCountries, setVatCountries] = useState(VAT_COUNTRIES);
   const [submitting, setSubmitting] = useState(false);
@@ -307,6 +307,10 @@ export default function CheckoutPage() {
         });
         window.location.href = session.url;
         return;
+      }
+
+      if (!isMonolithDbCheckoutFallback()) {
+        throw new Error("Stripe checkout is required. Set NEXT_PUBLIC_ALLOW_DB_CHECKOUT=true for monolith-only dev.");
       }
 
       await completeCheckout({

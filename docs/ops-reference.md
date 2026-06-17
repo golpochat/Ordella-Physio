@@ -174,6 +174,45 @@ Then re-run migrations (see above).
 
 ---
 
+# 3b. Stripe billing (local dev)
+
+Platform subscriptions use **billing-service** + Stripe when running the Docker/gateway stack.
+
+## Required env (billing-service + frontend)
+
+Set in `docker-compose.dev.yml` or service `.env`:
+
+| Variable | Example |
+|----------|---------|
+| `STRIPE_SECRET_KEY` | `sk_test_...` |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...` (from Stripe CLI or Dashboard) |
+| `STRIPE_PRICE_STARTER` | `price_...` |
+| `STRIPE_PRICE_PRO` | `price_...` |
+| `STRIPE_PRICE_ENTERPRISE` | `price_...` |
+
+Frontend (optional): `NEXT_PUBLIC_ALLOW_DB_CHECKOUT=true` — monolith-only fake card checkout (dev only; **do not use in production**).
+
+## Forward webhooks locally
+
+```bash
+stripe listen --forward-to localhost:3049/billing/webhook
+```
+
+Copy the webhook signing secret into `STRIPE_WEBHOOK_SECRET` and restart `billing-service`.
+
+## Smoke test checklist
+
+1. Register or log in as clinic admin (`demo-tenant`).
+2. Open `/checkout?plan=pro&cycle=yearly&intent=checkout`.
+3. Complete Stripe Checkout (test card `4242 4242 4242 4242`).
+4. Confirm redirect to `/checkout/success` then `/clinic`.
+5. Verify tenant status: `docker exec ordella-physio-db psql -U physio -d ordella_tenant -c "SELECT id, status FROM tenants LIMIT 5;"`
+6. Check billing-service logs for webhook events.
+
+Paid checkout API: `POST /billing/checkout-session` (via BFF `/api/billing/checkout-session`).
+
+---
+
 # 4. Sample Test Users (For QA & Development)
 
 Below are sample users for every role in the system.  

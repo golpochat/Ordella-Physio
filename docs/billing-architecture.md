@@ -47,3 +47,13 @@ Trial upgrade redirects:
 
 - [implementation-audit-tracker.md](./implementation-audit-tracker.md)
 - [ops-reference.md](./ops-reference.md)
+
+## Deprecated: subscription-billing-service
+
+`services/subscription-billing-service` is **deprecated** (2026-06-17). Do not add features or wire new webhooks there.
+
+| Legacy | Replacement |
+|--------|-------------|
+| `POST /subscription-billing/stripe/webhook` | `POST /billing/webhook` |
+| `/settings/billing` UI | `/clinic/billing` or `/organization/billing` |
+| `subscription-billing-service` DB | `billing-service` + org/tenant billing sync |
