@@ -1,4 +1,4 @@
-import { EMAIL_REGEX } from "@ordella/validation";
+import { EMAIL_REGEX } from "@ordella/validation/constants";
 
 export const TENANT_CODE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

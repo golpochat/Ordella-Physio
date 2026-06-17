@@ -30,4 +30,11 @@ export class SubscriptionRepository {
       data: { usageCurrent: { increment: amount } },
     });
   }
+
+  incrementAiNotesUsage(tenantId: string, amount = 1): Promise<TenantSubscription> {
+    return this.database.tenantSubscription.update({
+      where: { tenantId },
+      data: { aiNotesUsageCount: { increment: amount } },
+    });
+  }
 }

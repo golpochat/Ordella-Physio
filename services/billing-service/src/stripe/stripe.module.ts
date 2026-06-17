@@ -6,6 +6,8 @@ import { StripeBillingService } from "@/stripe/stripe-billing.service";
 import { StripeBillingRepository } from "@/stripe/stripe-billing.repository";
 import { StripeClient } from "@/stripe/stripe.client";
 import { TenantSyncClient } from "@/stripe/tenant-sync.client";
+import { OrganizationSyncClient } from "@/stripe/organization-sync.client";
+import { BillingTruthClient } from "@/stripe/billing-truth.client";
 import { TenantCreatedConsumer } from "@/stripe/tenant-created.consumer";
 
 @Module({
@@ -16,6 +18,8 @@ import { TenantCreatedConsumer } from "@/stripe/tenant-created.consumer";
     StripeBillingRepository,
     StripeClient,
     TenantSyncClient,
+    OrganizationSyncClient,
+    BillingTruthClient,
     TenantCreatedConsumer,
   ],
   exports: [StripeBillingService],

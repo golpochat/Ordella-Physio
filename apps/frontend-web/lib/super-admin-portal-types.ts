@@ -384,6 +384,9 @@ export type PlatformOrganization = {
   primaryContactEmail: string;
   primaryContactPhone: string | null;
   billingModel: "tenant-level" | "organization-level";
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  subscriptionStatus?: "ACTIVE" | "TRIALING" | "PAST_DUE" | "CANCELED" | null;
   status: "ACTIVE" | "INACTIVE";
   createdAt: string;
   updatedAt: string;

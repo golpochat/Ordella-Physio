@@ -27,6 +27,7 @@ const TENANT_PUBLIC_PATHS = [
   "/tenants/directory",
   "/tenants",
   "/tenants/internal/billing-sync",
+  "/tenants/internal/billing-context",
   "/tenants/internal/localization",
   "/tenants/internal/domain",
   "/tenants/internal/status",

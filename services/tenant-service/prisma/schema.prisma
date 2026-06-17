@@ -216,6 +216,7 @@ model TenantSubscription {
   subscriptionStatus   String?
   usageLimit           Int?
   usageCurrent         Int              @default(0)
+  aiNotesUsageCount    Int              @default(0)
   renewsAt             DateTime?
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt

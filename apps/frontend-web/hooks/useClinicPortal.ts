@@ -33,6 +33,8 @@ import type {
   UpdateClinicInvoicePayload,
   CreateClinicPatientPayload,
   CreateClinicSubscriptionPayload,
+  ClinicStripeSubscription,
+  BillingTruthContext,
   CreateClinicStaffPayload,
   CreateClinicUserPayload,
   ClinicStaffMember,
@@ -747,10 +749,23 @@ export function useClinicSubscription() {
   const { tenantId } = useClinicContext();
   const authReady = useQueryAuthReady();
 
-  return useQuery({
+  return useQuery<ClinicStripeSubscription>({
     queryKey: ["clinic", "subscription", tenantId],
     queryFn: () => requireApi(clinicApi).getSubscription(),
     enabled: Boolean(tenantId && clinicApi && authReady),
+  });
+}
+
+export function useBillingContext() {
+  const clinicApi = useClinicPortalApi();
+  const { tenantId } = useClinicContext();
+  const authReady = useQueryAuthReady();
+
+  return useQuery<BillingTruthContext>({
+    queryKey: ["billing", "context", tenantId],
+    queryFn: () => requireApi(clinicApi).getBillingContext(),
+    enabled: Boolean(tenantId && clinicApi && authReady),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

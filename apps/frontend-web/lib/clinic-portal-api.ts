@@ -394,6 +394,32 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       return api.get<ClinicStripeSubscription>("billing", "/subscription");
     },
 
+    getBillingContext() {
+      if (isClinicBackendClient()) {
+        return Promise.resolve({
+          billingModel: "tenant-level",
+          billingEntity: "tenant",
+          organizationId: null,
+          organizationName: null,
+          tenantId,
+          canManageBillingAtTenant: true,
+          canManageBillingAtOrganization: false,
+          billingAdmin: "tenant-owner",
+          clinicBillingPath: "/clinic/billing",
+          organizationBillingPath: "/organization/billing",
+          upgradePath: "/clinic/billing/upgrade",
+          subscriptionStatus: null,
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+        } satisfies import("@/lib/clinic-portal-types").BillingTruthContext);
+      }
+
+      return api.get<import("@/lib/clinic-portal-types").BillingTruthContext>(
+        "billing",
+        "/billing-context",
+      );
+    },
+
     listStripeInvoices() {
       if (isClinicBackendClient()) {
         return Promise.resolve([]);

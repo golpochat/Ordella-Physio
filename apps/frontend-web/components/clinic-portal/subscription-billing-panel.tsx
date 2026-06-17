@@ -23,7 +23,11 @@ const PLANS: { id: ClinicSubscriptionPlan; label: string; description: string }[
   { id: "ENTERPRISE", label: "Enterprise", description: "Advanced controls and support" },
 ];
 
-export function ClinicSubscriptionBillingPanel() {
+export function ClinicSubscriptionBillingPanel({
+  portalReturnPath = "/clinic/billing",
+}: {
+  portalReturnPath?: string;
+}) {
   const { user } = useAuth();
   const canManageBilling = can(user, Permission.BILLING_MANAGE);
   const subscriptionQuery = useClinicSubscription();
@@ -64,7 +68,7 @@ export function ClinicSubscriptionBillingPanel() {
   const handleOpenPortal = async () => {
     try {
       const result = await customerPortal.mutateAsync(
-        typeof window !== "undefined" ? `${window.location.origin}/clinic/billing` : undefined,
+        typeof window !== "undefined" ? `${window.location.origin}${portalReturnPath}` : undefined,
       );
       if (result.url) {
         window.location.href = result.url;

@@ -1,40 +1,46 @@
 # Billing architecture — Ordella Physio
 
-> **Decision (2026-06-16):** Production billing uses **subscription-billing microservice + Stripe** when running the Docker/gateway stack. The **clinic monolith** (`backend/`) records platform subscriptions in Postgres for local `USE_CLINIC_BACKEND=true` development without requiring Stripe keys.
+> **Decision (2026-06-16):** Production billing uses **billing-service + Stripe** when running the Docker/gateway stack. The **clinic monolith** (`backend/`) records platform subscriptions in Postgres for local `USE_CLINIC_BACKEND=true` development without requiring Stripe keys.
+
+## Hybrid billing truth model
+
+Every organization has a required `billingModel`:
+
+| Value | Billing entity | Stripe customer metadata | Subscription owner |
+|-------|----------------|--------------------------|-------------------|
+| `tenant-level` | Tenant | `tenantId` + `organizationId` | `tenant.subscription` |
+| `organization-level` | Organization | `organizationId` only | `organization.subscription` |
+
+**Rules:**
+
+- Tenants inherit billing behavior from their organization; they cannot override `billingModel`.
+- Exactly one Stripe customer per billing entity — never both tenant and organization customers for the same workspace.
+- Webhooks route to tenant **or** organization based on Stripe customer ownership, never both.
+- AI Notes usage (`tenant.usage.aiNotesCount`) is always billed per tenant even under organization-level platform billing.
+
+## UI routing
+
+| billingModel | Platform billing UI | Clinic `/clinic/billing` |
+|--------------|---------------------|--------------------------|
+| `tenant-level` | `/clinic/billing` | Full subscription + invoices |
+| `organization-level` | `/organization/billing` | Read-only “managed by organization” + patient invoices only |
+
+Trial upgrade redirects:
+
+- `tenant-level` → `/clinic/billing/upgrade`
+- `organization-level` → `/organization/billing/upgrade`
 
 ## Modes
 
-| Mode | Checkout (`/checkout`) | In-portal upgrade (`/clinic/billing`) | Payment capture |
-|------|--------------------------|---------------------------------------|-----------------|
-| **Gateway + microservices** (Docker dev/prod) | BFF → onboarding + **subscription-billing** `/subscription/subscribe` | `ClinicSubscriptionBillingPanel` → subscription-billing + Stripe portal | Stripe (when `STRIPE_SECRET_KEY` set) |
-| **Clinic monolith** (`pnpm dev`, `USE_CLINIC_BACKEND=true`) | BFF → `/api/onboarding/checkout/complete` | Subscription panel may be limited; platform state in `PlatformSubscription` | DB-only activation; card validated, not charged |
+| Mode | Checkout (`/checkout`) | In-portal upgrade | Payment capture |
+|------|------------------------|-------------------|-----------------|
+| **Gateway + microservices** | BFF → onboarding + Stripe via billing-service | Clinic or organization billing panel | Stripe |
+| **Clinic monolith** (`USE_CLINIC_BACKEND=true`) | BFF → `/api/onboarding/checkout/complete` | Limited; DB-only stub | DB-only activation |
 
-## User flows
+## API
 
-### Trial
-
-1. `/pricing` → `/checkout?intent=trial`
-2. CTA → `/register` (if needed) → tenant `TRIALING`
-3. Trial banner → `/checkout?intent=checkout` or `/clinic/billing`
-
-### Paid signup
-
-1. `/pricing` → `/checkout?intent=checkout`
-2. Register → return to checkout → complete payment
-3. Gateway: Stripe subscription via subscription-billing
-4. Monolith: `PlatformSubscription` + tenant `ACTIVE`
-
-## Environment
-
-| Variable | Service | Purpose |
-|----------|---------|---------|
-| `STRIPE_SECRET_KEY` | subscription-billing | Live Stripe API |
-| `STRIPE_WEBHOOK_SECRET` | subscription-billing | Webhook verification |
-| `FRONTEND_URL` | backend / subscription-billing | Reset links, portal return URLs |
-
-## Webhooks
-
-Stripe webhooks are handled by **subscription-billing** (`stripe-webhook.service.ts`). Tenant status sync (`ACTIVE`, `PAST_DUE`, suspension) should be driven from webhook handlers — verify in deploy checklist.
+- `GET /billing/billing-context` — resolves billing truth for the current tenant (via billing-service → tenant-service).
+- Stripe webhooks: `POST /billing/webhook` (billing-service), routed by customer metadata.
 
 ## Related docs
 

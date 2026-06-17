@@ -2,10 +2,14 @@ import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import type { CreateOrganizationPayload } from "@/models/Organization";
 import { organizationNotFoundError } from "@/utils/organization-errors";
 import { OrganizationService } from "@/services/organization.service";
+import { OrganizationBillingService, type OrganizationBillingSyncDto } from "@/services/organization-billing.service";
 
 @Controller("organizations/internal")
 export class InternalOrganizationController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(
+    private readonly organizationService: OrganizationService,
+    private readonly organizationBillingService: OrganizationBillingService,
+  ) {}
 
   @Post("create")
   create(@Body() payload: CreateOrganizationPayload) {
@@ -15,6 +19,11 @@ export class InternalOrganizationController {
   @Delete(":id/provisioning-rollback")
   rollback(@Param("id") id: string) {
     return this.organizationService.rollbackProvisioningOrganization(id);
+  }
+
+  @Post("billing-sync")
+  syncBilling(@Body() payload: OrganizationBillingSyncDto) {
+    return this.organizationBillingService.syncBilling(payload);
   }
 
   @Get(":id")

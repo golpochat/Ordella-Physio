@@ -36,8 +36,12 @@ export class SubscriptionService {
     return toSubscriptionResponse(subscription);
   }
 
-  trackUsage(tenantId: string, amount = 1) {
+  incrementUsage(tenantId: string, amount = 1) {
     return this.subscriptionRepository.incrementUsage(tenantId, amount);
+  }
+
+  incrementAiNotesUsage(tenantId: string, amount = 1) {
+    return this.subscriptionRepository.incrementAiNotesUsage(tenantId, amount);
   }
 
   async syncFromStripe(

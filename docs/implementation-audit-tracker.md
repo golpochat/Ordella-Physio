@@ -1,7 +1,7 @@
 # Ordella Physio — Implementation Audit & Tracker
 
 > **Purpose:** Living reference for what is implemented, what appears on the website, gaps, and planned work.  
-> **Last updated:** 2026-06-16  
+> **Last updated:** 2026-06-17  
 > **Primary frontend:** `apps/frontend-web` (port 3010)  
 > **Primary backends:** `backend/` (clinic monolith) + `services/*` (35 microservices via API gateway)
 
@@ -76,7 +76,7 @@ The **live website** is **`apps/frontend-web`**. Legacy apps (`apps/web`, `apps/
 | Profile completion wizard | Tenant profile API | `/clinic` home | ✅ | Done |
 | CSRF on register/checkout BFF | BFF + fetcher | Auth flows | ✅ | Done (2026-06) |
 | Platform paid checkout (Stripe capture) | DB-only on monolith | Card form on checkout | ⚠️ | **Not started** |
-| Stripe subscription (in-portal upgrade) | Microservice | `/clinic/billing` | ⚠️ | **Not started** — placeholder card vs live panel |
+| Stripe subscription (in-portal upgrade) | Microservice + billing truth | `/clinic/billing`, `/organization/billing` | ⚠️ | **Partial** — tenant vs org routing live; Stripe keys required |
 
 ---
 
@@ -134,7 +134,7 @@ Routed via **api-gateway** (`:3049`). Dev compose runs **17** domain services + 
 |-------|----------|----------------|-------------|---------|
 | Core | auth, tenant, organization, user-role, staff, audit, feature-flags, event-bus | Mostly complete | Partial (super-admin) | Ongoing |
 | Clinical | patient, appointment, notes, terminal | Complete vs monolith | ✅ Via BFF | Done |
-| Billing | billing, payment, subscription-billing | Stripe in MS; mocks in dev | ⚠️ | Partial |
+| Billing | billing, payment, subscription-billing | Hybrid billing truth (tenant vs org) in billing-service | ⚠️ | Partial — org-level Stripe + webhooks wired |
 | Comms | notification, notification-provider, communication, messaging | Stubbed channels | ✅ Topbar | Partial |
 | Reporting & search | reporting, search-index | Placeholder exports, ES stub | ✅ Search topbar | Partial |
 | Integrations | file-storage, marketplace | Complete | ✅ Clinic nav | Done (nav) |
@@ -183,7 +183,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 |------------|----------|-----|----------|---------|
 | Pricing → checkout → register | ✅ | — | — | Done |
 | Paid checkout payment capture | ⚠️ | Monolith DB-only | P1 | Not started |
-| Clinic billing Stripe UX | ⚠️ | Live panel in gateway mode; monolith DB-only | P1 | Partial — see billing-architecture.md |
+| Clinic billing Stripe UX | ⚠️ | Hybrid truth: tenant `/clinic/billing` vs org `/organization/billing` | P1 | Partial — see billing-architecture.md |
 | Password reset (monolith) | ✅ | Email + token routes | P1 | Done |
 | AI / automation / marketplace / enterprise nav | ✅ | Clinic sidebar | P2 | Done (nav) |
 | Patient portal full nav | ✅ | Appointments, billing, notes, messages | P2 | Done — **keep `/patient` APIs/routes** |
@@ -227,6 +227,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 ### Phase 1 — Stabilize user-facing UX (P1)
 
 - [x] Pick one billing truth: documented in [billing-architecture.md](./billing-architecture.md) (gateway+Stripe vs monolith DB)
+- [x] Hybrid billing truth model: `billingModel` on org, context API, org Stripe accounts, UI routing
 - [x] Remove Stripe “coming soon” placeholder on `/clinic/billing` (use subscription panel only)
 - [x] Fix broken `/settings/notifications/logs` (delivery logs page)
 - [x] Implement monolith password reset (`POST /api/auth/password/request`, `/password/reset`)
@@ -298,6 +299,7 @@ flowchart TB
 | 2026-06-16 | Initial audit from full-repo review (backend, microservices, frontend-web, docs, Docker). Baseline tracker created. |
 | 2026-06-16 | Phase 1 started: patient API/route preservation policy recorded; removed clinic billing Stripe placeholder; added notification delivery logs page. |
 | 2026-06-16 | Phases 1–2 + partial 4–5: monolith password reset, notes PATCH/DELETE, billing architecture doc, trial banner → checkout, clinic/patient/staff/therapist nav, legacy scaffold redirects, legacy app DEPRECATED.md, JWT rotation runbook, README/ops-reference updates. |
+| 2026-06-17 | Hybrid billing truth model: shared `billing-truth` types, org/tenant/billing-service migrations, `GET /billing/billing-context`, org-level Stripe accounts + webhooks, `/organization/billing` UI, clinic read-only when org-level, trial upgrade path routing. |
 
 ---
 

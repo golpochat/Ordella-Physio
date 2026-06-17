@@ -5,9 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useAuth } from "@/hooks/useAuth";
+import { useBillingContext } from "@/hooks/useClinicPortal";
 
 export function TrialBanner() {
   const { accessToken } = useAuth();
+  const billingContextQuery = useBillingContext();
 
   const trialQuery = useQuery({
     queryKey: ["tenant-trial"],
@@ -18,13 +20,19 @@ export function TrialBanner() {
   });
 
   const trial = trialQuery.data;
+  const upgradePath =
+    billingContextQuery.data?.upgradePath ??
+    (billingContextQuery.data?.billingModel === "organization-level"
+      ? "/organization/billing/upgrade"
+      : "/clinic/billing/upgrade");
+
   if (!trial || trial.status !== "TRIALING" || trial.trialExpired) {
     if (trial?.trialExpired || trial?.status === "TRIAL_EXPIRED") {
       return (
         <div className="tenant-trial-banner tenant-trial-banner-expired" role="alert">
           <p>Your free trial has ended. Upgrade to restore full access to your clinic portal.</p>
           <Button asChild size="sm" variant="secondary">
-            <Link href="/checkout?intent=checkout">Upgrade now</Link>
+            <Link href={upgradePath}>Upgrade now</Link>
           </Button>
         </div>
       );
@@ -43,7 +51,7 @@ export function TrialBanner() {
         without interruption.
       </p>
       <Button asChild size="sm">
-        <Link href="/checkout?intent=checkout">Upgrade now</Link>
+        <Link href={upgradePath}>Upgrade now</Link>
       </Button>
     </div>
   );

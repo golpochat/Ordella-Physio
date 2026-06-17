@@ -124,8 +124,8 @@ export function PlatformUserCreateForm({
             <p className="text-sm text-muted-foreground">
               Platform operators are stored under tenant{" "}
               <span className="font-medium text-foreground">
-                {tenants.find((tenant) => tenant.id === tenantId)?.name ??
-                  tenantId ||
+                {(tenants.find((tenant) => tenant.id === tenantId)?.name ??
+                  tenantId) ||
                   "demo-tenant"}
               </span>
               , matching the auth service multi-tenant model.

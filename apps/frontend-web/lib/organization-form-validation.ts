@@ -1,4 +1,4 @@
-import { EMAIL_REGEX, PHONE_REGEX } from "@ordella/validation";
+import { EMAIL_REGEX, PHONE_REGEX } from "@ordella/validation/constants";
 
 export function validateOrganizationName(name: string): string | null {
   const trimmed = name.trim();

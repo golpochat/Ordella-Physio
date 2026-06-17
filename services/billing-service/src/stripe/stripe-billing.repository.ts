@@ -20,6 +20,51 @@ export class StripeBillingRepository {
     });
   }
 
+  findOrganizationAccountByOrganizationId(organizationId: string) {
+    return this.database.organizationBillingAccount.findUnique({
+      where: { organizationId },
+      include: { subscription: true },
+    });
+  }
+
+  findOrganizationAccountByStripeCustomerId(stripeCustomerId: string) {
+    return this.database.organizationBillingAccount.findUnique({
+      where: { stripeCustomerId },
+      include: { subscription: true },
+    });
+  }
+
+  createOrganizationAccount(data: Prisma.OrganizationBillingAccountCreateInput) {
+    return this.database.organizationBillingAccount.create({ data });
+  }
+
+  updateOrganizationAccount(
+    organizationId: string,
+    data: Prisma.OrganizationBillingAccountUpdateInput,
+  ) {
+    return this.database.organizationBillingAccount.update({ where: { organizationId }, data });
+  }
+
+  upsertOrganizationSubscription(
+    organizationBillingId: string,
+    data: Omit<Prisma.OrganizationStripeSubscriptionUncheckedCreateInput, "organizationBillingId">,
+  ) {
+    return this.database.organizationStripeSubscription.upsert({
+      where: { organizationBillingId },
+      create: { organizationBillingId, ...data },
+      update: {
+        stripeSubscriptionId: data.stripeSubscriptionId,
+        stripePriceId: data.stripePriceId,
+        plan: data.plan,
+        status: data.status,
+        currentPeriodStart: data.currentPeriodStart,
+        currentPeriodEnd: data.currentPeriodEnd,
+        cancelAtPeriodEnd: data.cancelAtPeriodEnd,
+        canceledAt: data.canceledAt,
+      },
+    });
+  }
+
   createAccount(data: Prisma.TenantBillingAccountCreateInput) {
     return this.database.tenantBillingAccount.create({ data });
   }

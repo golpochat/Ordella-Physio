@@ -840,8 +840,27 @@ export type ClinicAppointmentReminderSaveResponse = {
 
 export type ClinicSubscriptionPlan = "STARTER" | "PROFESSIONAL" | "ENTERPRISE";
 
+export type BillingTruthContext = {
+  billingModel: "tenant-level" | "organization-level";
+  billingEntity: "tenant" | "organization";
+  organizationId: string | null;
+  organizationName: string | null;
+  tenantId: string;
+  canManageBillingAtTenant: boolean;
+  canManageBillingAtOrganization: boolean;
+  billingAdmin: "tenant-owner" | "organization-contact";
+  clinicBillingPath: "/clinic/billing";
+  organizationBillingPath: "/organization/billing";
+  upgradePath: string;
+  subscriptionStatus: "ACTIVE" | "TRIALING" | "PAST_DUE" | "CANCELED" | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+};
+
 export type ClinicStripeSubscription = {
   tenantId: string;
+  organizationId?: string;
+  billingEntity?: "tenant" | "organization";
   stripeCustomerId: string | null;
   defaultPaymentMethodId: string | null;
   status: string;

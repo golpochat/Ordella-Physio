@@ -6,6 +6,15 @@ export const BILLING_MODELS = ["tenant-level", "organization-level"] as const;
 
 export type BillingModel = (typeof BILLING_MODELS)[number];
 
+export const ORGANIZATION_SUBSCRIPTION_STATUSES = [
+  "ACTIVE",
+  "TRIALING",
+  "PAST_DUE",
+  "CANCELED",
+] as const;
+
+export type OrganizationSubscriptionStatus = (typeof ORGANIZATION_SUBSCRIPTION_STATUSES)[number];
+
 export type OrganizationRecord = {
   id: string;
   name: string;
@@ -16,6 +25,9 @@ export type OrganizationRecord = {
   primaryContactEmail: string;
   primaryContactPhone: string | null;
   billingModel: BillingModel;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  subscriptionStatus: OrganizationSubscriptionStatus | null;
   status: OrganizationStatus;
   createdAt: string;
   updatedAt: string;

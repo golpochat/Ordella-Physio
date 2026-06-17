@@ -1,6 +1,6 @@
 import type { ClinicStaffListItem, ClinicStaffListResponse } from "@/lib/clinic-staff-member-types";
 import type { ClinicStaffType } from "@/lib/clinic-staff-member-types";
-import type { ClinicStaffMember } from "@/lib/clinic-portal-types";
+import type { ClinicStaffMember, ClinicStripeSubscription } from "@/lib/clinic-portal-types";
 import type { ClinicRoleListItem, ClinicRoleListResponse } from "@/lib/user-role-portal-types";
 
 type PaginatedEnvelope<T> = {
@@ -204,7 +204,7 @@ export function isClinicBackendClient(): boolean {
   );
 }
 
-export function getClinicBackendSubscriptionStub(tenantId: string) {
+export function getClinicBackendSubscriptionStub(tenantId: string): ClinicStripeSubscription {
   return {
     tenantId,
     stripeCustomerId: null,

@@ -130,6 +130,9 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   primaryContactEmail: 'primaryContactEmail',
   primaryContactPhone: 'primaryContactPhone',
   billingModel: 'billingModel',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  subscriptionStatus: 'subscriptionStatus',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -179,6 +182,13 @@ exports.Prisma.JsonNullValueFilter = {
 exports.BillingModel = exports.$Enums.BillingModel = {
   TENANT_LEVEL: 'TENANT_LEVEL',
   ORGANIZATION_LEVEL: 'ORGANIZATION_LEVEL'
+};
+
+exports.OrganizationSubscriptionStatus = exports.$Enums.OrganizationSubscriptionStatus = {
+  ACTIVE: 'ACTIVE',
+  TRIALING: 'TRIALING',
+  PAST_DUE: 'PAST_DUE',
+  CANCELED: 'CANCELED'
 };
 
 exports.OrganizationStatus = exports.$Enums.OrganizationStatus = {

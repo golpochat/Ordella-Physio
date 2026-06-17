@@ -4,6 +4,7 @@ import { OrganizationController } from "@/controllers/organization.controller";
 import { InternalOrganizationController } from "@/controllers/internal-organization.controller";
 import { SuperAdminOrganizationController } from "@/controllers/super-admin-organization.controller";
 import { OrganizationConfigController } from "@/controllers/organization-config.controller";
+import { OrganizationBillingService } from "@/services/organization-billing.service";
 import { OrganizationService } from "@/services/organization.service";
 import { OrganizationConfigService } from "@/services/organization-config.service";
 import { OrganizationRepository } from "@/repositories/organization.repository";
@@ -25,6 +26,7 @@ import { AuditLogClient } from "@/integrations/audit-log.client";
   providers: [
     OrganizationService,
     OrganizationConfigService,
+    OrganizationBillingService,
     OrganizationRepository,
     OrganizationConfigRepository,
     TenantServiceClient,

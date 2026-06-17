@@ -44,6 +44,13 @@ export class StripeBillingController {
     return this.stripeBillingService.getSubscription(tenantId);
   }
 
+  @Get("billing-context")
+  @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
+  @RequirePermissions("billing.read")
+  getBillingContext(@TenantId() tenantId: string) {
+    return this.stripeBillingService.getBillingContext(tenantId);
+  }
+
   @Get(["stripe-invoices", "subscription/invoices"])
   @UseGuards(JwtGuard, TenantGuard, PermissionGuard)
   @RequirePermissions("billing.read")
