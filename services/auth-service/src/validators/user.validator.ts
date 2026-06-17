@@ -458,6 +458,8 @@ export type ListUsersQuery = {
   limit: number;
   search?: string;
   role?: (typeof USER_ROLES)[number];
+  excludeRoles?: (typeof USER_ROLES)[number][];
+  tenantId?: string;
   status?: UserStatus;
   sortBy: ListUsersSortField;
   sortOrder: "asc" | "desc";
@@ -534,6 +536,26 @@ export function parseListUsersQuery(query: unknown): ListUsersQueryResult {
     role = roleRaw as (typeof USER_ROLES)[number];
   }
 
+  let excludeRoles: ListUsersQuery["excludeRoles"];
+  const excludeRolesRaw = readQueryString(body.excludeRoles)?.trim();
+  if (excludeRolesRaw) {
+    const parsedRoles = excludeRolesRaw
+      .split(",")
+      .map((entry) => entry.trim().toUpperCase())
+      .filter(Boolean);
+
+    for (const entry of parsedRoles) {
+      if (!USER_ROLES.includes(entry as (typeof USER_ROLES)[number])) {
+        return { valid: false, error: "INVALID_FILTER" };
+      }
+    }
+
+    excludeRoles = parsedRoles as (typeof USER_ROLES)[number][];
+  }
+
+  const tenantIdRaw = readQueryString(body.tenantId)?.trim();
+  const tenantId = tenantIdRaw ? tenantIdRaw : undefined;
+
   let status: ListUsersQuery["status"];
   const statusRaw = readQueryString(body.status)?.trim().toUpperCase();
   if (statusRaw) {
@@ -568,6 +590,8 @@ export function parseListUsersQuery(query: unknown): ListUsersQueryResult {
       limit: safeLimit,
       search,
       role,
+      excludeRoles,
+      tenantId,
       status,
       sortBy,
       sortOrder,

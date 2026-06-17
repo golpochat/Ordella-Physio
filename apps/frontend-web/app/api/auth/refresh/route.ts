@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { getAuthRefreshUrl } from "@/lib/auth/bff-auth";
+import { buildAuthUpstreamHeaders } from "@/lib/auth/bff-upstream-headers";
+import { parseAuthUpstreamPayload } from "@/lib/auth/parse-auth-upstream";
 import {
   getSecureCookieOptions,
   REFRESH_COOKIE_NAME,
@@ -11,23 +13,6 @@ import {
 } from "@/lib/auth/cookie-names";
 import { signSessionPayload } from "@/lib/auth/session-signing";
 import type { SessionCookiePayload } from "@/lib/auth/session";
-
-type RefreshUpstreamUser = {
-  id: string;
-  email: string;
-  tenantId: string;
-  role?: string;
-  roles?: string[];
-  permissions?: string[];
-  firstName?: string;
-  lastName?: string;
-};
-
-type RefreshUpstreamData = {
-  accessToken: string;
-  refreshToken: string;
-  user: RefreshUpstreamUser;
-};
 
 export async function POST() {
   const refreshToken = cookies().get(REFRESH_COOKIE_NAME)?.value;
@@ -41,7 +26,9 @@ export async function POST() {
 
   const upstream = await fetch(getAuthRefreshUrl(), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: buildAuthUpstreamHeaders({
+      bodyText: JSON.stringify({ refreshToken }),
+    }),
     body: JSON.stringify({ refreshToken }),
     cache: "no-store",
   });
@@ -61,8 +48,8 @@ export async function POST() {
     return response;
   }
 
-  const data = (payload as { data?: RefreshUpstreamData })?.data;
-  if (!data?.accessToken || !data.user) {
+  const data = parseAuthUpstreamPayload(payload);
+  if (!data || !("accessToken" in data) || !data.user) {
     return NextResponse.json({ error: { message: "Invalid refresh response" } }, { status: 502 });
   }
 

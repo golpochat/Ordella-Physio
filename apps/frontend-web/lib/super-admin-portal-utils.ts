@@ -43,6 +43,12 @@ export const BUILTIN_PLATFORM_ROLES: PlatformRole[] = (
   permissions: ROLE_PERMISSIONS[role],
 }));
 
+/** Default Super Admin → Users list scope (platform operators). */
+export const PLATFORM_OPERATOR_ROLE = "SYSTEM";
+
+/** Auth list query: hide patient + platform operator accounts on tenant detail. */
+export const TENANT_STAFF_EXCLUDE_ROLES = "PATIENT,SYSTEM";
+
 export function getUserDisplayName(user: {
   firstName?: string;
   lastName?: string;

@@ -108,6 +108,7 @@ export class RoleRepository {
     code: string;
     description?: string;
     permissionIds: string[];
+    isSystem?: boolean;
   }): Promise<Role & { permissions: Array<{ permission: Permission }> }> {
     return this.database.$transaction(async (tx) => {
       const role = await tx.role.create({
@@ -116,7 +117,7 @@ export class RoleRepository {
           name: input.name,
           code: input.code,
           description: input.description ?? null,
-          isSystem: false,
+          isSystem: input.isSystem ?? false,
         },
       });
 
@@ -141,6 +142,40 @@ export class RoleRepository {
     });
   }
 
+  createSystemRoleWithPermissions(input: {
+    tenantId: string;
+    name: string;
+    code: string;
+    description?: string;
+    permissionIds: string[];
+  }) {
+    return this.createRoleWithPermissions({ ...input, isSystem: true });
+  }
+
+  findUserRoleAssignment(tenantId: string, userId: string, roleId: string) {
+    return this.database.userRoleAssignment.findFirst({
+      where: { tenantId, userId, roleId },
+    });
+  }
+
+  findUserAssignment(tenantId: string, userId: string) {
+    return this.database.userRoleAssignment.findUnique({
+      where: {
+        tenantId_userId: { tenantId, userId },
+      },
+    });
+  }
+
+  assignUserRole(input: { tenantId: string; userId: string; roleId: string }) {
+    return this.database.userRoleAssignment.create({
+      data: {
+        tenantId: input.tenantId,
+        userId: input.userId,
+        roleId: input.roleId,
+      },
+    });
+  }
+
   countUsersAssignedToRole(roleId: string): Promise<number> {
     return this.database.userRoleAssignment.count({
       where: { roleId },
@@ -151,6 +186,25 @@ export class RoleRepository {
     await this.database.$transaction(async (tx) => {
       await tx.rolePermission.deleteMany({ where: { roleId } });
       await tx.role.delete({ where: { id: roleId } });
+    });
+  }
+
+  async deleteTenantRoles(tenantId: string): Promise<void> {
+    await this.database.$transaction(async (tx) => {
+      const roles = await tx.role.findMany({
+        where: { tenantId },
+        select: { id: true },
+      });
+
+      const roleIds = roles.map((role) => role.id);
+      if (roleIds.length === 0) {
+        await tx.userRoleAssignment.deleteMany({ where: { tenantId } });
+        return;
+      }
+
+      await tx.userRoleAssignment.deleteMany({ where: { tenantId } });
+      await tx.rolePermission.deleteMany({ where: { roleId: { in: roleIds } } });
+      await tx.role.deleteMany({ where: { tenantId } });
     });
   }
 

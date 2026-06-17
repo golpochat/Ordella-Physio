@@ -22,6 +22,12 @@ export class TenantsRepository {
     return this.database.tenant.findUnique({ where: { code } });
   }
 
+  findByOwnerUserId(ownerUserId: string): Promise<Tenant | null> {
+    return this.database.tenant.findFirst({
+      where: { ownerUserId },
+    });
+  }
+
   findMany(params?: { skip?: number; take?: number }): Promise<Tenant[]> {
     return this.database.tenant.findMany({
       skip: params?.skip,
@@ -61,5 +67,9 @@ export class TenantsRepository {
 
   setOrganizationId(id: string, organizationId: string | null): Promise<Tenant> {
     return this.update(id, { organizationId });
+  }
+
+  deleteById(id: string) {
+    return this.database.tenant.delete({ where: { id } });
   }
 }

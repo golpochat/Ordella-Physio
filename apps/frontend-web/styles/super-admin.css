@@ -346,6 +346,137 @@
   }
 }
 
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-section {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: 0;
+  padding: var(--space-md);
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0 var(--space-xs);
+  text-transform: uppercase;
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-field-full {
+  grid-column: 1 / -1;
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-success-summary {
+  display: grid;
+  gap: var(--space-md);
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-success-summary dt {
+  color: var(--text-muted, var(--brand-gray));
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-success-summary dd {
+  font-size: 1rem;
+  margin: 0;
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-empty-state,
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-field-hint {
+  color: var(--text-muted, var(--brand-gray));
+  font-size: 0.875rem;
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-inline-link {
+  color: var(--brand-primary, #0f766e);
+  text-decoration: underline;
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-owner-mode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+:is(.super-admin-portal, .sa-surface) .tenant-create-form-owner-mode-option {
+  align-items: center;
+  display: flex;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  :is(.super-admin-portal, .sa-surface) .tenant-create-form-owner-mode {
+    flex-direction: row;
+    gap: var(--space-lg);
+  }
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  list-style: none;
+  margin: 0 0 var(--space-lg);
+  padding: 0;
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-step {
+  align-items: center;
+  color: var(--text-muted, #64748b);
+  display: flex;
+  font-size: 0.875rem;
+  gap: var(--space-sm);
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-step-active {
+  color: var(--text-primary, #0f172a);
+  font-weight: 600;
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-step-complete {
+  color: var(--brand-primary, #0f766e);
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-step-index {
+  align-items: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  display: inline-flex;
+  height: 1.5rem;
+  justify-content: center;
+  width: 1.5rem;
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-lg);
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-review {
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+}
+
+:is(.super-admin-portal, .sa-surface) .provisioning-wizard-review-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  :is(.super-admin-portal, .sa-surface) .tenant-create-form-success-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 :is(.super-admin-portal, .sa-surface) .tenant-localization-number-format-toggle {
   display: flex;
   flex-direction: column;

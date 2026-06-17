@@ -18,7 +18,7 @@ function resolveName(user: UserRowUser): string {
   }
 
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();
-  return fullName || "Unnamed User";
+  return fullName || user?.email || "Unnamed User";
 }
 
 export function UserRow({ user }: UserRowProps) {

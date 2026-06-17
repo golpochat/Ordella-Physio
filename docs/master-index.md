@@ -1,6 +1,9 @@
 # MASTER INDEX DOCUMENT
 ## Ordella Clinic Management System — Internal‑Use SaaS Architecture Blueprint
 
+> **Live implementation tracker:** [implementation-audit-tracker.md](./implementation-audit-tracker.md) — what is built, what appears on the website, gaps, and phased roadmap (updated 2026-06-16).  
+> **Billing:** [billing-architecture.md](./billing-architecture.md) · **JWT rotation:** [runbooks/jwt-rotation.md](./runbooks/jwt-rotation.md)
+
 ### 1. SYSTEM OVERVIEW
 Ordella is a multi-tenant, internal-use clinic management platform designed for:
 - Clinic Admins

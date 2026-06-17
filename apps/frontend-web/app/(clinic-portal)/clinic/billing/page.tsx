@@ -1,7 +1,6 @@
 "use client";
 
 import { ClinicBillingList } from "@/components/clinic-portal/billing-list";
-import { BillingUpgradePlaceholder } from "@/components/clinic-portal/billing-upgrade-placeholder";
 import { ClinicSubscriptionBillingPanel } from "@/components/clinic-portal/subscription-billing-panel";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
@@ -16,8 +15,6 @@ export default function ClinicBillingPage() {
         title="Billing"
         subtitle="Manage your platform subscription and review patient invoices."
       />
-
-      <BillingUpgradePlaceholder />
 
       <ClinicSubscriptionBillingPanel />
 

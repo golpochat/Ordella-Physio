@@ -2,36 +2,43 @@ export const ORGANIZATION_STATUSES = ["ACTIVE", "INACTIVE"] as const;
 
 export type OrganizationStatus = (typeof ORGANIZATION_STATUSES)[number];
 
+export const BILLING_MODELS = ["tenant-level", "organization-level"] as const;
+
+export type BillingModel = (typeof BILLING_MODELS)[number];
+
 export type OrganizationRecord = {
   id: string;
   name: string;
   code: string;
+  organizationCode: string;
   description: string | null;
   primaryContactName: string;
   primaryContactEmail: string;
   primaryContactPhone: string | null;
+  billingModel: BillingModel;
   status: OrganizationStatus;
   createdAt: string;
   updatedAt: string;
 };
 
-export type CreateOrganizationPayload = {
-  name?: string;
-  code?: string;
-  description?: string;
+export type SuperAdminCreateOrganizationPayload = {
+  organizationName?: string;
   primaryContactName?: string;
   primaryContactEmail?: string;
   primaryContactPhone?: string;
-  tenantId?: string;
+  billingModel?: BillingModel | string;
+  description?: string;
 };
+
+export type CreateOrganizationPayload = SuperAdminCreateOrganizationPayload;
 
 export type UpdateOrganizationPayload = {
   name?: string;
-  code?: string;
   description?: string | null;
   primaryContactName?: string;
   primaryContactEmail?: string;
   primaryContactPhone?: string | null;
+  billingModel?: BillingModel | string;
   status?: OrganizationStatus | string;
 };
 

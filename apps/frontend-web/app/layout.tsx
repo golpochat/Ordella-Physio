@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Providers } from "@/app/providers";
+import { getRequestNonce } from "@/lib/security/nonce";
 import "@/styles/globals.css";
+
+// Nonces are generated per request in middleware; pages must render dynamically.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Ordella Physio",
@@ -11,7 +16,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  await headers();
+  const nonce = getRequestNonce();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -31,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous"
         />
       </head>
-      <body className="min-h-screen font-body antialiased">
+      <body className="min-h-screen font-body antialiased" nonce={nonce}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -18,9 +18,9 @@ export function PlatformBillingOverview({ invoiceCount }: { invoiceCount: number
           <CardDescription>Monthly recurring revenue</CardDescription>
         </CardHeader>
         <CardBody>
-          <div className="flex h-20 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-            Coming soon
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Requires subscription-billing aggregation API (Stripe MRR via microservice stack).
+          </p>
         </CardBody>
       </Card>
       <Card>
@@ -29,14 +29,14 @@ export function PlatformBillingOverview({ invoiceCount }: { invoiceCount: number
           <CardDescription>Payment collection rate</CardDescription>
         </CardHeader>
         <CardBody>
-          <div className="flex h-20 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-            Coming soon
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Requires subscription-billing aggregation API (Stripe MRR via microservice stack).
+          </p>
         </CardBody>
       </Card>
       <p className="text-sm text-muted-foreground sm:col-span-2 lg:col-span-3">
-        Global billing overview is placeholder UI until the platform billing aggregation API is
-        available.
+        Invoice count is live. MRR and collections need subscription-billing platform aggregation
+        (see repo docs/billing-architecture.md).
       </p>
     </div>
   );

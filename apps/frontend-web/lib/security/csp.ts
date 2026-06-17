@@ -57,7 +57,7 @@ export function buildContentSecurityPolicy(options: CspOptions = {}): string {
   const scriptSrc = ["'self'"];
 
   if (useNonce && options.nonce) {
-    scriptSrc.push(`'nonce-${options.nonce}'`);
+    scriptSrc.push(`'nonce-${options.nonce}'`, "'strict-dynamic'");
   } else if (isDev) {
     scriptSrc.push("'unsafe-inline'", "'unsafe-eval'");
   } else {

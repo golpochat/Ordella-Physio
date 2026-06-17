@@ -1,7 +1,9 @@
 import { EMAIL_REGEX, PHONE_REGEX } from "@ordella/validation";
 import {
+  BILLING_MODELS,
   LIST_ORGANIZATION_SORT_FIELDS,
   ORGANIZATION_STATUSES,
+  type BillingModel,
   type CreateOrganizationPayload,
   type ListOrganizationSortField,
   type ListOrganizationsQuery,
@@ -10,20 +12,17 @@ import {
   type UpdateOrganizationPayload,
 } from "@/models/Organization";
 
-const ORGANIZATION_CODE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
 export type CreateOrganizationValidationResult =
   | { valid: true; payload: NormalizedCreateOrganizationPayload }
   | { valid: false; error: "VALIDATION_ERROR"; fields: OrganizationValidationFieldError[] };
 
 export type NormalizedCreateOrganizationPayload = {
   name: string;
-  code: string;
   description?: string;
   primaryContactName: string;
   primaryContactEmail: string;
-  primaryContactPhone?: string;
-  tenantId?: string;
+  primaryContactPhone: string;
+  billingModel: BillingModel;
 };
 
 export type UpdateOrganizationValidationResult =
@@ -32,11 +31,11 @@ export type UpdateOrganizationValidationResult =
 
 export type NormalizedUpdateOrganizationPayload = {
   name?: string;
-  code?: string;
   description?: string | null;
   primaryContactName?: string;
   primaryContactEmail?: string;
   primaryContactPhone?: string | null;
+  billingModel?: BillingModel;
   status?: OrganizationStatus;
 };
 
@@ -47,6 +46,29 @@ function isValidEmail(value: string): boolean {
 function isValidPhone(value: string): boolean {
   return PHONE_REGEX.test(value);
 }
+
+function normalizeBillingModel(value: unknown): BillingModel | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (BILLING_MODELS.includes(normalized as BillingModel)) {
+    return normalized as BillingModel;
+  }
+
+  return null;
+}
+
+function billingModelToDb(value: BillingModel): "TENANT_LEVEL" | "ORGANIZATION_LEVEL" {
+  return value === "organization-level" ? "ORGANIZATION_LEVEL" : "TENANT_LEVEL";
+}
+
+export function billingModelFromDb(value: string): BillingModel {
+  return value === "ORGANIZATION_LEVEL" ? "organization-level" : "tenant-level";
+}
+
+export { billingModelToDb };
 
 export function validateCreateOrganization(payload: unknown): CreateOrganizationValidationResult {
   const fields: OrganizationValidationFieldError[] = [];
@@ -59,27 +81,40 @@ export function validateCreateOrganization(payload: unknown): CreateOrganization
     };
   }
 
-  const body = payload as CreateOrganizationPayload;
-  const name = body.name?.trim() ?? "";
-  const code = body.code?.trim().toLowerCase() ?? "";
+  const body = payload as CreateOrganizationPayload & {
+    name?: string;
+    code?: string;
+    organizationCode?: string;
+    tenantId?: string;
+  };
+
+  if (body.code !== undefined || body.organizationCode !== undefined) {
+    fields.push({
+      field: "organizationCode",
+      message: "Organization code is auto-generated and cannot be supplied.",
+    });
+  }
+
+  if (body.tenantId !== undefined) {
+    fields.push({
+      field: "tenantId",
+      message: "Tenants must be created separately and linked via tenant provisioning.",
+    });
+  }
+
+  const name = (body.organizationName ?? body.name)?.trim() ?? "";
   const description = body.description?.trim();
   const primaryContactName = body.primaryContactName?.trim() ?? "";
   const primaryContactEmail = body.primaryContactEmail?.trim() ?? "";
-  const primaryContactPhone = body.primaryContactPhone?.trim();
-  const tenantId = body.tenantId?.trim();
+  const primaryContactPhone = body.primaryContactPhone?.trim() ?? "";
+  const billingModel = normalizeBillingModel(body.billingModel);
 
   if (!name) {
-    fields.push({ field: "name", message: "Organization name is required." });
+    fields.push({ field: "organizationName", message: "Organization name is required." });
   } else if (name.length < 3) {
-    fields.push({ field: "name", message: "Organization name must be at least 3 characters." });
-  }
-
-  if (!code) {
-    fields.push({ field: "code", message: "Organization code is required." });
-  } else if (!ORGANIZATION_CODE_REGEX.test(code)) {
     fields.push({
-      field: "code",
-      message: "Code must be lowercase and can contain letters, numbers, and hyphens.",
+      field: "organizationName",
+      message: "Organization name must be at least 3 characters.",
     });
   }
 
@@ -93,8 +128,17 @@ export function validateCreateOrganization(payload: unknown): CreateOrganization
     fields.push({ field: "primaryContactEmail", message: "Enter a valid email." });
   }
 
-  if (primaryContactPhone && !isValidPhone(primaryContactPhone)) {
+  if (!primaryContactPhone) {
+    fields.push({ field: "primaryContactPhone", message: "Primary contact phone is required." });
+  } else if (!isValidPhone(primaryContactPhone)) {
     fields.push({ field: "primaryContactPhone", message: "Enter a valid phone number." });
+  }
+
+  if (!billingModel) {
+    fields.push({
+      field: "billingModel",
+      message: 'Billing model must be "tenant-level" or "organization-level".',
+    });
   }
 
   if (fields.length > 0) {
@@ -105,12 +149,11 @@ export function validateCreateOrganization(payload: unknown): CreateOrganization
     valid: true,
     payload: {
       name,
-      code,
       description: description || undefined,
       primaryContactName,
       primaryContactEmail,
-      primaryContactPhone: primaryContactPhone || undefined,
-      tenantId: tenantId || undefined,
+      primaryContactPhone,
+      billingModel: billingModel!,
     },
   };
 }
@@ -126,8 +169,15 @@ export function validateUpdateOrganization(payload: unknown): UpdateOrganization
     };
   }
 
-  const body = payload as UpdateOrganizationPayload;
+  const body = payload as UpdateOrganizationPayload & { code?: string; organizationCode?: string };
   const result: NormalizedUpdateOrganizationPayload = {};
+
+  if (body.code !== undefined || body.organizationCode !== undefined) {
+    fields.push({
+      field: "organizationCode",
+      message: "Organization code is immutable and cannot be changed.",
+    });
+  }
 
   if (body.name !== undefined) {
     const name = body.name.trim();
@@ -137,20 +187,6 @@ export function validateUpdateOrganization(payload: unknown): UpdateOrganization
       fields.push({ field: "name", message: "Organization name must be at least 3 characters." });
     } else {
       result.name = name;
-    }
-  }
-
-  if (body.code !== undefined) {
-    const code = body.code.trim().toLowerCase();
-    if (!code) {
-      fields.push({ field: "code", message: "Organization code is required." });
-    } else if (!ORGANIZATION_CODE_REGEX.test(code)) {
-      fields.push({
-        field: "code",
-        message: "Code must be lowercase and can contain letters, numbers, and hyphens.",
-      });
-    } else {
-      result.code = code;
     }
   }
 
@@ -180,10 +216,24 @@ export function validateUpdateOrganization(payload: unknown): UpdateOrganization
 
   if (body.primaryContactPhone !== undefined) {
     const primaryContactPhone = body.primaryContactPhone?.trim() ?? "";
-    if (primaryContactPhone && !isValidPhone(primaryContactPhone)) {
+    if (!primaryContactPhone) {
+      fields.push({ field: "primaryContactPhone", message: "Primary contact phone is required." });
+    } else if (!isValidPhone(primaryContactPhone)) {
       fields.push({ field: "primaryContactPhone", message: "Enter a valid phone number." });
     } else {
-      result.primaryContactPhone = primaryContactPhone || null;
+      result.primaryContactPhone = primaryContactPhone;
+    }
+  }
+
+  if (body.billingModel !== undefined) {
+    const billingModel = normalizeBillingModel(body.billingModel);
+    if (!billingModel) {
+      fields.push({
+        field: "billingModel",
+        message: 'Billing model must be "tenant-level" or "organization-level".',
+      });
+    } else {
+      result.billingModel = billingModel;
     }
   }
 

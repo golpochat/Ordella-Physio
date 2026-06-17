@@ -87,6 +87,10 @@ services:
         condition: service_started
       file-storage-service:
         condition: service_started
+      enterprise-service:
+        condition: service_started
+      organization-service:
+        condition: service_started
       terminal-service:
         condition: service_started
       marketplace-service:
@@ -137,6 +141,8 @@ services:
     environment:
       PORT: 3010
       DISABLE_API_RATE_LIMIT: "true"
+      # Production Next image + local dev: relax nonce CSP (middleware still sets headers in prod).
+      DISABLE_NONCE_CSP: "true"
       NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
       API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
       NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
@@ -228,6 +234,31 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - ordella-physio-network
+
+  enterprise-service:
+    container_name: ordella-physio-enterprise-service
+    build:
+      context: ./services/enterprise-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-enterprise-service:latest
+    environment:
+      PORT: 3065
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_enterprise?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      ENTERPRISE_SSO_CALLBACK_URL: http://localhost:3049/enterprise/sso/oauth/callback
+      ENTERPRISE_SAML_ACS_URL: http://localhost:3049/enterprise/sso/saml/acs
+      ENTERPRISE_FRONTEND_CALLBACK_URL: http://localhost:3010/clinic/enterprise/sso/callback
+      TENANT_SERVICE_URL: http://tenant-service:3052
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
     networks:
       - ordella-physio-network
 
@@ -447,6 +478,28 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - ordella-physio-network
+
+  organization-service:
+    container_name: ordella-physio-organization-service
+    build:
+      context: ./services/organization-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-organization-service:latest
+    environment:
+      PORT: 3066
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_organization?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      TENANT_SERVICE_URL: http://tenant-service:3052
+    depends_on:
+      db:
+        condition: service_healthy
+      tenant-service:
+        condition: service_started
     networks:
       - ordella-physio-network
 

@@ -174,8 +174,25 @@ const proxyControllers = [
     public: true,
     skipTenant: true,
   }),
-  createProxyController(ENTERPRISE_ROUTES.base, "ENTERPRISE_SERVICE_URL"),
-  createProxyController(ORGANIZATION_ROUTES.base, "ORGANIZATION_SERVICE_URL"),
+  createProxyController(ENTERPRISE_ROUTES.base, "ENTERPRISE_SERVICE_URL", {
+    skipTenant: true,
+  }),
+  createProxyController(ORGANIZATION_ROUTES.base, "ORGANIZATION_SERVICE_URL", {
+    skipTenant: true,
+  }),
+  createProxyController("/organizations/internal", "ORGANIZATION_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
+  createProxyController("/super-admin/organizations", "ORGANIZATION_SERVICE_URL", {
+    skipTenant: true,
+  }),
+  createProxyController("/super-admin/tenants", "TENANT_SERVICE_URL", {
+    skipTenant: true,
+  }),
+  createProxyController("/super-admin/provisioning", "TENANT_SERVICE_URL", {
+    skipTenant: true,
+  }),
   createProxyController(TERMINAL_ROUTES.base, "TERMINAL_SERVICE_URL"),
   createProxyController(USER_ROLE_ROUTES.base, "USER_ROLE_SERVICE_URL"),
   createProxyController("/roles/internal", "USER_ROLE_SERVICE_URL", {

@@ -2,6 +2,11 @@
 
 This document contains all essential operational commands for managing the entire Ordella Physio microservices ecosystem. It also includes sample test users for every role in the system.
 
+> **Implementation status & gaps:** [implementation-audit-tracker.md](./implementation-audit-tracker.md)  
+> **Billing modes (monolith vs Stripe):** [billing-architecture.md](./billing-architecture.md)
+
+> **Policy (2026-06-16):** All **patient** API endpoints and routes (`/api/patients/*`, BFF patient proxies, `/patient/*` portal) must be **kept** — do not delete or redirect away during consolidation work.
+
 > **Working directory:** Most local Docker commands assume you are in `infrastructure/deployment-layer`.
 
 ```bash

@@ -2,8 +2,10 @@ export type PlatformTenant = {
   id: string;
   name: string;
   code: string;
+  tenantCode?: string;
   slug: string;
   ownerUserId?: string | null;
+  organizationId?: string | null;
   timezone: string;
   currency: string;
   address: string | null;
@@ -20,24 +22,65 @@ export type PlatformTenantListResponse = {
 };
 
 export type CreatePlatformTenantPayload = {
-  name: string;
-  code: string;
-  slug?: string;
-  ownerUserId: string;
+  tenantName: string;
+  organizationId: string;
   timezone: string;
   currency: string;
-  address?: string;
-  phone?: string;
+  ownerUserId?: string;
+  ownerEmail?: string;
 };
 
 export type CreatePlatformTenantResponse = {
+  tenantId: string;
+  tenantName: string;
+  ownerUserId: string;
+  ownerEmail: string;
+  organizationId: string;
+  organizationName: string;
   tenant: PlatformTenant;
+  message: string;
+};
+
+export type FullProvisioningOrganizationPayload = {
+  organizationName: string;
+  primaryContactName: string;
+  primaryContactEmail: string;
+  primaryContactPhone: string;
+  billingModel: "tenant-level" | "organization-level";
+  description?: string;
+};
+
+export type FullProvisioningTenantPayload = {
+  tenantName: string;
+  timezone: string;
+  currency: string;
+};
+
+export type FullProvisioningOwnerPayload = {
+  ownerUserId?: string;
+  ownerEmail?: string;
+};
+
+export type FullProvisioningPayload = {
+  organization: FullProvisioningOrganizationPayload;
+  tenant: FullProvisioningTenantPayload;
+  owner: FullProvisioningOwnerPayload;
+};
+
+export type FullProvisioningResponse = {
+  organizationId: string;
+  organizationName: string;
+  organizationCode: string;
+  tenantId: string;
+  tenantName: string;
+  tenantCode: string;
+  ownerUserId: string;
+  ownerEmail: string;
   message: string;
 };
 
 export type UpdatePlatformTenantPayload = {
   name?: string;
-  code?: string;
   timezone?: string;
   currency?: string;
   status?: "ACTIVE" | "SUSPENDED";
@@ -216,11 +259,35 @@ export type PlatformUser = {
   updatedAt?: string;
 };
 
+export type PlatformUserListFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  tenantId?: string;
+  excludeRoles?: string;
+  status?: "ACTIVE" | "DISABLED";
+  sortBy?: "createdAt" | "firstName" | "lastName" | "email" | "role";
+  sortOrder?: "asc" | "desc";
+};
+
+export type PlatformUserListResponse = {
+  data: PlatformUser[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
 export type CreatePlatformUserPayload = {
   tenantId: string;
   email: string;
   password: string;
-  role?: "OWNER" | "ADMIN" | "THERAPIST" | "STAFF";
+  role?: "SYSTEM" | "OWNER" | "ADMIN" | "THERAPIST" | "STAFF";
+  firstName?: string;
+  lastName?: string;
 };
 
 export type UpdatePlatformUserPayload = {
@@ -311,23 +378,24 @@ export type PlatformOrganization = {
   id: string;
   name: string;
   code: string;
+  organizationCode?: string;
   description: string | null;
   primaryContactName: string;
   primaryContactEmail: string;
   primaryContactPhone: string | null;
+  billingModel: "tenant-level" | "organization-level";
   status: "ACTIVE" | "INACTIVE";
   createdAt: string;
   updatedAt: string;
 };
 
 export type CreatePlatformOrganizationPayload = {
-  name: string;
-  code: string;
-  description?: string;
+  organizationName: string;
   primaryContactName: string;
   primaryContactEmail: string;
-  primaryContactPhone?: string;
-  tenantId?: string;
+  primaryContactPhone: string;
+  billingModel: "tenant-level" | "organization-level";
+  description?: string;
 };
 
 export type CreatePlatformOrganizationResponse = {
@@ -337,11 +405,11 @@ export type CreatePlatformOrganizationResponse = {
 
 export type UpdatePlatformOrganizationPayload = {
   name?: string;
-  code?: string;
   description?: string | null;
   primaryContactName?: string;
   primaryContactEmail?: string;
   primaryContactPhone?: string | null;
+  billingModel?: "tenant-level" | "organization-level";
   status?: "ACTIVE" | "INACTIVE";
 };
 

@@ -14,7 +14,9 @@ import { env } from "../../config";
 
 import { ensureDefaultRoles, getUserRolesAndPermissions } from "../rbac/rbac.service";
 
+import { signPasswordResetToken, verifyPasswordResetToken } from "../../utils/action-token";
 import { writeAuditLog } from "../utilities/audit.service";
+import { sendEmail } from "../utilities/email.service";
 
 import { resolveTenantByIdOrSlug } from "../../utils/tenant-resolver";
 
@@ -469,39 +471,100 @@ export async function logoutAllSessions(userId: string): Promise<void> {
 
 
 export async function requestPasswordReset(input: {
-
   tenantSlug?: string;
-
   tenantId?: string;
-
   email: string;
-
   ipAddress?: string;
-
 }): Promise<{ accepted: true }> {
-
+  const email = input.email.toLowerCase();
   const tenant = await resolveTenant(input.tenantSlug, input.tenantId);
 
+  let user: { id: string; email: string; tenantId: string } | null = null;
 
+  if (tenant) {
+    const match = await prisma.user.findUnique({
+      where: { tenantId_email: { tenantId: tenant.id, email } },
+      select: { id: true, email: true, tenantId: true, status: true },
+    });
+    if (match?.status === "ACTIVE") {
+      user = match;
+    }
+  } else {
+    const matches = await prisma.user.findMany({
+      where: { email, status: "ACTIVE" },
+      select: { id: true, email: true, tenantId: true },
+    });
+    if (matches.length === 1) {
+      user = matches[0] ?? null;
+    }
+  }
+
+  if (user) {
+    const token = signPasswordResetToken({
+      userId: user.id,
+      tenantId: user.tenantId,
+      email: user.email,
+    });
+    const resetUrl = `${env.FRONTEND_URL.replace(/\/$/, "")}/reset-password/${encodeURIComponent(token)}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Reset your Ordella Physio password",
+      text: `Reset your password using this link (valid for 30 minutes): ${resetUrl}`,
+      html: `<p>Reset your password using the link below (valid for 30 minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
+    });
+  }
 
   await writeAuditLog({
-
-    tenantId: tenant?.id ?? "unknown",
-
+    tenantId: user?.tenantId ?? tenant?.id ?? "unknown",
+    userId: user?.id,
     action: "auth.forgot_password",
-
     ipAddress: input.ipAddress,
-
-    metadata: { email: input.email.toLowerCase() },
-
+    metadata: { email, accountFound: Boolean(user) },
   });
 
-
-
-  // Always return success to avoid account enumeration.
-
   return { accepted: true };
+}
 
+export async function confirmPasswordReset(input: {
+  token: string;
+  newPassword: string;
+  ipAddress?: string;
+  userAgent?: string;
+}): Promise<{ message: string }> {
+  let payload;
+  try {
+    payload = verifyPasswordResetToken(input.token);
+  } catch {
+    throw new UnauthorizedError("Invalid or expired reset link");
+  }
+
+  const user = await prisma.user.findFirst({
+    where: { id: payload.sub, tenantId: payload.tenantId, email: payload.email, status: "ACTIVE" },
+  });
+
+  if (!user) {
+    throw new UnauthorizedError("Invalid or expired reset link");
+  }
+
+  const passwordHash = await hashPassword(input.newPassword);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash },
+  });
+
+  await revokeAllUserTokens(user.id);
+
+  await writeAuditLog({
+    tenantId: user.tenantId,
+    userId: user.id,
+    action: "auth.password_reset",
+    ipAddress: input.ipAddress,
+    userAgent: input.userAgent,
+  });
+
+  return { message: "Your password has been reset successfully." };
 }
 
 

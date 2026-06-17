@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { getAuthLogoutUrl } from "@/lib/auth/bff-auth";
+import { buildAuthUpstreamHeaders } from "@/lib/auth/bff-upstream-headers";
 import {
   getSecureCookieOptions,
   REFRESH_COOKIE_NAME,
@@ -15,10 +16,10 @@ export async function POST(request: Request) {
   if (authorization) {
     await fetch(getAuthLogoutUrl(), {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: authorization,
-      },
+      headers: buildAuthUpstreamHeaders({
+        incomingHeaders: request.headers,
+        authorization,
+      }),
       body: JSON.stringify(refreshToken ? { refreshToken } : {}),
       cache: "no-store",
     }).catch(() => undefined);

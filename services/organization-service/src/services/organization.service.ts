@@ -1,15 +1,17 @@
 import { Injectable } from "@nestjs/common";
+import { generateUniqueCode } from "@ordella/utils";
 import type { CreateOrganizationPayload, UpdateOrganizationPayload } from "@/models/Organization";
 import { OrganizationRepository } from "@/repositories/organization.repository";
+import { AuditLogClient } from "@/integrations/audit-log.client";
 import {
   validateCreateOrganization,
   validateUpdateOrganization,
   parseListOrganizationsQuery,
+  billingModelToDb,
 } from "@/validators/organization.validator";
 import {
   organizationAlreadyActiveError,
   organizationAlreadyInactiveError,
-  organizationCodeExistsError,
   organizationHasActiveTenantsError,
   invalidFilterError,
   invalidPaginationError,
@@ -31,14 +33,10 @@ export class OrganizationService {
   constructor(
     private readonly organizationRepository: OrganizationRepository,
     private readonly tenantServiceClient: TenantServiceClient,
+    private readonly auditLogClient: AuditLogClient,
   ) {}
 
-  async createOrganization(
-    payload: CreateOrganizationPayload,
-    createdByUser?: AuthenticatedOrganizationUser,
-  ) {
-    void createdByUser;
-
+  async createOrganizationInternal(payload: CreateOrganizationPayload) {
     const validation = validateCreateOrganization(payload);
     if (!validation.valid) {
       throw organizationValidationError(validation.fields);
@@ -46,40 +44,87 @@ export class OrganizationService {
 
     const normalized = validation.payload;
 
-    const existing = await this.organizationRepository.findByCode(normalized.code);
-    if (existing) {
-      throw organizationCodeExistsError();
-    }
+    const code = await generateUniqueCode(normalized.name, async (candidate) => {
+      const existing = await this.organizationRepository.findByCode(candidate);
+      return Boolean(existing);
+    });
 
     const organization = await this.organizationRepository.create({
       name: normalized.name,
-      code: normalized.code,
+      code,
       description: normalized.description,
       primaryContactName: normalized.primaryContactName,
       primaryContactEmail: normalized.primaryContactEmail,
       primaryContactPhone: normalized.primaryContactPhone,
+      billingModel: billingModelToDb(normalized.billingModel),
       status: "ACTIVE",
     });
 
-    if (normalized.tenantId) {
-      const tenant = await this.tenantServiceClient.getTenantForOrganizationLink(normalized.tenantId);
-      if (!tenant) {
-        throw tenantNotFoundError();
-      }
+    return toOrganizationResponse(organization);
+  }
 
-      if (tenant.organizationId) {
-        throw tenantAlreadyAssignedError();
-      }
+  async rollbackProvisioningOrganization(orgId: string) {
+    const organization = await this.organizationRepository.findById(orgId);
+    if (!organization) {
+      return { message: "Organization already removed." };
+    }
 
-      const updatedTenant = await this.tenantServiceClient.setTenantOrganization(
-        normalized.tenantId,
-        organization.id,
-      );
-      if (!updatedTenant) {
-        throw tenantNotFoundError();
-      }
+    await this.organizationRepository.deleteById(orgId);
 
-      await this.organizationRepository.linkTenant(organization.id, normalized.tenantId);
+    return { message: "Organization provisioning rollback completed." };
+  }
+
+  async unlinkTenantInternal(orgId: string, tenantId: string) {
+    const organization = await this.organizationRepository.findById(orgId);
+    if (!organization) {
+      return { message: "Organization not found." };
+    }
+
+    await this.organizationRepository.unlinkTenant(orgId, tenantId);
+    return { message: "Tenant unlinked from organization." };
+  }
+
+  async createOrganization(
+    payload: CreateOrganizationPayload,
+    createdByUser?: AuthenticatedOrganizationUser,
+  ) {
+    const validation = validateCreateOrganization(payload);
+    if (!validation.valid) {
+      throw organizationValidationError(validation.fields);
+    }
+
+    const normalized = validation.payload;
+
+    const code = await generateUniqueCode(normalized.name, async (candidate) => {
+      const existing = await this.organizationRepository.findByCode(candidate);
+      return Boolean(existing);
+    });
+
+    const organization = await this.organizationRepository.create({
+      name: normalized.name,
+      code,
+      description: normalized.description,
+      primaryContactName: normalized.primaryContactName,
+      primaryContactEmail: normalized.primaryContactEmail,
+      primaryContactPhone: normalized.primaryContactPhone,
+      billingModel: billingModelToDb(normalized.billingModel),
+      status: "ACTIVE",
+    });
+
+    if (createdByUser?.userId && createdByUser.tenantId) {
+      await this.auditLogClient.logAction({
+        tenantId: createdByUser.tenantId,
+        actorUserId: createdByUser.userId,
+        actorRole: createdByUser.role,
+        entityType: "Organization",
+        entityId: organization.id,
+        action: "createOrganization",
+        metadata: {
+          organizationId: organization.id,
+          payload: normalized,
+          organizationCode: organization.code,
+        },
+      });
     }
 
     return {
@@ -148,16 +193,8 @@ export class OrganizationService {
 
     const normalized = validation.payload;
 
-    if (normalized.code && normalized.code !== organization.code) {
-      const existing = await this.organizationRepository.findByCode(normalized.code);
-      if (existing && existing.id !== id) {
-        throw organizationCodeExistsError();
-      }
-    }
-
     const updated = await this.organizationRepository.update(id, {
       ...(normalized.name !== undefined ? { name: normalized.name } : {}),
-      ...(normalized.code !== undefined ? { code: normalized.code } : {}),
       ...(normalized.description !== undefined ? { description: normalized.description } : {}),
       ...(normalized.primaryContactName !== undefined
         ? { primaryContactName: normalized.primaryContactName }
@@ -167,6 +204,9 @@ export class OrganizationService {
         : {}),
       ...(normalized.primaryContactPhone !== undefined
         ? { primaryContactPhone: normalized.primaryContactPhone }
+        : {}),
+      ...(normalized.billingModel !== undefined
+        ? { billingModel: billingModelToDb(normalized.billingModel) }
         : {}),
       ...(normalized.status !== undefined ? { status: normalized.status } : {}),
     });
@@ -246,13 +286,7 @@ export class OrganizationService {
     return { data };
   }
 
-  async assignTenantToOrganization(
-    orgId: string,
-    tenantId: string,
-    performedByUser?: AuthenticatedOrganizationUser,
-  ) {
-    void performedByUser;
-
+  async linkTenantInternal(orgId: string, tenantId: string) {
     const organization = await this.organizationRepository.findById(orgId);
     if (!organization) {
       throw organizationNotFoundError();
@@ -263,7 +297,7 @@ export class OrganizationService {
       throw tenantNotFoundError();
     }
 
-    if (tenant.organizationId) {
+    if (tenant.organizationId && tenant.organizationId !== orgId) {
       throw tenantAlreadyAssignedError();
     }
 
@@ -279,8 +313,17 @@ export class OrganizationService {
 
     return {
       tenant: updatedTenant,
-      message: "Tenant assigned successfully.",
+      message: "Tenant linked successfully.",
     };
+  }
+
+  async assignTenantToOrganization(
+    orgId: string,
+    tenantId: string,
+    performedByUser?: AuthenticatedOrganizationUser,
+  ) {
+    void performedByUser;
+    return this.linkTenantInternal(orgId, tenantId);
   }
 
   async removeTenantFromOrganization(

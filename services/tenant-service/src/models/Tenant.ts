@@ -6,6 +6,7 @@ export type TenantRecord = {
   id: string;
   name: string;
   code: string;
+  tenantCode: string;
   slug: string;
   ownerUserId: string | null;
   timezone: string;
@@ -21,21 +22,28 @@ export type TenantRecord = {
   updatedAt: string;
 };
 
-export type CreateTenantPayload = {
-  name?: string;
-  code?: string;
-  slug?: string;
-  ownerUserId?: string;
+export type SuperAdminCreateTenantPayload = {
+  tenantName?: string;
+  organizationId?: string;
   timezone?: string;
   currency?: string;
-  address?: string;
-  phone?: string;
-  homeRegion?: string;
+  ownerUserId?: string;
+  ownerEmail?: string;
+};
+
+export type CreateTenantPayload = SuperAdminCreateTenantPayload;
+
+export type NormalizedCreateTenantPayload = {
+  name: string;
+  organizationId: string;
+  timezone: string;
+  currency: string;
+  ownerUserId?: string;
+  ownerEmail?: string;
 };
 
 export type UpdateTenantPayload = {
   name?: string;
-  code?: string;
   timezone?: string;
   currency?: string;
   status?: TenantStatus | string;
@@ -45,5 +53,16 @@ export type UpdateTenantPayload = {
 
 export type TenantValidationFieldError = {
   field: string;
+  message: string;
+};
+
+export type ProvisionTenantSuccess = {
+  tenantId: string;
+  tenantName: string;
+  ownerUserId: string;
+  ownerEmail: string;
+  organizationId: string;
+  organizationName: string;
+  tenant: TenantRecord;
   message: string;
 };

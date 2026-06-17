@@ -75,3 +75,34 @@ export async function createNote(
 
   return note;
 }
+
+export async function updateNote(
+  tenantId: string,
+  noteId: string,
+  data: {
+    type?: "GENERAL" | "CLINICAL" | "SOAP" | "ADMIN";
+    title?: string;
+    content?: string;
+  },
+) {
+  await getNoteById(tenantId, noteId);
+
+  const note = await prisma.note.update({
+    where: { id: noteId },
+    data: {
+      ...(data.type !== undefined ? { type: data.type } : {}),
+      ...(data.title !== undefined ? { title: data.title } : {}),
+      ...(data.content !== undefined ? { content: data.content } : {}),
+    },
+  });
+
+  return note;
+}
+
+export async function deleteNote(tenantId: string, noteId: string) {
+  await getNoteById(tenantId, noteId);
+
+  await prisma.note.delete({ where: { id: noteId } });
+
+  return { id: noteId, deleted: true as const };
+}

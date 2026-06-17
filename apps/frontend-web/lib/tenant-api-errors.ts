@@ -62,8 +62,24 @@ export function parseTenantFormErrors(
 
   if (code === "OWNER_NOT_FOUND") {
     return {
-      fieldErrors,
-      generalError: apiError?.message ?? "Selected owner does not exist.",
+      fieldErrors: { ownerUserId: apiError?.message ?? "Selected owner does not exist." },
+      generalError: null,
+      notFound,
+    };
+  }
+
+  if (code === "OWNER_ALREADY_ASSIGNED") {
+    return {
+      fieldErrors: { ownerUserId: apiError?.message ?? "This user is already owner of another tenant." },
+      generalError: null,
+      notFound,
+    };
+  }
+
+  if (code === "EMAIL_EXISTS") {
+    return {
+      fieldErrors: { ownerEmail: apiError?.message ?? "This email is already in use." },
+      generalError: null,
       notFound,
     };
   }

@@ -7,14 +7,16 @@ import {
   createSuperAdminPortalApi,
   normalizeAuthAuditLogListResponse,
   normalizeTenantList,
-  normalizeUserList,
+  normalizeUserListResponse,
   normalizeOrganizationList,
 } from "@/lib/super-admin-portal-api";
 import type {
   AuthAuditLogFilters,
   CreatePlatformRolePayload,
   CreatePlatformTenantPayload,
+  FullProvisioningPayload,
   CreatePlatformUserPayload,
+  PlatformUserListFilters,
   UpdatePlatformProfilePayload,
   UpdatePlatformRolePayload,
   UpdatePlatformSettingsPayload,
@@ -30,6 +32,10 @@ import type {
   OrganizationListFilters,
   PlatformOrganizationConfigNamespace,
 } from "@/lib/super-admin-portal-types";
+import {
+  PLATFORM_OPERATOR_ROLE,
+  TENANT_STAFF_EXCLUDE_ROLES,
+} from "@/lib/super-admin-portal-utils";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 
@@ -213,6 +219,19 @@ export function useCreatePlatformTenant() {
     mutationFn: (payload: CreatePlatformTenantPayload) =>
       requireApi(portalApi).createTenant(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] }),
+  });
+}
+
+export function useFullPlatformProvisioning() {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: FullProvisioningPayload) => requireApi(portalApi).provisionFull(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "organizations"] });
+    },
   });
 }
 
@@ -466,12 +485,38 @@ export function useReactivatePlatformTenant(id: string) {
   });
 }
 
-export function usePlatformUsers() {
+export function usePlatformUsers(filters?: PlatformUserListFilters) {
+  const portalApi = useSuperAdminPortalApi();
+  const resolvedFilters: PlatformUserListFilters = filters ?? {
+    page: 1,
+    limit: 20,
+    role: PLATFORM_OPERATOR_ROLE,
+  };
+
+  return useQuery({
+    queryKey: ["super-admin", "users", resolvedFilters],
+    queryFn: async () =>
+      normalizeUserListResponse(await requireApi(portalApi).listUsers(resolvedFilters)),
+  });
+}
+
+export function useTenantStaffUsers(tenantId: string) {
   const portalApi = useSuperAdminPortalApi();
 
   return useQuery({
-    queryKey: ["super-admin", "users"],
-    queryFn: async () => normalizeUserList(await requireApi(portalApi).listUsers({ limit: 100 })),
+    queryKey: ["super-admin", "tenants", tenantId, "staff-users"],
+    queryFn: async () =>
+      normalizeUserListResponse(
+        await requireApi(portalApi).listUsers({
+          tenantId,
+          excludeRoles: TENANT_STAFF_EXCLUDE_ROLES,
+          limit: 100,
+          page: 1,
+          sortBy: "createdAt",
+          sortOrder: "desc",
+        }),
+      ),
+    enabled: Boolean(tenantId),
   });
 }
 
@@ -491,7 +536,10 @@ export function useCreatePlatformUser() {
 
   return useMutation({
     mutationFn: (payload: CreatePlatformUserPayload) => requireApi(portalApi).createUser(payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["super-admin", "users"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "tenants"] });
+    },
   });
 }
 

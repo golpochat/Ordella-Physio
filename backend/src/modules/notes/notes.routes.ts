@@ -4,12 +4,13 @@ import { asyncHandler } from "../../utils/async-handler";
 import { withAudit } from "../../middleware/audit";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { policies } from "../rbac/policies";
-import { createNote, getNoteById, listAllNotes, listNotes } from "./notes.service";
+import { createNote, deleteNote, getNoteById, listAllNotes, listNotes, updateNote } from "./notes.service";
 import {
   createNoteSchema,
   listNotesQuerySchema,
   noteIdParamSchema,
   patientNotesParamSchema,
+  updateNoteSchema,
 } from "./notes.validation";
 
 export const notesRouter = Router();
@@ -52,5 +53,26 @@ notesRouter.post(
   withAudit("create", "note")(async (req, res) => {
     const note = await createNote(req.tenantId!, req.user!.id, req.body);
     res.status(201).json({ data: note });
+  }),
+);
+
+notesRouter.patch(
+  "/:id",
+  policies.notesWrite,
+  validateRequest(noteIdParamSchema, "params"),
+  validateRequest(updateNoteSchema),
+  withAudit("update", "note")(async (req, res) => {
+    const note = await updateNote(req.tenantId!, String(req.params.id), req.body);
+    res.json({ data: note });
+  }),
+);
+
+notesRouter.delete(
+  "/:id",
+  policies.notesWrite,
+  validateRequest(noteIdParamSchema, "params"),
+  withAudit("delete", "note")(async (req, res) => {
+    const result = await deleteNote(req.tenantId!, String(req.params.id));
+    res.json({ data: result });
   }),
 );

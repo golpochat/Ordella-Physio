@@ -111,4 +111,8 @@ export class OrganizationRepository {
       data: { status },
     });
   }
+
+  deleteById(id: string) {
+    return this.database.organization.delete({ where: { id } });
+  }
 }

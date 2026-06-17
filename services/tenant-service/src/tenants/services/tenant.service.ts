@@ -1,22 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import type { Prisma } from "@/generated/prisma";
 import type { CreateTenantPayload, UpdateTenantPayload } from "@/models/Tenant";
-import { AuthUsersClient } from "@/integrations/auth-users.client";
-import { CreateTenantCommand } from "@/tenants/commands/create-tenant.command";
+import { ProvisionTenantCommand } from "@/tenants/commands/provision-tenant.command";
 import { UpdateTenantCommand } from "@/tenants/commands/update-tenant.command";
 import { TenantsRepository } from "@/tenants/tenants.repository";
 import { toTenantResponse } from "@/tenants/tenants.mapper";
 import {
-  normalizeCreateTenantPayload,
   normalizeUpdateTenantPayload,
-  validateCreateTenant,
   validateUpdateTenant,
 } from "@/validators/tenant.validator";
 import {
-  ownerNotFoundError,
   tenantAlreadyActiveError,
   tenantAlreadySuspendedError,
-  tenantCodeExistsError,
   tenantNotFoundError,
   tenantValidationError,
 } from "@/utils/tenant-errors";
@@ -25,10 +20,9 @@ import type { AuthenticatedTenantUser } from "@/utils/tenant-helpers";
 @Injectable()
 export class TenantService {
   constructor(
-    private readonly createTenantCommand: CreateTenantCommand,
+    private readonly provisionTenantCommand: ProvisionTenantCommand,
     private readonly updateTenantCommand: UpdateTenantCommand,
     private readonly tenantsRepository: TenantsRepository,
-    private readonly authUsersClient: AuthUsersClient,
   ) {}
 
   async createTenant(
@@ -36,34 +30,7 @@ export class TenantService {
     createdByUser?: AuthenticatedTenantUser,
     correlationId?: string,
   ) {
-    void createdByUser;
-
-    const validationErrors = validateCreateTenant(payload);
-    if (validationErrors.length > 0) {
-      throw tenantValidationError(validationErrors);
-    }
-
-    const normalized = normalizeCreateTenantPayload(payload);
-
-    const existing = await this.tenantsRepository.findByCode(normalized.code);
-    if (existing) {
-      throw tenantCodeExistsError();
-    }
-
-    const owner = await this.authUsersClient.findById(normalized.ownerUserId);
-    if (!owner) {
-      throw ownerNotFoundError();
-    }
-
-    const tenant = await this.createTenantCommand.execute({
-      dto: normalized,
-      correlationId,
-    });
-
-    return {
-      tenant,
-      message: "Tenant created successfully.",
-    };
+    return this.provisionTenantCommand.execute(payload, createdByUser, correlationId);
   }
 
   async findById(tenantId: string) {
@@ -91,16 +58,8 @@ export class TenantService {
 
     const normalized = normalizeUpdateTenantPayload(payload);
 
-    if (normalized.code && normalized.code !== tenant.code) {
-      const existing = await this.tenantsRepository.findByCode(normalized.code);
-      if (existing && existing.id !== id) {
-        throw tenantCodeExistsError();
-      }
-    }
-
     const updateData: Prisma.TenantUpdateInput = {
       ...(normalized.name !== undefined ? { name: normalized.name } : {}),
-      ...(normalized.code !== undefined ? { code: normalized.code, slug: normalized.slug } : {}),
       ...(normalized.timezone !== undefined ? { timezone: normalized.timezone } : {}),
       ...(normalized.currency !== undefined ? { currency: normalized.currency } : {}),
       ...(normalized.status !== undefined

@@ -1,8 +1,14 @@
 # Ordella Clinic Management System
 
-A multi-tenant, internal-use clinic management platform for Admins, Staff, and Clinicians. Patients do not log in. All operations are performed internally by clinic personnel.
+A multi-tenant clinic management platform for Admins, Staff, Clinicians, and optional patient self-service.
 
-This README provides complete setup instructions for running the project locally, understanding the architecture, and contributing to development.
+**Primary frontend:** `apps/frontend-web` (port 3010).  
+**Backends:** `backend/` clinic monolith (local dev) and `services/*` microservices via API gateway (Docker).  
+**Live tracker:** [docs/implementation-audit-tracker.md](./docs/implementation-audit-tracker.md) · [docs/billing-architecture.md](./docs/billing-architecture.md)
+
+Legacy apps (`apps/web`, `apps/marketing-site`, `apps/app`, `apps/admin-dashboard`) are deprecated — see each app's `DEPRECATED.md`.
+
+This README provides setup instructions for running the project locally, understanding the architecture, and contributing to development.
 
 ---
 

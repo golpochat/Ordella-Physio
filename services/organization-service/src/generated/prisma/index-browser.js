@@ -129,6 +129,7 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   primaryContactName: 'primaryContactName',
   primaryContactEmail: 'primaryContactEmail',
   primaryContactPhone: 'primaryContactPhone',
+  billingModel: 'billingModel',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -175,6 +176,11 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.BillingModel = exports.$Enums.BillingModel = {
+  TENANT_LEVEL: 'TENANT_LEVEL',
+  ORGANIZATION_LEVEL: 'ORGANIZATION_LEVEL'
+};
+
 exports.OrganizationStatus = exports.$Enums.OrganizationStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE'

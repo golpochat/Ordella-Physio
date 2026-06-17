@@ -42,6 +42,8 @@ export class UsersRepository {
     lastName?: string;
     phone?: string;
     verificationToken?: string;
+    isActive?: boolean;
+    emailVerified?: boolean;
   }) {
     return this.db.user.create({
       data: {
@@ -53,8 +55,49 @@ export class UsersRepository {
         lastName: data.lastName,
         phone: data.phone,
         verificationToken: data.verificationToken,
+        isActive: data.isActive ?? true,
+        emailVerified: data.emailVerified ?? false,
       },
     });
+  }
+
+  findByEmailGlobal(email: string) {
+    return this.db.user.findFirst({
+      where: { email: email.trim().toLowerCase() },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  updateUserGlobal(
+    userId: string,
+    data: Partial<{
+      tenantId: string;
+      passwordHash: string;
+      emailVerified: boolean;
+      verificationToken: string | null;
+      mfaEnabled: boolean;
+      mfaSecret: string | null;
+      tokenVersion: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string | null;
+      avatarUrl: string | null;
+      role: Role;
+      isActive: boolean;
+    }>,
+  ) {
+    return this.db.user.update({
+      where: { id: userId },
+      data: {
+        ...data,
+        email: data.email?.toLowerCase(),
+      },
+    });
+  }
+
+  deleteUserGlobal(userId: string) {
+    return this.db.user.delete({ where: { id: userId } });
   }
 
   findManyByTenant(tenantId: string, params?: { skip?: number; take?: number }) {
@@ -72,6 +115,7 @@ export class UsersRepository {
     take: number;
     search?: string;
     role?: Role;
+    excludeRoles?: Role[];
     isActive?: boolean;
     sortBy: ListUsersSortField;
     sortOrder: "asc" | "desc";
@@ -82,7 +126,9 @@ export class UsersRepository {
       where.tenantId = params.tenantId;
     }
 
-    if (params.role) {
+    if (params.excludeRoles?.length) {
+      where.role = { notIn: params.excludeRoles };
+    } else if (params.role) {
       where.role = params.role;
     }
 

@@ -1,3 +1,5 @@
+import { EMAIL_REGEX } from "@ordella/validation";
+
 export const TENANT_CODE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function validateTenantName(name: string): string | null {
@@ -32,6 +34,40 @@ export function validateTenantTimezone(timezone: string): string | null {
   } catch {
     return "Timezone is invalid";
   }
+}
+
+export function validateOwnerEmail(email: string): string | null {
+  const trimmed = email.trim();
+  if (!trimmed) {
+    return "Owner email is required";
+  }
+  if (!EMAIL_REGEX.test(trimmed)) {
+    return "Enter a valid email";
+  }
+  return null;
+}
+
+export function validateTenantOwnerSelection(input: {
+  mode: "existing" | "email";
+  ownerUserId: string;
+  ownerEmail: string;
+}): Record<string, string> {
+  const errors: Record<string, string> = {};
+
+  if (input.mode === "existing") {
+    if (!input.ownerUserId) {
+      errors.ownerUserId = "Select a tenant owner";
+    }
+  } else if (!input.ownerEmail.trim()) {
+    errors.ownerEmail = "Owner email is required";
+  } else {
+    const emailError = validateOwnerEmail(input.ownerEmail);
+    if (emailError) {
+      errors.ownerEmail = emailError;
+    }
+  }
+
+  return errors;
 }
 
 export function validateTenantCurrency(currency: string): string | null {

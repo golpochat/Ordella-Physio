@@ -24,7 +24,7 @@ export function TrialBanner() {
         <div className="tenant-trial-banner tenant-trial-banner-expired" role="alert">
           <p>Your free trial has ended. Upgrade to restore full access to your clinic portal.</p>
           <Button asChild size="sm" variant="secondary">
-            <Link href="/clinic/billing">Upgrade now</Link>
+            <Link href="/checkout?intent=checkout">Upgrade now</Link>
           </Button>
         </div>
       );
@@ -43,7 +43,7 @@ export function TrialBanner() {
         without interruption.
       </p>
       <Button asChild size="sm">
-        <Link href="/clinic/billing">Upgrade now</Link>
+        <Link href="/checkout?intent=checkout">Upgrade now</Link>
       </Button>
     </div>
   );

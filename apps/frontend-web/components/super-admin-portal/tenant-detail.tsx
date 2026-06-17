@@ -16,6 +16,8 @@ import { TenantStatusBadge } from "@/components/super-admin/tenants/TenantStatus
 
 import { TenantStatusActions } from "@/components/tenants/TenantStatusActions";
 
+import { TenantUsersSection } from "@/components/super-admin-portal/tenant-users-section";
+
 import { useDeletePlatformTenant } from "@/hooks/useSuperAdminPortal";
 
 import type { PlatformTenant } from "@/lib/super-admin-portal-types";
@@ -100,7 +102,7 @@ export function PlatformTenantDetail({ tenant }: { tenant: PlatformTenant }) {
 
       </Card>
 
-
+      <TenantUsersSection tenantId={tenant.id} tenantName={tenant.name} />
 
       <div className="flex flex-wrap gap-3">
 

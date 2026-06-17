@@ -59,7 +59,9 @@ export class UserManagementService {
     }
 
     const filters = parsed.payload;
-    const tenantScope = isSystemRole(requestingUser.role) ? undefined : requestingUser.tenantId;
+    const tenantScope = isSystemRole(requestingUser.role)
+      ? filters.tenantId
+      : requestingUser.tenantId;
     const skip = (filters.page - 1) * filters.limit;
 
     const [total, users] = await this.usersRepository.listUsers({
@@ -68,6 +70,7 @@ export class UserManagementService {
       take: filters.limit,
       search: filters.search,
       role: filters.role,
+      excludeRoles: filters.excludeRoles,
       isActive:
         filters.status === undefined ? undefined : filters.status === "ACTIVE",
       sortBy: filters.sortBy,
@@ -93,7 +96,7 @@ export class UserManagementService {
       throw userValidationError(validation.fields);
     }
 
-    const tenantId = createdByUser.tenantId;
+    const tenantId = this.resolveCreateTenantId(payload, createdByUser);
     const data = validation.payload;
 
     const existing = await this.usersRepository.findByEmail(tenantId, data.email);
@@ -446,5 +449,21 @@ export class UserManagementService {
 
   private canAssignRole(actorRole: AuthenticatedRequestUser["role"], targetRole: string): boolean {
     return this.canModifyUser(actorRole, targetRole);
+  }
+
+  private resolveCreateTenantId(
+    payload: unknown,
+    createdByUser: AuthenticatedRequestUser,
+  ): string {
+    if (!isSystemRole(createdByUser.role) || !payload || typeof payload !== "object") {
+      return createdByUser.tenantId;
+    }
+
+    const requestedTenantId = (payload as Record<string, unknown>).tenantId;
+    if (typeof requestedTenantId === "string" && requestedTenantId.trim()) {
+      return requestedTenantId.trim();
+    }
+
+    return createdByUser.tenantId;
   }
 }

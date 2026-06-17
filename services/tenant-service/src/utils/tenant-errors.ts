@@ -29,6 +29,51 @@ export function ownerNotFoundError(message = "Selected owner does not exist.") {
   });
 }
 
+export function organizationNotFoundError(message = "Organization does not exist.") {
+  return new HttpError({
+    statusCode: 404,
+    code: ERROR_CODES.TENANT.NOT_FOUND,
+    message,
+    metadata: { field: "organizationId" },
+  });
+}
+
+export function ownerAlreadyAssignedError(
+  message = "This user is already assigned as owner of another tenant.",
+) {
+  return new HttpError({
+    statusCode: 409,
+    code: ERROR_CODES.TENANT.OWNER_ALREADY_ASSIGNED,
+    message,
+    metadata: { field: "ownerUserId" },
+  });
+}
+
+export function ownerEmailExistsError(message = "This email is already in use.") {
+  return new HttpError({
+    statusCode: 409,
+    code: ERROR_CODES.AUTH.EMAIL_EXISTS,
+    message,
+    metadata: { field: "ownerEmail" },
+  });
+}
+
+export function actorRequiredError(message = "Super admin actor is required for provisioning.") {
+  return new HttpError({
+    statusCode: 400,
+    code: ERROR_CODES.AUTH.UNAUTHORIZED,
+    message,
+  });
+}
+
+export function provisionFailedError(message = "Tenant provisioning failed.") {
+  return new HttpError({
+    statusCode: 500,
+    code: ERROR_CODES.SYSTEM.INTERNAL_SERVER_ERROR,
+    message,
+  });
+}
+
 export function tenantNotFoundError(message = "Tenant does not exist.") {
   return new HttpError({
     statusCode: 404,

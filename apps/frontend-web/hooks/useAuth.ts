@@ -15,7 +15,7 @@ import {
 } from "@/lib/auth-client";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { resolveUserRoles } from "@/lib/rbac";
-import { getPortalForRole, isSystemUser, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
+import { getPortalForRoles, isSystemUser, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
 import { clearAuthSession, syncTenantFromSession } from "@/lib/session-manager";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { useAuthStore } from "@/store/auth.store";
@@ -81,7 +81,7 @@ export function useAuth() {
         }
 
         const session = applySession(response, response.user.tenantId);
-        router.push(getPortalForRole(session.user.role));
+        router.push(getPortalForRoles(session.user.roles));
       } catch (error) {
         throw new Error(getApiErrorMessage(error, "Unable to sign in. Check your credentials."));
       }
@@ -106,7 +106,7 @@ export function useAuth() {
           return session;
         }
 
-        router.push(getPortalForRole(session.user.role));
+        router.push(getPortalForRoles(session.user.roles));
         return session;
       } catch (error) {
         throw new Error(getApiErrorMessage(error, "Unable to create your clinic workspace."));
@@ -148,7 +148,7 @@ export function useAuth() {
       try {
         await authClient.completeCheckout(accessToken, user.tenantId, payload);
         await refresh();
-        router.push(getPortalForRole(user.role ?? "ADMIN"));
+        router.push(getPortalForRoles(resolveUserRoles(user)));
       } catch (error) {
         throw new Error(getApiErrorMessage(error, "Unable to complete payment."));
       }

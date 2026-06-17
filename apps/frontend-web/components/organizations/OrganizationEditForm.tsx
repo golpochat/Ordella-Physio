@@ -11,8 +11,12 @@ import { useUpdatePlatformOrganization } from "@/hooks/useSuperAdminPortal";
 import { parseOrganizationUpdateErrors } from "@/lib/organization-api-errors";
 import type { PlatformOrganization } from "@/lib/super-admin-portal-types";
 import { cn } from "@/lib/cn";
+import {
+  validateBillingModel,
+  validateOrganizationEmail,
+  validateOrganizationPhone,
+} from "@/lib/organization-form-validation";
 
-const CODE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ORGANIZATION_STATUS_OPTIONS = ["ACTIVE", "INACTIVE"] as const;
@@ -26,22 +30,24 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
   const updateOrganization = useUpdatePlatformOrganization(organization.id);
 
   const [name, setName] = useState(organization.name);
-  const [code, setCode] = useState(organization.code);
   const [description, setDescription] = useState(organization.description ?? "");
   const [primaryContactName, setPrimaryContactName] = useState(organization.primaryContactName);
   const [primaryContactEmail, setPrimaryContactEmail] = useState(organization.primaryContactEmail);
   const [primaryContactPhone, setPrimaryContactPhone] = useState(organization.primaryContactPhone ?? "");
+  const [billingModel, setBillingModel] = useState<"tenant-level" | "organization-level">(
+    organization.billingModel ?? "tenant-level",
+  );
   const [status, setStatus] = useState<"ACTIVE" | "INACTIVE">(organization.status);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
 
   useEffect(() => {
     setName(organization.name);
-    setCode(organization.code);
     setDescription(organization.description ?? "");
     setPrimaryContactName(organization.primaryContactName);
     setPrimaryContactEmail(organization.primaryContactEmail);
     setPrimaryContactPhone(organization.primaryContactPhone ?? "");
+    setBillingModel(organization.billingModel ?? "tenant-level");
     setStatus(organization.status);
   }, [organization]);
 
@@ -52,13 +58,17 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
       errors.name = "Organization name must be at least 3 characters";
     }
 
-    if (code.trim() && !CODE_REGEX.test(code.trim())) {
-      errors.code = "Code must be lowercase and can contain letters, numbers, and hyphens";
-    }
-
     if (primaryContactEmail.trim() && !EMAIL_REGEX.test(primaryContactEmail.trim())) {
       errors.primaryContactEmail = "Enter a valid email";
     }
+
+    const phoneError = validateOrganizationPhone(primaryContactPhone);
+    if (primaryContactPhone.trim() && phoneError) {
+      errors.primaryContactPhone = phoneError;
+    }
+
+    const billingError = validateBillingModel(billingModel);
+    if (billingError) errors.billingModel = billingError;
 
     return errors;
   }
@@ -85,11 +95,11 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
             updateOrganization.mutate(
               {
                 name: name.trim(),
-                code: code.trim().toLowerCase(),
                 description: description.trim() || null,
                 primaryContactName: primaryContactName.trim(),
                 primaryContactEmail: primaryContactEmail.trim(),
                 primaryContactPhone: primaryContactPhone.trim() || null,
+                billingModel,
                 status,
               },
               {
@@ -138,12 +148,31 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
               <Label htmlFor="edit-organization-code">Organization code</Label>
               <Input
                 id="edit-organization-code"
-                value={code}
-                onChange={(event) => setCode(event.target.value.toLowerCase())}
-                aria-invalid={Boolean(fieldErrors.code)}
+                value={organization.organizationCode ?? organization.code}
+                readOnly
+                disabled
               />
-              {fieldErrors.code ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.code}</p>
+              <p className="tenant-create-form-field-hint">Auto-generated and immutable.</p>
+            </div>
+
+            <div className="tenant-create-form-field">
+              <Label htmlFor="edit-organization-billing-model">Billing model</Label>
+              <select
+                id="edit-organization-billing-model"
+                className={cn(
+                  "tenant-create-form-select",
+                  fieldErrors.billingModel && "tenant-create-form-select-error",
+                )}
+                value={billingModel}
+                onChange={(event) =>
+                  setBillingModel(event.target.value as "tenant-level" | "organization-level")
+                }
+              >
+                <option value="tenant-level">Tenant-level billing</option>
+                <option value="organization-level">Organization-level billing</option>
+              </select>
+              {fieldErrors.billingModel ? (
+                <p className="tenant-create-form-field-error">{fieldErrors.billingModel}</p>
               ) : null}
             </div>
 

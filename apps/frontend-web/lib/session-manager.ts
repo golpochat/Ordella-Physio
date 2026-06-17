@@ -237,7 +237,7 @@ export async function validateStoredSession(): Promise<boolean> {
   }
 
   try {
-    await authClient.me(useAuthStore.getState().accessToken ?? accessToken);
+    await authClient.me(useAuthStore.getState().accessToken ?? accessToken, tenantId ?? undefined);
     return true;
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {

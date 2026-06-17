@@ -40,11 +40,23 @@ export namespace $Enums {
 
 export type OrganizationStatus = (typeof OrganizationStatus)[keyof typeof OrganizationStatus]
 
+
+export const BillingModel: {
+  TENANT_LEVEL: 'TENANT_LEVEL',
+  ORGANIZATION_LEVEL: 'ORGANIZATION_LEVEL'
+};
+
+export type BillingModel = (typeof BillingModel)[keyof typeof BillingModel]
+
 }
 
 export type OrganizationStatus = $Enums.OrganizationStatus
 
 export const OrganizationStatus: typeof $Enums.OrganizationStatus
+
+export type BillingModel = $Enums.BillingModel
+
+export const BillingModel: typeof $Enums.BillingModel
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1117,6 +1129,7 @@ export namespace Prisma {
     primaryContactName: string | null
     primaryContactEmail: string | null
     primaryContactPhone: string | null
+    billingModel: $Enums.BillingModel | null
     status: $Enums.OrganizationStatus | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1130,6 +1143,7 @@ export namespace Prisma {
     primaryContactName: string | null
     primaryContactEmail: string | null
     primaryContactPhone: string | null
+    billingModel: $Enums.BillingModel | null
     status: $Enums.OrganizationStatus | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1143,6 +1157,7 @@ export namespace Prisma {
     primaryContactName: number
     primaryContactEmail: number
     primaryContactPhone: number
+    billingModel: number
     status: number
     createdAt: number
     updatedAt: number
@@ -1158,6 +1173,7 @@ export namespace Prisma {
     primaryContactName?: true
     primaryContactEmail?: true
     primaryContactPhone?: true
+    billingModel?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -1171,6 +1187,7 @@ export namespace Prisma {
     primaryContactName?: true
     primaryContactEmail?: true
     primaryContactPhone?: true
+    billingModel?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -1184,6 +1201,7 @@ export namespace Prisma {
     primaryContactName?: true
     primaryContactEmail?: true
     primaryContactPhone?: true
+    billingModel?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -1270,6 +1288,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone: string | null
+    billingModel: $Enums.BillingModel
     status: $Enums.OrganizationStatus
     createdAt: Date
     updatedAt: Date
@@ -1300,6 +1319,7 @@ export namespace Prisma {
     primaryContactName?: boolean
     primaryContactEmail?: boolean
     primaryContactPhone?: boolean
+    billingModel?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1316,6 +1336,7 @@ export namespace Prisma {
     primaryContactName?: boolean
     primaryContactEmail?: boolean
     primaryContactPhone?: boolean
+    billingModel?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1329,6 +1350,7 @@ export namespace Prisma {
     primaryContactName?: boolean
     primaryContactEmail?: boolean
     primaryContactPhone?: boolean
+    billingModel?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1342,12 +1364,13 @@ export namespace Prisma {
     primaryContactName?: boolean
     primaryContactEmail?: boolean
     primaryContactPhone?: boolean
+    billingModel?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "code" | "description" | "primaryContactName" | "primaryContactEmail" | "primaryContactPhone" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "code" | "description" | "primaryContactName" | "primaryContactEmail" | "primaryContactPhone" | "billingModel" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenantLinks?: boolean | Organization$tenantLinksArgs<ExtArgs>
     configs?: boolean | Organization$configsArgs<ExtArgs>
@@ -1370,6 +1393,7 @@ export namespace Prisma {
       primaryContactName: string
       primaryContactEmail: string
       primaryContactPhone: string | null
+      billingModel: $Enums.BillingModel
       status: $Enums.OrganizationStatus
       createdAt: Date
       updatedAt: Date
@@ -1805,6 +1829,7 @@ export namespace Prisma {
     readonly primaryContactName: FieldRef<"Organization", 'String'>
     readonly primaryContactEmail: FieldRef<"Organization", 'String'>
     readonly primaryContactPhone: FieldRef<"Organization", 'String'>
+    readonly billingModel: FieldRef<"Organization", 'BillingModel'>
     readonly status: FieldRef<"Organization", 'OrganizationStatus'>
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
@@ -4409,6 +4434,7 @@ export namespace Prisma {
     primaryContactName: 'primaryContactName',
     primaryContactEmail: 'primaryContactEmail',
     primaryContactPhone: 'primaryContactPhone',
+    billingModel: 'billingModel',
     status: 'status',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -4500,6 +4526,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BillingModel'
+   */
+  export type EnumBillingModelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingModel'>
+    
+
+
+  /**
+   * Reference to a field of type 'BillingModel[]'
+   */
+  export type ListEnumBillingModelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingModel[]'>
+    
+
+
+  /**
    * Reference to a field of type 'OrganizationStatus'
    */
   export type EnumOrganizationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationStatus'>
@@ -4569,6 +4609,7 @@ export namespace Prisma {
     primaryContactName?: StringFilter<"Organization"> | string
     primaryContactEmail?: StringFilter<"Organization"> | string
     primaryContactPhone?: StringNullableFilter<"Organization"> | string | null
+    billingModel?: EnumBillingModelFilter<"Organization"> | $Enums.BillingModel
     status?: EnumOrganizationStatusFilter<"Organization"> | $Enums.OrganizationStatus
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
@@ -4584,6 +4625,7 @@ export namespace Prisma {
     primaryContactName?: SortOrder
     primaryContactEmail?: SortOrder
     primaryContactPhone?: SortOrderInput | SortOrder
+    billingModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -4602,6 +4644,7 @@ export namespace Prisma {
     primaryContactName?: StringFilter<"Organization"> | string
     primaryContactEmail?: StringFilter<"Organization"> | string
     primaryContactPhone?: StringNullableFilter<"Organization"> | string | null
+    billingModel?: EnumBillingModelFilter<"Organization"> | $Enums.BillingModel
     status?: EnumOrganizationStatusFilter<"Organization"> | $Enums.OrganizationStatus
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
@@ -4617,6 +4660,7 @@ export namespace Prisma {
     primaryContactName?: SortOrder
     primaryContactEmail?: SortOrder
     primaryContactPhone?: SortOrderInput | SortOrder
+    billingModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -4636,6 +4680,7 @@ export namespace Prisma {
     primaryContactName?: StringWithAggregatesFilter<"Organization"> | string
     primaryContactEmail?: StringWithAggregatesFilter<"Organization"> | string
     primaryContactPhone?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    billingModel?: EnumBillingModelWithAggregatesFilter<"Organization"> | $Enums.BillingModel
     status?: EnumOrganizationStatusWithAggregatesFilter<"Organization"> | $Enums.OrganizationStatus
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
@@ -4766,6 +4811,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4781,6 +4827,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4796,6 +4843,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4811,6 +4859,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4826,6 +4875,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4839,6 +4889,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4852,6 +4903,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5004,6 +5056,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type EnumBillingModelFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingModel | EnumBillingModelFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingModelFilter<$PrismaModel> | $Enums.BillingModel
+  }
+
   export type EnumOrganizationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.OrganizationStatus | EnumOrganizationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.OrganizationStatus[] | ListEnumOrganizationStatusFieldRefInput<$PrismaModel>
@@ -5055,6 +5114,7 @@ export namespace Prisma {
     primaryContactName?: SortOrder
     primaryContactEmail?: SortOrder
     primaryContactPhone?: SortOrder
+    billingModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5068,6 +5128,7 @@ export namespace Prisma {
     primaryContactName?: SortOrder
     primaryContactEmail?: SortOrder
     primaryContactPhone?: SortOrder
+    billingModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5081,6 +5142,7 @@ export namespace Prisma {
     primaryContactName?: SortOrder
     primaryContactEmail?: SortOrder
     primaryContactPhone?: SortOrder
+    billingModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5120,6 +5182,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumBillingModelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingModel | EnumBillingModelFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingModelWithAggregatesFilter<$PrismaModel> | $Enums.BillingModel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBillingModelFilter<$PrismaModel>
+    _max?: NestedEnumBillingModelFilter<$PrismaModel>
   }
 
   export type EnumOrganizationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -5295,6 +5367,10 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type EnumBillingModelFieldUpdateOperationsInput = {
+    set?: $Enums.BillingModel
+  }
+
   export type EnumOrganizationStatusFieldUpdateOperationsInput = {
     set?: $Enums.OrganizationStatus
   }
@@ -5415,6 +5491,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedEnumBillingModelFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingModel | EnumBillingModelFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingModelFilter<$PrismaModel> | $Enums.BillingModel
+  }
+
   export type NestedEnumOrganizationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.OrganizationStatus | EnumOrganizationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.OrganizationStatus[] | ListEnumOrganizationStatusFieldRefInput<$PrismaModel>
@@ -5487,6 +5570,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumBillingModelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingModel | EnumBillingModelFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingModel[] | ListEnumBillingModelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingModelWithAggregatesFilter<$PrismaModel> | $Enums.BillingModel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBillingModelFilter<$PrismaModel>
+    _max?: NestedEnumBillingModelFilter<$PrismaModel>
   }
 
   export type NestedEnumOrganizationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -5649,6 +5742,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5663,6 +5757,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5693,6 +5788,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5707,6 +5803,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5721,6 +5818,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5735,6 +5833,7 @@ export namespace Prisma {
     primaryContactName: string
     primaryContactEmail: string
     primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
     status?: $Enums.OrganizationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5765,6 +5864,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5779,6 +5879,7 @@ export namespace Prisma {
     primaryContactName?: StringFieldUpdateOperationsInput | string
     primaryContactEmail?: StringFieldUpdateOperationsInput | string
     primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

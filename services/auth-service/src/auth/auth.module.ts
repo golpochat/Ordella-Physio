@@ -9,6 +9,7 @@ import { TokenController } from "@/controllers/token.controller";
 import { AuditController } from "@/controllers/audit.controller";
 import { InternalUsersController } from "@/controllers/internal-users.controller";
 import { UserController } from "@/controllers/user.controller";
+import { InternalOwnerService } from "@/services/internal-owner.service";
 import { UserManagementService } from "@/services/user.service";
 import { PlatformSettingsController } from "@/auth/platform-settings.controller";
 import { PlatformSettingsService } from "@/auth/platform-settings.service";
@@ -54,6 +55,7 @@ import { AuditModule } from "@/audit/audit.module";
   ],
   providers: [
     UserManagementService,
+    InternalOwnerService,
     PlatformSettingsService,
     AuthService,
     PasswordService,

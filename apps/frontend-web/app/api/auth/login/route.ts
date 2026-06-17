@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { getAuthLoginUrl } from "@/lib/auth/bff-auth";
+import { buildAuthUpstreamHeaders } from "@/lib/auth/bff-upstream-headers";
+import { parseAuthUpstreamPayload } from "@/lib/auth/parse-auth-upstream";
 import {
   getSecureCookieOptions,
   REFRESH_COOKIE_NAME,
@@ -11,30 +13,13 @@ import {
 import { signSessionPayload } from "@/lib/auth/session-signing";
 import type { SessionCookiePayload } from "@/lib/auth/session";
 
-type LoginUpstreamUser = {
-  id: string;
-  email: string;
-  tenantId: string;
-  role?: string;
-  roles?: string[];
-  permissions?: string[];
-  firstName?: string;
-  lastName?: string;
-};
-
-type LoginUpstreamData = {
-  accessToken: string;
-  refreshToken: string;
-  user: LoginUpstreamUser;
-};
-
 export async function POST(request: Request) {
   const body = await request.text();
   const loginUrl = getAuthLoginUrl();
 
   const upstream = await fetch(loginUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: buildAuthUpstreamHeaders({ bodyText: body, incomingHeaders: request.headers }),
     body,
     cache: "no-store",
   });
@@ -47,39 +32,42 @@ export async function POST(request: Request) {
     });
   }
 
-  const data = (payload as { data?: LoginUpstreamData | { requiresTenantSelection: true; tenants: unknown[] } })?.data;
-  if (!data) {
+  const parsed = parseAuthUpstreamPayload(payload);
+  if (!parsed) {
     return NextResponse.json({ error: { message: "Invalid login response" } }, { status: 502 });
   }
 
-  if ("requiresTenantSelection" in data && data.requiresTenantSelection) {
-    return NextResponse.json({ data });
+  if ("requiresTenantSelection" in parsed && parsed.requiresTenantSelection) {
+    return NextResponse.json({ data: parsed });
   }
 
-  const authData = data as LoginUpstreamData;
-  if (!authData.accessToken || !authData.refreshToken || !authData.user) {
+  if ("mfaRequired" in parsed && parsed.mfaRequired) {
+    return NextResponse.json({ data: parsed });
+  }
+
+  if (!("accessToken" in parsed)) {
     return NextResponse.json({ error: { message: "Invalid login response" } }, { status: 502 });
   }
 
   const response = NextResponse.json({
     data: {
-      accessToken: authData.accessToken,
-      user: authData.user,
+      accessToken: parsed.accessToken,
+      user: parsed.user,
     },
   });
 
   response.cookies.set(
     REFRESH_COOKIE_NAME,
-    authData.refreshToken,
+    parsed.refreshToken,
     getSecureCookieOptions(REFRESH_MAX_AGE_SECONDS),
   );
 
   const sessionPayload: SessionCookiePayload = {
     user: {
-      id: authData.user.id,
-      role: authData.user.roles?.[0] ?? authData.user.role ?? "STAFF",
-      tenantId: authData.user.tenantId,
-      roles: authData.user.roles,
+      id: parsed.user.id,
+      role: parsed.user.roles?.[0] ?? parsed.user.role ?? "STAFF",
+      tenantId: parsed.user.tenantId,
+      roles: parsed.user.roles,
     },
   };
 

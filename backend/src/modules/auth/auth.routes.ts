@@ -30,6 +30,8 @@ import {
 
   requestPasswordReset,
 
+  confirmPasswordReset,
+
   updateCurrentUser,
 
 } from "./auth.service";
@@ -39,6 +41,8 @@ import { getTenantUser, listTenantUsers } from "./users.service";
 import {
 
   forgotPasswordSchema,
+
+  resetPasswordSchema,
 
   loginSchema,
 
@@ -145,6 +149,62 @@ authRouter.post(
     });
 
     res.json({ data: result });
+
+  }),
+
+);
+
+
+
+authRouter.post(
+
+  "/password/request",
+
+  authRateLimiter,
+
+  validateRequest(forgotPasswordSchema),
+
+  asyncHandler(async (req, res) => {
+
+    const result = await requestPasswordReset({
+
+      ...req.body,
+
+      ipAddress: req.ip,
+
+    });
+
+    res.json({ data: result, message: "If an account exists, a reset link has been sent." });
+
+  }),
+
+);
+
+
+
+authRouter.post(
+
+  "/password/reset",
+
+  authRateLimiter,
+
+  validateRequest(resetPasswordSchema),
+
+  asyncHandler(async (req, res) => {
+
+    const result = await confirmPasswordReset({
+
+      token: req.body.token,
+
+      newPassword: req.body.newPassword,
+
+      ipAddress: req.ip,
+
+      userAgent: req.get("user-agent") ?? undefined,
+
+    });
+
+    res.json({ data: result, message: result.message });
 
   }),
 

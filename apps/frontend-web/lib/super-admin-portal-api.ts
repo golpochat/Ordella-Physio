@@ -11,6 +11,8 @@ import type {
   PlatformSettings,
   PlatformTenant,
   PlatformUser,
+  PlatformUserListFilters,
+  PlatformUserListResponse,
   ServiceHealthStatus,
   UpdatePlatformProfilePayload,
   UpdatePlatformRolePayload,
@@ -37,6 +39,8 @@ import type {
   AuthAuditLogFilters,
   CreatePlatformOrganizationPayload,
   CreatePlatformOrganizationResponse,
+  FullProvisioningPayload,
+  FullProvisioningResponse,
   PlatformOrganization,
   UpdatePlatformOrganizationPayload,
   UpdatePlatformOrganizationResponse,
@@ -71,6 +75,49 @@ export function normalizeUserList(
   if (!response) return [];
   if (Array.isArray(response)) return response;
   return response.data ?? [];
+}
+
+export function normalizeUserListResponse(
+  response:
+    | PlatformUserListResponse
+    | PlatformUser[]
+    | { data: PlatformUser[]; pagination?: PlatformUserListResponse["pagination"] }
+    | undefined,
+  fallbackLimit = 20,
+): PlatformUserListResponse {
+  if (!response) {
+    return {
+      data: [],
+      pagination: { page: 1, limit: fallbackLimit, total: 0, totalPages: 0 },
+    };
+  }
+
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      pagination: {
+        page: 1,
+        limit: response.length || fallbackLimit,
+        total: response.length,
+        totalPages: response.length > 0 ? 1 : 0,
+      },
+    };
+  }
+
+  if ("pagination" in response && Array.isArray(response.data)) {
+    return response as PlatformUserListResponse;
+  }
+
+  const data = normalizeUserList(response);
+  return {
+    data,
+    pagination: {
+      page: 1,
+      limit: fallbackLimit,
+      total: data.length,
+      totalPages: data.length > 0 ? 1 : 0,
+    },
+  };
 }
 
 export function normalizeAuthAuditLogListResponse(
@@ -285,15 +332,17 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     async createTenant(payload: CreatePlatformTenantPayload) {
-      const response = await api.post<CreatePlatformTenantResponse | PlatformTenant>("tenant", "", payload, {
+      const response = await api.post<CreatePlatformTenantResponse>("superAdminTenant", "", payload, {
         context: GLOBAL_CONTEXT,
       });
 
-      if (response && typeof response === "object" && "tenant" in response) {
-        return response.tenant;
-      }
+      return response;
+    },
 
-      return response as PlatformTenant;
+    async provisionFull(payload: FullProvisioningPayload) {
+      return api.post<FullProvisioningResponse>("superAdminProvisioning", "/full", payload, {
+        context: GLOBAL_CONTEXT,
+      });
     },
 
     listOrganizations(params?: OrganizationListFilters) {
@@ -305,7 +354,7 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
 
     async createOrganization(payload: CreatePlatformOrganizationPayload) {
       const response = await api.post<CreatePlatformOrganizationResponse | PlatformOrganization>(
-        "organization",
+        "superAdminOrganization",
         "",
         payload,
         { context: GLOBAL_CONTEXT },
@@ -485,61 +534,46 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
       return this.suspendTenant(id);
     },
 
-    async listUsers(params?: { page?: number; limit?: number }) {
-      try {
-        return await api.get<PlatformUser[] | { data: PlatformUser[] }>("auth", "/users", {
-          params,
-          context: GLOBAL_CONTEXT,
-        });
-      } catch {
-        const tenants = normalizeTenantList(await this.listTenants({ limit: 100 }));
-        const users: PlatformUser[] = [];
+    listUsers(filters: PlatformUserListFilters = {}) {
+      const params: Record<string, string | number> = {
+        page: filters.page ?? 1,
+        limit: filters.limit ?? 20,
+      };
 
-        for (const tenant of tenants) {
-          try {
-            const staff = await api.get<
-              Array<{ userId: string; role: string; tenantId: string; createdAt: string }>
-            >("tenant", `/${tenant.id}/staff`, { context: { tenantId: tenant.id } });
+      if (filters.search) params.search = filters.search;
+      if (filters.role) params.role = filters.role;
+      if (filters.tenantId) params.tenantId = filters.tenantId;
+      if (filters.excludeRoles) params.excludeRoles = filters.excludeRoles;
+      if (filters.status) params.status = filters.status;
+      if (filters.sortBy) params.sortBy = filters.sortBy;
+      if (filters.sortOrder) params.sortOrder = filters.sortOrder;
 
-            for (const member of staff ?? []) {
-              users.push({
-                id: member.userId,
-                tenantId: member.tenantId ?? tenant.id,
-                role: member.role,
-                createdAt: member.createdAt,
-              });
-            }
-          } catch {
-            // Skip tenants without staff access
-          }
-        }
-
-        return users;
-      }
+      return api.get<PlatformUserListResponse>("auth", "/users", {
+        params,
+        context: GLOBAL_CONTEXT,
+      });
     },
 
     getUser(id: string, tenantId?: string) {
-      return api
-        .get<PlatformUser>("auth", `/users/${id}`, {
-          context: tenantId ? { tenantId } : GLOBAL_CONTEXT,
-        })
-        .catch(async () => {
-          const users = normalizeUserList(await this.listUsers());
-          return users.find((user) => user.id === id) ?? null;
-        });
+      return api.get<PlatformUser>("auth", `/users/${id}`, {
+        context: tenantId ? { tenantId } : GLOBAL_CONTEXT,
+      });
     },
 
     createUser(payload: CreatePlatformUserPayload) {
-      const { tenantId, email, password, role } = payload;
+      const { tenantId, email, password, role, firstName, lastName } = payload;
+      const localPart = email.split("@")[0] ?? "User";
+
       return api.post<{ user: PlatformUser; message: string }>(
         "auth",
         "/users",
         {
+          tenantId,
           email,
           password,
           role,
-          firstName: email.split("@")[0] ?? "User",
-          lastName: "Account",
+          firstName: firstName ?? localPart,
+          lastName: lastName ?? "Account",
         },
         { context: { tenantId } },
       );

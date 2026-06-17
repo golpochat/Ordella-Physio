@@ -1,9 +1,10 @@
 import { ApiError } from "./api-client";
 import { CSRF_HEADER_NAME, ensureCsrfToken } from "@/lib/auth/csrf";
+import { getStoredAuthUser } from "@/lib/auth-storage";
 import { resolveAuthErrorMessage } from "./auth-error-messages";
 import { TENANT_HEADER } from "./constants";
-import { redirectToForbidden } from "./session-manager";
 import { getDefaultTenantId } from "./tenant-config";
+import { useAuthStore } from "@/store/auth.store";
 
 export type FetcherOptions = RequestInit & {
   params?: Record<string, string | number | boolean | undefined>;
@@ -28,6 +29,39 @@ function buildUrl(path: string, params?: FetcherOptions["params"]): string {
 
 function extractErrorMessage(payload: unknown, fallback: string): string {
   return resolveAuthErrorMessage(payload, fallback);
+}
+
+function readTenantHeader(headers?: HeadersInit): string | undefined {
+  if (!headers) {
+    return undefined;
+  }
+
+  if (headers instanceof Headers) {
+    return headers.get(TENANT_HEADER) ?? undefined;
+  }
+
+  if (Array.isArray(headers)) {
+    const match = headers.find(([key]) => key.toLowerCase() === TENANT_HEADER.toLowerCase());
+    return match?.[1];
+  }
+
+  for (const [key, value] of Object.entries(headers)) {
+    if (key.toLowerCase() === TENANT_HEADER.toLowerCase() && value) {
+      return String(value);
+    }
+  }
+
+  return undefined;
+}
+
+/** Prefer the signed-in user's tenant over env defaults to avoid gateway tenant mismatch. */
+function resolveAuthTenantId(headers?: HeadersInit): string | undefined {
+  return (
+    readTenantHeader(headers) ??
+    useAuthStore.getState().user?.tenantId ??
+    getStoredAuthUser()?.tenantId ??
+    getDefaultTenantId()
+  );
 }
 
 function hasAuthorizationHeader(headers?: HeadersInit): boolean {
@@ -60,6 +94,7 @@ export async function fetcher<T>(
     method !== "GET" && method !== "HEAD" && !hasAuthorizationHeader(headers)
       ? await ensureCsrfToken()
       : null;
+  const authTenantId = path.startsWith("/api/auth") ? resolveAuthTenantId(headers) : undefined;
 
   const response = await fetch(buildUrl(path, params), {
     ...init,
@@ -67,9 +102,7 @@ export async function fetcher<T>(
       credentials ?? (path.startsWith("/api/auth") ? "include" : "same-origin"),
     headers: {
       "Content-Type": "application/json",
-      ...(getDefaultTenantId() && path.startsWith("/api/auth")
-        ? { [TENANT_HEADER]: getDefaultTenantId()! }
-        : {}),
+      ...(authTenantId ? { [TENANT_HEADER]: authTenantId } : {}),
       ...(csrfToken ? { [CSRF_HEADER_NAME]: csrfToken } : {}),
       ...headers,
     },
@@ -78,10 +111,6 @@ export async function fetcher<T>(
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    if (response.status === 403) {
-      redirectToForbidden();
-    }
-
     throw new ApiError(
       extractErrorMessage(payload, "Request failed"),
       response.status,

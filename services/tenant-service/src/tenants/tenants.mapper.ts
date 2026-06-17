@@ -4,6 +4,7 @@ export type TenantResponse = {
   id: string;
   name: string;
   code: string;
+  tenantCode: string;
   slug: string;
   ownerUserId: string | null;
   timezone: string;
@@ -33,6 +34,7 @@ export function toTenantResponse(tenant: Tenant): TenantResponse {
     id: tenant.id,
     name: tenant.name,
     code: tenant.code ?? tenant.slug,
+    tenantCode: tenant.code ?? tenant.slug,
     slug: tenant.slug,
     ownerUserId: tenant.ownerUserId ?? null,
     timezone: tenant.timezone,

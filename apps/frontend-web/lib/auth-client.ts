@@ -340,15 +340,21 @@ export const authClient = {
     });
   },
 
-  me(accessToken: string) {
+  me(accessToken: string, tenantId?: string) {
     return fetcher<AuthUser>(`${API_ROUTES.auth}/me`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        ...(tenantId ? { [TENANT_HEADER]: tenantId } : {}),
+      },
     });
   },
 
-  session(accessToken: string) {
+  session(accessToken: string, tenantId?: string) {
     return fetcher<{ user: AuthUser; tenantId: string; role: string }>(`${API_ROUTES.auth}/session`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        ...(tenantId ? { [TENANT_HEADER]: tenantId } : {}),
+      },
     });
   },
 };

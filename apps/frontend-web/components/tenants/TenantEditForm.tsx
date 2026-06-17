@@ -14,7 +14,6 @@ import {
   TENANT_TIMEZONE_OPTIONS,
 } from "@/lib/tenant-form-options";
 import {
-  validateTenantCode,
   validateTenantCurrency,
   validateTenantName,
   validateTenantTimezone,
@@ -29,7 +28,6 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
   const updateTenant = useUpdatePlatformTenant(tenant.id);
 
   const [name, setName] = useState(tenant.name);
-  const [code, setCode] = useState(tenant.code ?? tenant.slug);
   const [timezone, setTimezone] = useState(tenant.timezone);
   const [currency, setCurrency] = useState(tenant.currency);
   const [status, setStatus] = useState<"ACTIVE" | "SUSPENDED">(
@@ -40,7 +38,6 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
 
   useEffect(() => {
     setName(tenant.name);
-    setCode(tenant.code ?? tenant.slug);
     setTimezone(tenant.timezone);
     setCurrency(tenant.currency);
     setStatus(tenant.status ?? (tenant.isActive ? "ACTIVE" : "SUSPENDED"));
@@ -51,9 +48,6 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
 
     const nameError = validateTenantName(name);
     if (nameError) errors.name = nameError;
-
-    const codeError = validateTenantCode(code);
-    if (codeError) errors.code = codeError;
 
     const timezoneError = validateTenantTimezone(timezone);
     if (timezoneError) errors.timezone = timezoneError;
@@ -86,7 +80,6 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
             updateTenant.mutate(
               {
                 name: name.trim(),
-                code: code.trim().toLowerCase(),
                 timezone,
                 currency,
                 status,
@@ -122,11 +115,11 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
               <Label htmlFor="edit-tenant-code">Tenant code</Label>
               <Input
                 id="edit-tenant-code"
-                value={code}
-                onChange={(event) => setCode(event.target.value.toLowerCase())}
-                aria-invalid={Boolean(fieldErrors.code)}
+                value={tenant.tenantCode ?? tenant.code ?? tenant.slug}
+                readOnly
+                disabled
               />
-              {fieldErrors.code ? <p className="tenant-create-form-field-error">{fieldErrors.code}</p> : null}
+              <p className="tenant-create-form-field-hint">Auto-generated and immutable.</p>
             </div>
 
             <div className="tenant-create-form-field">

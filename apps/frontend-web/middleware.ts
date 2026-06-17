@@ -13,6 +13,7 @@ import {
 import { checkRateLimit } from "@/lib/rate-limit/store";
 import { buildContentSecurityPolicy } from "@/lib/security/csp";
 import { NONCE_HEADER } from "@/lib/security/nonce";
+import { resolveLegacyClinicRedirect } from "@/lib/legacy-redirects";
 
 const RATE_LIMIT = Number(process.env.API_RATE_LIMIT ?? 120);
 const WINDOW_MS = 60 * 1000;
@@ -60,22 +61,23 @@ function applyPageSecurityHeaders(request: NextRequest): NextResponse {
   const isDev = process.env.NODE_ENV === "development";
   const nonce = isDev ? undefined : generateNonce();
   const requestHeaders = new Headers(request.headers);
+  const contentSecurityPolicy = buildContentSecurityPolicy({
+    nonce,
+    reportUri: process.env.CSP_REPORT_URI,
+  });
 
   if (nonce) {
     requestHeaders.set(NONCE_HEADER, nonce);
   }
 
+  // Next.js app-render reads the lowercase request header to attach nonces to framework scripts.
+  requestHeaders.set("content-security-policy", contentSecurityPolicy);
+
   const response = NextResponse.next({
     request: { headers: requestHeaders },
   });
 
-  response.headers.set(
-    "Content-Security-Policy",
-    buildContentSecurityPolicy({
-      nonce,
-      reportUri: process.env.CSP_REPORT_URI,
-    }),
-  );
+  response.headers.set("Content-Security-Policy", contentSecurityPolicy);
 
   return response;
 }
@@ -143,8 +145,19 @@ async function enforcePortalRbac(request: NextRequest) {
   return null;
 }
 
+function redirectToPath(request: NextRequest, pathname: string) {
+  const url = request.nextUrl.clone();
+  url.pathname = pathname;
+  return NextResponse.redirect(url);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const legacyTarget = resolveLegacyClinicRedirect(pathname);
+  if (legacyTarget) {
+    return redirectToPath(request, legacyTarget);
+  }
 
   if (pathname.startsWith("/api/")) {
     if (!RATE_LIMIT_DISABLED && !isExemptApiPath(pathname)) {

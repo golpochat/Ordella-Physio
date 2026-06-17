@@ -52,6 +52,12 @@ export const routes: Record<PortalRouteRole, readonly string[]> = {
     "/clinic/audit-logs",
     "/clinic/settings",
     "/clinic/profile",
+    "/clinic/messages",
+    "/clinic/notifications",
+    "/clinic/search",
+    "/clinic/marketplace",
+    "/clinic/enterprise",
+    "/clinic/ai",
   ],
   staff: [
     "/staff",
@@ -70,6 +76,8 @@ export const routes: Record<PortalRouteRole, readonly string[]> = {
     "/staff/notes",
     "/staff/notes/[id]",
     "/staff/profile",
+    "/staff/messages",
+    "/staff/notifications",
   ],
   therapist: [
     "/therapist",
@@ -87,6 +95,8 @@ export const routes: Record<PortalRouteRole, readonly string[]> = {
     "/therapist/profile",
     "/therapist/billing",
     "/therapist/billing/[invoiceId]",
+    "/therapist/messages",
+    "/therapist/notifications",
   ],
 };
 
@@ -220,6 +230,12 @@ export const adminRoutes = {
   auditLogs: "/clinic/audit-logs",
   settings: "/clinic/settings",
   profile: "/clinic/profile",
+  messages: "/clinic/messages",
+  notifications: "/clinic/notifications",
+  search: "/clinic/search",
+  marketplace: "/clinic/marketplace",
+  enterprise: "/clinic/enterprise",
+  ai: "/clinic/ai/models",
 } as const;
 
 export const staffRoutes = {
@@ -239,6 +255,8 @@ export const staffRoutes = {
   notes: "/staff/notes",
   note: (id: string) => `/staff/notes/${id}`,
   profile: "/staff/profile",
+  messages: "/staff/messages",
+  notifications: "/staff/notifications",
 } as const;
 
 export const therapistRoutes = {
@@ -256,4 +274,7 @@ export const therapistRoutes = {
   noteCreate: "/therapist/notes/create",
   profile: "/therapist/profile",
   billing: "/therapist/billing",
+  invoice: (id: string) => `/therapist/billing/${id}`,
+  messages: "/therapist/messages",
+  notifications: "/therapist/notifications",
 } as const;

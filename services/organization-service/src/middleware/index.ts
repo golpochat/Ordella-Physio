@@ -22,7 +22,7 @@ import { ORGANIZATION_ROUTES } from "@/routes/organization.routes";
 const metricsRegistry = createMetricsRegistry({ serviceName: "organization-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
-const skipPaths = [ORGANIZATION_ROUTES.health];
+const skipPaths = [ORGANIZATION_ROUTES.health, "/organizations/internal"];
 
 export const OrganizationAuthContextMiddleware = createAuthContextMiddleware({
   required: false,

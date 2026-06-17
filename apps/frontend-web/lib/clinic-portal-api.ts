@@ -442,6 +442,14 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
       return api.get<ClinicNote>("notes", `/${id}`);
     },
 
+    updateNote(id: string, payload: { type?: string; title?: string; content?: string }) {
+      return api.patch<ClinicNote>("notes", `/${id}`, payload);
+    },
+
+    deleteNote(id: string) {
+      return api.delete<{ id: string; deleted: boolean }>("notes", `/${id}`);
+    },
+
     listUsers(params?: ClinicUserListFilters) {
       return api.get<ClinicUserListResponse>("auth", "/users", {
         params,

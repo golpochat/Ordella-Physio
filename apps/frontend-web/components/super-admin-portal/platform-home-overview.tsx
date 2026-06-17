@@ -13,11 +13,16 @@ import {
   usePlatformUsers,
   useSuperAdminContext,
 } from "@/hooks/useSuperAdminPortal";
+import { PLATFORM_OPERATOR_ROLE } from "@/lib/super-admin-portal-utils";
 
 export function PlatformHomeOverview() {
   const { displayName } = useSuperAdminContext();
   const tenantsQuery = usePlatformTenants();
-  const usersQuery = usePlatformUsers();
+  const usersQuery = usePlatformUsers({
+    role: PLATFORM_OPERATOR_ROLE,
+    limit: 1,
+    page: 1,
+  });
   const rolesQuery = usePlatformRoles();
   const billingQuery = usePlatformBilling();
   const healthQuery = usePlatformSystemHealth();
@@ -44,7 +49,7 @@ export function PlatformHomeOverview() {
   }
 
   const tenants = tenantsQuery.data ?? [];
-  const users = usersQuery.data ?? [];
+  const platformOperatorCount = usersQuery.data?.pagination.total ?? 0;
   const roles = rolesQuery.data ?? [];
   const healthyServices = (healthQuery.data ?? []).filter((item) => item.status === "ok").length;
 
@@ -61,8 +66,8 @@ export function PlatformHomeOverview() {
           <p className="dashboard-stat-value">{tenants.length}</p>
         </Card>
         <Card compact>
-          <p className="dashboard-stat-label">Users</p>
-          <p className="dashboard-stat-value">{users.length}</p>
+          <p className="dashboard-stat-label">Platform operators</p>
+          <p className="dashboard-stat-value">{platformOperatorCount}</p>
         </Card>
         <Card compact>
           <p className="dashboard-stat-label">Roles</p>
@@ -78,6 +83,12 @@ export function PlatformHomeOverview() {
         <p className="dashboard-section-title">Quick actions</p>
         <div className="dashboard-actions">
           <Button asChild className="btn-primary">
+            <Link href="/super-admin/provisioning/new">Provision workspace</Link>
+          </Button>
+          <Button asChild className="btn-secondary" variant="outline">
+            <Link href="/super-admin/organizations/new">Create organization</Link>
+          </Button>
+          <Button asChild className="btn-secondary" variant="outline">
             <Link href="/super-admin/tenants/create">Create tenant</Link>
           </Button>
           <Button asChild className="btn-secondary" variant="outline">

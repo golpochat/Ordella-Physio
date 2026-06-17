@@ -22,6 +22,8 @@ const PUBLIC_PATHS = [
   "/api/auth/refresh",
   "/api/auth/csrf",
   "/api/auth/forgot-password",
+  "/api/auth/password/request",
+  "/api/auth/password/reset",
   "/api/onboarding/start-trial",
   "/api/onboarding/register",
   "/api/onboarding/config",

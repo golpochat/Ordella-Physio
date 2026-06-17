@@ -2,70 +2,105 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Loader2 } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { useCreatePlatformOrganization } from "@/hooks/useSuperAdminPortal";
 import { parseOrganizationCreateErrors } from "@/lib/organization-api-errors";
+import {
+  validateBillingModel,
+  validateOrganizationEmail,
+  validateOrganizationName,
+  validateOrganizationPhone,
+} from "@/lib/organization-form-validation";
+import { cn } from "@/lib/cn";
+import type { PlatformOrganization } from "@/lib/super-admin-portal-types";
 
-function slugifyCode(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-const CODE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+type SuccessSummary = {
+  organizationName: string;
+  organizationCode: string;
+  primaryContactEmail: string;
+};
 
 export function OrganizationCreateForm() {
   const router = useRouter();
   const createOrganization = useCreatePlatformOrganization();
 
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
-  const [codeTouched, setCodeTouched] = useState(false);
+  const [organizationName, setOrganizationName] = useState("");
   const [description, setDescription] = useState("");
   const [primaryContactName, setPrimaryContactName] = useState("");
   const [primaryContactEmail, setPrimaryContactEmail] = useState("");
   const [primaryContactPhone, setPrimaryContactPhone] = useState("");
+  const [billingModel, setBillingModel] = useState<"tenant-level" | "organization-level" | "">("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [successSummary, setSuccessSummary] = useState<SuccessSummary | null>(null);
 
   function validateClient(): Record<string, string> {
     const errors: Record<string, string> = {};
 
-    if (!name.trim()) {
-      errors.name = "Organization name is required";
-    }
-
-    if (!code.trim()) {
-      errors.code = "Organization code is required";
-    } else if (!CODE_REGEX.test(code.trim())) {
-      errors.code = "Code must be lowercase and can contain letters, numbers, and hyphens";
-    }
+    const nameError = validateOrganizationName(organizationName);
+    if (nameError) errors.organizationName = nameError;
 
     if (!primaryContactName.trim()) {
       errors.primaryContactName = "Primary contact name is required";
     }
 
-    if (!primaryContactEmail.trim()) {
-      errors.primaryContactEmail = "Primary contact email is required";
-    } else if (!EMAIL_REGEX.test(primaryContactEmail.trim())) {
-      errors.primaryContactEmail = "Enter a valid email";
-    }
+    const emailError = validateOrganizationEmail(primaryContactEmail);
+    if (emailError) errors.primaryContactEmail = emailError;
+
+    const phoneError = validateOrganizationPhone(primaryContactPhone);
+    if (phoneError) errors.primaryContactPhone = phoneError;
+
+    const billingError = validateBillingModel(billingModel);
+    if (billingError) errors.billingModel = billingError;
 
     return errors;
+  }
+
+  if (successSummary) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Organization created</CardTitle>
+          <CardDescription>Provisioning completed successfully.</CardDescription>
+        </CardHeader>
+        <CardBody className="space-y-4">
+          <dl className="tenant-create-form-success-summary">
+            <div>
+              <dt>Organization</dt>
+              <dd>{successSummary.organizationName}</dd>
+            </div>
+            <div>
+              <dt>Organization code</dt>
+              <dd>
+                <code>{successSummary.organizationCode}</code>
+              </dd>
+            </div>
+            <div>
+              <dt>Primary contact email</dt>
+              <dd>{successSummary.primaryContactEmail}</dd>
+            </div>
+          </dl>
+          <div className="flex flex-wrap gap-3">
+            <Button type="button" className="btn-primary" onClick={() => router.push("/super-admin/tenants/create")}>
+              Create tenant
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.push("/super-admin/organizations")}>
+              View organizations
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
+    );
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Create organization</CardTitle>
-        <CardDescription>Provision a new multi-tenant organization on the platform.</CardDescription>
+        <CardDescription>Register a company-level organization before provisioning clinic tenants.</CardDescription>
       </CardHeader>
       <CardBody>
         <form
@@ -82,17 +117,21 @@ export function OrganizationCreateForm() {
 
             createOrganization.mutate(
               {
-                name: name.trim(),
-                code: code.trim().toLowerCase(),
+                organizationName: organizationName.trim(),
                 description: description.trim() || undefined,
                 primaryContactName: primaryContactName.trim(),
                 primaryContactEmail: primaryContactEmail.trim(),
-                primaryContactPhone: primaryContactPhone.trim() || undefined,
+                primaryContactPhone: primaryContactPhone.trim(),
+                billingModel: billingModel as "tenant-level" | "organization-level",
               },
               {
-                onSuccess: () => {
-                  toast.success("Organization created successfully.");
-                  router.push("/super-admin/organizations");
+                onSuccess: (response) => {
+                  const organization = (response as { organization: PlatformOrganization }).organization;
+                  setSuccessSummary({
+                    organizationName: organization.name,
+                    organizationCode: organization.organizationCode ?? organization.code,
+                    primaryContactEmail: organization.primaryContactEmail,
+                  });
                 },
                 onError: (error) => {
                   const parsed = parseOrganizationCreateErrors(error);
@@ -110,96 +149,101 @@ export function OrganizationCreateForm() {
         >
           {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
 
-          <div className="tenant-create-form-grid">
-            <div className="tenant-create-form-field">
-              <Label htmlFor="organization-name">Organization name</Label>
-              <Input
-                id="organization-name"
-                value={name}
-                onChange={(event) => {
-                  const nextName = event.target.value;
-                  setName(nextName);
-                  if (!codeTouched) {
-                    setCode(slugifyCode(nextName));
+          <fieldset className="tenant-create-form-section">
+            <legend className="tenant-create-form-section-title">Organization details</legend>
+            <div className="tenant-create-form-grid">
+              <div className="tenant-create-form-field">
+                <Label htmlFor="organization-name">Organization name</Label>
+                <Input
+                  id="organization-name"
+                  value={organizationName}
+                  onChange={(event) => setOrganizationName(event.target.value)}
+                  aria-invalid={Boolean(fieldErrors.organizationName)}
+                />
+                {fieldErrors.organizationName ? (
+                  <p className="tenant-create-form-field-error">{fieldErrors.organizationName}</p>
+                ) : null}
+              </div>
+
+              <div className="tenant-create-form-field">
+                <Label htmlFor="organization-billing-model">Billing model</Label>
+                <select
+                  id="organization-billing-model"
+                  className={cn(
+                    "tenant-create-form-select",
+                    fieldErrors.billingModel && "tenant-create-form-select-error",
+                  )}
+                  value={billingModel}
+                  onChange={(event) =>
+                    setBillingModel(event.target.value as "tenant-level" | "organization-level" | "")
                   }
-                }}
-                aria-invalid={Boolean(fieldErrors.name)}
-              />
-              {fieldErrors.name ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.name}</p>
-              ) : null}
-            </div>
+                  aria-invalid={Boolean(fieldErrors.billingModel)}
+                >
+                  <option value="">Select billing model</option>
+                  <option value="tenant-level">Tenant-level billing</option>
+                  <option value="organization-level">Organization-level billing</option>
+                </select>
+                {fieldErrors.billingModel ? (
+                  <p className="tenant-create-form-field-error">{fieldErrors.billingModel}</p>
+                ) : null}
+              </div>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="organization-code">Organization code</Label>
-              <Input
-                id="organization-code"
-                value={code}
-                onChange={(event) => {
-                  setCodeTouched(true);
-                  setCode(event.target.value.toLowerCase());
-                }}
-                aria-invalid={Boolean(fieldErrors.code)}
-              />
-              {fieldErrors.code ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.code}</p>
-              ) : null}
+              <div className="tenant-create-form-field tenant-create-form-field-full">
+                <Label htmlFor="organization-description">Description (optional)</Label>
+                <Input
+                  id="organization-description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                />
+              </div>
             </div>
+          </fieldset>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="organization-description">Description</Label>
-              <Input
-                id="organization-description"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.description)}
-              />
-              {fieldErrors.description ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.description}</p>
-              ) : null}
-            </div>
+          <fieldset className="tenant-create-form-section">
+            <legend className="tenant-create-form-section-title">Primary contact</legend>
+            <div className="tenant-create-form-grid">
+              <div className="tenant-create-form-field">
+                <Label htmlFor="organization-contact-name">Contact name</Label>
+                <Input
+                  id="organization-contact-name"
+                  value={primaryContactName}
+                  onChange={(event) => setPrimaryContactName(event.target.value)}
+                  aria-invalid={Boolean(fieldErrors.primaryContactName)}
+                />
+                {fieldErrors.primaryContactName ? (
+                  <p className="tenant-create-form-field-error">{fieldErrors.primaryContactName}</p>
+                ) : null}
+              </div>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="organization-contact-name">Primary contact name</Label>
-              <Input
-                id="organization-contact-name"
-                value={primaryContactName}
-                onChange={(event) => setPrimaryContactName(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.primaryContactName)}
-              />
-              {fieldErrors.primaryContactName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.primaryContactName}</p>
-              ) : null}
-            </div>
+              <div className="tenant-create-form-field">
+                <Label htmlFor="organization-contact-email">Contact email</Label>
+                <Input
+                  id="organization-contact-email"
+                  type="email"
+                  value={primaryContactEmail}
+                  onChange={(event) => setPrimaryContactEmail(event.target.value)}
+                  aria-invalid={Boolean(fieldErrors.primaryContactEmail)}
+                />
+                {fieldErrors.primaryContactEmail ? (
+                  <p className="tenant-create-form-field-error">{fieldErrors.primaryContactEmail}</p>
+                ) : null}
+              </div>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="organization-contact-email">Primary contact email</Label>
-              <Input
-                id="organization-contact-email"
-                type="email"
-                value={primaryContactEmail}
-                onChange={(event) => setPrimaryContactEmail(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.primaryContactEmail)}
-              />
-              {fieldErrors.primaryContactEmail ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.primaryContactEmail}</p>
-              ) : null}
+              <div className="tenant-create-form-field">
+                <Label htmlFor="organization-contact-phone">Contact phone</Label>
+                <Input
+                  id="organization-contact-phone"
+                  type="tel"
+                  value={primaryContactPhone}
+                  onChange={(event) => setPrimaryContactPhone(event.target.value)}
+                  aria-invalid={Boolean(fieldErrors.primaryContactPhone)}
+                />
+                {fieldErrors.primaryContactPhone ? (
+                  <p className="tenant-create-form-field-error">{fieldErrors.primaryContactPhone}</p>
+                ) : null}
+              </div>
             </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="organization-contact-phone">Primary contact phone</Label>
-              <Input
-                id="organization-contact-phone"
-                type="tel"
-                value={primaryContactPhone}
-                onChange={(event) => setPrimaryContactPhone(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.primaryContactPhone)}
-              />
-              {fieldErrors.primaryContactPhone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.primaryContactPhone}</p>
-              ) : null}
-            </div>
-          </div>
+          </fieldset>
 
           <Button type="submit" className="btn-primary" disabled={createOrganization.isPending}>
             {createOrganization.isPending ? (

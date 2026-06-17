@@ -1,9 +1,13 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { TenantsController } from "@/tenants/tenants.controller";
+import { SuperAdminTenantController } from "@/tenants/controllers/super-admin-tenant.controller";
+import { SuperAdminProvisioningController } from "@/tenants/controllers/super-admin-provisioning.controller";
 import { TenantsService } from "@/tenants/tenants.service";
 import { TenantsRepository } from "@/tenants/tenants.repository";
 import { CreateTenantCommand } from "@/tenants/commands/create-tenant.command";
+import { ProvisionTenantCommand } from "@/tenants/commands/provision-tenant.command";
+import { ProvisionFullCommand } from "@/tenants/commands/provision-full.command";
 import { UpdateTenantCommand } from "@/tenants/commands/update-tenant.command";
 import { AddLocationCommand } from "@/tenants/commands/add-location.command";
 import { UpdateLocationCommand } from "@/tenants/commands/update-location.command";
@@ -19,7 +23,11 @@ import { SubscriptionModule } from "@/subscription/subscription.module";
 import { EventsModule } from "@/events/events.module";
 import { TenantService } from "@/tenants/services/tenant.service";
 import { TenantOrganizationService } from "@/tenants/services/tenant-organization.service";
+import { ProvisioningCompensatorService } from "@/tenants/services/provisioning-compensator.service";
 import { AuthUsersClient } from "@/integrations/auth-users.client";
+import { OrganizationServiceClient } from "@/integrations/organization-service.client";
+import { UserRoleClient } from "@/integrations/user-role.client";
+import { AuditLogClient } from "@/integrations/audit-log.client";
 import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repository";
 
 @Module({
@@ -31,11 +39,13 @@ import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repositor
     BrandingModule,
     SubscriptionModule,
   ],
-  controllers: [TenantsController],
+  controllers: [TenantsController, SuperAdminTenantController, SuperAdminProvisioningController],
   providers: [
     TenantsService,
     TenantsRepository,
     CreateTenantCommand,
+    ProvisionTenantCommand,
+    ProvisionFullCommand,
     UpdateTenantCommand,
     AddLocationCommand,
     UpdateLocationCommand,
@@ -46,7 +56,11 @@ import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repositor
     TenantMatchGuard,
     TenantService,
     TenantOrganizationService,
+    ProvisioningCompensatorService,
     AuthUsersClient,
+    OrganizationServiceClient,
+    UserRoleClient,
+    AuditLogClient,
     TenantDomainRepository,
   ],
   exports: [TenantsService, TenantsRepository],
