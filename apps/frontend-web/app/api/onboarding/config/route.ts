@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { getOnboardingConfigUrl } from "@/lib/auth/bff-auth";
+import { buildOnboardingUpstreamHeaders } from "@/lib/auth/onboarding-upstream";
 
 export async function GET() {
-  const upstream = await fetch(getOnboardingConfigUrl(), { cache: "no-store" });
+  const upstream = await fetch(getOnboardingConfigUrl(), {
+    cache: "no-store",
+    headers: buildOnboardingUpstreamHeaders(),
+  });
   const payload = await upstream.json().catch(() => null);
 
   if (!upstream.ok) {

@@ -146,6 +146,7 @@ services:
       DISABLE_NONCE_CSP: "true"
       NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
       API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
+      CLINIC_BACKEND_INTERNAL_URL: ${CLINIC_BACKEND_INTERNAL_URL:-http://host.docker.internal:4000}
       NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
       DEFAULT_TENANT_ID: ${DEFAULT_TENANT_ID:-demo-tenant}
       NEXTAUTH_URL: http://localhost:3010

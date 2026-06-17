@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getOnboardingRegisterUrl } from "@/lib/auth/bff-auth";
+import { buildOnboardingUpstreamHeaders } from "@/lib/auth/onboarding-upstream";
 import { csrfForbiddenResponse, validateOnboardingBffCsrf } from "@/lib/auth/bff-csrf";
 import { buildOnboardingAuthResponse, type OnboardingAuthUpstreamData } from "@/lib/auth/onboarding-bff";
 
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
   const body = await request.text();
   const upstream = await fetch(getOnboardingRegisterUrl(), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: buildOnboardingUpstreamHeaders({ "Content-Type": "application/json" }),
     body,
     cache: "no-store",
   });

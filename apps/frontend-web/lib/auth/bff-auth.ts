@@ -1,6 +1,8 @@
 import { getClinicBackendBaseUrl, useClinicBackend } from "@/lib/clinic-backend-proxy";
 import { getGatewayBaseUrl } from "@/lib/gateway-proxy";
 
+import { getOnboardingBackendBaseUrl } from "./onboarding-upstream";
+
 export function getAuthBackendBaseUrl(): string {
   return useClinicBackend() ? getClinicBackendBaseUrl() : getGatewayBaseUrl();
 }
@@ -21,26 +23,21 @@ export function getAuthLogoutUrl(): string {
 }
 
 export function getOnboardingStartTrialUrl(): string {
-  const base = getAuthBackendBaseUrl();
-  return `${base}/api/onboarding/start-trial`;
+  return `${getOnboardingBackendBaseUrl()}/api/onboarding/start-trial`;
 }
 
 export function getOnboardingRegisterUrl(): string {
-  const base = getAuthBackendBaseUrl();
-  return `${base}/api/onboarding/register`;
+  return `${getOnboardingBackendBaseUrl()}/api/onboarding/register`;
 }
 
 export function getOnboardingConfigUrl(): string {
-  const base = getAuthBackendBaseUrl();
-  return `${base}/api/onboarding/config`;
+  return `${getOnboardingBackendBaseUrl()}/api/onboarding/config`;
 }
 
 export function getOnboardingCheckoutPreviewUrl(): string {
-  const base = getAuthBackendBaseUrl();
-  return `${base}/api/onboarding/checkout/preview`;
+  return `${getOnboardingBackendBaseUrl()}/api/onboarding/checkout/preview`;
 }
 
 export function getOnboardingCheckoutCompleteUrl(): string {
-  const base = getAuthBackendBaseUrl();
-  return `${base}/api/onboarding/checkout/complete`;
+  return `${getOnboardingBackendBaseUrl()}/api/onboarding/checkout/complete`;
 }

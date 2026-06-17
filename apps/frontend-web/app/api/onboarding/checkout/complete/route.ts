@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getOnboardingCheckoutCompleteUrl } from "@/lib/auth/bff-auth";
+import { buildOnboardingUpstreamHeaders } from "@/lib/auth/onboarding-upstream";
 import { TENANT_HEADER } from "@/lib/constants";
 
 export async function POST(request: Request) {
@@ -10,11 +11,11 @@ export async function POST(request: Request) {
 
   const upstream = await fetch(getOnboardingCheckoutCompleteUrl(), {
     method: "POST",
-    headers: {
+    headers: buildOnboardingUpstreamHeaders({
       "Content-Type": "application/json",
       ...(authorization ? { Authorization: authorization } : {}),
       ...(tenantId ? { [TENANT_HEADER]: tenantId } : {}),
-    },
+    }),
     body,
     cache: "no-store",
   });
