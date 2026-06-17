@@ -41,6 +41,7 @@ x-gateway-urls: &gateway-urls
   AI_SECURITY_SERVICE_URL: http://ai-security-service:3082
   AI_OBSERVABILITY_SERVICE_URL: http://ai-observability-service:3083
   AI_AGENTS_SERVICE_URL: http://ai-agents-service:3084
+  PHARMACY_SERVICE_URL: http://pharmacy-service:3085
   CLINIC_BACKEND_URL: ${CLINIC_BACKEND_URL:-http://host.docker.internal:4000}
 
 services:
@@ -85,6 +86,8 @@ services:
       subscription-billing-service:
         condition: service_started
       staff-service:
+        condition: service_started
+      pharmacy-service:
         condition: service_started
       file-storage-service:
         condition: service_started
@@ -146,7 +149,8 @@ services:
       DISABLE_NONCE_CSP: "true"
       NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
       API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
-      CLINIC_BACKEND_INTERNAL_URL: ${CLINIC_BACKEND_INTERNAL_URL:-http://host.docker.internal:4000}
+      USE_CLINIC_BACKEND: "false"
+      NEXT_PUBLIC_USE_CLINIC_BACKEND: "false"
       NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
       DEFAULT_TENANT_ID: ${DEFAULT_TENANT_ID:-demo-tenant}
       NEXTAUTH_URL: http://localhost:3010
@@ -198,6 +202,8 @@ services:
       JWT_ACCESS_SECRET: *jwt-secret
       AUTH_SERVICE_URL: http://core-service:3051
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
+      USER_ROLE_SERVICE_URL: http://user-role-service:3068
+      AUDIT_SERVICE_URL: http://audit-service:3070
       NATS_URL: nats://nats:4222
     depends_on:
       db:
@@ -253,6 +259,9 @@ services:
       PORT: 3065
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_enterprise?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      SSO_ENCRYPTION_KEY: *jwt-secret
+      ORGANIZATION_SERVICE_URL: http://organization-service:3066
+      AUTH_SERVICE_URL: http://core-service:3051
       ENTERPRISE_SSO_CALLBACK_URL: http://localhost:3049/enterprise/sso/oauth/callback
       ENTERPRISE_SAML_ACS_URL: http://localhost:3049/enterprise/sso/saml/acs
       ENTERPRISE_FRONTEND_CALLBACK_URL: http://localhost:3010/clinic/enterprise/sso/callback
@@ -261,6 +270,8 @@ services:
       db:
         condition: service_healthy
       tenant-service:
+        condition: service_started
+      organization-service:
         condition: service_started
     networks:
       - ordella-physio-network
@@ -280,11 +291,14 @@ services:
       JWT_ACCESS_SECRET: *jwt-secret
       TENANT_SERVICE_URL: http://tenant-service:3052
       SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
+      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
       NATS_URL: nats://nats:4222
     depends_on:
       db:
         condition: service_healthy
       tenant-service:
+        condition: service_started
+      file-storage-service:
         condition: service_started
       nats:
         condition: service_started
@@ -440,10 +454,6 @@ services:
         condition: service_healthy
       tenant-service:
         condition: service_started
-      patient-service:
-        condition: service_started
-      appointment-service:
-        condition: service_started
     networks:
       - ordella-physio-network
 
@@ -499,6 +509,7 @@ services:
       PORT: 3066
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_organization?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
+      SSO_ENCRYPTION_KEY: *jwt-secret
       TENANT_SERVICE_URL: http://tenant-service:3052
     depends_on:
       db:
@@ -561,6 +572,35 @@ services:
     networks:
       - ordella-physio-network
 
+  pharmacy-service:
+    container_name: ordella-physio-pharmacy-service
+    build:
+      context: ./services/pharmacy-service
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-pharmacy-service:latest
+    environment:
+      PORT: 3085
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_pharmacy?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      PATIENT_SERVICE_URL: http://patient-service:3053
+      STAFF_SERVICE_URL: http://staff-service:3069
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
+      AUDIT_SERVICE_URL: http://audit-service:3070
+    depends_on:
+      db:
+        condition: service_healthy
+      patient-service:
+        condition: service_started
+      staff-service:
+        condition: service_started
+      audit-service:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
   file-storage-service:
     container_name: ordella-physio-file-storage-service
     build:
@@ -579,17 +619,38 @@ services:
       STORAGE_FAILOVER_PROVIDERS: S3,GCS,LOCAL
       STORAGE_LOCAL_BASE_PATH: /app/uploads/files
       FILE_STORAGE_PUBLIC_BASE_URL: http://localhost:3049/files
+      FILE_STORAGE_SIGNED_URL_TTL_SECONDS: 60
+      FILE_STORAGE_MAX_BYTES: 52428800
+      S3_BUCKET: ordella-uploads-prod
+      S3_REGION: eu-west-1
+      # Set STORAGE_DEFAULT_PROVIDER=S3 and S3_ACCESS_KEY/S3_SECRET_KEY in production.
       AUDIT_SERVICE_URL: http://audit-service:3070
       SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
-      # CLAMAV_HOST: clamav
-      # CLAMAV_PORT: 3310
+      CLAMAV_ENABLED: "true"
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
     depends_on:
+      clamav:
+        condition: service_healthy
       db:
         condition: service_healthy
       audit-service:
         condition: service_started
-      subscription-billing-service:
-        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  clamav:
+    container_name: ordella-physio-clamav
+    image: clamav/clamav:latest
+    ports:
+      - "3310:3310"
+    environment:
+      CLAMAV_NO_FRESHCLAMD: "false"
+    healthcheck:
+      test: ["CMD", "clamdscan", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - ordella-physio-network
 
@@ -689,6 +750,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      additional_contexts:
+        workspace: .
     image: ordella-clinic-backend:latest
     ports:
       - "${CLINIC_BACKEND_PORT:-4000}:4000"
@@ -699,9 +762,13 @@ services:
       JWT_SECRET: *jwt-secret
       JWT_REFRESH_SECRET: *jwt-secret
       TENANT_HEADER: x-tenant-id
+      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
+      FILE_STORAGE_MAX_BYTES: 52428800
     depends_on:
       clinic-backend-db:
         condition: service_healthy
+      file-storage-service:
+        condition: service_started
     networks:
       - ordella-physio-network
 

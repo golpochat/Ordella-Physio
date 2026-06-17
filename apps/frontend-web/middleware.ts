@@ -125,24 +125,23 @@ async function enforcePortalRbac(request: NextRequest) {
     return redirectToLogin(request);
   }
 
-  const { role, roles } = session.user;
+  const { role, roles, effectiveRole, permissions, resolvedPermissions } = session.user;
 
   if (!hasValidTenant(session)) {
     return redirectToLogin(request, "missing-tenant");
   }
 
-  const allowedPrefix = resolveAllowedPortalPrefix(role, roles);
+  const allowedPrefix = resolveAllowedPortalPrefix(role, roles, effectiveRole);
   if (!allowedPrefix) {
     return redirectToLogin(request);
   }
 
   if (!pathname.startsWith(allowedPrefix)) {
-    if (!canAccessGuardedPath(pathname, role, roles)) {
-      return redirectToPortalHome(
-        request,
-        resolveMiddlewarePortalHome(role, roles),
-      );
+    if (!canAccessGuardedPath(pathname, role, roles, session)) {
+      return redirectToPath(request, "/access-denied");
     }
+  } else if (!canAccessGuardedPath(pathname, role, roles, session)) {
+    return redirectToPath(request, "/access-denied");
   }
 
   return null;

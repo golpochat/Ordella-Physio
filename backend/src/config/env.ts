@@ -60,6 +60,11 @@ const envSchema = z
     SMTP_PASS: z.string().optional(),
     SMTP_FROM: z.string().default("noreply@ordella.local"),
     TRIAL_DURATION_DAYS: z.coerce.number().int().min(1).max(90).default(14),
+    FILE_STORAGE_SERVICE_URL: z
+      .string()
+      .url()
+      .default("http://localhost:3071"),
+    FILE_STORAGE_MAX_BYTES: z.coerce.number().default(50 * 1024 * 1024),
   })
   .superRefine((value, ctx) => {
     if (value.NODE_ENV === "production") {

@@ -13,7 +13,7 @@ export function parseFileApiError(error: unknown): ParsedFileApiError {
   }
 
   if (code === "VIRUS_DETECTED") {
-    return { toastError: "The uploaded file contains a virus." };
+    return { toastError: "This file appears to be unsafe and cannot be uploaded." };
   }
 
   if (code === "FILE_TOO_LARGE") {

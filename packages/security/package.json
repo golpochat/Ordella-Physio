@@ -11,6 +11,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./rbac": {
+      "types": "./dist/rbac.d.ts",
+      "import": "./dist/rbac.mjs",
+      "require": "./dist/rbac.js"
     }
   },
   "scripts": {

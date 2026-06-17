@@ -33,6 +33,7 @@ import { ORGANIZATION_ROUTES } from "@/routes/organization.routes";
 import { TERMINAL_ROUTES } from "@/routes/terminal.routes";
 import { USER_ROLE_ROUTES } from "@/routes/user-role.routes";
 import { STAFF_ROUTES } from "@/routes/staff.routes";
+import { PHARMACY_ROUTES } from "@/routes/pharmacy.routes";
 import { AUDIT_ROUTES } from "@/routes/audit.routes";
 import { FILE_STORAGE_ROUTES } from "@/routes/file-storage.routes";
 import { NOTIFICATION_PROVIDER_ROUTES } from "@/routes/notification-provider.routes";
@@ -205,6 +206,7 @@ const proxyControllers = [
     skipTenant: true,
   }),
   createProxyController(STAFF_ROUTES.base, "STAFF_SERVICE_URL"),
+  createProxyController(PHARMACY_ROUTES.base, "PHARMACY_SERVICE_URL"),
   createProxyController("/audit-logs/internal", "AUDIT_SERVICE_URL", {
     public: true,
     skipTenant: true,
@@ -218,7 +220,11 @@ const proxyControllers = [
     public: true,
     skipTenant: true,
   }),
-  createProxyController(FILE_STORAGE_ROUTES.base, "FILE_STORAGE_SERVICE_URL"),
+  createProxyController("/api/files", "CLINIC_BACKEND_URL"),
+  createProxyController(FILE_STORAGE_ROUTES.health, "FILE_STORAGE_SERVICE_URL", {
+    public: true,
+    skipTenant: true,
+  }),
   createProxyController("/notification-providers/internal", "NOTIFICATION_PROVIDER_SERVICE_URL", {
     public: true,
     skipTenant: true,

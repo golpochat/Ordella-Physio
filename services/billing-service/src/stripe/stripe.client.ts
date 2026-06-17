@@ -42,4 +42,18 @@ export class StripeClient {
   getFrontendUrl(): string {
     return billingConfig.frontendUrl ?? process.env.FRONTEND_URL ?? "http://localhost:3010";
   }
+
+  isMockMode(): boolean {
+    const secretKey = billingConfig.stripeSecretKey ?? process.env.STRIPE_SECRET_KEY ?? "";
+    return (
+      process.env.STRIPE_E2E_MOCK === "true" ||
+      secretKey.includes("local_dev") ||
+      secretKey.includes("change-me")
+    );
+  }
+
+  buildMockCustomerId(entityId: string): string {
+    const normalized = entityId.replace(/[^a-z0-9]/gi, "").slice(0, 18);
+    return `cus_e2e_${normalized}`;
+  }
 }

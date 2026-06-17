@@ -59,10 +59,11 @@ export function PharmacyHomeOverview() {
   const patients = patientsQuery.data ?? [];
   const appointments = appointmentsQuery.data ?? [];
   const invoices = billingQuery.data ?? [];
-  const pendingRx = prescriptions.filter((item) => item.status === "PENDING").length;
-  const activeFulfillment = fulfillment.filter(
-    (item) => item.status !== "DELIVERED",
-  ).length;
+  const pendingRx = prescriptions.filter((item) => item.status === "DRAFT").length;
+  const activeFulfillment = fulfillment.filter((item) => {
+    const status = item.fulfillment?.status;
+    return status === "PENDING" || status === "IN_PROGRESS";
+  }).length;
   const todaysAppointments = getTodaysAppointments(appointments);
 
   return (

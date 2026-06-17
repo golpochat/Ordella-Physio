@@ -4,6 +4,7 @@ CREATE TABLE "organization_billing_accounts" (
     "stripeCustomerId" TEXT NOT NULL,
     "defaultPaymentMethodId" TEXT,
     "email" TEXT,
+    "stripeAiNotesSubscriptionItemId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

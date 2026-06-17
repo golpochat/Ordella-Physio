@@ -68,10 +68,18 @@ export type ProvisionTrace = {
   previousOwnerTenantId?: string;
   orgLinked?: boolean;
   rolesSeeded?: boolean;
+  billingProvisioned?: boolean;
+  billingEntity?: "tenant" | "organization";
+  stripeCustomerId?: string;
 };
 
 export type ProvisionTenantOptions = {
   rollbackOnFailure?: boolean;
   trace?: ProvisionTrace;
   skipAudit?: boolean;
+  failAt?: import("@ordella/shared").ProvisioningFailStage;
+};
+
+export type ProvisionFullOptions = {
+  failAt?: import("@ordella/shared").ProvisioningFailStage;
 };

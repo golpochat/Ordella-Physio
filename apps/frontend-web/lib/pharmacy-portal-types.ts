@@ -61,25 +61,28 @@ export type PharmacyInvoice = {
 
 export type PharmacyPrescription = {
   id: string;
+  tenantId: string;
   patientId: string;
-  patientName: string;
-  medication: string;
+  therapistId: string;
+  medicationName: string;
   dosage: string;
-  status: "PENDING" | "APPROVED" | "DISPENSED" | "CANCELLED";
-  requestedAt: string;
-  appointmentId: string | null;
+  frequency: string;
+  duration: string;
+  notes: string;
+  status: "DRAFT" | "ISSUED" | "DISPENSED" | "CANCELLED";
+  createdAt: string;
+  updatedAt: string;
+  fulfillment?: {
+    id: string;
+    prescriptionId: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
+    filledBy: string | null;
+    filledAt: string | null;
+    notes: string;
+  } | null;
 };
 
-export type PharmacyFulfillmentOrder = {
-  id: string;
-  prescriptionId: string;
-  patientId: string;
-  patientName: string;
-  medication: string;
-  status: "QUEUED" | "PREPARING" | "READY" | "DELIVERED";
-  appointmentId: string | null;
-  updatedAt: string;
-};
+export type PharmacyFulfillmentOrder = PharmacyPrescription;
 
 export type PharmacyProfile = {
   id: string;

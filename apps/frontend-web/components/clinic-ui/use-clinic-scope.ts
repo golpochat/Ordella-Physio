@@ -13,10 +13,10 @@ export function useClinicScope() {
   const { user } = useAuth();
   const { tenant, tenantId, theme } = useTenant();
   const roles: PortalRole[] = user ? resolveUserRoles(user) : [];
-  const capabilities = getPortalCapabilities(roles);
+  const capabilities = getPortalCapabilities(roles, user?.permissions ?? [], user?.effectiveRole);
 
   function can(capability: PortalCapability): boolean {
-    return portalHasCapability(roles, capability);
+    return portalHasCapability(roles, capability, user?.permissions ?? [], user?.effectiveRole);
   }
 
   return {

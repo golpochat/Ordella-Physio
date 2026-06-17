@@ -22,7 +22,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     payload: AccessTokenPayload & AuthAccessClaims & { permissions?: string[]; sessionId?: string },
   ): Promise<AuthenticatedRequestUser> {
     const tokenVersion = getTokenVersionFromPayload(payload);
-    const user = await this.usersService.findById(payload.tenantId, payload.userId);
+    const user = payload.tenantId
+      ? await this.usersService.findById(payload.tenantId, payload.userId)
+      : await this.usersService.findByIdGlobal(payload.userId);
 
     if (!user || user.isActive === false) {
       throw invalidTokenError();
@@ -34,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 
     return {
       userId: payload.userId,
-      tenantId: payload.tenantId,
+      tenantId: payload.tenantId ?? user.tenantId ?? "",
       role: payload.role,
       email: payload.email,
       sessionId: payload.sessionId ?? payload.jti,

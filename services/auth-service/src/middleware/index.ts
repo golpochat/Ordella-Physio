@@ -29,7 +29,7 @@ export const AuthDomainResolverMiddleware = createDomainResolverMiddleware({
 
 export const AuthTenantMiddleware = createTenantMiddleware({
   required: true,
-  skipPaths: ["/auth/health"],
+  skipPaths: ["/auth/health", "/auth/internal"],
 });
 
 export const AuthRequestLoggingMiddleware = createRequestLoggingMiddleware({

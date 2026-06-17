@@ -11,7 +11,7 @@ export { ROLE_LEVELS, getRoleLevel, isSystemRole, roleMeetsMinLevel };
 
 export type AuthUserContext = {
   userId: string;
-  tenantId?: string;
+  tenantId?: string | null;
   role: SecurityRole;
   email?: string;
 };

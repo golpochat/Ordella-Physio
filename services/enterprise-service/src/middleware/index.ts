@@ -23,8 +23,10 @@ setDefaultMetricsRegistry(metricsRegistry);
 
 const skipPaths = [
   "/enterprise/health",
+  "/enterprise/sso/saml/login",
   "/enterprise/sso/saml/acs",
   "/enterprise/sso/saml/metadata",
+  "/enterprise/sso/oauth/start",
   "/enterprise/sso/oauth/callback",
   "/enterprise/webhooks/inbound",
 ];

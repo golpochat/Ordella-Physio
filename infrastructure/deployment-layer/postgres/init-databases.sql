@@ -32,3 +32,4 @@ CREATE DATABASE ordella_file_storage;
 CREATE DATABASE ordella_notification_provider;
 CREATE DATABASE ordella_search_index;
 CREATE DATABASE ordella_subscription_billing;
+CREATE DATABASE ordella_pharmacy;

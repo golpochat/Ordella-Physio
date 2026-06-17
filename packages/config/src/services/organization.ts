@@ -9,6 +9,7 @@ function createOrganizationConfig() {
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
     jwtSecret: resolveJwtSecret(env),
+    ssoEncryptionKey: env.SSO_ENCRYPTION_KEY,
   } as const;
 }
 

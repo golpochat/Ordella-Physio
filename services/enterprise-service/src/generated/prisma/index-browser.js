@@ -141,6 +141,18 @@ exports.Prisma.SsoConfigScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SsoAuthStateScalarFieldEnum = {
+  id: 'id',
+  state: 'state',
+  nonce: 'nonce',
+  tenantId: 'tenantId',
+  organizationId: 'organizationId',
+  protocol: 'protocol',
+  redirectUri: 'redirectUri',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.PermissionGroupScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
@@ -276,6 +288,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   SsoConfig: 'SsoConfig',
+  SsoAuthState: 'SsoAuthState',
   PermissionGroup: 'PermissionGroup',
   CustomRole: 'CustomRole',
   AuditLog: 'AuditLog',

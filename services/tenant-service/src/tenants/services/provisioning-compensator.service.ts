@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import type { ProvisionTrace } from "@/models/FullProvisioning";
 import { AuthUsersClient } from "@/integrations/auth-users.client";
+import { BillingServiceClient } from "@/integrations/billing-service.client";
 import { OrganizationServiceClient } from "@/integrations/organization-service.client";
 import { UserRoleClient } from "@/integrations/user-role.client";
 import { TenantsRepository } from "@/tenants/tenants.repository";
@@ -14,6 +15,7 @@ export class ProvisioningCompensatorService {
     private readonly organizationServiceClient: OrganizationServiceClient,
     private readonly authUsersClient: AuthUsersClient,
     private readonly userRoleClient: UserRoleClient,
+    private readonly billingServiceClient: BillingServiceClient,
   ) {}
 
   async rollback(trace: ProvisionTrace) {
@@ -45,6 +47,15 @@ export class ProvisioningCompensatorService {
           trace.previousOwnerTenantId,
         );
       }
+    }
+
+    if (trace.billingProvisioned) {
+      await this.billingServiceClient.rollbackProvisioning({
+        tenantId: trace.tenantId,
+        organizationId: trace.organizationId,
+        stripeCustomerId: trace.stripeCustomerId,
+        billingEntity: trace.billingEntity,
+      });
     }
 
     if (trace.organizationId) {

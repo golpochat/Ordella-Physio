@@ -5,7 +5,7 @@ export class UserRoleClient {
   private readonly logger = new Logger(UserRoleClient.name);
 
   private get baseUrl(): string {
-    return process.env.USER_ROLE_SERVICE_URL ?? "http://user-role-service:3054";
+    return process.env.USER_ROLE_SERVICE_URL ?? "http://user-role-service:3068";
   }
 
   async seedTenantDefaults(tenantId: string, ownerUserId: string): Promise<boolean> {

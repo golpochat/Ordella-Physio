@@ -1,5 +1,6 @@
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Headers, Post, Req, UseGuards } from "@nestjs/common";
 import type { OrdellaRequest } from "@ordella/middleware";
+import { resolveProvisioningFailStage, PROVISIONING_FAIL_HEADER } from "@ordella/shared";
 import type { FullProvisioningPayload } from "@/models/FullProvisioning";
 import { ProvisionFullCommand } from "@/tenants/commands/provision-full.command";
 import { JwtGuard } from "@/tenants/guards/jwt.guard";
@@ -18,7 +19,9 @@ export class SuperAdminProvisioningController {
     @Body() payload: FullProvisioningPayload,
     @CurrentUser() user: AuthenticatedTenantUser,
     @Req() request: OrdellaRequest,
+    @Headers(PROVISIONING_FAIL_HEADER) failAtHeader?: string,
   ) {
-    return this.provisionFullCommand.execute(payload, user, request.correlationId);
+    const failAt = resolveProvisioningFailStage({ headerValue: failAtHeader }) ?? undefined;
+    return this.provisionFullCommand.execute(payload, user, request.correlationId, { failAt });
   }
 }

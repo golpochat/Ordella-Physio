@@ -11,6 +11,7 @@
     "test:cov:report": "node scripts/testing/coverage-report.mjs",
     "test:watch": "turbo run test:watch",
     "test:e2e": "pnpm --filter @ordella/developer-tooling-layer test:e2e",
+    "billing-e2e": "pnpm --filter @ordella/developer-tooling-layer billing-e2e",
     "test:workflow": "pnpm --filter @ordella/workflow-tests test",
     "test:all": "pnpm test && pnpm test:workflow && pnpm test:e2e",
     "seed:test-data": "node scripts/seed-test-data.mjs",

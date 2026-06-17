@@ -395,24 +395,15 @@ export function createClinicPortalApi(api: ClinicApiClient, tenantId: string) {
     },
 
     getBillingContext() {
-      if (isClinicBackendClient()) {
-        return Promise.resolve({
-          billingModel: "tenant-level",
-          billingEntity: "tenant",
-          organizationId: null,
-          organizationName: null,
-          tenantId,
-          canManageBillingAtTenant: true,
-          canManageBillingAtOrganization: false,
-          billingAdmin: "tenant-owner",
-          clinicBillingPath: "/clinic/billing",
-          organizationBillingPath: "/organization/billing",
-          upgradePath: "/clinic/billing/upgrade",
-          subscriptionStatus: null,
-          stripeCustomerId: null,
-          stripeSubscriptionId: null,
-          aiNotesUsageCount: 0,
-        } satisfies import("@/lib/clinic-portal-types").BillingTruthContext);
+      if (typeof window !== "undefined") {
+        const e2eContext = (
+          window as unknown as {
+            __ORDELLA_E2E_BILLING_CONTEXT__?: import("@/lib/clinic-portal-types").BillingTruthContext;
+          }
+        ).__ORDELLA_E2E_BILLING_CONTEXT__;
+        if (e2eContext) {
+          return Promise.resolve(e2eContext);
+        }
       }
 
       return api.get<import("@/lib/clinic-portal-types").BillingTruthContext>(

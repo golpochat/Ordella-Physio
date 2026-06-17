@@ -111,14 +111,15 @@ enum StripeSubscriptionStatus {
 }
 
 model TenantBillingAccount {
-  id                     String                    @id @default(cuid())
-  tenantId               String                    @unique
-  stripeCustomerId       String                    @unique
-  defaultPaymentMethodId String?
-  email                  String?
-  subscription           TenantStripeSubscription?
-  createdAt              DateTime                  @default(now())
-  updatedAt              DateTime                  @updatedAt
+  id                              String                    @id @default(cuid())
+  tenantId                        String                    @unique
+  stripeCustomerId                String                    @unique
+  stripeAiNotesSubscriptionItemId String?
+  defaultPaymentMethodId          String?
+  email                           String?
+  subscription                    TenantStripeSubscription?
+  createdAt                       DateTime                  @default(now())
+  updatedAt                       DateTime                  @updatedAt
 
   @@map("tenant_billing_accounts")
 }
@@ -142,14 +143,15 @@ model TenantStripeSubscription {
 }
 
 model OrganizationBillingAccount {
-  id                     String                           @id @default(cuid())
-  organizationId         String                           @unique
-  stripeCustomerId       String                           @unique
-  defaultPaymentMethodId String?
-  email                  String?
-  subscription           OrganizationStripeSubscription?
-  createdAt              DateTime                         @default(now())
-  updatedAt              DateTime                         @updatedAt
+  id                              String                           @id @default(cuid())
+  organizationId                  String                           @unique
+  stripeCustomerId                String                           @unique
+  stripeAiNotesSubscriptionItemId String?
+  defaultPaymentMethodId          String?
+  email                           String?
+  subscription                    OrganizationStripeSubscription?
+  createdAt                       DateTime                         @default(now())
+  updatedAt                       DateTime                         @updatedAt
 
   @@map("organization_billing_accounts")
 }
@@ -179,4 +181,43 @@ model StripeWebhookEvent {
   processedAt   DateTime @default(now())
 
   @@map("stripe_webhook_events")
+}
+
+model AiNotesUsageRecord {
+  id                       String   @id @default(cuid())
+  tenantId                 String
+  organizationId           String?
+  billingEntity            String
+  stripeCustomerId         String
+  stripeSubscriptionId     String
+  stripeSubscriptionItemId String
+  stripeUsageRecordId      String   @unique
+  quantity                 Int      @default(1)
+  recordedAt               DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([organizationId])
+  @@index([stripeCustomerId])
+  @@map("ai_notes_usage_records")
+}
+
+model AiNotesInvoiceItem {
+  id               String   @id @default(cuid())
+  stripeInvoiceId  String
+  stripeLineItemId String?
+  stripeCustomerId String
+  tenantId         String?
+  organizationId   String?
+  billingEntity    String
+  priceId          String
+  quantity         Int
+  amountCents      Int
+  invoiceStatus    String
+  verifiedAt       DateTime @default(now())
+
+  @@unique([stripeInvoiceId, stripeLineItemId])
+  @@index([stripeCustomerId])
+  @@index([tenantId])
+  @@index([organizationId])
+  @@map("ai_notes_invoice_items")
 }

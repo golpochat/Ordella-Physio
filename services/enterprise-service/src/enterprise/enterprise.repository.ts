@@ -198,4 +198,22 @@ export class EnterpriseRepository {
       take: 50,
     });
   }
+
+  createSsoAuthState(data: Prisma.SsoAuthStateCreateInput) {
+    return this.db.ssoAuthState.create({ data });
+  }
+
+  consumeSsoAuthState(state: string) {
+    return this.db.ssoAuthState.findUnique({ where: { state } });
+  }
+
+  deleteSsoAuthState(state: string) {
+    return this.db.ssoAuthState.delete({ where: { state } }).catch(() => undefined);
+  }
+
+  purgeExpiredSsoAuthStates() {
+    return this.db.ssoAuthState.deleteMany({
+      where: { expiresAt: { lt: new Date() } },
+    });
+  }
 }

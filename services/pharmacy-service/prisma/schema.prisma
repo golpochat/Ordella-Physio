@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PrescriptionStatus {
+  DRAFT
+  ISSUED
+  DISPENSED
+  CANCELLED
+}
+
+enum FulfillmentStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+model Prescription {
+  id              String             @id @default(uuid())
+  tenantId        String
+  patientId       String
+  therapistId     String
+  medicationName  String
+  dosage          String
+  frequency       String
+  duration        String
+  notes           String             @default("")
+  status          PrescriptionStatus @default(DRAFT)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  fulfillment     PharmacyFulfillment?
+  auditLogs       PharmacyAuditLog[]
+
+  @@index([tenantId])
+  @@index([tenantId, patientId])
+  @@index([tenantId, status])
+  @@map("prescriptions")
+}
+
+model PharmacyFulfillment {
+  id             String            @id @default(uuid())
+  prescriptionId String            @unique
+  prescription   Prescription      @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  status         FulfillmentStatus @default(PENDING)
+  filledBy       String?
+  filledAt       DateTime?
+  notes          String            @default("")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([prescriptionId])
+  @@map("pharmacy_fulfillments")
+}
+
+model PharmacyAuditLog {
+  id             String       @id @default(uuid())
+  tenantId       String
+  prescriptionId String
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  actorId        String
+  action         String
+  payload        Json?
+  createdAt      DateTime     @default(now())
+
+  @@index([tenantId, prescriptionId])
+  @@map("pharmacy_audit_logs")
+}

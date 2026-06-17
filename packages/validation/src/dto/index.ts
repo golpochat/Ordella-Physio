@@ -278,3 +278,11 @@ export {
   type CreateWebhookInput,
   type UpdateWebhookInput,
 } from "./enterprise.dto";
+export {
+  upsertOrganizationSsoConfigSchema,
+  refreshOrganizationSsoMetadataSchema,
+  ssoProtocolSchema,
+  ssoRoleMappingSchema,
+  type UpsertOrganizationSsoConfigInput,
+  type SsoProtocol,
+} from "./organization-sso.dto";

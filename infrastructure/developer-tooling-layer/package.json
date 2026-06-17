@@ -11,13 +11,16 @@
     "test:all": "bash scripts/test-all.sh",
     "generate:env": "bash scripts/generate-env.sh",
     "test:e2e": "playwright test --config playwright/playwright.config.ts",
-    "test:e2e:ui": "playwright test --config playwright/playwright.config.ts --ui"
+    "test:e2e:ui": "playwright test --config playwright/playwright.config.ts --ui",
+    "billing-e2e": "playwright test --config playwright/playwright.config.ts playwright/tests/billing-e2e.spec.ts",
+    "provisioning-rollback-e2e": "playwright test --config playwright/playwright.config.ts playwright/tests/provisioning-rollback-e2e.spec.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@nestjs/testing": "^10.4.15",
     "@playwright/test": "^1.49.1",
+    "stripe": "^17.5.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/jest": "^29.5.14",

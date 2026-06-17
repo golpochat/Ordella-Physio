@@ -7,6 +7,7 @@ import { AuthEventPublisher } from "@/events/auth-event.publisher";
 import { createUserRegisteredEvent } from "@/auth/events/user-registered.event";
 import { DEFAULT_USER_ROLE } from "@/constants";
 import { generateEmailVerificationToken } from "@/utils/token";
+import { coalesceTenantId } from "@/utils/auth-helpers";
 
 export type RegisterCommandInput = {
   tenantId: string;
@@ -48,7 +49,7 @@ export class RegisterCommand {
 
     const verificationToken = generateEmailVerificationToken({
       userId: user.id,
-      tenantId: user.tenantId,
+      tenantId: coalesceTenantId(user.tenantId),
       email: user.email,
     });
 

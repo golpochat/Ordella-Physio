@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { PROVISIONING_FAIL_HEADER, type ProvisioningFailStage } from "@ordella/shared";
 
 export type OrganizationSummary = {
   id: string;
@@ -78,14 +79,21 @@ export class OrganizationServiceClient {
 
   async createOrganizationInternal(
     payload: CreateOrganizationInternalPayload,
+    options?: { failAt?: ProvisioningFailStage },
   ): Promise<OrganizationSummary | null> {
     try {
+      const headers: Record<string, string> = {
+        accept: "application/json",
+        "content-type": "application/json",
+      };
+
+      if (options?.failAt) {
+        headers[PROVISIONING_FAIL_HEADER] = options.failAt;
+      }
+
       const response = await fetch(`${this.baseUrl}/organizations/internal/create`, {
         method: "POST",
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-        },
+        headers,
         body: JSON.stringify(payload),
       });
 

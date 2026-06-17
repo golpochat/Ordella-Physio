@@ -32,6 +32,22 @@ model SsoConfig {
   @@map("sso_configs")
 }
 
+model SsoAuthState {
+  id             String   @id @default(cuid())
+  state          String   @unique
+  nonce          String
+  tenantId       String
+  organizationId String
+  protocol       String
+  redirectUri    String
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([tenantId])
+  @@map("sso_auth_states")
+}
+
 model PermissionGroup {
   id          String   @id @default(cuid())
   tenantId    String

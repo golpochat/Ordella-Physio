@@ -19,18 +19,20 @@ The main hardening pass (P0–P2) is **complete**. Do not re-implement finished 
 
 ### 1. ClamAV on upload routes (P3)
 
-**Trigger:** Clinic backend gains real file-upload endpoints.
+**Status:** Wired — `file-storage-service` scans all uploads when `CLAMAV_ENABLED=true`.
 
-**Already built:**
+**Production requirements:**
 
-- `backend/src/modules/security/virus-scan.service.ts`
-- `backend/src/modules/security/file-upload.ts` → `validateAndScanUpload()`
+- `CLAMAV_ENABLED=true`, `CLAMAV_HOST` reachable (Docker `clamav` service on port 3310)
+- Uploads flow: frontend BFF → `clinic-backend` `/api/files` → `file-storage-service` (scan before persist)
+- Patient attachments route through `file-storage-service` internal API (not local disk)
 
-**Todo when uploads ship:**
+**Key paths:**
 
-- Call `validateAndScanUpload()` in the upload handler(s) before persisting files
-- Set `CLAMAV_HOST` + `CLAMAV_REQUIRED=true` in production `.env`
-- Add e2e test: clean file passes, EICAR/test signature rejected
+- `services/file-storage/src/services/virus-scan.service.ts`
+- `services/file-storage/src/utils/file-security.ts`
+- `backend/src/modules/files/`
+- `docker-compose.dev.yml` → `clamav` + `file-storage-service` env
 
 ### 2. Automated JWT key rotation
 

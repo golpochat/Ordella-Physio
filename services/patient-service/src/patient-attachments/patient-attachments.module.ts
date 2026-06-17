@@ -8,6 +8,8 @@ import { PatientAttachmentRepository } from "@/repositories/patient-attachment.r
 import { JwtGuard } from "@/patients/guards/jwt.guard";
 import { JwtStrategy } from "@/patients/strategies/jwt.strategy";
 
+import { FileStorageClient } from "@/integrations/file-storage.client";
+
 @Module({
   imports: [PassportModule.register({ defaultStrategy: "jwt" })],
   controllers: [PatientAttachmentController],
@@ -16,6 +18,7 @@ import { JwtStrategy } from "@/patients/strategies/jwt.strategy";
     PatientAttachmentRepository,
     PatientsRepository,
     PatientAttachmentsGuard,
+    FileStorageClient,
     JwtStrategy,
     JwtGuard,
   ],

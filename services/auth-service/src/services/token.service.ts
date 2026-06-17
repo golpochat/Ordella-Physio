@@ -12,6 +12,7 @@ import {
   tokenReuseDetectedError,
   tokenRevokedError,
 } from "@/utils/auth-errors";
+import { coalesceTenantId } from "@/utils/auth-helpers";
 import { signRefreshTokenForUser, verifyRefreshToken, getTokenVersionFromPayload } from "@/utils/jwt";
 
 function parseDurationToMs(value: string): number {
@@ -47,9 +48,10 @@ export class TokenService {
     deviceInfo?: string;
   }): Promise<IssuedTokens> {
     const jti = this.tokenBuilder.createSessionId();
+    const tenantId = coalesceTenantId(input.user.tenantId);
     const refreshToken = signRefreshTokenForUser({
       userId: input.user.id,
-      tenantId: input.user.tenantId,
+      tenantId,
       role: input.user.role,
       email: input.user.email,
       sessionId: jti,
@@ -72,12 +74,14 @@ export class TokenService {
 
     const accessToken = this.tokenBuilder.buildAccessToken({
       userId: input.user.id,
-      tenantId: input.user.tenantId,
+      tenantId,
       role: input.user.role,
       email: input.user.email,
       sessionId: jti,
       jti,
       tokenVersion: input.user.tokenVersion ?? 0,
+      organizationId: input.user.organizationId,
+      permissionOverrides: input.user.permissionOverrides,
     });
 
     return {
@@ -110,7 +114,7 @@ export class TokenService {
 
     if (stored) {
       if (stored.revokedAt) {
-        await this.handleReuseDetected(stored.userId, stored.user.tenantId, {
+        await this.handleReuseDetected(stored.userId, coalesceTenantId(stored.user.tenantId), {
           ipAddress: input.ipAddress,
           userAgent: input.deviceInfo,
         });
@@ -131,7 +135,7 @@ export class TokenService {
       };
 
       const tokens = await this.issueRotatedTokens(user, stored.id, input.ipAddress, input.deviceInfo);
-      return { userId: stored.userId, tenantId: user.tenantId, tokens };
+      return { userId: stored.userId, tenantId: coalesceTenantId(user.tenantId), tokens };
     }
 
     const user = await this.usersService.findById(payload.tenantId, payload.userId);
@@ -143,7 +147,7 @@ export class TokenService {
       throw tokenRevokedError();
     }
 
-    await this.handleReuseDetected(user.id, user.tenantId, {
+    await this.handleReuseDetected(user.id, coalesceTenantId(user.tenantId), {
       ipAddress: input.ipAddress,
       userAgent: input.deviceInfo,
     });
@@ -195,9 +199,10 @@ export class TokenService {
     deviceInfo?: string,
   ): Promise<IssuedTokens> {
     const jti = this.tokenBuilder.createSessionId();
+    const tenantId = coalesceTenantId(user.tenantId);
     const refreshToken = signRefreshTokenForUser({
       userId: user.id,
-      tenantId: user.tenantId,
+      tenantId,
       role: user.role,
       email: user.email,
       sessionId: jti,
@@ -222,12 +227,14 @@ export class TokenService {
 
     const accessToken = this.tokenBuilder.buildAccessToken({
       userId: user.id,
-      tenantId: user.tenantId,
+      tenantId,
       role: user.role,
       email: user.email,
       sessionId: jti,
       jti,
       tokenVersion: user.tokenVersion ?? 0,
+      organizationId: user.organizationId,
+      permissionOverrides: user.permissionOverrides,
     });
 
     return {

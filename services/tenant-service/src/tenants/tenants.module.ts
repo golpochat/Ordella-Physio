@@ -28,6 +28,7 @@ import { AuthUsersClient } from "@/integrations/auth-users.client";
 import { OrganizationServiceClient } from "@/integrations/organization-service.client";
 import { UserRoleClient } from "@/integrations/user-role.client";
 import { AuditLogClient } from "@/integrations/audit-log.client";
+import { BillingServiceClient } from "@/integrations/billing-service.client";
 import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repository";
 
 @Module({
@@ -61,6 +62,7 @@ import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repositor
     OrganizationServiceClient,
     UserRoleClient,
     AuditLogClient,
+    BillingServiceClient,
     TenantDomainRepository,
   ],
   exports: [TenantsService, TenantsRepository],

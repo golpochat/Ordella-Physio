@@ -9,6 +9,7 @@ type ApiErrorPayload = {
     metadata?: {
       fields?: Array<{ field?: string; message?: string }>;
       field?: string;
+      error?: string;
     };
   };
 };
@@ -440,6 +441,17 @@ export function parsePatientAttachmentUploadErrors(error: unknown): {
     return {
       fieldErrors,
       generalError: apiError?.message ?? "Patient does not exist.",
+      forbidden,
+      tenantMismatch,
+      patientNotFound,
+      fileTooLarge,
+    };
+  }
+
+  if (code === "VIRUS_DETECTED" || apiError?.metadata?.error === "VIRUS_DETECTED") {
+    return {
+      fieldErrors,
+      generalError: "This file appears to be unsafe and cannot be uploaded.",
       forbidden,
       tenantMismatch,
       patientNotFound,

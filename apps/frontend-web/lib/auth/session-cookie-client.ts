@@ -11,23 +11,18 @@ const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 
 function buildSessionPayload(user: AuthUser): SessionCookiePayload {
-
   return {
-
     user: {
-
       id: user.id,
-
       role: user.role,
-
+      effectiveRole: user.effectiveRole,
       tenantId: user.tenantId,
-
+      organizationId: user.organizationId,
       roles: user.roles,
-
+      permissions: user.permissions,
+      resolvedPermissions: user.permissions,
     },
-
   };
-
 }
 
 

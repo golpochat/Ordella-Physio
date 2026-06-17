@@ -8,8 +8,11 @@ import { Reflector } from "@nestjs/core";
 import { gatewayConfig } from "@ordella/config";
 import {
   getPermissionsForRole,
+  isPermission,
+  resolvePermissions,
   verifyToken,
   type AccessTokenPayload,
+  type Permission,
 } from "@ordella/security";
 import type { Request } from "express";
 import type { GatewayUser } from "@/constants";
@@ -58,18 +61,28 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const role = payload.role;
-    const permissions = getPermissionsForRole(role);
+    const resolved = resolvePermissions({
+      role,
+      organizationId: (payload as { organizationId?: string }).organizationId,
+      permissionOverrides: payload.permissions,
+    });
+    const rawPermissions =
+      (payload as { resolvedPermissions?: string[] }).resolvedPermissions ??
+      payload.permissions ??
+      resolved.resolvedPermissions ??
+      getPermissionsForRole(role);
+    const permissions = rawPermissions.filter(isPermission) as Permission[];
 
     request.user = {
       userId: payload.userId ?? payload.sub,
-      tenantId: payload.tenantId,
+      tenantId: payload.tenantId ?? "",
       role,
       roles: [role],
       permissions,
       email: payload.email,
     };
 
-    if (role === "SYSTEM") {
+    if (role === "SYSTEM" || role === "SUPER_ADMIN") {
       delete request.headers["x-tenant-id"];
     } else if (!request.headers["x-tenant-id"] && payload.tenantId) {
       request.headers["x-tenant-id"] = payload.tenantId;

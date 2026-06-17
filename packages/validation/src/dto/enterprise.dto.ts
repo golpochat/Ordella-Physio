@@ -24,6 +24,8 @@ export const upsertSsoConfigSchema = z.object({
   issuerUrl: z.string().url().optional(),
   metadataUrl: z.string().url().optional(),
   redirectUri: z.string().url().optional(),
+  logoutUrl: z.string().url().optional(),
+  jwksUrl: z.string().url().optional(),
   scopes: z.array(z.string()).optional(),
   attributeMap: z.record(z.string()).optional(),
 });

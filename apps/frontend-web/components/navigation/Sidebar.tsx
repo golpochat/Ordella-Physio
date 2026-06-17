@@ -66,9 +66,10 @@ function resolveSidebarRole(user: ReturnType<typeof useAuth>["user"]): SidebarRo
 function filterMenuItems(
   items: SidebarMenuItem[],
   userRoles: PortalRole[],
+  permissions: string[],
 ): SidebarMenuItem[] {
   return items.filter(
-    (item) => !item.permission || portalHasCapability(userRoles, item.permission),
+    (item) => !item.permission || portalHasCapability(userRoles, item.permission, permissions),
   );
 }
 
@@ -105,8 +106,8 @@ export function Sidebar({
       return [];
     }
 
-    return filterMenuItems(sidebarConfig[sidebarRole], userRoles);
-  }, [config.id, sidebarRole, userRoles]);
+    return filterMenuItems(sidebarConfig[sidebarRole], userRoles, user?.permissions ?? []);
+  }, [config.id, sidebarRole, userRoles, user?.permissions]);
 
   const useRbacMenu =
     Boolean(sidebarRole) && sidebarRoleMatchesPortal(sidebarRole!, config.id);

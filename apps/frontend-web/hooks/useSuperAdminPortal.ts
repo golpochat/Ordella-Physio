@@ -627,6 +627,8 @@ export function usePlatformBilling() {
   return useQuery({
     queryKey: ["super-admin", "billing"],
     queryFn: () => requireApi(portalApi).getBillingOverview(),
+    refetchInterval: 60_000,
+    staleTime: 30_000,
   });
 }
 

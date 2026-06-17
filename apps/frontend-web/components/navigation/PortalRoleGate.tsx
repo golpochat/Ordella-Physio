@@ -7,7 +7,7 @@ import { portalHasCapability } from "@/lib/portal-capabilities";
 import { resolveUserRoles, type PortalRole } from "@/lib/rbac";
 
 export type PortalRoleGateProps = {
-  capability?: PortalCapability;
+  capability?: PortalCapability | string;
   roles?: PortalRole[];
   fallback?: ReactNode;
   children: ReactNode;
@@ -21,12 +21,14 @@ export function PortalRoleGate({
 }: PortalRoleGateProps) {
   const { user } = useAuth();
   const roles = user ? resolveUserRoles(user) : [];
+  const permissions = user?.permissions ?? [];
+  const effectiveRole = user?.effectiveRole;
 
   if (requiredRoles?.length && !requiredRoles.some((role) => roles.includes(role))) {
     return <>{fallback}</>;
   }
 
-  if (capability && !portalHasCapability(roles, capability)) {
+  if (capability && !portalHasCapability(roles, capability, permissions, effectiveRole)) {
     return <>{fallback}</>;
   }
 

@@ -3,6 +3,7 @@ import {
   DEFAULT_ACCESS_TOKEN_EXPIRES_IN,
   DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
 } from "../constants/security-headers";
+import { resolvePermissions } from "../rbac/resolve-rbac";
 import type { SecurityUser } from "../rbac/rbac.service";
 import {
   createJwtConfigFromEnv,
@@ -42,11 +43,20 @@ export class TokenService {
 
   generateAuthTokens(user: SecurityUser): AuthTokens {
     const tokenId = randomBytes(16).toString("hex");
+    const { effectiveRole, resolvedPermissions } = resolvePermissions({
+      role: user.role,
+      organizationId: user.organizationId,
+      permissionOverrides: user.permissions,
+    });
     const payload = {
       sub: user.userId,
       userId: user.userId,
       tenantId: user.tenantId,
+      organizationId: user.organizationId ?? undefined,
       role: user.role,
+      effectiveRole,
+      permissions: resolvedPermissions,
+      resolvedPermissions,
       email: user.email,
       tokenId,
     };

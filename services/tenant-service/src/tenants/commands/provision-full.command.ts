@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { FullProvisioningPayload, FullProvisioningSuccess, ProvisionTrace } from "@/models/FullProvisioning";
+import type { FullProvisioningPayload, FullProvisioningSuccess, ProvisionFullOptions, ProvisionTrace } from "@/models/FullProvisioning";
+import { BillingServiceClient } from "@/integrations/billing-service.client";
 import { AuditLogClient } from "@/integrations/audit-log.client";
 import { OrganizationServiceClient } from "@/integrations/organization-service.client";
 import { ProvisionTenantCommand } from "@/tenants/commands/provision-tenant.command";
@@ -18,6 +19,7 @@ export class ProvisionFullCommand {
     private readonly organizationServiceClient: OrganizationServiceClient,
     private readonly provisionTenantCommand: ProvisionTenantCommand,
     private readonly provisioningCompensator: ProvisioningCompensatorService,
+    private readonly billingServiceClient: BillingServiceClient,
     private readonly auditLogClient: AuditLogClient,
   ) {}
 
@@ -25,6 +27,7 @@ export class ProvisionFullCommand {
     payload: FullProvisioningPayload,
     createdByUser?: AuthenticatedTenantUser,
     correlationId?: string,
+    options?: ProvisionFullOptions,
   ): Promise<FullProvisioningSuccess> {
     const validation = validateFullProvisioning(payload);
     if (!validation.valid) {
@@ -41,14 +44,17 @@ export class ProvisionFullCommand {
     const trace: ProvisionTrace = {};
 
     try {
-      const organization = await this.organizationServiceClient.createOrganizationInternal({
-        organizationName: normalized.organization.organizationName,
-        primaryContactName: normalized.organization.primaryContactName,
-        primaryContactEmail: normalized.organization.primaryContactEmail,
-        primaryContactPhone: normalized.organization.primaryContactPhone,
-        billingModel: normalized.organization.billingModel,
-        description: normalized.organization.description,
-      });
+      const organization = await this.organizationServiceClient.createOrganizationInternal(
+        {
+          organizationName: normalized.organization.organizationName,
+          primaryContactName: normalized.organization.primaryContactName,
+          primaryContactEmail: normalized.organization.primaryContactEmail,
+          primaryContactPhone: normalized.organization.primaryContactPhone,
+          billingModel: normalized.organization.billingModel,
+          description: normalized.organization.description,
+        },
+        { failAt: options?.failAt },
+      );
 
       if (!organization) {
         throw provisionFailedError("Failed to create organization.");
@@ -71,8 +77,22 @@ export class ProvisionFullCommand {
           rollbackOnFailure: true,
           skipAudit: true,
           trace,
+          failAt: options?.failAt,
         },
       );
+
+      const billing = await this.billingServiceClient.provisionTenantBilling(
+        {
+          tenantId: tenantResult.tenantId,
+          name: tenantResult.tenantName,
+          slug: tenantResult.tenantCode,
+        },
+        { failAt: options?.failAt },
+      );
+
+      trace.billingProvisioned = true;
+      trace.billingEntity = billing.billingEntity;
+      trace.stripeCustomerId = billing.stripeCustomerId;
 
       const timestamp = new Date().toISOString();
       const chainedPayload = {

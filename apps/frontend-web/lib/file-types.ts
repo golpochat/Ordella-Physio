@@ -44,15 +44,25 @@ export type FileListResponse = {
   };
 };
 
-export type FileUploadResponse = {
+export type FileUploadPipelineResponse = {
+  fileId: string;
+  fileName: string;
+  mimeType: string;
+  size: number;
+  signedUrl: string | null;
+};
+
+export type FileUploadResponse = FileUploadPipelineResponse | {
   file: StoredFileRecord;
   accessUrl?: string;
   message: string;
 };
 
 export type FileAccessUrlResponse = {
-  url: string;
+  signedUrl?: string;
+  url?: string;
   expiresInSeconds?: number | null;
+  fileId?: string;
 };
 
 export type FileVersionsResponse = {

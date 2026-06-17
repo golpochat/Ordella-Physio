@@ -14,7 +14,9 @@ import type {
   UpdateStripePaymentMethodInput,
 } from "@ordella/validation";
 import { BillingTruthClient } from "@/stripe/billing-truth.client";
+import { AiNotesMeteringService } from "@/stripe/ai-notes-metering.service";
 import { OrganizationSyncClient } from "@/stripe/organization-sync.client";
+import { StripePlatformMetricsService } from "@/stripe/stripe-platform-metrics.service";
 import { StripeClient } from "@/stripe/stripe.client";
 import { StripeBillingRepository } from "@/stripe/stripe-billing.repository";
 import { TenantSyncClient } from "@/stripe/tenant-sync.client";
@@ -38,6 +40,8 @@ export class StripeBillingService {
     private readonly tenantSync: TenantSyncClient,
     private readonly organizationSync: OrganizationSyncClient,
     private readonly billingTruthClient: BillingTruthClient,
+    private readonly stripePlatformMetrics: StripePlatformMetricsService,
+    private readonly aiNotesMetering: AiNotesMeteringService,
   ) {}
 
   async getBillingContext(tenantId: string) {
@@ -46,72 +50,11 @@ export class StripeBillingService {
   }
 
   async getPlatformMetrics() {
-    const planMrrCents: Record<string, number> = {
-      STARTER: 4_900,
-      PROFESSIONAL: 14_900,
-      ENTERPRISE: 49_900,
-    };
-
-    const [tenantSubs, orgSubs, paidInvoices, issuedInvoices] = await Promise.all([
-      this.repository.listActiveTenantSubscriptions(),
-      this.repository.listActiveOrganizationSubscriptions(),
-      this.repository.countPaidInvoices(),
-      this.repository.countIssuedInvoices(),
-    ]);
-
-    const subscriptions = [...tenantSubs, ...orgSubs];
-    const mrrCents = subscriptions.reduce((total, sub) => {
-      return total + (planMrrCents[sub.plan] ?? 0);
-    }, 0);
-
-    const collectionsRate =
-      issuedInvoices > 0 ? Math.round((paidInvoices / issuedInvoices) * 100) : null;
-
-    return {
-      mrrCents,
-      activeSubscriptions: subscriptions.length,
-      activeTenantSubscriptions: tenantSubs.length,
-      activeOrganizationSubscriptions: orgSubs.length,
-      paidInvoiceCount: paidInvoices,
-      issuedInvoiceCount: issuedInvoices,
-      collectionsRatePercent: collectionsRate,
-      currency: "USD",
-      source: "billing-service" as const,
-    };
+    return this.stripePlatformMetrics.getStripeLivePlatformMetrics();
   }
 
   async recordAiNotesUsageCharge(tenantId: string, quantity: number) {
-    const resolved = await this.requireBillingAccount(tenantId);
-    const stripe = this.stripeClient.getClient();
-    const unitPrice = process.env.STRIPE_PRICE_AI_NOTES ?? "";
-
-    if (!unitPrice) {
-      return {
-        synced: false,
-        reason: "STRIPE_PRICE_AI_NOTES not configured",
-        tenantId,
-        quantity,
-      };
-    }
-
-    await stripe.invoiceItems.create({
-      customer: resolved.account.stripeCustomerId,
-      price: unitPrice,
-      quantity: Math.max(1, quantity),
-      description: `AI notes usage (${Math.max(1, quantity)} generation${quantity > 1 ? "s" : ""})`,
-      metadata: {
-        tenantId,
-        billingEntity: resolved.entity,
-        usageType: "ai_notes",
-      },
-    });
-
-    return {
-      synced: true,
-      tenantId,
-      quantity: Math.max(1, quantity),
-      billedTo: resolved.entity,
-    };
+    return this.aiNotesMetering.recordRealtimeUsage(tenantId, quantity);
   }
 
   async createCustomer(dto: CreateStripeCustomerInput) {
@@ -392,11 +335,91 @@ export class StripeBillingService {
     });
   }
 
+  async provisionTenantBillingSynchronously(payload: {
+    tenantId: string;
+    name: string;
+    slug: string;
+  }) {
+    const result = await this.handleTenantCreated(payload);
+    const stripeCustomerId =
+      typeof result === "object" && result && "stripeCustomerId" in result
+        ? String(result.stripeCustomerId)
+        : null;
+
+    if (!stripeCustomerId) {
+      throw new BadRequestException("Stripe customer was not created during provisioning.");
+    }
+
+    const context = await this.billingTruthClient.getContext(payload.tenantId);
+    const billingEntity =
+      context && isOrganizationLevelBilling(context.billingModel) ? "organization" : "tenant";
+
+    return {
+      tenantId: payload.tenantId,
+      organizationId: context?.organizationId ?? null,
+      stripeCustomerId,
+      billingEntity,
+    };
+  }
+
+  async getProvisioningBillingStatus(tenantId: string) {
+    const tenantAccount = await this.repository.findAccountByTenantId(tenantId);
+    const context = await this.billingTruthClient.getContext(tenantId);
+    const organizationAccount = context?.organizationId
+      ? await this.repository.findOrganizationAccountByOrganizationId(context.organizationId)
+      : null;
+
+    return {
+      tenantId,
+      organizationId: context?.organizationId ?? null,
+      hasTenantBillingAccount: Boolean(tenantAccount),
+      hasOrganizationBillingAccount: Boolean(organizationAccount),
+      tenantStripeCustomerId: tenantAccount?.stripeCustomerId ?? null,
+      organizationStripeCustomerId: organizationAccount?.stripeCustomerId ?? null,
+      tenantSubscriptionId: tenantAccount?.subscription?.stripeSubscriptionId ?? null,
+      organizationSubscriptionId: organizationAccount?.subscription?.stripeSubscriptionId ?? null,
+    };
+  }
+
+  async rollbackProvisioningBilling(input: {
+    tenantId?: string;
+    organizationId?: string;
+    stripeCustomerId?: string;
+    billingEntity?: "tenant" | "organization";
+  }) {
+    const tenantId = input.tenantId?.trim();
+    const organizationId = input.organizationId?.trim();
+    const stripeCustomerId = input.stripeCustomerId?.trim();
+
+    if (input.billingEntity === "organization" && organizationId) {
+      await this.repository.deleteOrganizationBillingAccount(organizationId);
+    } else if (tenantId) {
+      await this.repository.deleteTenantBillingAccount(tenantId);
+    }
+
+    if (stripeCustomerId && !this.stripeClient.isMockMode()) {
+      try {
+        const stripe = this.stripeClient.getClient();
+        await stripe.customers.del(stripeCustomerId);
+      } catch {
+        // Best-effort Stripe cleanup during rollback.
+      }
+    }
+
+    return { message: "Billing provisioning rollback completed." };
+  }
+
   async handleWebhookEvent(event: Stripe.Event) {
     const processed = await this.repository.hasWebhookEvent(event.id);
     if (processed) {
       return { received: true, duplicate: true };
     }
+
+    const shouldInvalidatePlatformMetrics =
+      event.type === "invoice.paid" ||
+      event.type === "invoice.payment_failed" ||
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted";
 
     switch (event.type) {
       case "checkout.session.completed":
@@ -412,11 +435,23 @@ export class StripeBillingService {
       case "invoice.paid":
         await this.handleInvoicePaid(event.data.object as Stripe.Invoice);
         break;
+      case "invoice.created":
+      case "invoice.finalized":
+      case "invoice.updated":
+      case "invoice.upcoming":
+        await this.aiNotesMetering.verifyAndStoreInvoiceAiNotesLines(
+          event.data.object as Stripe.Invoice,
+        );
+        break;
       case "invoice.payment_failed":
         await this.handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
         break;
       default:
         break;
+    }
+
+    if (shouldInvalidatePlatformMetrics) {
+      this.stripePlatformMetrics.invalidateCache();
     }
 
     await this.repository.recordWebhookEvent(event.id, event.type);
@@ -436,16 +471,20 @@ export class StripeBillingService {
       throw new BadRequestException("Tenant must be linked to an organization before billing setup.");
     }
 
-    const stripe = this.stripeClient.getClient();
-    const customer = await stripe.customers.create({
-      email: dto.email,
-      name: dto.name,
-      metadata: buildStripeCustomerMetadata({
-        billingModel: context.billingModel,
-        organizationId: context.organizationId,
-        tenantId: dto.tenantId,
-      }),
-    });
+    const customer = this.stripeClient.isMockMode()
+      ? {
+          id: this.stripeClient.buildMockCustomerId(dto.tenantId),
+          email: dto.email ?? null,
+        }
+      : await this.stripeClient.getClient().customers.create({
+          email: dto.email,
+          name: dto.name,
+          metadata: buildStripeCustomerMetadata({
+            billingModel: context.billingModel,
+            organizationId: context.organizationId,
+            tenantId: dto.tenantId,
+          }),
+        });
 
     const account = await this.repository.createAccount({
       tenantId: dto.tenantId,
@@ -480,15 +519,19 @@ export class StripeBillingService {
       };
     }
 
-    const stripe = this.stripeClient.getClient();
-    const customer = await stripe.customers.create({
-      email: dto.email,
-      name: dto.name,
-      metadata: buildStripeCustomerMetadata({
-        billingModel: context.billingModel,
-        organizationId: context.organizationId,
-      }),
-    });
+    const customer = this.stripeClient.isMockMode()
+      ? {
+          id: this.stripeClient.buildMockCustomerId(context.organizationId),
+          email: dto.email ?? null,
+        }
+      : await this.stripeClient.getClient().customers.create({
+          email: dto.email,
+          name: dto.name,
+          metadata: buildStripeCustomerMetadata({
+            billingModel: context.billingModel,
+            organizationId: context.organizationId,
+          }),
+        });
 
     const account = await this.repository.createOrganizationAccount({
       organizationId: context.organizationId,
@@ -729,6 +772,8 @@ export class StripeBillingService {
   }
 
   private async handleInvoicePaid(invoice: Stripe.Invoice) {
+    await this.aiNotesMetering.verifyAndStoreInvoiceAiNotesLines(invoice);
+
     const customerId = this.resolveCustomerId(invoice.customer);
     if (!customerId) return;
 

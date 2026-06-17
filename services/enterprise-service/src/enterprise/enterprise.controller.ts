@@ -87,26 +87,65 @@ export class EnterpriseController {
     return this.enterpriseService.getSamlMetadata(tenantId);
   }
 
+  @Get("sso/saml/login")
+  async startSamlLogin(@Query("tenantId") tenantId: string, @Res() response: Response) {
+    const result = await this.enterpriseService.startSamlLogin(tenantId);
+    return response.redirect(result.authUrl);
+  }
+
   @Post("sso/saml/acs")
-  samlAcs(@Query("tenantId") tenantId: string, @Body() payload: unknown) {
-    return this.enterpriseService.handleSamlAcs(tenantId, payload);
+  async samlAcs(
+    @Query("tenantId") tenantId: string,
+    @Req() request: OrdellaRequest,
+    @Res() response: Response,
+  ) {
+    const body = request.body as Record<string, string>;
+    const result = await this.enterpriseService.handleSamlAcs(tenantId, body, {
+      ipAddress: request.ip,
+      deviceInfo: request.headers["user-agent"],
+    });
+    return response.redirect(result.redirectUrl);
   }
 
   @Get("sso/oauth/start")
-  @UseGuards(JwtGuard, EnterpriseTenantGuard, EnterprisePlanGuard, PermissionGuard)
-  @RequirePermissions("enterprise.write")
-  startOAuth(@TenantId() tenantId: string, @Query("provider") provider: string) {
-    return this.enterpriseService.startSsoOAuth(tenantId, provider);
+  async startOAuth(
+    @Query("tenantId") tenantId: string,
+    @Res() response: Response,
+  ) {
+    const result = await this.enterpriseService.startSsoOAuth(tenantId);
+    return response.redirect(result.authUrl);
   }
 
   @Get("sso/oauth/callback")
   async oauthCallback(
     @Query("code") code: string,
     @Query("state") state: string,
+    @Req() request: OrdellaRequest,
     @Res() response: Response,
   ) {
-    const result = await this.enterpriseService.handleSsoOAuthCallback(code, state);
-    return response.redirect(`${result.redirectUrl}?status=connected&provider=sso`);
+    const callbackUrl = new URL(`${request.protocol}://${request.get("host")}${request.originalUrl}`);
+    const result = await this.enterpriseService.handleSsoOAuthCallback(code, state, callbackUrl, {
+      ipAddress: request.ip,
+      deviceInfo: request.headers["user-agent"],
+    });
+    return response.redirect(result.redirectUrl);
+  }
+
+  @Post("sso/logout")
+  @UseGuards(JwtGuard, EnterpriseTenantGuard, PermissionGuard)
+  @RequirePermissions("enterprise.read")
+  logoutSso(
+    @TenantId() tenantId: string,
+    @Req() request: OrdellaRequest,
+    @Body() body: { idTokenHint?: string },
+  ) {
+    const user = request.user as AuthenticatedEnterpriseUser;
+    return this.enterpriseService.logoutSso({
+      tenantId,
+      userId: user.userId,
+      idTokenHint: body.idTokenHint,
+      ipAddress: request.ip,
+    });
   }
 
   @Get("permission-groups")

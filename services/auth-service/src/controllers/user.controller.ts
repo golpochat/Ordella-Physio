@@ -17,7 +17,7 @@ import { TenantGuard as SecurityTenantGuard } from "@ordella/security";
 
 import { JwtGuard } from "@/auth/guards/jwt.guard";
 import { PermissionEnforcementGuard, RequireAuthPermission } from "@/auth/guards/permission-enforcement.guard";
-import { CurrentUser, type AuthenticatedRequestUser } from "@/utils/auth-helpers";
+import { CurrentUser, coalesceTenantId, type AuthenticatedRequestUser } from "@/utils/auth-helpers";
 import { MAX_AVATAR_BYTES } from "@/utils/fileUpload";
 import { UserManagementService } from "@/services/user.service";
 
@@ -28,12 +28,12 @@ export class UserController {
 
   @Get("me")
   getMyProfile(@CurrentUser() user: AuthenticatedRequestUser) {
-    return this.userManagementService.getMyProfile(user.userId, user.tenantId);
+    return this.userManagementService.getMyProfile(user.userId, coalesceTenantId(user.tenantId));
   }
 
   @Put("me")
   selfUpdate(@Body() payload: unknown, @CurrentUser() user: AuthenticatedRequestUser) {
-    return this.userManagementService.selfUpdate(user.userId, user.tenantId, payload);
+    return this.userManagementService.selfUpdate(user.userId, coalesceTenantId(user.tenantId), payload);
   }
 
   @Post("me/avatar")
@@ -56,17 +56,17 @@ export class UserController {
         }
       : undefined;
 
-    return this.userManagementService.updateAvatar(user.userId, user.tenantId, uploadFile);
+    return this.userManagementService.updateAvatar(user.userId, coalesceTenantId(user.tenantId), uploadFile);
   }
 
   @Delete("me/avatar")
   removeAvatar(@CurrentUser() user: AuthenticatedRequestUser) {
-    return this.userManagementService.removeAvatar(user.userId, user.tenantId);
+    return this.userManagementService.removeAvatar(user.userId, coalesceTenantId(user.tenantId));
   }
 
   @Post("change-password")
   changePassword(@Body() payload: unknown, @CurrentUser() user: AuthenticatedRequestUser) {
-    return this.userManagementService.changePassword(user.userId, user.tenantId, payload);
+    return this.userManagementService.changePassword(user.userId, coalesceTenantId(user.tenantId), payload);
   }
 
   @Get()

@@ -8,7 +8,7 @@ import {
   userNotFoundError,
   userValidationError,
 } from "@/utils/user-errors";
-import { sanitizeManagedUser } from "@/models/User";
+import { coalesceTenantId } from "@/utils/auth-helpers";
 import { EMAIL_REGEX } from "@ordella/validation";
 
 export type InternalOwnerUser = {
@@ -31,7 +31,7 @@ function deriveInvitedName(email: string): { firstName: string; lastName: string
 
 function toInternalOwnerUser(user: {
   id: string;
-  tenantId: string;
+  tenantId: string | null;
   email: string;
   role: string;
   isActive: boolean;
@@ -45,7 +45,7 @@ function toInternalOwnerUser(user: {
 
   return {
     id: user.id,
-    tenantId: user.tenantId,
+    tenantId: coalesceTenantId(user.tenantId),
     email: user.email,
     role: user.role,
     status,
@@ -93,7 +93,7 @@ export class InternalOwnerService {
     });
 
     await this.emailService.sendVerificationEmail({
-      tenantId: user.tenantId,
+      tenantId: coalesceTenantId(user.tenantId),
       email: user.email,
       token: verificationToken,
     });

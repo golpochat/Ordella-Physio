@@ -13,7 +13,7 @@ export function CanAccess({
   fallback = null,
 }: {
   children: ReactNode;
-  permission?: AuthPermission;
+  permission?: string;
   minRoleLevel?: number;
   fallback?: ReactNode;
 }) {

@@ -15,28 +15,25 @@ export function PharmacyPrescriptionList({
     return (
       <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
         <p className="font-medium text-foreground">No prescription requests</p>
-        <p className="mt-2">Incoming requests from clinicians will appear here.</p>
+        <p className="mt-2">Issued prescriptions from the clinic will appear here.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
-        Placeholder data — prescription service integration coming soon.
-      </p>
       {prescriptions.map((prescription) => (
         <Card key={prescription.id}>
           <CardBody className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="font-medium">{prescription.medication}</p>
+                <p className="font-medium">{prescription.medicationName}</p>
                 <Badge>{prescription.status}</Badge>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">{prescription.patientName}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Patient {prescription.patientId}</p>
               <p className="text-sm text-muted-foreground">{prescription.dosage}</p>
               <p className="text-xs text-muted-foreground">
-                Requested {formatPortalDateTime(prescription.requestedAt)}
+                Created {formatPortalDateTime(prescription.createdAt)}
               </p>
             </div>
             <Link

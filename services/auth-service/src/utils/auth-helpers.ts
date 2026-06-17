@@ -5,11 +5,13 @@ import type { SecurityRole } from "@ordella/security";
 
 export type AuthenticatedRequestUser = {
   userId: string;
-  tenantId: string;
+  tenantId: string | null;
   role: SecurityRole;
   email?: string;
   sessionId?: string;
   permissions?: string[];
+  effectiveRole?: string;
+  resolvedPermissions?: string[];
 };
 
 export const TenantId = createParamDecorator((_data: unknown, ctx: ExecutionContext) => {
@@ -22,21 +24,28 @@ export const CurrentUser = createParamDecorator((_data: unknown, ctx: ExecutionC
   return request.user;
 });
 
+export function coalesceTenantId(tenantId: string | null | undefined): string {
+  return tenantId ?? "";
+}
+
 export function sanitizeUser(user: {
   id: string;
-  tenantId: string;
+  tenantId: string | null;
+  organizationId?: string | null;
   email: string;
   role: string;
   emailVerified: boolean;
   mfaEnabled?: boolean;
   firstName?: string | null;
   lastName?: string | null;
+  permissionOverrides?: string[];
   createdAt: Date;
   updatedAt: Date;
 }) {
   return {
     id: user.id,
     tenantId: user.tenantId,
+    organizationId: user.organizationId ?? null,
     email: user.email,
     role: user.role,
     emailVerified: user.emailVerified,

@@ -9,11 +9,12 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { PERMISSIONS_KEY } from "./metadata";
+import { logRbacAction } from "../rbac/rbac-audit";
 import { rbacService } from "../rbac/rbac.service";
 import type { Permission } from "../rbac/permissions";
 import type { SecurityUser } from "../rbac/rbac.service";
 
-export const RequirePermissions = (...permissions: Permission[]) =>
+export const RequirePermissions = (...permissions: (Permission | string)[]) =>
   SetMetadata(PERMISSIONS_KEY, permissions);
 
 @Injectable()
@@ -25,10 +26,10 @@ export class PermissionGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredPermissions = this.reflector.getAllAndOverride<Permission[]>(PERMISSIONS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredPermissions = this.reflector.getAllAndOverride<(Permission | string)[]>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredPermissions?.length) {
       return true;
@@ -46,6 +47,13 @@ export class PermissionGuard implements CanActivate {
     );
 
     if (!allowed) {
+      void logRbacAction({
+        actorId: user.userId,
+        action: "permission.denied",
+        permission: requiredPermissions.join(","),
+        tenantId: user.tenantId ?? null,
+        organizationId: user.organizationId ?? null,
+      });
       throw new ForbiddenException("Missing required permission");
     }
 

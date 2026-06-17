@@ -24,6 +24,10 @@ import { useTenantStore } from "@/store/tenant.store";
 function normalizeAuthResponse(response: AuthTokensResponse): AuthTokensResponse {
   const roles = resolveUserRoles(response.user);
   const primaryRole = roles[0] ?? mapAuthRoleToPortalRole(response.user.role);
+  const permissions =
+    response.user.permissions ??
+    (response.user as { resolvedPermissions?: string[] }).resolvedPermissions ??
+    [];
 
   return {
     ...response,
@@ -31,7 +35,10 @@ function normalizeAuthResponse(response: AuthTokensResponse): AuthTokensResponse
       ...response.user,
       role: primaryRole,
       roles,
-      permissions: response.user.permissions ?? [],
+      permissions,
+      effectiveRole:
+        response.user.effectiveRole ??
+        (response.user as { effectiveRole?: string }).effectiveRole,
     },
   };
 }

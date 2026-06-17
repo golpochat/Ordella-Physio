@@ -35,6 +35,7 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   notificationProviders: GATEWAY_PATHS.notificationProviders,
   searchIndex: GATEWAY_PATHS.searchIndex,
   subscriptionBilling: GATEWAY_PATHS.subscriptionBilling,
+  pharmacy: GATEWAY_PATHS.pharmacy,
 };
 
 const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
@@ -65,6 +66,7 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   notificationProviders: "/api/notification-providers",
   searchIndex: "/api/search-index",
   subscriptionBilling: "/api/subscription-billing",
+  pharmacy: "/api/pharmacy",
 };
 
 const PROXY_STRIP_REQUEST_HEADERS = [
@@ -95,6 +97,10 @@ export async function proxyToGateway(
   service: ApiServiceKey,
   pathSuffix = "",
 ): Promise<NextResponse> {
+  if (service === "files") {
+    return proxyToClinicBackend(request, service);
+  }
+
   if (useClinicBackend() && isClinicBackendService(service)) {
     return proxyToClinicBackend(request, service);
   }

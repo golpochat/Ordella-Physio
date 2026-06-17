@@ -526,13 +526,17 @@ export type PlatformOrganizationListResponse = {
 };
 
 export type PlatformBillingMetrics = {
-  mrrCents: number;
+  mrrStripeLive: number;
+  arrStripeLive: number;
   activeSubscriptions: number;
-  activeTenantSubscriptions: number;
-  activeOrganizationSubscriptions: number;
-  paidInvoiceCount: number;
-  issuedInvoiceCount: number;
-  collectionsRatePercent: number | null;
-  currency: string;
-  source: "billing-service";
+  trialingSubscriptions: number;
+  pastDueSubscriptions: number;
+  canceledSubscriptions: number;
+  churnRate: number;
+  usageRevenue: number;
+  tenantRevenue: number;
+  organizationRevenue: number;
+  aiNotesUsage: number;
+  aiNotesRevenue: number;
+  lastUpdatedAt: string;
 };

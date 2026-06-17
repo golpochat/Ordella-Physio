@@ -1,4 +1,4 @@
-export const MAX_PATIENT_ATTACHMENT_BYTES = 20 * 1024 * 1024;
+export const MAX_PATIENT_ATTACHMENT_BYTES = 50 * 1024 * 1024;
 
 export const ALLOWED_PATIENT_ATTACHMENT_MIME_TYPES = [
   "application/pdf",

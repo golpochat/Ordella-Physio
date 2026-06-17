@@ -13,6 +13,18 @@ export class UsersRepository {
     });
   }
 
+  findBySsoSubject(tenantId: string, ssoProvider: string, ssoSubject: string) {
+    return this.db.user.findUnique({
+      where: {
+        tenantId_ssoProvider_ssoSubject: {
+          tenantId,
+          ssoProvider,
+          ssoSubject,
+        },
+      },
+    });
+  }
+
   findById(tenantId: string, userId: string) {
     return this.db.user.findFirst({
       where: { id: userId, tenantId },
@@ -61,6 +73,33 @@ export class UsersRepository {
     });
   }
 
+  createSsoUser(data: {
+    tenantId: string;
+    organizationId: string;
+    email: string;
+    role: Role;
+    firstName?: string;
+    lastName?: string;
+    ssoSubject: string;
+    ssoProvider: string;
+    emailVerified?: boolean;
+  }) {
+    return this.db.user.create({
+      data: {
+        tenantId: data.tenantId,
+        organizationId: data.organizationId,
+        email: data.email.toLowerCase(),
+        role: data.role,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        ssoSubject: data.ssoSubject,
+        ssoProvider: data.ssoProvider,
+        emailVerified: data.emailVerified ?? true,
+        isActive: true,
+      },
+    });
+  }
+
   findByEmailGlobal(email: string) {
     return this.db.user.findFirst({
       where: { email: email.trim().toLowerCase() },
@@ -72,6 +111,7 @@ export class UsersRepository {
     userId: string,
     data: Partial<{
       tenantId: string;
+      organizationId: string;
       passwordHash: string;
       emailVerified: boolean;
       verificationToken: string | null;
@@ -85,6 +125,8 @@ export class UsersRepository {
       avatarUrl: string | null;
       role: Role;
       isActive: boolean;
+      ssoSubject: string;
+      ssoProvider: string;
     }>,
   ) {
     return this.db.user.update({

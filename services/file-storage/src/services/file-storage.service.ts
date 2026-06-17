@@ -185,6 +185,70 @@ export class FileStorageService {
 
 
 
+  async uploadPipelineFile(
+
+    payload: UploadFilePayload,
+
+    file: UploadMultipartFile | undefined,
+
+    requestingUser: AuthenticatedFileUser,
+
+  ) {
+
+    const result = await this.uploadFile(payload, file, requestingUser);
+
+    return this.toUploadPipelineResponse(result.file, result.accessUrl);
+
+  }
+
+
+
+  async getPipelineSignedUrl(id: string, requestingUser: AuthenticatedFileUser) {
+
+    const access = await this.getFileAccessUrl(id, {}, requestingUser);
+
+    return {
+
+      fileId: id,
+
+      signedUrl: access.url,
+
+      expiresInSeconds: access.expiresInSeconds ?? this.config.signedUrlTtlSeconds,
+
+    };
+
+  }
+
+
+
+  private toUploadPipelineResponse(
+
+    file: ReturnType<typeof toFileObjectResponse>,
+
+    signedUrl?: string,
+
+  ) {
+
+    return {
+
+      fileId: file.id,
+
+      fileName: file.filename,
+
+      mimeType: file.mimeType,
+
+      size: file.sizeBytes,
+
+      s3Key: file.storageKey,
+
+      signedUrl: signedUrl ?? null,
+
+    };
+
+  }
+
+
+
   async uploadFileInternal(payload: Record<string, unknown>) {
 
     const validated = validateInternalUploadPayload(payload);
@@ -685,7 +749,57 @@ export class FileStorageService {
 
     await this.subscriptionBillingClient.enforceFileUpload(input.tenantId, input.sizeBytes);
 
-    await this.virusScanService.scanBuffer(input.buffer);
+    let scanResult: "OK" | "FOUND" = "OK";
+
+    try {
+
+      scanResult = await this.virusScanService.scanBuffer(input.buffer, {
+
+        tenantId: input.tenantId,
+
+        actorId: input.ownerUserId,
+
+        fileName: input.filename,
+
+        fileSize: input.sizeBytes,
+
+      });
+
+    } catch (error) {
+
+      void this.auditLogClient.logAction({
+
+        tenantId: input.tenantId,
+
+        actorUserId: input.ownerUserId,
+
+        actorRole: input.actorRole,
+
+        entityType: "FILE_UPLOAD",
+
+        entityId: input.filename,
+
+        action: "FILE_UPLOAD_REJECTED",
+
+        metadata: {
+
+          fileName: input.filename,
+
+          fileSize: input.sizeBytes,
+
+          mimeType: input.mimeType,
+
+          scanResult: "FOUND",
+
+          timestamp: new Date().toISOString(),
+
+        },
+
+      });
+
+      throw error;
+
+    }
 
 
 
@@ -807,9 +921,17 @@ export class FileStorageService {
 
       metadata: {
 
-        filename: record.filename,
+        fileName: record.filename,
 
-        sizeBytes: record.sizeBytes,
+        fileSize: record.sizeBytes,
+
+        mimeType: record.mimeType,
+
+        scanResult,
+
+        s3Key: record.storageKey,
+
+        timestamp: new Date().toISOString(),
 
         entityType: record.entityType,
 

@@ -1,4 +1,10 @@
-import { isSystemRole, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
+import {
+  isOrganizationUser,
+  isSystemRole,
+  isSystemUser,
+  mapAuthRoleToPortalRole,
+} from "@/lib/auth/roleRedirect";
+import { canAccessNavHrefByPermission, type PermissionSubject } from "@/lib/platform-rbac";
 
 import type { MiddlewareSession } from "./session-types";
 
@@ -12,22 +18,31 @@ const PUBLIC_ROUTE_PREFIXES = [
   "/start-trial",
   "/signup",
   "/forgot-password",
+  "/access-denied",
 ] as const;
 
-export function resolveMiddlewarePortalHome(role: string, roles?: string[]): string {
+export function resolveMiddlewarePortalHome(
+  role: string,
+  roles?: string[],
+  effectiveRole?: string,
+): string {
   const resolved = roles?.length
     ? roles.map((entry) => mapAuthRoleToPortalRole(entry))
     : [mapAuthRoleToPortalRole(role)];
 
-  if (resolved.includes("SYSTEM")) {
+  if (isSystemUser(resolved) || isSystemRole(role) || isSystemRole(effectiveRole)) {
     return "/super-admin";
+  }
+
+  if (isOrganizationUser(resolved) || role === "ORG_ADMIN" || role === "ORG_BILLING_ADMIN") {
+    return "/organization";
   }
 
   if (resolved.some((entry) => entry === "CLINIC_ADMIN" || entry === "ADMIN" || entry === "OWNER")) {
     return "/clinic";
   }
 
-  if (resolved.includes("STAFF")) {
+  if (resolved.includes("STAFF") || resolved.includes("BILLING_ADMIN") || resolved.includes("READ_ONLY")) {
     return "/staff";
   }
 
@@ -35,11 +50,23 @@ export function resolveMiddlewarePortalHome(role: string, roles?: string[]): str
     return "/therapist";
   }
 
+  if (resolved.includes("PHARMACY")) {
+    return "/pharmacy";
+  }
+
+  if (resolved.includes("PATIENT")) {
+    return "/patient";
+  }
+
   return "/login";
 }
 
-export function resolveAllowedPortalPrefix(role: string, roles?: string[]): string | null {
-  const home = resolveMiddlewarePortalHome(role, roles);
+export function resolveAllowedPortalPrefix(
+  role: string,
+  roles?: string[],
+  effectiveRole?: string,
+): string | null {
+  const home = resolveMiddlewarePortalHome(role, roles, effectiveRole);
   return home === "/login" ? null : home;
 }
 
@@ -71,17 +98,35 @@ export function isGuardedPortalPath(pathname: string): boolean {
   return guardedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
+function toPermissionSubject(session: MiddlewareSession): PermissionSubject {
+  const { user } = session;
+  return {
+    role: user.role,
+    effectiveRole: user.effectiveRole,
+    permissions: user.resolvedPermissions ?? user.permissions ?? [],
+    organizationId: user.organizationId,
+  };
+}
+
 export function canAccessGuardedPath(
   pathname: string,
   role: string,
   roles?: string[],
+  session?: MiddlewareSession | null,
 ): boolean {
-  const allowedPrefix = resolveAllowedPortalPrefix(role, roles);
+  const allowedPrefix = resolveAllowedPortalPrefix(
+    role,
+    roles,
+    session?.user.effectiveRole,
+  );
   if (!allowedPrefix) {
     return false;
   }
 
   if (pathname.startsWith(allowedPrefix)) {
+    if (session && !canAccessNavHrefByPermission(pathname, toPermissionSubject(session))) {
+      return false;
+    }
     return true;
   }
 
@@ -93,16 +138,31 @@ export function canAccessGuardedPath(
     (entry) => entry === "CLINIC_ADMIN" || entry === "ADMIN" || entry === "OWNER",
   );
 
-  return isClinicOperator && pathname.startsWith("/organization");
+  if (isClinicOperator && pathname.startsWith("/organization")) {
+    return session
+      ? canAccessNavHrefByPermission(pathname, toPermissionSubject(session))
+      : true;
+  }
+
+  return false;
 }
 
 export function sessionRequiresTenant(session: MiddlewareSession): boolean {
-  const { role, roles } = session.user;
-  if (isSystemRole(role)) {
+  const { role, roles, effectiveRole } = session.user;
+  if (isSystemRole(role) || isSystemRole(effectiveRole)) {
     return false;
   }
 
-  return !roles?.some((entry) => isSystemRole(entry));
+  if (roles?.some((entry) => isSystemRole(entry))) {
+    return false;
+  }
+
+  const resolved = roles?.map(mapAuthRoleToPortalRole) ?? [mapAuthRoleToPortalRole(role)];
+  if (isOrganizationUser(resolved)) {
+    return false;
+  }
+
+  return true;
 }
 
 export function hasValidTenant(session: MiddlewareSession): boolean {

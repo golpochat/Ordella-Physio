@@ -217,6 +217,20 @@ export function FullProvisioningWizard() {
         </ol>
 
         {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+        {generalError ? (
+          <div className="provisioning-wizard-actions">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setGeneralError(null);
+                setFieldErrors({});
+              }}
+            >
+              Try again
+            </Button>
+          </div>
+        ) : null}
 
         {step === 1 ? (
           <fieldset className="tenant-create-form-section">

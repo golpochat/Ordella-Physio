@@ -1,13 +1,19 @@
 import type { createApiClient } from "@/lib/api-client";
 import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type {
+  ClinicPrescription,
+  ClinicPrescriptionAuditLog,
+  CreateClinicPrescriptionPayload,
+  FulfillmentActionPayload,
+  PrescriptionStatus,
+} from "@/lib/clinic-pharmacy-types";
+import { createClinicPharmacyApi } from "@/lib/clinic-pharmacy-api";
+import type {
   PharmacyAppointment,
   PharmacyAppointmentListResponse,
-  PharmacyFulfillmentOrder,
   PharmacyInvoice,
   PharmacyPatient,
   PharmacyPatientListResponse,
-  PharmacyPrescription,
   PharmacyProfile,
   UpdatePharmacyProfilePayload,
 } from "@/lib/pharmacy-portal-types";
@@ -21,17 +27,7 @@ export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[]
 }
 
 export function createPharmacyPortalApi(api: PharmacyApiClient) {
-  async function pharmacyBffGet<T>(path: string): Promise<T> {
-    const response = await fetch(`/api/pharmacy${path}`, {
-      credentials: "include",
-      cache: "no-store",
-    });
-    const data = await response.json().catch(() => null);
-    if (!response.ok) {
-      throw new Error((data as { message?: string } | null)?.message ?? "Pharmacy request failed.");
-    }
-    return data as T;
-  }
+  const pharmacyApi = createClinicPharmacyApi(api);
 
   return {
     listPatients(params?: { page?: number; limit?: number }) {
@@ -61,20 +57,48 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
       return api.get<PharmacyInvoice>("billing", `/invoices/${invoiceId}`);
     },
 
-    listPrescriptions() {
-      return pharmacyBffGet<PharmacyPrescription[]>("/prescriptions");
+    listPrescriptions(params?: { patientId?: string; status?: PrescriptionStatus }) {
+      return pharmacyApi.listPrescriptions(params);
     },
 
     getPrescription(id: string) {
-      return pharmacyBffGet<PharmacyPrescription | null>(`/prescriptions/${id}`);
+      return pharmacyApi.getPrescription(id);
+    },
+
+    createPrescription(payload: CreateClinicPrescriptionPayload) {
+      return pharmacyApi.createPrescription(payload);
+    },
+
+    issuePrescription(id: string) {
+      return pharmacyApi.issuePrescription(id);
+    },
+
+    cancelPrescription(id: string) {
+      return pharmacyApi.cancelPrescription(id);
+    },
+
+    getPrescriptionAuditLogs(id: string) {
+      return pharmacyApi.getPrescriptionAuditLogs(id);
+    },
+
+    startFulfillment(prescriptionId: string, payload?: FulfillmentActionPayload) {
+      return pharmacyApi.startFulfillment(prescriptionId, payload);
+    },
+
+    completeFulfillment(prescriptionId: string, payload?: FulfillmentActionPayload) {
+      return pharmacyApi.completeFulfillment(prescriptionId, payload);
+    },
+
+    failFulfillment(prescriptionId: string, payload?: FulfillmentActionPayload) {
+      return pharmacyApi.failFulfillment(prescriptionId, payload);
     },
 
     listFulfillmentOrders() {
-      return pharmacyBffGet<PharmacyFulfillmentOrder[]>("/fulfillment");
+      return pharmacyApi.listPrescriptions({ status: "ISSUED" });
     },
 
-    getFulfillmentOrder(id: string) {
-      return pharmacyBffGet<PharmacyFulfillmentOrder | null>(`/fulfillment/${id}`);
+    async getFulfillmentOrder(id: string) {
+      return pharmacyApi.getPrescription(id);
     },
 
     getProfile() {
@@ -86,3 +110,5 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
     },
   };
 }
+
+export type { ClinicPrescription as PharmacyPrescription, ClinicPrescriptionAuditLog };

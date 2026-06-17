@@ -1,10 +1,16 @@
 export type RedirectPortalRole =
   | "SYSTEM"
+  | "SUPER_ADMIN"
+  | "TENANT_OWNER"
   | "OWNER"
   | "ADMIN"
   | "CLINIC_ADMIN"
   | "THERAPIST"
   | "STAFF"
+  | "BILLING_ADMIN"
+  | "READ_ONLY"
+  | "ORG_ADMIN"
+  | "ORG_BILLING_ADMIN"
   | "PHARMACY"
   | "PATIENT"
   | "USER";
@@ -15,27 +21,37 @@ export function mapAuthRoleToPortalRole(role: string): RedirectPortalRole {
     return "CLINIC_ADMIN";
   }
 
+  if (role === "TENANT_OWNER") {
+    return "OWNER";
+  }
+
   return role as RedirectPortalRole;
 }
 
 export function getPortalForRole(role: string): string {
   switch (role) {
     case "SYSTEM":
+    case "SUPER_ADMIN":
       return "/super-admin";
+    case "ORG_ADMIN":
+    case "ORG_BILLING_ADMIN":
+      return "/organization";
     case "ADMIN":
-      return "/clinic";
     case "CLINIC_ADMIN":
+      return "/clinic";
+    case "TENANT_OWNER":
+    case "OWNER":
       return "/clinic";
     case "THERAPIST":
       return "/therapist";
     case "STAFF":
+    case "BILLING_ADMIN":
+    case "READ_ONLY":
       return "/staff";
     case "PHARMACY":
       return "/pharmacy";
     case "PATIENT":
       return "/patient";
-    case "OWNER":
-      return "/admin";
     default:
       return "/login";
   }
@@ -43,12 +59,18 @@ export function getPortalForRole(role: string): string {
 
 const ROLE_REDIRECT_PRIORITY: RedirectPortalRole[] = [
   "SYSTEM",
+  "SUPER_ADMIN",
+  "ORG_ADMIN",
+  "ORG_BILLING_ADMIN",
   "OWNER",
+  "TENANT_OWNER",
   "ADMIN",
   "CLINIC_ADMIN",
   "THERAPIST",
   "PHARMACY",
+  "BILLING_ADMIN",
   "STAFF",
+  "READ_ONLY",
   "PATIENT",
   "USER",
 ];
@@ -66,9 +88,13 @@ export function getPortalForRoles(roles: RedirectPortalRole[] | undefined): stri
 }
 
 export function isSystemUser(roles: RedirectPortalRole[]): boolean {
-  return roles.includes("SYSTEM");
+  return roles.includes("SYSTEM") || roles.includes("SUPER_ADMIN");
 }
 
 export function isSystemRole(role: string | undefined): boolean {
-  return role === "SYSTEM";
+  return role === "SYSTEM" || role === "SUPER_ADMIN";
+}
+
+export function isOrganizationUser(roles: RedirectPortalRole[]): boolean {
+  return roles.includes("ORG_ADMIN") || roles.includes("ORG_BILLING_ADMIN");
 }

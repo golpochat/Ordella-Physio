@@ -85,7 +85,7 @@ export type UserValidationFieldError = {
 
 export type SanitizedUser = {
   id: string;
-  tenantId: string;
+  tenantId: string | null;
   firstName: string;
   lastName: string;
   email: string;
@@ -103,7 +103,7 @@ export function toUserStatus(isActive: boolean): UserStatus {
 
 export function sanitizeManagedUser(user: {
   id: string;
-  tenantId: string;
+  tenantId: string | null;
   firstName?: string | null;
   lastName?: string | null;
   email: string;

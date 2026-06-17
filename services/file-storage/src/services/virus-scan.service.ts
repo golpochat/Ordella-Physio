@@ -1,33 +1,139 @@
 import { Socket } from "net";
-import { Injectable, Logger } from "@nestjs/common";
-import { virusDetectedError } from "@/utils/file-errors";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { HttpError } from "@ordella/errors";
+import { virusDetectedError, fileStorageError } from "@/utils/file-errors";
 
-export type VirusScanResult = { clean: true };
+export type VirusScanResult = "OK" | "FOUND";
+
+export type VirusScanContext = {
+  tenantId: string;
+  actorId: string;
+  fileName: string;
+  fileSize: number;
+};
 
 @Injectable()
-export class VirusScanService {
+export class VirusScanService implements OnModuleInit {
   private readonly logger = new Logger(VirusScanService.name);
 
-  async scanBuffer(fileBuffer: Buffer): Promise<VirusScanResult> {
-    const host = process.env.CLAMAV_HOST?.trim();
-    const port = Number(process.env.CLAMAV_PORT ?? "3310");
+  private isEnabled(): boolean {
+    const raw = process.env.CLAMAV_ENABLED?.trim().toLowerCase();
+    return raw === "true" || raw === "1";
+  }
 
+  private getHost(): string | undefined {
+    return process.env.CLAMAV_HOST?.trim() || undefined;
+  }
+
+  private getPort(): number {
+    return Number(process.env.CLAMAV_PORT ?? "3310");
+  }
+
+  private getTimeoutMs(): number {
+    return Number(process.env.CLAMAV_TIMEOUT_MS ?? "30000");
+  }
+
+  private isProduction(): boolean {
+    return (process.env.NODE_ENV ?? "development") === "production";
+  }
+
+  async onModuleInit(): Promise<void> {
+    if (!this.isEnabled()) {
+      if (this.isProduction()) {
+        throw new Error("CLAMAV_ENABLED must be true in production");
+      }
+      return;
+    }
+
+    const host = this.getHost();
     if (!host) {
-      // TODO: Enable ClamAV scanning by setting CLAMAV_HOST (and optional CLAMAV_PORT) in deployment.
-      return { clean: true };
+      throw new Error("CLAMAV_HOST is required when CLAMAV_ENABLED=true");
     }
 
-    const response = await this.scanWithClamAv(host, port, fileBuffer);
-    if (response.includes("FOUND")) {
-      throw virusDetectedError();
+    await this.pingClamAv(host, this.getPort());
+    this.logger.log(`ClamAV reachable at ${host}:${this.getPort()}`);
+  }
+
+  async scanBuffer(fileBuffer: Buffer, context?: VirusScanContext): Promise<VirusScanResult> {
+    if (!this.isEnabled()) {
+      this.logScan(context, "OK", "ClamAV disabled");
+      return "OK";
     }
 
-    if (!response.includes("OK")) {
-      this.logger.warn(`Unexpected ClamAV response: ${response}`);
-      throw virusDetectedError("The uploaded file failed virus scanning.");
+    const host = this.getHost();
+    if (!host) {
+      this.logScan(context, "FOUND", "ClamAV host not configured");
+      throw fileStorageError("Virus scanning is required but ClamAV is not configured.");
     }
 
-    return { clean: true };
+    try {
+      const response = await this.scanWithClamAv(host, this.getPort(), fileBuffer);
+
+      if (response.includes("FOUND")) {
+        this.logScan(context, "FOUND", response);
+        throw virusDetectedError();
+      }
+
+      if (!response.includes("OK")) {
+        this.logger.warn(`Unexpected ClamAV response: ${response}`);
+        this.logScan(context, "FOUND", response);
+        throw virusDetectedError();
+      }
+
+      this.logScan(context, "OK", response);
+      return "OK";
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw error;
+      }
+
+      const message = error instanceof Error ? error.message : "ClamAV scan failed";
+      this.logScan(context, "FOUND", message);
+      throw fileStorageError("Virus scanning is unavailable. Upload rejected.");
+    }
+  }
+
+  async pingClamAv(host = this.getHost(), port = this.getPort()): Promise<void> {
+    if (!host) {
+      throw new Error("CLAMAV_HOST is not configured");
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      const socket = new Socket();
+      socket.setTimeout(this.getTimeoutMs());
+
+      socket.on("timeout", () => {
+        socket.destroy();
+        reject(new Error("ClamAV health check timed out"));
+      });
+
+      socket.on("error", reject);
+      socket.on("connect", () => {
+        socket.end();
+        resolve();
+      });
+
+      socket.connect(port, host);
+    });
+  }
+
+  private logScan(context: VirusScanContext | undefined, scanResult: VirusScanResult, detail: string) {
+    const payload = {
+      actorId: context?.actorId ?? "unknown",
+      tenantId: context?.tenantId ?? "unknown",
+      fileName: context?.fileName ?? "unknown",
+      fileSize: context?.fileSize ?? 0,
+      scanResult,
+      timestamp: new Date().toISOString(),
+      detail,
+    };
+
+    if (scanResult === "FOUND") {
+      this.logger.warn(`ClamAV scan rejected upload: ${JSON.stringify(payload)}`);
+      return;
+    }
+
+    this.logger.log(`ClamAV scan passed: ${JSON.stringify(payload)}`);
   }
 
   private scanWithClamAv(host: string, port: number, fileBuffer: Buffer): Promise<string> {
@@ -35,7 +141,7 @@ export class VirusScanService {
       const socket = new Socket();
       let response = "";
 
-      socket.setTimeout(30_000);
+      socket.setTimeout(this.getTimeoutMs());
 
       socket.on("data", (chunk) => {
         response += chunk.toString("utf8");

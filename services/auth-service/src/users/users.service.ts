@@ -43,6 +43,11 @@ export class UsersService {
     return user ? toUserRecord(user) : null;
   }
 
+  async findByIdGlobal(userId: string): Promise<UserRecord | null> {
+    const user = await this.usersRepository.findByIdGlobal(userId);
+    return user ? toUserRecord(user) : null;
+  }
+
   async getById(tenantId: string, userId: string): Promise<UserRecord> {
     const user = await this.findById(tenantId, userId);
     if (!user) {
@@ -52,6 +57,10 @@ export class UsersService {
   }
 
   async validatePassword(user: UserRecord, password: string): Promise<boolean> {
+    if (!user.passwordHash) {
+      return false;
+    }
+
     return passwordHasher.compare(password, user.passwordHash);
   }
 

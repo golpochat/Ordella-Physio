@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/generated/prisma": ["src/generated/prisma"],
+      "@/generated/prisma/*": ["src/generated/prisma/*"],
+      "@/*": ["src/*"],
+      "@ordella/shared": ["../../packages/shared/src/index.ts"],
+      "@ordella/config": ["../../packages/config/src/index.ts"],
+      "@ordella/utils": ["../../packages/utils/src/index.ts"],
+      "@ordella/errors": ["../../packages/errors/src/index.ts"],
+      "@ordella/middleware": ["../../packages/middleware/src/index.ts"],
+      "@ordella/observability": ["../../packages/observability/src/index.ts"],
+      "@ordella/validation": ["../../packages/validation/src/index.ts"],
+      "@ordella/security": ["../../packages/security/src/index.ts"],
+      "@ordella/database": ["../../packages/database/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test"]
+}

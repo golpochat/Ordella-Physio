@@ -30,8 +30,9 @@ export class InternalBillingService {
       throw new NotFoundException("Tenant not found");
     }
 
-    const subscription = await this.subscriptionService.incrementAiNotesUsage(tenantId, amount);
     await this.billingServiceClient.recordAiNotesUsageCharge(tenantId, amount);
+    const subscription = await this.subscriptionService.incrementAiNotesUsage(tenantId, amount);
+
     return {
       synced: true,
       tenantId,

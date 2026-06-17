@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
+ * Model OrganizationSsoConfig
+ * 
+ */
+export type OrganizationSsoConfig = $Result.DefaultSelection<Prisma.$OrganizationSsoConfigPayload>
+/**
  * Model OrganizationConfig
  * 
  */
@@ -58,6 +63,14 @@ export const OrganizationSubscriptionStatus: {
 
 export type OrganizationSubscriptionStatus = (typeof OrganizationSubscriptionStatus)[keyof typeof OrganizationSubscriptionStatus]
 
+
+export const SsoProtocol: {
+  SAML: 'SAML',
+  OIDC: 'OIDC'
+};
+
+export type SsoProtocol = (typeof SsoProtocol)[keyof typeof SsoProtocol]
+
 }
 
 export type OrganizationStatus = $Enums.OrganizationStatus
@@ -71,6 +84,10 @@ export const BillingModel: typeof $Enums.BillingModel
 export type OrganizationSubscriptionStatus = $Enums.OrganizationSubscriptionStatus
 
 export const OrganizationSubscriptionStatus: typeof $Enums.OrganizationSubscriptionStatus
+
+export type SsoProtocol = $Enums.SsoProtocol
+
+export const SsoProtocol: typeof $Enums.SsoProtocol
 
 /**
  * ##  Prisma Client ʲˢ
@@ -199,6 +216,16 @@ export class PrismaClient<
     * ```
     */
   get organization(): Prisma.OrganizationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.organizationSsoConfig`: Exposes CRUD operations for the **OrganizationSsoConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OrganizationSsoConfigs
+    * const organizationSsoConfigs = await prisma.organizationSsoConfig.findMany()
+    * ```
+    */
+  get organizationSsoConfig(): Prisma.OrganizationSsoConfigDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.organizationConfig`: Exposes CRUD operations for the **OrganizationConfig** model.
@@ -661,6 +688,7 @@ export namespace Prisma {
 
   export const ModelName: {
     Organization: 'Organization',
+    OrganizationSsoConfig: 'OrganizationSsoConfig',
     OrganizationConfig: 'OrganizationConfig',
     OrganizationTenant: 'OrganizationTenant'
   };
@@ -681,7 +709,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "organizationConfig" | "organizationTenant"
+      modelProps: "organization" | "organizationSsoConfig" | "organizationConfig" | "organizationTenant"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -756,6 +784,80 @@ export namespace Prisma {
           count: {
             args: Prisma.OrganizationCountArgs<ExtArgs>
             result: $Utils.Optional<OrganizationCountAggregateOutputType> | number
+          }
+        }
+      }
+      OrganizationSsoConfig: {
+        payload: Prisma.$OrganizationSsoConfigPayload<ExtArgs>
+        fields: Prisma.OrganizationSsoConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OrganizationSsoConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OrganizationSsoConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.OrganizationSsoConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OrganizationSsoConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>
+          }
+          findMany: {
+            args: Prisma.OrganizationSsoConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>[]
+          }
+          create: {
+            args: Prisma.OrganizationSsoConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>
+          }
+          createMany: {
+            args: Prisma.OrganizationSsoConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OrganizationSsoConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.OrganizationSsoConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>
+          }
+          update: {
+            args: Prisma.OrganizationSsoConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.OrganizationSsoConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OrganizationSsoConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OrganizationSsoConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.OrganizationSsoConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrganizationSsoConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.OrganizationSsoConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOrganizationSsoConfig>
+          }
+          groupBy: {
+            args: Prisma.OrganizationSsoConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OrganizationSsoConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OrganizationSsoConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<OrganizationSsoConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -1004,6 +1106,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     organization?: OrganizationOmit
+    organizationSsoConfig?: OrganizationSsoConfigOmit
     organizationConfig?: OrganizationConfigOmit
     organizationTenant?: OrganizationTenantOmit
   }
@@ -1363,6 +1466,7 @@ export namespace Prisma {
     updatedAt?: boolean
     tenantLinks?: boolean | Organization$tenantLinksArgs<ExtArgs>
     configs?: boolean | Organization$configsArgs<ExtArgs>
+    ssoConfig?: boolean | Organization$ssoConfigArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -1421,6 +1525,7 @@ export namespace Prisma {
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenantLinks?: boolean | Organization$tenantLinksArgs<ExtArgs>
     configs?: boolean | Organization$configsArgs<ExtArgs>
+    ssoConfig?: boolean | Organization$ssoConfigArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1431,6 +1536,7 @@ export namespace Prisma {
     objects: {
       tenantLinks: Prisma.$OrganizationTenantPayload<ExtArgs>[]
       configs: Prisma.$OrganizationConfigPayload<ExtArgs>[]
+      ssoConfig: Prisma.$OrganizationSsoConfigPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1843,6 +1949,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tenantLinks<T extends Organization$tenantLinksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$tenantLinksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationTenantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     configs<T extends Organization$configsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$configsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    ssoConfig<T extends Organization$ssoConfigArgs<ExtArgs> = {}>(args?: Subset<T, Organization$ssoConfigArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2322,6 +2429,25 @@ export namespace Prisma {
   }
 
   /**
+   * Organization.ssoConfig
+   */
+  export type Organization$ssoConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    where?: OrganizationSsoConfigWhereInput
+  }
+
+  /**
    * Organization without action
    */
   export type OrganizationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2337,6 +2463,1273 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrganizationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model OrganizationSsoConfig
+   */
+
+  export type AggregateOrganizationSsoConfig = {
+    _count: OrganizationSsoConfigCountAggregateOutputType | null
+    _min: OrganizationSsoConfigMinAggregateOutputType | null
+    _max: OrganizationSsoConfigMaxAggregateOutputType | null
+  }
+
+  export type OrganizationSsoConfigMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    ssoEnabled: boolean | null
+    ssoProtocol: $Enums.SsoProtocol | null
+    ssoMetadataUrl: string | null
+    ssoEntityId: string | null
+    ssoAcsUrl: string | null
+    ssoCertificate: string | null
+    ssoClientId: string | null
+    ssoClientSecret: string | null
+    ssoIssuer: string | null
+    ssoRedirectUri: string | null
+    ssoLogoutUrl: string | null
+    ssoJwksUrl: string | null
+    metadataFetchedAt: Date | null
+    metadataValidatedAt: Date | null
+    allowSelfSignedCerts: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type OrganizationSsoConfigMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    ssoEnabled: boolean | null
+    ssoProtocol: $Enums.SsoProtocol | null
+    ssoMetadataUrl: string | null
+    ssoEntityId: string | null
+    ssoAcsUrl: string | null
+    ssoCertificate: string | null
+    ssoClientId: string | null
+    ssoClientSecret: string | null
+    ssoIssuer: string | null
+    ssoRedirectUri: string | null
+    ssoLogoutUrl: string | null
+    ssoJwksUrl: string | null
+    metadataFetchedAt: Date | null
+    metadataValidatedAt: Date | null
+    allowSelfSignedCerts: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type OrganizationSsoConfigCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    ssoEnabled: number
+    ssoProtocol: number
+    ssoMetadataUrl: number
+    ssoEntityId: number
+    ssoAcsUrl: number
+    ssoCertificate: number
+    ssoClientId: number
+    ssoClientSecret: number
+    ssoIssuer: number
+    ssoRedirectUri: number
+    ssoLogoutUrl: number
+    ssoJwksUrl: number
+    roleMappings: number
+    previousCertificates: number
+    metadataCache: number
+    metadataFetchedAt: number
+    metadataValidatedAt: number
+    allowSelfSignedCerts: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type OrganizationSsoConfigMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    ssoEnabled?: true
+    ssoProtocol?: true
+    ssoMetadataUrl?: true
+    ssoEntityId?: true
+    ssoAcsUrl?: true
+    ssoCertificate?: true
+    ssoClientId?: true
+    ssoClientSecret?: true
+    ssoIssuer?: true
+    ssoRedirectUri?: true
+    ssoLogoutUrl?: true
+    ssoJwksUrl?: true
+    metadataFetchedAt?: true
+    metadataValidatedAt?: true
+    allowSelfSignedCerts?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type OrganizationSsoConfigMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    ssoEnabled?: true
+    ssoProtocol?: true
+    ssoMetadataUrl?: true
+    ssoEntityId?: true
+    ssoAcsUrl?: true
+    ssoCertificate?: true
+    ssoClientId?: true
+    ssoClientSecret?: true
+    ssoIssuer?: true
+    ssoRedirectUri?: true
+    ssoLogoutUrl?: true
+    ssoJwksUrl?: true
+    metadataFetchedAt?: true
+    metadataValidatedAt?: true
+    allowSelfSignedCerts?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type OrganizationSsoConfigCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    ssoEnabled?: true
+    ssoProtocol?: true
+    ssoMetadataUrl?: true
+    ssoEntityId?: true
+    ssoAcsUrl?: true
+    ssoCertificate?: true
+    ssoClientId?: true
+    ssoClientSecret?: true
+    ssoIssuer?: true
+    ssoRedirectUri?: true
+    ssoLogoutUrl?: true
+    ssoJwksUrl?: true
+    roleMappings?: true
+    previousCertificates?: true
+    metadataCache?: true
+    metadataFetchedAt?: true
+    metadataValidatedAt?: true
+    allowSelfSignedCerts?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type OrganizationSsoConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OrganizationSsoConfig to aggregate.
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrganizationSsoConfigs to fetch.
+     */
+    orderBy?: OrganizationSsoConfigOrderByWithRelationInput | OrganizationSsoConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OrganizationSsoConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrganizationSsoConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrganizationSsoConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OrganizationSsoConfigs
+    **/
+    _count?: true | OrganizationSsoConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OrganizationSsoConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OrganizationSsoConfigMaxAggregateInputType
+  }
+
+  export type GetOrganizationSsoConfigAggregateType<T extends OrganizationSsoConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateOrganizationSsoConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOrganizationSsoConfig[P]>
+      : GetScalarType<T[P], AggregateOrganizationSsoConfig[P]>
+  }
+
+
+
+
+  export type OrganizationSsoConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrganizationSsoConfigWhereInput
+    orderBy?: OrganizationSsoConfigOrderByWithAggregationInput | OrganizationSsoConfigOrderByWithAggregationInput[]
+    by: OrganizationSsoConfigScalarFieldEnum[] | OrganizationSsoConfigScalarFieldEnum
+    having?: OrganizationSsoConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OrganizationSsoConfigCountAggregateInputType | true
+    _min?: OrganizationSsoConfigMinAggregateInputType
+    _max?: OrganizationSsoConfigMaxAggregateInputType
+  }
+
+  export type OrganizationSsoConfigGroupByOutputType = {
+    id: string
+    organizationId: string
+    ssoEnabled: boolean
+    ssoProtocol: $Enums.SsoProtocol | null
+    ssoMetadataUrl: string | null
+    ssoEntityId: string | null
+    ssoAcsUrl: string | null
+    ssoCertificate: string | null
+    ssoClientId: string | null
+    ssoClientSecret: string | null
+    ssoIssuer: string | null
+    ssoRedirectUri: string | null
+    ssoLogoutUrl: string | null
+    ssoJwksUrl: string | null
+    roleMappings: JsonValue | null
+    previousCertificates: JsonValue | null
+    metadataCache: JsonValue | null
+    metadataFetchedAt: Date | null
+    metadataValidatedAt: Date | null
+    allowSelfSignedCerts: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: OrganizationSsoConfigCountAggregateOutputType | null
+    _min: OrganizationSsoConfigMinAggregateOutputType | null
+    _max: OrganizationSsoConfigMaxAggregateOutputType | null
+  }
+
+  type GetOrganizationSsoConfigGroupByPayload<T extends OrganizationSsoConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OrganizationSsoConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OrganizationSsoConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OrganizationSsoConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], OrganizationSsoConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OrganizationSsoConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    ssoEnabled?: boolean
+    ssoProtocol?: boolean
+    ssoMetadataUrl?: boolean
+    ssoEntityId?: boolean
+    ssoAcsUrl?: boolean
+    ssoCertificate?: boolean
+    ssoClientId?: boolean
+    ssoClientSecret?: boolean
+    ssoIssuer?: boolean
+    ssoRedirectUri?: boolean
+    ssoLogoutUrl?: boolean
+    ssoJwksUrl?: boolean
+    roleMappings?: boolean
+    previousCertificates?: boolean
+    metadataCache?: boolean
+    metadataFetchedAt?: boolean
+    metadataValidatedAt?: boolean
+    allowSelfSignedCerts?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["organizationSsoConfig"]>
+
+  export type OrganizationSsoConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    ssoEnabled?: boolean
+    ssoProtocol?: boolean
+    ssoMetadataUrl?: boolean
+    ssoEntityId?: boolean
+    ssoAcsUrl?: boolean
+    ssoCertificate?: boolean
+    ssoClientId?: boolean
+    ssoClientSecret?: boolean
+    ssoIssuer?: boolean
+    ssoRedirectUri?: boolean
+    ssoLogoutUrl?: boolean
+    ssoJwksUrl?: boolean
+    roleMappings?: boolean
+    previousCertificates?: boolean
+    metadataCache?: boolean
+    metadataFetchedAt?: boolean
+    metadataValidatedAt?: boolean
+    allowSelfSignedCerts?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["organizationSsoConfig"]>
+
+  export type OrganizationSsoConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    ssoEnabled?: boolean
+    ssoProtocol?: boolean
+    ssoMetadataUrl?: boolean
+    ssoEntityId?: boolean
+    ssoAcsUrl?: boolean
+    ssoCertificate?: boolean
+    ssoClientId?: boolean
+    ssoClientSecret?: boolean
+    ssoIssuer?: boolean
+    ssoRedirectUri?: boolean
+    ssoLogoutUrl?: boolean
+    ssoJwksUrl?: boolean
+    roleMappings?: boolean
+    previousCertificates?: boolean
+    metadataCache?: boolean
+    metadataFetchedAt?: boolean
+    metadataValidatedAt?: boolean
+    allowSelfSignedCerts?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["organizationSsoConfig"]>
+
+  export type OrganizationSsoConfigSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    ssoEnabled?: boolean
+    ssoProtocol?: boolean
+    ssoMetadataUrl?: boolean
+    ssoEntityId?: boolean
+    ssoAcsUrl?: boolean
+    ssoCertificate?: boolean
+    ssoClientId?: boolean
+    ssoClientSecret?: boolean
+    ssoIssuer?: boolean
+    ssoRedirectUri?: boolean
+    ssoLogoutUrl?: boolean
+    ssoJwksUrl?: boolean
+    roleMappings?: boolean
+    previousCertificates?: boolean
+    metadataCache?: boolean
+    metadataFetchedAt?: boolean
+    metadataValidatedAt?: boolean
+    allowSelfSignedCerts?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type OrganizationSsoConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "ssoEnabled" | "ssoProtocol" | "ssoMetadataUrl" | "ssoEntityId" | "ssoAcsUrl" | "ssoCertificate" | "ssoClientId" | "ssoClientSecret" | "ssoIssuer" | "ssoRedirectUri" | "ssoLogoutUrl" | "ssoJwksUrl" | "roleMappings" | "previousCertificates" | "metadataCache" | "metadataFetchedAt" | "metadataValidatedAt" | "allowSelfSignedCerts" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSsoConfig"]>
+  export type OrganizationSsoConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type OrganizationSsoConfigIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type OrganizationSsoConfigIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+
+  export type $OrganizationSsoConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OrganizationSsoConfig"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      ssoEnabled: boolean
+      ssoProtocol: $Enums.SsoProtocol | null
+      ssoMetadataUrl: string | null
+      ssoEntityId: string | null
+      ssoAcsUrl: string | null
+      ssoCertificate: string | null
+      ssoClientId: string | null
+      ssoClientSecret: string | null
+      ssoIssuer: string | null
+      ssoRedirectUri: string | null
+      ssoLogoutUrl: string | null
+      ssoJwksUrl: string | null
+      roleMappings: Prisma.JsonValue | null
+      previousCertificates: Prisma.JsonValue | null
+      metadataCache: Prisma.JsonValue | null
+      metadataFetchedAt: Date | null
+      metadataValidatedAt: Date | null
+      allowSelfSignedCerts: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["organizationSsoConfig"]>
+    composites: {}
+  }
+
+  type OrganizationSsoConfigGetPayload<S extends boolean | null | undefined | OrganizationSsoConfigDefaultArgs> = $Result.GetResult<Prisma.$OrganizationSsoConfigPayload, S>
+
+  type OrganizationSsoConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OrganizationSsoConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OrganizationSsoConfigCountAggregateInputType | true
+    }
+
+  export interface OrganizationSsoConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OrganizationSsoConfig'], meta: { name: 'OrganizationSsoConfig' } }
+    /**
+     * Find zero or one OrganizationSsoConfig that matches the filter.
+     * @param {OrganizationSsoConfigFindUniqueArgs} args - Arguments to find a OrganizationSsoConfig
+     * @example
+     * // Get one OrganizationSsoConfig
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OrganizationSsoConfigFindUniqueArgs>(args: SelectSubset<T, OrganizationSsoConfigFindUniqueArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OrganizationSsoConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OrganizationSsoConfigFindUniqueOrThrowArgs} args - Arguments to find a OrganizationSsoConfig
+     * @example
+     * // Get one OrganizationSsoConfig
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OrganizationSsoConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, OrganizationSsoConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OrganizationSsoConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigFindFirstArgs} args - Arguments to find a OrganizationSsoConfig
+     * @example
+     * // Get one OrganizationSsoConfig
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OrganizationSsoConfigFindFirstArgs>(args?: SelectSubset<T, OrganizationSsoConfigFindFirstArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OrganizationSsoConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigFindFirstOrThrowArgs} args - Arguments to find a OrganizationSsoConfig
+     * @example
+     * // Get one OrganizationSsoConfig
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OrganizationSsoConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, OrganizationSsoConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OrganizationSsoConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OrganizationSsoConfigs
+     * const organizationSsoConfigs = await prisma.organizationSsoConfig.findMany()
+     * 
+     * // Get first 10 OrganizationSsoConfigs
+     * const organizationSsoConfigs = await prisma.organizationSsoConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const organizationSsoConfigWithIdOnly = await prisma.organizationSsoConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OrganizationSsoConfigFindManyArgs>(args?: SelectSubset<T, OrganizationSsoConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OrganizationSsoConfig.
+     * @param {OrganizationSsoConfigCreateArgs} args - Arguments to create a OrganizationSsoConfig.
+     * @example
+     * // Create one OrganizationSsoConfig
+     * const OrganizationSsoConfig = await prisma.organizationSsoConfig.create({
+     *   data: {
+     *     // ... data to create a OrganizationSsoConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends OrganizationSsoConfigCreateArgs>(args: SelectSubset<T, OrganizationSsoConfigCreateArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OrganizationSsoConfigs.
+     * @param {OrganizationSsoConfigCreateManyArgs} args - Arguments to create many OrganizationSsoConfigs.
+     * @example
+     * // Create many OrganizationSsoConfigs
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OrganizationSsoConfigCreateManyArgs>(args?: SelectSubset<T, OrganizationSsoConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OrganizationSsoConfigs and returns the data saved in the database.
+     * @param {OrganizationSsoConfigCreateManyAndReturnArgs} args - Arguments to create many OrganizationSsoConfigs.
+     * @example
+     * // Create many OrganizationSsoConfigs
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OrganizationSsoConfigs and only return the `id`
+     * const organizationSsoConfigWithIdOnly = await prisma.organizationSsoConfig.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OrganizationSsoConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, OrganizationSsoConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OrganizationSsoConfig.
+     * @param {OrganizationSsoConfigDeleteArgs} args - Arguments to delete one OrganizationSsoConfig.
+     * @example
+     * // Delete one OrganizationSsoConfig
+     * const OrganizationSsoConfig = await prisma.organizationSsoConfig.delete({
+     *   where: {
+     *     // ... filter to delete one OrganizationSsoConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OrganizationSsoConfigDeleteArgs>(args: SelectSubset<T, OrganizationSsoConfigDeleteArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OrganizationSsoConfig.
+     * @param {OrganizationSsoConfigUpdateArgs} args - Arguments to update one OrganizationSsoConfig.
+     * @example
+     * // Update one OrganizationSsoConfig
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OrganizationSsoConfigUpdateArgs>(args: SelectSubset<T, OrganizationSsoConfigUpdateArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OrganizationSsoConfigs.
+     * @param {OrganizationSsoConfigDeleteManyArgs} args - Arguments to filter OrganizationSsoConfigs to delete.
+     * @example
+     * // Delete a few OrganizationSsoConfigs
+     * const { count } = await prisma.organizationSsoConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OrganizationSsoConfigDeleteManyArgs>(args?: SelectSubset<T, OrganizationSsoConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OrganizationSsoConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OrganizationSsoConfigs
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OrganizationSsoConfigUpdateManyArgs>(args: SelectSubset<T, OrganizationSsoConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OrganizationSsoConfigs and returns the data updated in the database.
+     * @param {OrganizationSsoConfigUpdateManyAndReturnArgs} args - Arguments to update many OrganizationSsoConfigs.
+     * @example
+     * // Update many OrganizationSsoConfigs
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OrganizationSsoConfigs and only return the `id`
+     * const organizationSsoConfigWithIdOnly = await prisma.organizationSsoConfig.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OrganizationSsoConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, OrganizationSsoConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OrganizationSsoConfig.
+     * @param {OrganizationSsoConfigUpsertArgs} args - Arguments to update or create a OrganizationSsoConfig.
+     * @example
+     * // Update or create a OrganizationSsoConfig
+     * const organizationSsoConfig = await prisma.organizationSsoConfig.upsert({
+     *   create: {
+     *     // ... data to create a OrganizationSsoConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OrganizationSsoConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OrganizationSsoConfigUpsertArgs>(args: SelectSubset<T, OrganizationSsoConfigUpsertArgs<ExtArgs>>): Prisma__OrganizationSsoConfigClient<$Result.GetResult<Prisma.$OrganizationSsoConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OrganizationSsoConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigCountArgs} args - Arguments to filter OrganizationSsoConfigs to count.
+     * @example
+     * // Count the number of OrganizationSsoConfigs
+     * const count = await prisma.organizationSsoConfig.count({
+     *   where: {
+     *     // ... the filter for the OrganizationSsoConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends OrganizationSsoConfigCountArgs>(
+      args?: Subset<T, OrganizationSsoConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OrganizationSsoConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OrganizationSsoConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OrganizationSsoConfigAggregateArgs>(args: Subset<T, OrganizationSsoConfigAggregateArgs>): Prisma.PrismaPromise<GetOrganizationSsoConfigAggregateType<T>>
+
+    /**
+     * Group by OrganizationSsoConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrganizationSsoConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OrganizationSsoConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OrganizationSsoConfigGroupByArgs['orderBy'] }
+        : { orderBy?: OrganizationSsoConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OrganizationSsoConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOrganizationSsoConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OrganizationSsoConfig model
+   */
+  readonly fields: OrganizationSsoConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OrganizationSsoConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OrganizationSsoConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OrganizationSsoConfig model
+   */
+  interface OrganizationSsoConfigFieldRefs {
+    readonly id: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly organizationId: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoEnabled: FieldRef<"OrganizationSsoConfig", 'Boolean'>
+    readonly ssoProtocol: FieldRef<"OrganizationSsoConfig", 'SsoProtocol'>
+    readonly ssoMetadataUrl: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoEntityId: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoAcsUrl: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoCertificate: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoClientId: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoClientSecret: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoIssuer: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoRedirectUri: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoLogoutUrl: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly ssoJwksUrl: FieldRef<"OrganizationSsoConfig", 'String'>
+    readonly roleMappings: FieldRef<"OrganizationSsoConfig", 'Json'>
+    readonly previousCertificates: FieldRef<"OrganizationSsoConfig", 'Json'>
+    readonly metadataCache: FieldRef<"OrganizationSsoConfig", 'Json'>
+    readonly metadataFetchedAt: FieldRef<"OrganizationSsoConfig", 'DateTime'>
+    readonly metadataValidatedAt: FieldRef<"OrganizationSsoConfig", 'DateTime'>
+    readonly allowSelfSignedCerts: FieldRef<"OrganizationSsoConfig", 'Boolean'>
+    readonly createdAt: FieldRef<"OrganizationSsoConfig", 'DateTime'>
+    readonly updatedAt: FieldRef<"OrganizationSsoConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OrganizationSsoConfig findUnique
+   */
+  export type OrganizationSsoConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which OrganizationSsoConfig to fetch.
+     */
+    where: OrganizationSsoConfigWhereUniqueInput
+  }
+
+  /**
+   * OrganizationSsoConfig findUniqueOrThrow
+   */
+  export type OrganizationSsoConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which OrganizationSsoConfig to fetch.
+     */
+    where: OrganizationSsoConfigWhereUniqueInput
+  }
+
+  /**
+   * OrganizationSsoConfig findFirst
+   */
+  export type OrganizationSsoConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which OrganizationSsoConfig to fetch.
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrganizationSsoConfigs to fetch.
+     */
+    orderBy?: OrganizationSsoConfigOrderByWithRelationInput | OrganizationSsoConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OrganizationSsoConfigs.
+     */
+    cursor?: OrganizationSsoConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrganizationSsoConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrganizationSsoConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrganizationSsoConfigs.
+     */
+    distinct?: OrganizationSsoConfigScalarFieldEnum | OrganizationSsoConfigScalarFieldEnum[]
+  }
+
+  /**
+   * OrganizationSsoConfig findFirstOrThrow
+   */
+  export type OrganizationSsoConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which OrganizationSsoConfig to fetch.
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrganizationSsoConfigs to fetch.
+     */
+    orderBy?: OrganizationSsoConfigOrderByWithRelationInput | OrganizationSsoConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OrganizationSsoConfigs.
+     */
+    cursor?: OrganizationSsoConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrganizationSsoConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrganizationSsoConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrganizationSsoConfigs.
+     */
+    distinct?: OrganizationSsoConfigScalarFieldEnum | OrganizationSsoConfigScalarFieldEnum[]
+  }
+
+  /**
+   * OrganizationSsoConfig findMany
+   */
+  export type OrganizationSsoConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which OrganizationSsoConfigs to fetch.
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrganizationSsoConfigs to fetch.
+     */
+    orderBy?: OrganizationSsoConfigOrderByWithRelationInput | OrganizationSsoConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OrganizationSsoConfigs.
+     */
+    cursor?: OrganizationSsoConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrganizationSsoConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrganizationSsoConfigs.
+     */
+    skip?: number
+    distinct?: OrganizationSsoConfigScalarFieldEnum | OrganizationSsoConfigScalarFieldEnum[]
+  }
+
+  /**
+   * OrganizationSsoConfig create
+   */
+  export type OrganizationSsoConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OrganizationSsoConfig.
+     */
+    data: XOR<OrganizationSsoConfigCreateInput, OrganizationSsoConfigUncheckedCreateInput>
+  }
+
+  /**
+   * OrganizationSsoConfig createMany
+   */
+  export type OrganizationSsoConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OrganizationSsoConfigs.
+     */
+    data: OrganizationSsoConfigCreateManyInput | OrganizationSsoConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OrganizationSsoConfig createManyAndReturn
+   */
+  export type OrganizationSsoConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many OrganizationSsoConfigs.
+     */
+    data: OrganizationSsoConfigCreateManyInput | OrganizationSsoConfigCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OrganizationSsoConfig update
+   */
+  export type OrganizationSsoConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OrganizationSsoConfig.
+     */
+    data: XOR<OrganizationSsoConfigUpdateInput, OrganizationSsoConfigUncheckedUpdateInput>
+    /**
+     * Choose, which OrganizationSsoConfig to update.
+     */
+    where: OrganizationSsoConfigWhereUniqueInput
+  }
+
+  /**
+   * OrganizationSsoConfig updateMany
+   */
+  export type OrganizationSsoConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OrganizationSsoConfigs.
+     */
+    data: XOR<OrganizationSsoConfigUpdateManyMutationInput, OrganizationSsoConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which OrganizationSsoConfigs to update
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * Limit how many OrganizationSsoConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OrganizationSsoConfig updateManyAndReturn
+   */
+  export type OrganizationSsoConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update OrganizationSsoConfigs.
+     */
+    data: XOR<OrganizationSsoConfigUpdateManyMutationInput, OrganizationSsoConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which OrganizationSsoConfigs to update
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * Limit how many OrganizationSsoConfigs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OrganizationSsoConfig upsert
+   */
+  export type OrganizationSsoConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OrganizationSsoConfig to update in case it exists.
+     */
+    where: OrganizationSsoConfigWhereUniqueInput
+    /**
+     * In case the OrganizationSsoConfig found by the `where` argument doesn't exist, create a new OrganizationSsoConfig with this data.
+     */
+    create: XOR<OrganizationSsoConfigCreateInput, OrganizationSsoConfigUncheckedCreateInput>
+    /**
+     * In case the OrganizationSsoConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OrganizationSsoConfigUpdateInput, OrganizationSsoConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * OrganizationSsoConfig delete
+   */
+  export type OrganizationSsoConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
+    /**
+     * Filter which OrganizationSsoConfig to delete.
+     */
+    where: OrganizationSsoConfigWhereUniqueInput
+  }
+
+  /**
+   * OrganizationSsoConfig deleteMany
+   */
+  export type OrganizationSsoConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OrganizationSsoConfigs to delete
+     */
+    where?: OrganizationSsoConfigWhereInput
+    /**
+     * Limit how many OrganizationSsoConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OrganizationSsoConfig without action
+   */
+  export type OrganizationSsoConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationSsoConfig
+     */
+    select?: OrganizationSsoConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrganizationSsoConfig
+     */
+    omit?: OrganizationSsoConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrganizationSsoConfigInclude<ExtArgs> | null
   }
 
 
@@ -4499,6 +5892,34 @@ export namespace Prisma {
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
+  export const OrganizationSsoConfigScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    ssoEnabled: 'ssoEnabled',
+    ssoProtocol: 'ssoProtocol',
+    ssoMetadataUrl: 'ssoMetadataUrl',
+    ssoEntityId: 'ssoEntityId',
+    ssoAcsUrl: 'ssoAcsUrl',
+    ssoCertificate: 'ssoCertificate',
+    ssoClientId: 'ssoClientId',
+    ssoClientSecret: 'ssoClientSecret',
+    ssoIssuer: 'ssoIssuer',
+    ssoRedirectUri: 'ssoRedirectUri',
+    ssoLogoutUrl: 'ssoLogoutUrl',
+    ssoJwksUrl: 'ssoJwksUrl',
+    roleMappings: 'roleMappings',
+    previousCertificates: 'previousCertificates',
+    metadataCache: 'metadataCache',
+    metadataFetchedAt: 'metadataFetchedAt',
+    metadataValidatedAt: 'metadataValidatedAt',
+    allowSelfSignedCerts: 'allowSelfSignedCerts',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type OrganizationSsoConfigScalarFieldEnum = (typeof OrganizationSsoConfigScalarFieldEnum)[keyof typeof OrganizationSsoConfigScalarFieldEnum]
+
+
   export const OrganizationConfigScalarFieldEnum: {
     id: 'id',
     organizationId: 'organizationId',
@@ -4528,6 +5949,14 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const JsonNullValueInput: {
@@ -4638,6 +6067,27 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'SsoProtocol'
+   */
+  export type EnumSsoProtocolFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SsoProtocol'>
+    
+
+
+  /**
+   * Reference to a field of type 'SsoProtocol[]'
+   */
+  export type ListEnumSsoProtocolFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SsoProtocol[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -4688,6 +6138,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
     tenantLinks?: OrganizationTenantListRelationFilter
     configs?: OrganizationConfigListRelationFilter
+    ssoConfig?: XOR<OrganizationSsoConfigNullableScalarRelationFilter, OrganizationSsoConfigWhereInput> | null
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -4707,6 +6158,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     tenantLinks?: OrganizationTenantOrderByRelationAggregateInput
     configs?: OrganizationConfigOrderByRelationAggregateInput
+    ssoConfig?: OrganizationSsoConfigOrderByWithRelationInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -4729,6 +6181,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
     tenantLinks?: OrganizationTenantListRelationFilter
     configs?: OrganizationConfigListRelationFilter
+    ssoConfig?: XOR<OrganizationSsoConfigNullableScalarRelationFilter, OrganizationSsoConfigWhereInput> | null
   }, "id" | "code" | "stripeCustomerId" | "stripeSubscriptionId">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -4769,6 +6222,146 @@ export namespace Prisma {
     status?: EnumOrganizationStatusWithAggregatesFilter<"Organization"> | $Enums.OrganizationStatus
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
+  }
+
+  export type OrganizationSsoConfigWhereInput = {
+    AND?: OrganizationSsoConfigWhereInput | OrganizationSsoConfigWhereInput[]
+    OR?: OrganizationSsoConfigWhereInput[]
+    NOT?: OrganizationSsoConfigWhereInput | OrganizationSsoConfigWhereInput[]
+    id?: StringFilter<"OrganizationSsoConfig"> | string
+    organizationId?: StringFilter<"OrganizationSsoConfig"> | string
+    ssoEnabled?: BoolFilter<"OrganizationSsoConfig"> | boolean
+    ssoProtocol?: EnumSsoProtocolNullableFilter<"OrganizationSsoConfig"> | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoEntityId?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoAcsUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoCertificate?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoClientId?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoClientSecret?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoIssuer?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoRedirectUri?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoLogoutUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoJwksUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    roleMappings?: JsonNullableFilter<"OrganizationSsoConfig">
+    previousCertificates?: JsonNullableFilter<"OrganizationSsoConfig">
+    metadataCache?: JsonNullableFilter<"OrganizationSsoConfig">
+    metadataFetchedAt?: DateTimeNullableFilter<"OrganizationSsoConfig"> | Date | string | null
+    metadataValidatedAt?: DateTimeNullableFilter<"OrganizationSsoConfig"> | Date | string | null
+    allowSelfSignedCerts?: BoolFilter<"OrganizationSsoConfig"> | boolean
+    createdAt?: DateTimeFilter<"OrganizationSsoConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"OrganizationSsoConfig"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }
+
+  export type OrganizationSsoConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    ssoEnabled?: SortOrder
+    ssoProtocol?: SortOrderInput | SortOrder
+    ssoMetadataUrl?: SortOrderInput | SortOrder
+    ssoEntityId?: SortOrderInput | SortOrder
+    ssoAcsUrl?: SortOrderInput | SortOrder
+    ssoCertificate?: SortOrderInput | SortOrder
+    ssoClientId?: SortOrderInput | SortOrder
+    ssoClientSecret?: SortOrderInput | SortOrder
+    ssoIssuer?: SortOrderInput | SortOrder
+    ssoRedirectUri?: SortOrderInput | SortOrder
+    ssoLogoutUrl?: SortOrderInput | SortOrder
+    ssoJwksUrl?: SortOrderInput | SortOrder
+    roleMappings?: SortOrderInput | SortOrder
+    previousCertificates?: SortOrderInput | SortOrder
+    metadataCache?: SortOrderInput | SortOrder
+    metadataFetchedAt?: SortOrderInput | SortOrder
+    metadataValidatedAt?: SortOrderInput | SortOrder
+    allowSelfSignedCerts?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+  }
+
+  export type OrganizationSsoConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    organizationId?: string
+    AND?: OrganizationSsoConfigWhereInput | OrganizationSsoConfigWhereInput[]
+    OR?: OrganizationSsoConfigWhereInput[]
+    NOT?: OrganizationSsoConfigWhereInput | OrganizationSsoConfigWhereInput[]
+    ssoEnabled?: BoolFilter<"OrganizationSsoConfig"> | boolean
+    ssoProtocol?: EnumSsoProtocolNullableFilter<"OrganizationSsoConfig"> | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoEntityId?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoAcsUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoCertificate?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoClientId?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoClientSecret?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoIssuer?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoRedirectUri?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoLogoutUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    ssoJwksUrl?: StringNullableFilter<"OrganizationSsoConfig"> | string | null
+    roleMappings?: JsonNullableFilter<"OrganizationSsoConfig">
+    previousCertificates?: JsonNullableFilter<"OrganizationSsoConfig">
+    metadataCache?: JsonNullableFilter<"OrganizationSsoConfig">
+    metadataFetchedAt?: DateTimeNullableFilter<"OrganizationSsoConfig"> | Date | string | null
+    metadataValidatedAt?: DateTimeNullableFilter<"OrganizationSsoConfig"> | Date | string | null
+    allowSelfSignedCerts?: BoolFilter<"OrganizationSsoConfig"> | boolean
+    createdAt?: DateTimeFilter<"OrganizationSsoConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"OrganizationSsoConfig"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }, "id" | "organizationId">
+
+  export type OrganizationSsoConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    ssoEnabled?: SortOrder
+    ssoProtocol?: SortOrderInput | SortOrder
+    ssoMetadataUrl?: SortOrderInput | SortOrder
+    ssoEntityId?: SortOrderInput | SortOrder
+    ssoAcsUrl?: SortOrderInput | SortOrder
+    ssoCertificate?: SortOrderInput | SortOrder
+    ssoClientId?: SortOrderInput | SortOrder
+    ssoClientSecret?: SortOrderInput | SortOrder
+    ssoIssuer?: SortOrderInput | SortOrder
+    ssoRedirectUri?: SortOrderInput | SortOrder
+    ssoLogoutUrl?: SortOrderInput | SortOrder
+    ssoJwksUrl?: SortOrderInput | SortOrder
+    roleMappings?: SortOrderInput | SortOrder
+    previousCertificates?: SortOrderInput | SortOrder
+    metadataCache?: SortOrderInput | SortOrder
+    metadataFetchedAt?: SortOrderInput | SortOrder
+    metadataValidatedAt?: SortOrderInput | SortOrder
+    allowSelfSignedCerts?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: OrganizationSsoConfigCountOrderByAggregateInput
+    _max?: OrganizationSsoConfigMaxOrderByAggregateInput
+    _min?: OrganizationSsoConfigMinOrderByAggregateInput
+  }
+
+  export type OrganizationSsoConfigScalarWhereWithAggregatesInput = {
+    AND?: OrganizationSsoConfigScalarWhereWithAggregatesInput | OrganizationSsoConfigScalarWhereWithAggregatesInput[]
+    OR?: OrganizationSsoConfigScalarWhereWithAggregatesInput[]
+    NOT?: OrganizationSsoConfigScalarWhereWithAggregatesInput | OrganizationSsoConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OrganizationSsoConfig"> | string
+    organizationId?: StringWithAggregatesFilter<"OrganizationSsoConfig"> | string
+    ssoEnabled?: BoolWithAggregatesFilter<"OrganizationSsoConfig"> | boolean
+    ssoProtocol?: EnumSsoProtocolNullableWithAggregatesFilter<"OrganizationSsoConfig"> | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoEntityId?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoAcsUrl?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoCertificate?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoClientId?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoClientSecret?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoIssuer?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoRedirectUri?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoLogoutUrl?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    ssoJwksUrl?: StringNullableWithAggregatesFilter<"OrganizationSsoConfig"> | string | null
+    roleMappings?: JsonNullableWithAggregatesFilter<"OrganizationSsoConfig">
+    previousCertificates?: JsonNullableWithAggregatesFilter<"OrganizationSsoConfig">
+    metadataCache?: JsonNullableWithAggregatesFilter<"OrganizationSsoConfig">
+    metadataFetchedAt?: DateTimeNullableWithAggregatesFilter<"OrganizationSsoConfig"> | Date | string | null
+    metadataValidatedAt?: DateTimeNullableWithAggregatesFilter<"OrganizationSsoConfig"> | Date | string | null
+    allowSelfSignedCerts?: BoolWithAggregatesFilter<"OrganizationSsoConfig"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"OrganizationSsoConfig"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"OrganizationSsoConfig"> | Date | string
   }
 
   export type OrganizationConfigWhereInput = {
@@ -4905,6 +6498,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenantLinks?: OrganizationTenantCreateNestedManyWithoutOrganizationInput
     configs?: OrganizationConfigCreateNestedManyWithoutOrganizationInput
+    ssoConfig?: OrganizationSsoConfigCreateNestedOneWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -4924,6 +6518,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenantLinks?: OrganizationTenantUncheckedCreateNestedManyWithoutOrganizationInput
     configs?: OrganizationConfigUncheckedCreateNestedManyWithoutOrganizationInput
+    ssoConfig?: OrganizationSsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -4943,6 +6538,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantLinks?: OrganizationTenantUpdateManyWithoutOrganizationNestedInput
     configs?: OrganizationConfigUpdateManyWithoutOrganizationNestedInput
+    ssoConfig?: OrganizationSsoConfigUpdateOneWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -4962,6 +6558,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantLinks?: OrganizationTenantUncheckedUpdateManyWithoutOrganizationNestedInput
     configs?: OrganizationConfigUncheckedUpdateManyWithoutOrganizationNestedInput
+    ssoConfig?: OrganizationSsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -5011,6 +6608,180 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     subscriptionStatus?: NullableEnumOrganizationSubscriptionStatusFieldUpdateOperationsInput | $Enums.OrganizationSubscriptionStatus | null
     status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrganizationSsoConfigCreateInput = {
+    id?: string
+    ssoEnabled?: boolean
+    ssoProtocol?: $Enums.SsoProtocol | null
+    ssoMetadataUrl?: string | null
+    ssoEntityId?: string | null
+    ssoAcsUrl?: string | null
+    ssoCertificate?: string | null
+    ssoClientId?: string | null
+    ssoClientSecret?: string | null
+    ssoIssuer?: string | null
+    ssoRedirectUri?: string | null
+    ssoLogoutUrl?: string | null
+    ssoJwksUrl?: string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: Date | string | null
+    metadataValidatedAt?: Date | string | null
+    allowSelfSignedCerts?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutSsoConfigInput
+  }
+
+  export type OrganizationSsoConfigUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    ssoEnabled?: boolean
+    ssoProtocol?: $Enums.SsoProtocol | null
+    ssoMetadataUrl?: string | null
+    ssoEntityId?: string | null
+    ssoAcsUrl?: string | null
+    ssoCertificate?: string | null
+    ssoClientId?: string | null
+    ssoClientSecret?: string | null
+    ssoIssuer?: string | null
+    ssoRedirectUri?: string | null
+    ssoLogoutUrl?: string | null
+    ssoJwksUrl?: string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: Date | string | null
+    metadataValidatedAt?: Date | string | null
+    allowSelfSignedCerts?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrganizationSsoConfigUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ssoEnabled?: BoolFieldUpdateOperationsInput | boolean
+    ssoProtocol?: NullableEnumSsoProtocolFieldUpdateOperationsInput | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoEntityId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoAcsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoCertificate?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoIssuer?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoRedirectUri?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoLogoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoJwksUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadataValidatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowSelfSignedCerts?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutSsoConfigNestedInput
+  }
+
+  export type OrganizationSsoConfigUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    ssoEnabled?: BoolFieldUpdateOperationsInput | boolean
+    ssoProtocol?: NullableEnumSsoProtocolFieldUpdateOperationsInput | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoEntityId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoAcsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoCertificate?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoIssuer?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoRedirectUri?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoLogoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoJwksUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadataValidatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowSelfSignedCerts?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrganizationSsoConfigCreateManyInput = {
+    id?: string
+    organizationId: string
+    ssoEnabled?: boolean
+    ssoProtocol?: $Enums.SsoProtocol | null
+    ssoMetadataUrl?: string | null
+    ssoEntityId?: string | null
+    ssoAcsUrl?: string | null
+    ssoCertificate?: string | null
+    ssoClientId?: string | null
+    ssoClientSecret?: string | null
+    ssoIssuer?: string | null
+    ssoRedirectUri?: string | null
+    ssoLogoutUrl?: string | null
+    ssoJwksUrl?: string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: Date | string | null
+    metadataValidatedAt?: Date | string | null
+    allowSelfSignedCerts?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrganizationSsoConfigUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ssoEnabled?: BoolFieldUpdateOperationsInput | boolean
+    ssoProtocol?: NullableEnumSsoProtocolFieldUpdateOperationsInput | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoEntityId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoAcsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoCertificate?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoIssuer?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoRedirectUri?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoLogoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoJwksUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadataValidatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowSelfSignedCerts?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrganizationSsoConfigUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    ssoEnabled?: BoolFieldUpdateOperationsInput | boolean
+    ssoProtocol?: NullableEnumSsoProtocolFieldUpdateOperationsInput | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoEntityId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoAcsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoCertificate?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoIssuer?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoRedirectUri?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoLogoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoJwksUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadataValidatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowSelfSignedCerts?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5206,6 +6977,11 @@ export namespace Prisma {
     none?: OrganizationConfigWhereInput
   }
 
+  export type OrganizationSsoConfigNullableScalarRelationFilter = {
+    is?: OrganizationSsoConfigWhereInput | null
+    isNot?: OrganizationSsoConfigWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -5349,6 +7125,184 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type EnumSsoProtocolNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SsoProtocol | EnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSsoProtocolNullableFilter<$PrismaModel> | $Enums.SsoProtocol | null
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type OrganizationScalarRelationFilter = {
+    is?: OrganizationWhereInput
+    isNot?: OrganizationWhereInput
+  }
+
+  export type OrganizationSsoConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    ssoEnabled?: SortOrder
+    ssoProtocol?: SortOrder
+    ssoMetadataUrl?: SortOrder
+    ssoEntityId?: SortOrder
+    ssoAcsUrl?: SortOrder
+    ssoCertificate?: SortOrder
+    ssoClientId?: SortOrder
+    ssoClientSecret?: SortOrder
+    ssoIssuer?: SortOrder
+    ssoRedirectUri?: SortOrder
+    ssoLogoutUrl?: SortOrder
+    ssoJwksUrl?: SortOrder
+    roleMappings?: SortOrder
+    previousCertificates?: SortOrder
+    metadataCache?: SortOrder
+    metadataFetchedAt?: SortOrder
+    metadataValidatedAt?: SortOrder
+    allowSelfSignedCerts?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OrganizationSsoConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    ssoEnabled?: SortOrder
+    ssoProtocol?: SortOrder
+    ssoMetadataUrl?: SortOrder
+    ssoEntityId?: SortOrder
+    ssoAcsUrl?: SortOrder
+    ssoCertificate?: SortOrder
+    ssoClientId?: SortOrder
+    ssoClientSecret?: SortOrder
+    ssoIssuer?: SortOrder
+    ssoRedirectUri?: SortOrder
+    ssoLogoutUrl?: SortOrder
+    ssoJwksUrl?: SortOrder
+    metadataFetchedAt?: SortOrder
+    metadataValidatedAt?: SortOrder
+    allowSelfSignedCerts?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OrganizationSsoConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    ssoEnabled?: SortOrder
+    ssoProtocol?: SortOrder
+    ssoMetadataUrl?: SortOrder
+    ssoEntityId?: SortOrder
+    ssoAcsUrl?: SortOrder
+    ssoCertificate?: SortOrder
+    ssoClientId?: SortOrder
+    ssoClientSecret?: SortOrder
+    ssoIssuer?: SortOrder
+    ssoRedirectUri?: SortOrder
+    ssoLogoutUrl?: SortOrder
+    ssoJwksUrl?: SortOrder
+    metadataFetchedAt?: SortOrder
+    metadataValidatedAt?: SortOrder
+    allowSelfSignedCerts?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EnumSsoProtocolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SsoProtocol | EnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSsoProtocolNullableWithAggregatesFilter<$PrismaModel> | $Enums.SsoProtocol | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSsoProtocolNullableFilter<$PrismaModel>
+    _max?: NestedEnumSsoProtocolNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
   export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -5371,11 +7325,6 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type OrganizationScalarRelationFilter = {
-    is?: OrganizationWhereInput
-    isNot?: OrganizationWhereInput
   }
 
   export type OrganizationConfigOrganizationIdNamespaceCompoundUniqueInput = {
@@ -5477,6 +7426,12 @@ export namespace Prisma {
     connect?: OrganizationConfigWhereUniqueInput | OrganizationConfigWhereUniqueInput[]
   }
 
+  export type OrganizationSsoConfigCreateNestedOneWithoutOrganizationInput = {
+    create?: XOR<OrganizationSsoConfigCreateWithoutOrganizationInput, OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: OrganizationSsoConfigCreateOrConnectWithoutOrganizationInput
+    connect?: OrganizationSsoConfigWhereUniqueInput
+  }
+
   export type OrganizationTenantUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<OrganizationTenantCreateWithoutOrganizationInput, OrganizationTenantUncheckedCreateWithoutOrganizationInput> | OrganizationTenantCreateWithoutOrganizationInput[] | OrganizationTenantUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationTenantCreateOrConnectWithoutOrganizationInput | OrganizationTenantCreateOrConnectWithoutOrganizationInput[]
@@ -5489,6 +7444,12 @@ export namespace Prisma {
     connectOrCreate?: OrganizationConfigCreateOrConnectWithoutOrganizationInput | OrganizationConfigCreateOrConnectWithoutOrganizationInput[]
     createMany?: OrganizationConfigCreateManyOrganizationInputEnvelope
     connect?: OrganizationConfigWhereUniqueInput | OrganizationConfigWhereUniqueInput[]
+  }
+
+  export type OrganizationSsoConfigUncheckedCreateNestedOneWithoutOrganizationInput = {
+    create?: XOR<OrganizationSsoConfigCreateWithoutOrganizationInput, OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: OrganizationSsoConfigCreateOrConnectWithoutOrganizationInput
+    connect?: OrganizationSsoConfigWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -5543,6 +7504,16 @@ export namespace Prisma {
     deleteMany?: OrganizationConfigScalarWhereInput | OrganizationConfigScalarWhereInput[]
   }
 
+  export type OrganizationSsoConfigUpdateOneWithoutOrganizationNestedInput = {
+    create?: XOR<OrganizationSsoConfigCreateWithoutOrganizationInput, OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: OrganizationSsoConfigCreateOrConnectWithoutOrganizationInput
+    upsert?: OrganizationSsoConfigUpsertWithoutOrganizationInput
+    disconnect?: OrganizationSsoConfigWhereInput | boolean
+    delete?: OrganizationSsoConfigWhereInput | boolean
+    connect?: OrganizationSsoConfigWhereUniqueInput
+    update?: XOR<XOR<OrganizationSsoConfigUpdateToOneWithWhereWithoutOrganizationInput, OrganizationSsoConfigUpdateWithoutOrganizationInput>, OrganizationSsoConfigUncheckedUpdateWithoutOrganizationInput>
+  }
+
   export type OrganizationTenantUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<OrganizationTenantCreateWithoutOrganizationInput, OrganizationTenantUncheckedCreateWithoutOrganizationInput> | OrganizationTenantCreateWithoutOrganizationInput[] | OrganizationTenantUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationTenantCreateOrConnectWithoutOrganizationInput | OrganizationTenantCreateOrConnectWithoutOrganizationInput[]
@@ -5569,6 +7540,42 @@ export namespace Prisma {
     update?: OrganizationConfigUpdateWithWhereUniqueWithoutOrganizationInput | OrganizationConfigUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: OrganizationConfigUpdateManyWithWhereWithoutOrganizationInput | OrganizationConfigUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: OrganizationConfigScalarWhereInput | OrganizationConfigScalarWhereInput[]
+  }
+
+  export type OrganizationSsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput = {
+    create?: XOR<OrganizationSsoConfigCreateWithoutOrganizationInput, OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: OrganizationSsoConfigCreateOrConnectWithoutOrganizationInput
+    upsert?: OrganizationSsoConfigUpsertWithoutOrganizationInput
+    disconnect?: OrganizationSsoConfigWhereInput | boolean
+    delete?: OrganizationSsoConfigWhereInput | boolean
+    connect?: OrganizationSsoConfigWhereUniqueInput
+    update?: XOR<XOR<OrganizationSsoConfigUpdateToOneWithWhereWithoutOrganizationInput, OrganizationSsoConfigUpdateWithoutOrganizationInput>, OrganizationSsoConfigUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type OrganizationCreateNestedOneWithoutSsoConfigInput = {
+    create?: XOR<OrganizationCreateWithoutSsoConfigInput, OrganizationUncheckedCreateWithoutSsoConfigInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutSsoConfigInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type NullableEnumSsoProtocolFieldUpdateOperationsInput = {
+    set?: $Enums.SsoProtocol | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutSsoConfigNestedInput = {
+    create?: XOR<OrganizationCreateWithoutSsoConfigInput, OrganizationUncheckedCreateWithoutSsoConfigInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutSsoConfigInput
+    upsert?: OrganizationUpsertWithoutSsoConfigInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutSsoConfigInput, OrganizationUpdateWithoutSsoConfigInput>, OrganizationUncheckedUpdateWithoutSsoConfigInput>
   }
 
   export type OrganizationCreateNestedOneWithoutConfigsInput = {
@@ -5758,6 +7765,84 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumSsoProtocolNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SsoProtocol | EnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSsoProtocolNullableFilter<$PrismaModel> | $Enums.SsoProtocol | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSsoProtocolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SsoProtocol | EnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SsoProtocol[] | ListEnumSsoProtocolFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSsoProtocolNullableWithAggregatesFilter<$PrismaModel> | $Enums.SsoProtocol | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSsoProtocolNullableFilter<$PrismaModel>
+    _max?: NestedEnumSsoProtocolNullableFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -5832,6 +7917,59 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type OrganizationSsoConfigCreateWithoutOrganizationInput = {
+    id?: string
+    ssoEnabled?: boolean
+    ssoProtocol?: $Enums.SsoProtocol | null
+    ssoMetadataUrl?: string | null
+    ssoEntityId?: string | null
+    ssoAcsUrl?: string | null
+    ssoCertificate?: string | null
+    ssoClientId?: string | null
+    ssoClientSecret?: string | null
+    ssoIssuer?: string | null
+    ssoRedirectUri?: string | null
+    ssoLogoutUrl?: string | null
+    ssoJwksUrl?: string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: Date | string | null
+    metadataValidatedAt?: Date | string | null
+    allowSelfSignedCerts?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    ssoEnabled?: boolean
+    ssoProtocol?: $Enums.SsoProtocol | null
+    ssoMetadataUrl?: string | null
+    ssoEntityId?: string | null
+    ssoAcsUrl?: string | null
+    ssoCertificate?: string | null
+    ssoClientId?: string | null
+    ssoClientSecret?: string | null
+    ssoIssuer?: string | null
+    ssoRedirectUri?: string | null
+    ssoLogoutUrl?: string | null
+    ssoJwksUrl?: string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: Date | string | null
+    metadataValidatedAt?: Date | string | null
+    allowSelfSignedCerts?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrganizationSsoConfigCreateOrConnectWithoutOrganizationInput = {
+    where: OrganizationSsoConfigWhereUniqueInput
+    create: XOR<OrganizationSsoConfigCreateWithoutOrganizationInput, OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput>
+  }
+
   export type OrganizationTenantUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: OrganizationTenantWhereUniqueInput
     update: XOR<OrganizationTenantUpdateWithoutOrganizationInput, OrganizationTenantUncheckedUpdateWithoutOrganizationInput>
@@ -5887,6 +8025,157 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"OrganizationConfig"> | Date | string
   }
 
+  export type OrganizationSsoConfigUpsertWithoutOrganizationInput = {
+    update: XOR<OrganizationSsoConfigUpdateWithoutOrganizationInput, OrganizationSsoConfigUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<OrganizationSsoConfigCreateWithoutOrganizationInput, OrganizationSsoConfigUncheckedCreateWithoutOrganizationInput>
+    where?: OrganizationSsoConfigWhereInput
+  }
+
+  export type OrganizationSsoConfigUpdateToOneWithWhereWithoutOrganizationInput = {
+    where?: OrganizationSsoConfigWhereInput
+    data: XOR<OrganizationSsoConfigUpdateWithoutOrganizationInput, OrganizationSsoConfigUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type OrganizationSsoConfigUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ssoEnabled?: BoolFieldUpdateOperationsInput | boolean
+    ssoProtocol?: NullableEnumSsoProtocolFieldUpdateOperationsInput | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoEntityId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoAcsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoCertificate?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoIssuer?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoRedirectUri?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoLogoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoJwksUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadataValidatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowSelfSignedCerts?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrganizationSsoConfigUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ssoEnabled?: BoolFieldUpdateOperationsInput | boolean
+    ssoProtocol?: NullableEnumSsoProtocolFieldUpdateOperationsInput | $Enums.SsoProtocol | null
+    ssoMetadataUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoEntityId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoAcsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoCertificate?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientId?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoClientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoIssuer?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoRedirectUri?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoLogoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoJwksUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleMappings?: NullableJsonNullValueInput | InputJsonValue
+    previousCertificates?: NullableJsonNullValueInput | InputJsonValue
+    metadataCache?: NullableJsonNullValueInput | InputJsonValue
+    metadataFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadataValidatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowSelfSignedCerts?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrganizationCreateWithoutSsoConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    primaryContactName: string
+    primaryContactEmail: string
+    primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    subscriptionStatus?: $Enums.OrganizationSubscriptionStatus | null
+    status?: $Enums.OrganizationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantLinks?: OrganizationTenantCreateNestedManyWithoutOrganizationInput
+    configs?: OrganizationConfigCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutSsoConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    primaryContactName: string
+    primaryContactEmail: string
+    primaryContactPhone?: string | null
+    billingModel?: $Enums.BillingModel
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    subscriptionStatus?: $Enums.OrganizationSubscriptionStatus | null
+    status?: $Enums.OrganizationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantLinks?: OrganizationTenantUncheckedCreateNestedManyWithoutOrganizationInput
+    configs?: OrganizationConfigUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutSsoConfigInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutSsoConfigInput, OrganizationUncheckedCreateWithoutSsoConfigInput>
+  }
+
+  export type OrganizationUpsertWithoutSsoConfigInput = {
+    update: XOR<OrganizationUpdateWithoutSsoConfigInput, OrganizationUncheckedUpdateWithoutSsoConfigInput>
+    create: XOR<OrganizationCreateWithoutSsoConfigInput, OrganizationUncheckedCreateWithoutSsoConfigInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutSsoConfigInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutSsoConfigInput, OrganizationUncheckedUpdateWithoutSsoConfigInput>
+  }
+
+  export type OrganizationUpdateWithoutSsoConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryContactName?: StringFieldUpdateOperationsInput | string
+    primaryContactEmail?: StringFieldUpdateOperationsInput | string
+    primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    subscriptionStatus?: NullableEnumOrganizationSubscriptionStatusFieldUpdateOperationsInput | $Enums.OrganizationSubscriptionStatus | null
+    status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantLinks?: OrganizationTenantUpdateManyWithoutOrganizationNestedInput
+    configs?: OrganizationConfigUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutSsoConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryContactName?: StringFieldUpdateOperationsInput | string
+    primaryContactEmail?: StringFieldUpdateOperationsInput | string
+    primaryContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    billingModel?: EnumBillingModelFieldUpdateOperationsInput | $Enums.BillingModel
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    subscriptionStatus?: NullableEnumOrganizationSubscriptionStatusFieldUpdateOperationsInput | $Enums.OrganizationSubscriptionStatus | null
+    status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantLinks?: OrganizationTenantUncheckedUpdateManyWithoutOrganizationNestedInput
+    configs?: OrganizationConfigUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
   export type OrganizationCreateWithoutConfigsInput = {
     id?: string
     name: string
@@ -5903,6 +8192,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantLinks?: OrganizationTenantCreateNestedManyWithoutOrganizationInput
+    ssoConfig?: OrganizationSsoConfigCreateNestedOneWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutConfigsInput = {
@@ -5921,6 +8211,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantLinks?: OrganizationTenantUncheckedCreateNestedManyWithoutOrganizationInput
+    ssoConfig?: OrganizationSsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutConfigsInput = {
@@ -5955,6 +8246,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantLinks?: OrganizationTenantUpdateManyWithoutOrganizationNestedInput
+    ssoConfig?: OrganizationSsoConfigUpdateOneWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutConfigsInput = {
@@ -5973,6 +8265,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantLinks?: OrganizationTenantUncheckedUpdateManyWithoutOrganizationNestedInput
+    ssoConfig?: OrganizationSsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateWithoutTenantLinksInput = {
@@ -5991,6 +8284,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     configs?: OrganizationConfigCreateNestedManyWithoutOrganizationInput
+    ssoConfig?: OrganizationSsoConfigCreateNestedOneWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTenantLinksInput = {
@@ -6009,6 +8303,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     configs?: OrganizationConfigUncheckedCreateNestedManyWithoutOrganizationInput
+    ssoConfig?: OrganizationSsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTenantLinksInput = {
@@ -6043,6 +8338,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configs?: OrganizationConfigUpdateManyWithoutOrganizationNestedInput
+    ssoConfig?: OrganizationSsoConfigUpdateOneWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTenantLinksInput = {
@@ -6061,6 +8357,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configs?: OrganizationConfigUncheckedUpdateManyWithoutOrganizationNestedInput
+    ssoConfig?: OrganizationSsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
   }
 
   export type OrganizationTenantCreateManyOrganizationInput = {

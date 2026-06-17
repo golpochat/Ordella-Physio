@@ -3,6 +3,7 @@ import type { Role, User } from "@prisma/client";
 import { getRoleLevel, isSystemRole } from "@ordella/security";
 import { generateToken } from "@ordella/utils";
 import type { AuthenticatedRequestUser } from "@/utils/auth-helpers";
+import { coalesceTenantId } from "@/utils/auth-helpers";
 import { passwordHasher } from "@/utils/password-hasher";
 import { sanitizeManagedUser } from "@/models/User";
 import {
@@ -61,7 +62,7 @@ export class UserManagementService {
     const filters = parsed.payload;
     const tenantScope = isSystemRole(requestingUser.role)
       ? filters.tenantId
-      : requestingUser.tenantId;
+      : coalesceTenantId(requestingUser.tenantId);
     const skip = (filters.page - 1) * filters.limit;
 
     const [total, users] = await this.usersRepository.listUsers({
@@ -220,7 +221,7 @@ export class UserManagementService {
   async getUser(id: string, requestedBy: AuthenticatedRequestUser) {
     const user = isSystemRole(requestedBy.role)
       ? await this.usersRepository.findByIdGlobal(id)
-      : await this.usersRepository.findById(requestedBy.tenantId, id);
+      : await this.usersRepository.findById(coalesceTenantId(requestedBy.tenantId), id);
 
     if (!user) {
       throw userNotFoundError();
@@ -241,7 +242,7 @@ export class UserManagementService {
       throw userAlreadyDisabledError();
     }
 
-    const updated = await this.usersRepository.updateUser(user.tenantId, id, {
+    const updated = await this.usersRepository.updateUser(coalesceTenantId(user.tenantId), id, {
       isActive: false,
     });
 
@@ -259,7 +260,7 @@ export class UserManagementService {
       throw userAlreadyActiveError();
     }
 
-    const updated = await this.usersRepository.updateUser(user.tenantId, id, {
+    const updated = await this.usersRepository.updateUser(coalesceTenantId(user.tenantId), id, {
       isActive: true,
     });
 
@@ -283,8 +284,8 @@ export class UserManagementService {
     }
 
     const passwordHash = await passwordHasher.hash(validation.payload.password);
-    await this.usersRepository.updateUser(user.tenantId, id, { passwordHash });
-    await this.tokenService.invalidateAllUserTokens(id, user.tenantId);
+    await this.usersRepository.updateUser(coalesceTenantId(user.tenantId), id, { passwordHash });
+    await this.tokenService.invalidateAllUserTokens(id, coalesceTenantId(user.tenantId));
 
     return { message: "Password updated successfully." };
   }
@@ -301,6 +302,10 @@ export class UserManagementService {
     }
 
     const data = validation.payload;
+    if (!user.passwordHash) {
+      throw invalidCurrentPasswordError();
+    }
+
     const currentValid = await passwordHasher.compare(data.currentPassword, user.passwordHash);
     if (!currentValid) {
       throw invalidCurrentPasswordError();
@@ -347,7 +352,7 @@ export class UserManagementService {
       throw roleAssignNotAllowedError();
     }
 
-    const updated = await this.usersRepository.updateUser(user.tenantId, id, {
+    const updated = await this.usersRepository.updateUser(coalesceTenantId(user.tenantId), id, {
       role: newRole as Role,
     });
 
@@ -371,7 +376,7 @@ export class UserManagementService {
     }
 
     const data = validation.payload;
-    const tenantId = user.tenantId;
+    const tenantId = coalesceTenantId(user.tenantId);
 
     if (data.email !== undefined && data.email !== user.email) {
       const existing = await this.usersRepository.findByEmail(tenantId, data.email);
@@ -456,7 +461,7 @@ export class UserManagementService {
     createdByUser: AuthenticatedRequestUser,
   ): string {
     if (!isSystemRole(createdByUser.role) || !payload || typeof payload !== "object") {
-      return createdByUser.tenantId;
+      return coalesceTenantId(createdByUser.tenantId);
     }
 
     const requestedTenantId = (payload as Record<string, unknown>).tenantId;
@@ -464,6 +469,6 @@ export class UserManagementService {
       return requestedTenantId.trim();
     }
 
-    return createdByUser.tenantId;
+    return coalesceTenantId(createdByUser.tenantId);
   }
 }

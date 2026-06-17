@@ -6,6 +6,9 @@ export type JwtPayload = {
   email: string;
   roles: string[];
   permissions: string[];
+  effectiveRole?: string;
+  resolvedPermissions?: string[];
+  organizationId?: string | null;
   tv?: number;
 };
 

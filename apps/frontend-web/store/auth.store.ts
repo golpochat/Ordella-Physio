@@ -22,7 +22,11 @@ export type AuthUser = {
 
   tenantId: string;
 
+  organizationId?: string | null;
+
   role: PortalRole;
+
+  effectiveRole?: string;
 
   roles: PortalRole[];
 

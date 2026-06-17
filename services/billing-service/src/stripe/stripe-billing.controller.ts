@@ -100,7 +100,7 @@ export class StripeBillingController {
 
   @Get("platform-metrics")
   @UseGuards(JwtGuard, PermissionGuard)
-  @RequirePermissions("billing.analytics.view")
+  @RequirePermissions("platform.billing.metrics")
   getPlatformMetrics() {
     return this.stripeBillingService.getPlatformMetrics();
   }

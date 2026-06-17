@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type SsoConfig = $Result.DefaultSelection<Prisma.$SsoConfigPayload>
 /**
+ * Model SsoAuthState
+ * 
+ */
+export type SsoAuthState = $Result.DefaultSelection<Prisma.$SsoAuthStatePayload>
+/**
  * Model PermissionGroup
  * 
  */
@@ -186,6 +191,16 @@ export class PrismaClient<
     * ```
     */
   get ssoConfig(): Prisma.SsoConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.ssoAuthState`: Exposes CRUD operations for the **SsoAuthState** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SsoAuthStates
+    * const ssoAuthStates = await prisma.ssoAuthState.findMany()
+    * ```
+    */
+  get ssoAuthState(): Prisma.SsoAuthStateDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.permissionGroup`: Exposes CRUD operations for the **PermissionGroup** model.
@@ -708,6 +723,7 @@ export namespace Prisma {
 
   export const ModelName: {
     SsoConfig: 'SsoConfig',
+    SsoAuthState: 'SsoAuthState',
     PermissionGroup: 'PermissionGroup',
     CustomRole: 'CustomRole',
     AuditLog: 'AuditLog',
@@ -734,7 +750,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "ssoConfig" | "permissionGroup" | "customRole" | "auditLog" | "activityLog" | "apiKey" | "apiKeyUsageLog" | "webhookConfig" | "webhookDelivery"
+      modelProps: "ssoConfig" | "ssoAuthState" | "permissionGroup" | "customRole" | "auditLog" | "activityLog" | "apiKey" | "apiKeyUsageLog" | "webhookConfig" | "webhookDelivery"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -809,6 +825,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SsoConfigCountArgs<ExtArgs>
             result: $Utils.Optional<SsoConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      SsoAuthState: {
+        payload: Prisma.$SsoAuthStatePayload<ExtArgs>
+        fields: Prisma.SsoAuthStateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SsoAuthStateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SsoAuthStateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>
+          }
+          findFirst: {
+            args: Prisma.SsoAuthStateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SsoAuthStateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>
+          }
+          findMany: {
+            args: Prisma.SsoAuthStateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>[]
+          }
+          create: {
+            args: Prisma.SsoAuthStateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>
+          }
+          createMany: {
+            args: Prisma.SsoAuthStateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SsoAuthStateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>[]
+          }
+          delete: {
+            args: Prisma.SsoAuthStateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>
+          }
+          update: {
+            args: Prisma.SsoAuthStateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>
+          }
+          deleteMany: {
+            args: Prisma.SsoAuthStateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SsoAuthStateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SsoAuthStateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>[]
+          }
+          upsert: {
+            args: Prisma.SsoAuthStateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SsoAuthStatePayload>
+          }
+          aggregate: {
+            args: Prisma.SsoAuthStateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSsoAuthState>
+          }
+          groupBy: {
+            args: Prisma.SsoAuthStateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SsoAuthStateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SsoAuthStateCountArgs<ExtArgs>
+            result: $Utils.Optional<SsoAuthStateCountAggregateOutputType> | number
           }
         }
       }
@@ -1501,6 +1591,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     ssoConfig?: SsoConfigOmit
+    ssoAuthState?: SsoAuthStateOmit
     permissionGroup?: PermissionGroupOmit
     customRole?: CustomRoleOmit
     auditLog?: AuditLogOmit
@@ -2852,6 +2943,1053 @@ export namespace Prisma {
      * Omit specific fields from the SsoConfig
      */
     omit?: SsoConfigOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SsoAuthState
+   */
+
+  export type AggregateSsoAuthState = {
+    _count: SsoAuthStateCountAggregateOutputType | null
+    _min: SsoAuthStateMinAggregateOutputType | null
+    _max: SsoAuthStateMaxAggregateOutputType | null
+  }
+
+  export type SsoAuthStateMinAggregateOutputType = {
+    id: string | null
+    state: string | null
+    nonce: string | null
+    tenantId: string | null
+    organizationId: string | null
+    protocol: string | null
+    redirectUri: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type SsoAuthStateMaxAggregateOutputType = {
+    id: string | null
+    state: string | null
+    nonce: string | null
+    tenantId: string | null
+    organizationId: string | null
+    protocol: string | null
+    redirectUri: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type SsoAuthStateCountAggregateOutputType = {
+    id: number
+    state: number
+    nonce: number
+    tenantId: number
+    organizationId: number
+    protocol: number
+    redirectUri: number
+    expiresAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SsoAuthStateMinAggregateInputType = {
+    id?: true
+    state?: true
+    nonce?: true
+    tenantId?: true
+    organizationId?: true
+    protocol?: true
+    redirectUri?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type SsoAuthStateMaxAggregateInputType = {
+    id?: true
+    state?: true
+    nonce?: true
+    tenantId?: true
+    organizationId?: true
+    protocol?: true
+    redirectUri?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type SsoAuthStateCountAggregateInputType = {
+    id?: true
+    state?: true
+    nonce?: true
+    tenantId?: true
+    organizationId?: true
+    protocol?: true
+    redirectUri?: true
+    expiresAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SsoAuthStateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SsoAuthState to aggregate.
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SsoAuthStates to fetch.
+     */
+    orderBy?: SsoAuthStateOrderByWithRelationInput | SsoAuthStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SsoAuthStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SsoAuthStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SsoAuthStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SsoAuthStates
+    **/
+    _count?: true | SsoAuthStateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SsoAuthStateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SsoAuthStateMaxAggregateInputType
+  }
+
+  export type GetSsoAuthStateAggregateType<T extends SsoAuthStateAggregateArgs> = {
+        [P in keyof T & keyof AggregateSsoAuthState]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSsoAuthState[P]>
+      : GetScalarType<T[P], AggregateSsoAuthState[P]>
+  }
+
+
+
+
+  export type SsoAuthStateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SsoAuthStateWhereInput
+    orderBy?: SsoAuthStateOrderByWithAggregationInput | SsoAuthStateOrderByWithAggregationInput[]
+    by: SsoAuthStateScalarFieldEnum[] | SsoAuthStateScalarFieldEnum
+    having?: SsoAuthStateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SsoAuthStateCountAggregateInputType | true
+    _min?: SsoAuthStateMinAggregateInputType
+    _max?: SsoAuthStateMaxAggregateInputType
+  }
+
+  export type SsoAuthStateGroupByOutputType = {
+    id: string
+    state: string
+    nonce: string
+    tenantId: string
+    organizationId: string
+    protocol: string
+    redirectUri: string
+    expiresAt: Date
+    createdAt: Date
+    _count: SsoAuthStateCountAggregateOutputType | null
+    _min: SsoAuthStateMinAggregateOutputType | null
+    _max: SsoAuthStateMaxAggregateOutputType | null
+  }
+
+  type GetSsoAuthStateGroupByPayload<T extends SsoAuthStateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SsoAuthStateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SsoAuthStateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SsoAuthStateGroupByOutputType[P]>
+            : GetScalarType<T[P], SsoAuthStateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SsoAuthStateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    state?: boolean
+    nonce?: boolean
+    tenantId?: boolean
+    organizationId?: boolean
+    protocol?: boolean
+    redirectUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["ssoAuthState"]>
+
+  export type SsoAuthStateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    state?: boolean
+    nonce?: boolean
+    tenantId?: boolean
+    organizationId?: boolean
+    protocol?: boolean
+    redirectUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["ssoAuthState"]>
+
+  export type SsoAuthStateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    state?: boolean
+    nonce?: boolean
+    tenantId?: boolean
+    organizationId?: boolean
+    protocol?: boolean
+    redirectUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["ssoAuthState"]>
+
+  export type SsoAuthStateSelectScalar = {
+    id?: boolean
+    state?: boolean
+    nonce?: boolean
+    tenantId?: boolean
+    organizationId?: boolean
+    protocol?: boolean
+    redirectUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type SsoAuthStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "state" | "nonce" | "tenantId" | "organizationId" | "protocol" | "redirectUri" | "expiresAt" | "createdAt", ExtArgs["result"]["ssoAuthState"]>
+
+  export type $SsoAuthStatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SsoAuthState"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      state: string
+      nonce: string
+      tenantId: string
+      organizationId: string
+      protocol: string
+      redirectUri: string
+      expiresAt: Date
+      createdAt: Date
+    }, ExtArgs["result"]["ssoAuthState"]>
+    composites: {}
+  }
+
+  type SsoAuthStateGetPayload<S extends boolean | null | undefined | SsoAuthStateDefaultArgs> = $Result.GetResult<Prisma.$SsoAuthStatePayload, S>
+
+  type SsoAuthStateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SsoAuthStateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SsoAuthStateCountAggregateInputType | true
+    }
+
+  export interface SsoAuthStateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SsoAuthState'], meta: { name: 'SsoAuthState' } }
+    /**
+     * Find zero or one SsoAuthState that matches the filter.
+     * @param {SsoAuthStateFindUniqueArgs} args - Arguments to find a SsoAuthState
+     * @example
+     * // Get one SsoAuthState
+     * const ssoAuthState = await prisma.ssoAuthState.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SsoAuthStateFindUniqueArgs>(args: SelectSubset<T, SsoAuthStateFindUniqueArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SsoAuthState that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SsoAuthStateFindUniqueOrThrowArgs} args - Arguments to find a SsoAuthState
+     * @example
+     * // Get one SsoAuthState
+     * const ssoAuthState = await prisma.ssoAuthState.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SsoAuthStateFindUniqueOrThrowArgs>(args: SelectSubset<T, SsoAuthStateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SsoAuthState that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateFindFirstArgs} args - Arguments to find a SsoAuthState
+     * @example
+     * // Get one SsoAuthState
+     * const ssoAuthState = await prisma.ssoAuthState.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SsoAuthStateFindFirstArgs>(args?: SelectSubset<T, SsoAuthStateFindFirstArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SsoAuthState that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateFindFirstOrThrowArgs} args - Arguments to find a SsoAuthState
+     * @example
+     * // Get one SsoAuthState
+     * const ssoAuthState = await prisma.ssoAuthState.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SsoAuthStateFindFirstOrThrowArgs>(args?: SelectSubset<T, SsoAuthStateFindFirstOrThrowArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SsoAuthStates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SsoAuthStates
+     * const ssoAuthStates = await prisma.ssoAuthState.findMany()
+     * 
+     * // Get first 10 SsoAuthStates
+     * const ssoAuthStates = await prisma.ssoAuthState.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const ssoAuthStateWithIdOnly = await prisma.ssoAuthState.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SsoAuthStateFindManyArgs>(args?: SelectSubset<T, SsoAuthStateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SsoAuthState.
+     * @param {SsoAuthStateCreateArgs} args - Arguments to create a SsoAuthState.
+     * @example
+     * // Create one SsoAuthState
+     * const SsoAuthState = await prisma.ssoAuthState.create({
+     *   data: {
+     *     // ... data to create a SsoAuthState
+     *   }
+     * })
+     * 
+     */
+    create<T extends SsoAuthStateCreateArgs>(args: SelectSubset<T, SsoAuthStateCreateArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SsoAuthStates.
+     * @param {SsoAuthStateCreateManyArgs} args - Arguments to create many SsoAuthStates.
+     * @example
+     * // Create many SsoAuthStates
+     * const ssoAuthState = await prisma.ssoAuthState.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SsoAuthStateCreateManyArgs>(args?: SelectSubset<T, SsoAuthStateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SsoAuthStates and returns the data saved in the database.
+     * @param {SsoAuthStateCreateManyAndReturnArgs} args - Arguments to create many SsoAuthStates.
+     * @example
+     * // Create many SsoAuthStates
+     * const ssoAuthState = await prisma.ssoAuthState.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SsoAuthStates and only return the `id`
+     * const ssoAuthStateWithIdOnly = await prisma.ssoAuthState.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SsoAuthStateCreateManyAndReturnArgs>(args?: SelectSubset<T, SsoAuthStateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SsoAuthState.
+     * @param {SsoAuthStateDeleteArgs} args - Arguments to delete one SsoAuthState.
+     * @example
+     * // Delete one SsoAuthState
+     * const SsoAuthState = await prisma.ssoAuthState.delete({
+     *   where: {
+     *     // ... filter to delete one SsoAuthState
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SsoAuthStateDeleteArgs>(args: SelectSubset<T, SsoAuthStateDeleteArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SsoAuthState.
+     * @param {SsoAuthStateUpdateArgs} args - Arguments to update one SsoAuthState.
+     * @example
+     * // Update one SsoAuthState
+     * const ssoAuthState = await prisma.ssoAuthState.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SsoAuthStateUpdateArgs>(args: SelectSubset<T, SsoAuthStateUpdateArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SsoAuthStates.
+     * @param {SsoAuthStateDeleteManyArgs} args - Arguments to filter SsoAuthStates to delete.
+     * @example
+     * // Delete a few SsoAuthStates
+     * const { count } = await prisma.ssoAuthState.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SsoAuthStateDeleteManyArgs>(args?: SelectSubset<T, SsoAuthStateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SsoAuthStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SsoAuthStates
+     * const ssoAuthState = await prisma.ssoAuthState.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SsoAuthStateUpdateManyArgs>(args: SelectSubset<T, SsoAuthStateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SsoAuthStates and returns the data updated in the database.
+     * @param {SsoAuthStateUpdateManyAndReturnArgs} args - Arguments to update many SsoAuthStates.
+     * @example
+     * // Update many SsoAuthStates
+     * const ssoAuthState = await prisma.ssoAuthState.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SsoAuthStates and only return the `id`
+     * const ssoAuthStateWithIdOnly = await prisma.ssoAuthState.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SsoAuthStateUpdateManyAndReturnArgs>(args: SelectSubset<T, SsoAuthStateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SsoAuthState.
+     * @param {SsoAuthStateUpsertArgs} args - Arguments to update or create a SsoAuthState.
+     * @example
+     * // Update or create a SsoAuthState
+     * const ssoAuthState = await prisma.ssoAuthState.upsert({
+     *   create: {
+     *     // ... data to create a SsoAuthState
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SsoAuthState we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SsoAuthStateUpsertArgs>(args: SelectSubset<T, SsoAuthStateUpsertArgs<ExtArgs>>): Prisma__SsoAuthStateClient<$Result.GetResult<Prisma.$SsoAuthStatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SsoAuthStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateCountArgs} args - Arguments to filter SsoAuthStates to count.
+     * @example
+     * // Count the number of SsoAuthStates
+     * const count = await prisma.ssoAuthState.count({
+     *   where: {
+     *     // ... the filter for the SsoAuthStates we want to count
+     *   }
+     * })
+    **/
+    count<T extends SsoAuthStateCountArgs>(
+      args?: Subset<T, SsoAuthStateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SsoAuthStateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SsoAuthState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SsoAuthStateAggregateArgs>(args: Subset<T, SsoAuthStateAggregateArgs>): Prisma.PrismaPromise<GetSsoAuthStateAggregateType<T>>
+
+    /**
+     * Group by SsoAuthState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SsoAuthStateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SsoAuthStateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SsoAuthStateGroupByArgs['orderBy'] }
+        : { orderBy?: SsoAuthStateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SsoAuthStateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSsoAuthStateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SsoAuthState model
+   */
+  readonly fields: SsoAuthStateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SsoAuthState.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SsoAuthStateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SsoAuthState model
+   */
+  interface SsoAuthStateFieldRefs {
+    readonly id: FieldRef<"SsoAuthState", 'String'>
+    readonly state: FieldRef<"SsoAuthState", 'String'>
+    readonly nonce: FieldRef<"SsoAuthState", 'String'>
+    readonly tenantId: FieldRef<"SsoAuthState", 'String'>
+    readonly organizationId: FieldRef<"SsoAuthState", 'String'>
+    readonly protocol: FieldRef<"SsoAuthState", 'String'>
+    readonly redirectUri: FieldRef<"SsoAuthState", 'String'>
+    readonly expiresAt: FieldRef<"SsoAuthState", 'DateTime'>
+    readonly createdAt: FieldRef<"SsoAuthState", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SsoAuthState findUnique
+   */
+  export type SsoAuthStateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * Filter, which SsoAuthState to fetch.
+     */
+    where: SsoAuthStateWhereUniqueInput
+  }
+
+  /**
+   * SsoAuthState findUniqueOrThrow
+   */
+  export type SsoAuthStateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * Filter, which SsoAuthState to fetch.
+     */
+    where: SsoAuthStateWhereUniqueInput
+  }
+
+  /**
+   * SsoAuthState findFirst
+   */
+  export type SsoAuthStateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * Filter, which SsoAuthState to fetch.
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SsoAuthStates to fetch.
+     */
+    orderBy?: SsoAuthStateOrderByWithRelationInput | SsoAuthStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SsoAuthStates.
+     */
+    cursor?: SsoAuthStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SsoAuthStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SsoAuthStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SsoAuthStates.
+     */
+    distinct?: SsoAuthStateScalarFieldEnum | SsoAuthStateScalarFieldEnum[]
+  }
+
+  /**
+   * SsoAuthState findFirstOrThrow
+   */
+  export type SsoAuthStateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * Filter, which SsoAuthState to fetch.
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SsoAuthStates to fetch.
+     */
+    orderBy?: SsoAuthStateOrderByWithRelationInput | SsoAuthStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SsoAuthStates.
+     */
+    cursor?: SsoAuthStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SsoAuthStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SsoAuthStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SsoAuthStates.
+     */
+    distinct?: SsoAuthStateScalarFieldEnum | SsoAuthStateScalarFieldEnum[]
+  }
+
+  /**
+   * SsoAuthState findMany
+   */
+  export type SsoAuthStateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * Filter, which SsoAuthStates to fetch.
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SsoAuthStates to fetch.
+     */
+    orderBy?: SsoAuthStateOrderByWithRelationInput | SsoAuthStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SsoAuthStates.
+     */
+    cursor?: SsoAuthStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SsoAuthStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SsoAuthStates.
+     */
+    skip?: number
+    distinct?: SsoAuthStateScalarFieldEnum | SsoAuthStateScalarFieldEnum[]
+  }
+
+  /**
+   * SsoAuthState create
+   */
+  export type SsoAuthStateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SsoAuthState.
+     */
+    data: XOR<SsoAuthStateCreateInput, SsoAuthStateUncheckedCreateInput>
+  }
+
+  /**
+   * SsoAuthState createMany
+   */
+  export type SsoAuthStateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SsoAuthStates.
+     */
+    data: SsoAuthStateCreateManyInput | SsoAuthStateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SsoAuthState createManyAndReturn
+   */
+  export type SsoAuthStateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * The data used to create many SsoAuthStates.
+     */
+    data: SsoAuthStateCreateManyInput | SsoAuthStateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SsoAuthState update
+   */
+  export type SsoAuthStateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SsoAuthState.
+     */
+    data: XOR<SsoAuthStateUpdateInput, SsoAuthStateUncheckedUpdateInput>
+    /**
+     * Choose, which SsoAuthState to update.
+     */
+    where: SsoAuthStateWhereUniqueInput
+  }
+
+  /**
+   * SsoAuthState updateMany
+   */
+  export type SsoAuthStateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SsoAuthStates.
+     */
+    data: XOR<SsoAuthStateUpdateManyMutationInput, SsoAuthStateUncheckedUpdateManyInput>
+    /**
+     * Filter which SsoAuthStates to update
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * Limit how many SsoAuthStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SsoAuthState updateManyAndReturn
+   */
+  export type SsoAuthStateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * The data used to update SsoAuthStates.
+     */
+    data: XOR<SsoAuthStateUpdateManyMutationInput, SsoAuthStateUncheckedUpdateManyInput>
+    /**
+     * Filter which SsoAuthStates to update
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * Limit how many SsoAuthStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SsoAuthState upsert
+   */
+  export type SsoAuthStateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SsoAuthState to update in case it exists.
+     */
+    where: SsoAuthStateWhereUniqueInput
+    /**
+     * In case the SsoAuthState found by the `where` argument doesn't exist, create a new SsoAuthState with this data.
+     */
+    create: XOR<SsoAuthStateCreateInput, SsoAuthStateUncheckedCreateInput>
+    /**
+     * In case the SsoAuthState was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SsoAuthStateUpdateInput, SsoAuthStateUncheckedUpdateInput>
+  }
+
+  /**
+   * SsoAuthState delete
+   */
+  export type SsoAuthStateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
+    /**
+     * Filter which SsoAuthState to delete.
+     */
+    where: SsoAuthStateWhereUniqueInput
+  }
+
+  /**
+   * SsoAuthState deleteMany
+   */
+  export type SsoAuthStateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SsoAuthStates to delete
+     */
+    where?: SsoAuthStateWhereInput
+    /**
+     * Limit how many SsoAuthStates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SsoAuthState without action
+   */
+  export type SsoAuthStateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SsoAuthState
+     */
+    select?: SsoAuthStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SsoAuthState
+     */
+    omit?: SsoAuthStateOmit<ExtArgs> | null
   }
 
 
@@ -11876,6 +13014,21 @@ export namespace Prisma {
   export type SsoConfigScalarFieldEnum = (typeof SsoConfigScalarFieldEnum)[keyof typeof SsoConfigScalarFieldEnum]
 
 
+  export const SsoAuthStateScalarFieldEnum: {
+    id: 'id',
+    state: 'state',
+    nonce: 'nonce',
+    tenantId: 'tenantId',
+    organizationId: 'organizationId',
+    protocol: 'protocol',
+    redirectUri: 'redirectUri',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt'
+  };
+
+  export type SsoAuthStateScalarFieldEnum = (typeof SsoAuthStateScalarFieldEnum)[keyof typeof SsoAuthStateScalarFieldEnum]
+
+
   export const PermissionGroupScalarFieldEnum: {
     id: 'id',
     tenantId: 'tenantId',
@@ -12246,6 +13399,78 @@ export namespace Prisma {
     attributeMap?: JsonNullableWithAggregatesFilter<"SsoConfig">
     createdAt?: DateTimeWithAggregatesFilter<"SsoConfig"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SsoConfig"> | Date | string
+  }
+
+  export type SsoAuthStateWhereInput = {
+    AND?: SsoAuthStateWhereInput | SsoAuthStateWhereInput[]
+    OR?: SsoAuthStateWhereInput[]
+    NOT?: SsoAuthStateWhereInput | SsoAuthStateWhereInput[]
+    id?: StringFilter<"SsoAuthState"> | string
+    state?: StringFilter<"SsoAuthState"> | string
+    nonce?: StringFilter<"SsoAuthState"> | string
+    tenantId?: StringFilter<"SsoAuthState"> | string
+    organizationId?: StringFilter<"SsoAuthState"> | string
+    protocol?: StringFilter<"SsoAuthState"> | string
+    redirectUri?: StringFilter<"SsoAuthState"> | string
+    expiresAt?: DateTimeFilter<"SsoAuthState"> | Date | string
+    createdAt?: DateTimeFilter<"SsoAuthState"> | Date | string
+  }
+
+  export type SsoAuthStateOrderByWithRelationInput = {
+    id?: SortOrder
+    state?: SortOrder
+    nonce?: SortOrder
+    tenantId?: SortOrder
+    organizationId?: SortOrder
+    protocol?: SortOrder
+    redirectUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SsoAuthStateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    state?: string
+    AND?: SsoAuthStateWhereInput | SsoAuthStateWhereInput[]
+    OR?: SsoAuthStateWhereInput[]
+    NOT?: SsoAuthStateWhereInput | SsoAuthStateWhereInput[]
+    nonce?: StringFilter<"SsoAuthState"> | string
+    tenantId?: StringFilter<"SsoAuthState"> | string
+    organizationId?: StringFilter<"SsoAuthState"> | string
+    protocol?: StringFilter<"SsoAuthState"> | string
+    redirectUri?: StringFilter<"SsoAuthState"> | string
+    expiresAt?: DateTimeFilter<"SsoAuthState"> | Date | string
+    createdAt?: DateTimeFilter<"SsoAuthState"> | Date | string
+  }, "id" | "state">
+
+  export type SsoAuthStateOrderByWithAggregationInput = {
+    id?: SortOrder
+    state?: SortOrder
+    nonce?: SortOrder
+    tenantId?: SortOrder
+    organizationId?: SortOrder
+    protocol?: SortOrder
+    redirectUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    _count?: SsoAuthStateCountOrderByAggregateInput
+    _max?: SsoAuthStateMaxOrderByAggregateInput
+    _min?: SsoAuthStateMinOrderByAggregateInput
+  }
+
+  export type SsoAuthStateScalarWhereWithAggregatesInput = {
+    AND?: SsoAuthStateScalarWhereWithAggregatesInput | SsoAuthStateScalarWhereWithAggregatesInput[]
+    OR?: SsoAuthStateScalarWhereWithAggregatesInput[]
+    NOT?: SsoAuthStateScalarWhereWithAggregatesInput | SsoAuthStateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    state?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    nonce?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    tenantId?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    organizationId?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    protocol?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    redirectUri?: StringWithAggregatesFilter<"SsoAuthState"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"SsoAuthState"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"SsoAuthState"> | Date | string
   }
 
   export type PermissionGroupWhereInput = {
@@ -13022,6 +14247,90 @@ export namespace Prisma {
     attributeMap?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SsoAuthStateCreateInput = {
+    id?: string
+    state: string
+    nonce: string
+    tenantId: string
+    organizationId: string
+    protocol: string
+    redirectUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SsoAuthStateUncheckedCreateInput = {
+    id?: string
+    state: string
+    nonce: string
+    tenantId: string
+    organizationId: string
+    protocol: string
+    redirectUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SsoAuthStateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    nonce?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    redirectUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SsoAuthStateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    nonce?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    redirectUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SsoAuthStateCreateManyInput = {
+    id?: string
+    state: string
+    nonce: string
+    tenantId: string
+    organizationId: string
+    protocol: string
+    redirectUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SsoAuthStateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    nonce?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    redirectUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SsoAuthStateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    nonce?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    redirectUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PermissionGroupCreateInput = {
@@ -13967,6 +15276,42 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type SsoAuthStateCountOrderByAggregateInput = {
+    id?: SortOrder
+    state?: SortOrder
+    nonce?: SortOrder
+    tenantId?: SortOrder
+    organizationId?: SortOrder
+    protocol?: SortOrder
+    redirectUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SsoAuthStateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    state?: SortOrder
+    nonce?: SortOrder
+    tenantId?: SortOrder
+    organizationId?: SortOrder
+    protocol?: SortOrder
+    redirectUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SsoAuthStateMinOrderByAggregateInput = {
+    id?: SortOrder
+    state?: SortOrder
+    nonce?: SortOrder
+    tenantId?: SortOrder
+    organizationId?: SortOrder
+    protocol?: SortOrder
+    redirectUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
   }
   export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<

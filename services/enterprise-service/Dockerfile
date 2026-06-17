@@ -49,4 +49,4 @@ EXPOSE 3065
 # ---------------------------------------------------------
 # 4. START COMMAND
 # ---------------------------------------------------------
-CMD ["sh", "-c", "pnpm --filter @ordella/enterprise-service exec prisma db push --skip-generate && pnpm --filter @ordella/enterprise-service start"]
+CMD ["sh", "-c", "pnpm --filter @ordella/enterprise-service exec prisma migrate deploy && pnpm --filter @ordella/enterprise-service start"]

@@ -38,27 +38,47 @@ type PermissionSubject = {
  * or legacy colon-notation (seeded clinic roles in the database).
  */
 export const PERMISSION_GRANTS: Record<PermissionValue, readonly string[]> = {
-  [Permission.PATIENT_VIEW]: ["patient.view", "patients:read"],
-  [Permission.PATIENT_MANAGE]: ["patient.manage", "patients:write"],
-  [Permission.PATIENT_EDIT]: ["patient.edit", "patients:write"],
-  [Permission.PATIENT_ATTACHMENTS]: ["patient.attachments", "patients:read", "patients:write"],
-  [Permission.APPOINTMENT_MANAGE]: ["appointment.manage", "appointments:write", "appointments:read"],
+  [Permission.PATIENT_VIEW]: ["patient.view", "patients:read", "patients.read"],
+  [Permission.PATIENT_MANAGE]: ["patient.manage", "patients:write", "patients.write"],
+  [Permission.PATIENT_EDIT]: ["patient.edit", "patients:write", "patients.write"],
+  [Permission.PATIENT_ATTACHMENTS]: ["patient.attachments", "patients:read", "patients:write", "patients.read", "patients.write"],
+  [Permission.APPOINTMENT_MANAGE]: ["appointment.manage", "appointments:write", "appointments:read", "appointments.write", "appointments.read"],
   [Permission.NOTES_READ]: ["notes.read", "notes:read"],
   [Permission.NOTES_WRITE]: ["notes.write", "notes:write"],
   [Permission.BILLING_MANAGE]: ["billing.manage", "billing:write", "billing:read"],
-  [Permission.REPORTING_VIEW]: ["reporting.view", "reporting.read", "reports:read"],
-  [Permission.REPORTING_READ]: ["reporting.read", "reports:read"],
-  [Permission.ROLE_MANAGE]: ["role.manage", "rbac:write"],
+  [Permission.REPORTING_VIEW]: ["reporting.view", "reporting.read", "reports:read", "reports.read"],
+  [Permission.REPORTING_READ]: ["reporting.read", "reports:read", "reports.read"],
+  [Permission.ROLE_MANAGE]: ["role.manage", "rbac:write", "staff.roles.assign"],
   [Permission.USER_MANAGE]: ["user.manage", "rbac:read", "rbac:write"],
-  [Permission.SETTINGS_MANAGE]: ["settings.manage", "rbac:write"],
+  [Permission.SETTINGS_MANAGE]: ["settings.manage", "rbac:write", "settings.write"],
   [Permission.TENANT_MANAGE]: ["tenant.manage", "rbac:write"],
-  [Permission.ORGANIZATION_MANAGE]: ["organization.manage", "rbac:write"],
-  [Permission.TERMINAL_MANAGE]: ["terminal.manage", "staff:write", "staff:read"],
+  [Permission.ORGANIZATION_MANAGE]: ["organization.manage", "rbac:write", "org.tenants.write"],
+  [Permission.TERMINAL_MANAGE]: ["terminal.manage", "staff:write", "staff:read", "staff.write"],
+};
+
+const PLATFORM_PERMISSION_ALIASES: Record<string, readonly string[]> = {
+  "patients.read": ["patients.read", "patients:read", "patient.view"],
+  "patients.write": ["patients.write", "patients:write", "patient.manage", "patient.edit"],
+  "patients.delete": ["patients.delete"],
+  "appointments.read": ["appointments.read", "appointments:read"],
+  "appointments.write": ["appointments.write", "appointments:write", "appointment.manage"],
+  "billing.read": ["billing.read", "billing:read"],
+  "billing.manage": ["billing.manage", "billing:write"],
+  "notes.read": ["notes.read", "notes:read"],
+  "notes.write": ["notes.write", "notes:write"],
+  "reports.read": ["reports.read", "reporting.read", "reporting.view"],
+  "settings.read": ["settings.read"],
+  "settings.write": ["settings.write", "settings.manage"],
+  "platform.billing.metrics": ["platform.billing.metrics", "billing.analytics.view"],
 };
 
 function resolvePermissionGrants(permission: string): readonly string[] {
   if (permission in PERMISSION_GRANTS) {
     return PERMISSION_GRANTS[permission as PermissionValue];
+  }
+
+  if (permission in PLATFORM_PERMISSION_ALIASES) {
+    return PLATFORM_PERMISSION_ALIASES[permission]!;
   }
 
   return [permission];
@@ -78,6 +98,15 @@ export function expandCanonicalPermissions(permissions: string[]): string[] {
   const expanded = new Set(permissions);
 
   for (const [canonical, grants] of Object.entries(PERMISSION_GRANTS) as [PermissionValue, readonly string[]][]) {
+    if (grants.some((grant) => expanded.has(grant))) {
+      expanded.add(canonical);
+      for (const grant of grants) {
+        expanded.add(grant);
+      }
+    }
+  }
+
+  for (const [canonical, grants] of Object.entries(PLATFORM_PERMISSION_ALIASES)) {
     if (grants.some((grant) => expanded.has(grant))) {
       expanded.add(canonical);
       for (const grant of grants) {

@@ -2,6 +2,7 @@ import { prisma } from "../../lib/prisma";
 
 import { ConflictError, NotFoundError, UnauthorizedError } from "../../utils/api-error";
 
+import { resolvePermissions } from "@ordella/security";
 import { expandCanonicalPermissions } from "../../middleware/permissions";
 
 import { hashPassword, hashToken, verifyPassword, verifyTokenHash } from "../../utils/password";
@@ -48,7 +49,24 @@ export async function buildAuthResponse(userId: string, tenantId: string, email:
 
 
 
-  const payload = { sub: userId, tenantId, email, roles, permissions };
+  const primaryRole = roles[0] ?? "STAFF";
+  const { effectiveRole, resolvedPermissions: roleResolved } = resolvePermissions({
+    role: primaryRole,
+    permissionOverrides: permissions,
+  });
+  const resolvedPermissions = expandCanonicalPermissions([
+    ...new Set([...roleResolved, ...permissions]),
+  ]);
+
+  const payload = {
+    sub: userId,
+    tenantId,
+    email,
+    roles,
+    permissions: resolvedPermissions,
+    effectiveRole,
+    resolvedPermissions,
+  };
 
   const accessToken = signAccessToken(payload, tokenVersion);
 
@@ -82,7 +100,15 @@ export async function buildAuthResponse(userId: string, tenantId: string, email:
 
     refreshToken,
 
-    user: { id: userId, email, tenantId, roles, permissions },
+    user: {
+      id: userId,
+      email,
+      tenantId,
+      roles,
+      permissions: resolvedPermissions,
+      effectiveRole,
+      resolvedPermissions,
+    },
 
   };
 
@@ -709,11 +735,25 @@ export async function getCurrentUser(userId: string, tenantId: string) {
 
   const roles = user.roles.map((entry) => entry.role.name);
 
-  const permissions = expandCanonicalPermissions(
+  const rawPermissions = [...new Set(user.roles.flatMap((entry) => entry.role.permissions))];
 
-    [...new Set(user.roles.flatMap((entry) => entry.role.permissions))],
+  const permissions = expandCanonicalPermissions(rawPermissions);
 
-  );
+  const primaryRole = roles[0] ?? "STAFF";
+
+  const { effectiveRole, resolvedPermissions: roleResolved } = resolvePermissions({
+
+    role: primaryRole,
+
+    permissionOverrides: permissions,
+
+  });
+
+  const resolvedPermissions = expandCanonicalPermissions([
+
+    ...new Set([...roleResolved, ...permissions]),
+
+  ]);
 
 
 
@@ -735,7 +775,11 @@ export async function getCurrentUser(userId: string, tenantId: string) {
 
     roles,
 
-    permissions,
+    permissions: resolvedPermissions,
+
+    effectiveRole,
+
+    resolvedPermissions,
 
   };
 

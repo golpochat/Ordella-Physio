@@ -33,6 +33,7 @@ export const notificationEnvSchema = coreEnvSchema;
 export const organizationEnvSchema = coreEnvSchema.extend({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  SSO_ENCRYPTION_KEY: z.string().min(32).default("change-me-local-sso-encryption-key-32"),
 }).refine(
   (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
   { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
@@ -126,6 +127,9 @@ export const staffEnvSchema = coreEnvSchema.extend({
 export const enterpriseEnvSchema = coreEnvSchema.extend({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  SSO_ENCRYPTION_KEY: z.string().min(32).default("change-me-local-sso-encryption-key-32"),
+  ORGANIZATION_SERVICE_URL: z.string().url().default("http://localhost:3064"),
+  AUTH_SERVICE_URL: z.string().url().default("http://localhost:3051"),
   ENTERPRISE_SSO_CALLBACK_URL: z.string().url().default("http://localhost:3049/enterprise/sso/oauth/callback"),
   ENTERPRISE_SAML_ACS_URL: z.string().url().default("http://localhost:3049/enterprise/sso/saml/acs"),
   ENTERPRISE_FRONTEND_CALLBACK_URL: z.string().url().default("http://localhost:3010/clinic/enterprise/sso/callback"),
@@ -235,6 +239,7 @@ export const gatewayServiceUrlsSchema = z.object({
   AI_SECURITY_SERVICE_URL: z.string().url(),
   AI_OBSERVABILITY_SERVICE_URL: z.string().url(),
   AI_AGENTS_SERVICE_URL: z.string().url(),
+  PHARMACY_SERVICE_URL: z.string().url(),
 });
 
 export const gatewayEnvSchema = z.object({

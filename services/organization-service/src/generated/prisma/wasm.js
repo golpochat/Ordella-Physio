@@ -110,6 +110,31 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrganizationSsoConfigScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  ssoEnabled: 'ssoEnabled',
+  ssoProtocol: 'ssoProtocol',
+  ssoMetadataUrl: 'ssoMetadataUrl',
+  ssoEntityId: 'ssoEntityId',
+  ssoAcsUrl: 'ssoAcsUrl',
+  ssoCertificate: 'ssoCertificate',
+  ssoClientId: 'ssoClientId',
+  ssoClientSecret: 'ssoClientSecret',
+  ssoIssuer: 'ssoIssuer',
+  ssoRedirectUri: 'ssoRedirectUri',
+  ssoLogoutUrl: 'ssoLogoutUrl',
+  ssoJwksUrl: 'ssoJwksUrl',
+  roleMappings: 'roleMappings',
+  previousCertificates: 'previousCertificates',
+  metadataCache: 'metadataCache',
+  metadataFetchedAt: 'metadataFetchedAt',
+  metadataValidatedAt: 'metadataValidatedAt',
+  allowSelfSignedCerts: 'allowSelfSignedCerts',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.OrganizationConfigScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -130,6 +155,11 @@ exports.Prisma.OrganizationTenantScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.JsonNullValueInput = {
@@ -168,8 +198,14 @@ exports.OrganizationSubscriptionStatus = exports.$Enums.OrganizationSubscription
   CANCELED: 'CANCELED'
 };
 
+exports.SsoProtocol = exports.$Enums.SsoProtocol = {
+  SAML: 'SAML',
+  OIDC: 'OIDC'
+};
+
 exports.Prisma.ModelName = {
   Organization: 'Organization',
+  OrganizationSsoConfig: 'OrganizationSsoConfig',
   OrganizationConfig: 'OrganizationConfig',
   OrganizationTenant: 'OrganizationTenant'
 };
@@ -221,13 +257,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum OrganizationStatus {\n  ACTIVE\n  INACTIVE\n}\n\nenum BillingModel {\n  TENANT_LEVEL\n  ORGANIZATION_LEVEL\n}\n\nenum OrganizationSubscriptionStatus {\n  ACTIVE\n  TRIALING\n  PAST_DUE\n  CANCELED\n}\n\nmodel Organization {\n  id                   String                          @id @default(cuid())\n  name                 String\n  code                 String                          @unique\n  description          String?\n  primaryContactName   String\n  primaryContactEmail  String\n  primaryContactPhone  String?\n  billingModel         BillingModel                    @default(TENANT_LEVEL)\n  stripeCustomerId     String?                         @unique\n  stripeSubscriptionId String?                         @unique\n  subscriptionStatus   OrganizationSubscriptionStatus?\n  status               OrganizationStatus              @default(ACTIVE)\n  createdAt            DateTime                        @default(now())\n  updatedAt            DateTime                        @updatedAt\n  tenantLinks          OrganizationTenant[]\n  configs              OrganizationConfig[]\n\n  @@map(\"organizations\")\n}\n\nmodel OrganizationConfig {\n  id              String       @id @default(cuid())\n  organizationId  String\n  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  namespace       String\n  data            Json\n  updatedByUserId String?\n  createdAt       DateTime     @default(now())\n  updatedAt       DateTime     @updatedAt\n\n  @@unique([organizationId, namespace])\n  @@index([organizationId])\n  @@map(\"organization_configs\")\n}\n\nmodel OrganizationTenant {\n  id             String       @id @default(cuid())\n  organizationId String\n  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  tenantId       String\n  createdAt      DateTime     @default(now())\n\n  @@unique([organizationId, tenantId])\n  @@unique([tenantId])\n  @@map(\"organization_tenants\")\n}\n",
-  "inlineSchemaHash": "d7e8fc23d3664e75633892e6aa8cf779e15af6449672252f91dbe488a4591fcb",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum OrganizationStatus {\n  ACTIVE\n  INACTIVE\n}\n\nenum BillingModel {\n  TENANT_LEVEL\n  ORGANIZATION_LEVEL\n}\n\nenum OrganizationSubscriptionStatus {\n  ACTIVE\n  TRIALING\n  PAST_DUE\n  CANCELED\n}\n\nmodel Organization {\n  id                   String                          @id @default(cuid())\n  name                 String\n  code                 String                          @unique\n  description          String?\n  primaryContactName   String\n  primaryContactEmail  String\n  primaryContactPhone  String?\n  billingModel         BillingModel                    @default(TENANT_LEVEL)\n  stripeCustomerId     String?                         @unique\n  stripeSubscriptionId String?                         @unique\n  subscriptionStatus   OrganizationSubscriptionStatus?\n  status               OrganizationStatus              @default(ACTIVE)\n  createdAt            DateTime                        @default(now())\n  updatedAt            DateTime                        @updatedAt\n  tenantLinks          OrganizationTenant[]\n  configs              OrganizationConfig[]\n  ssoConfig            OrganizationSsoConfig?\n\n  @@map(\"organizations\")\n}\n\nenum SsoProtocol {\n  SAML\n  OIDC\n}\n\nmodel OrganizationSsoConfig {\n  id                   String       @id @default(cuid())\n  organizationId       String       @unique\n  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  ssoEnabled           Boolean      @default(false)\n  ssoProtocol          SsoProtocol?\n  ssoMetadataUrl       String?\n  ssoEntityId          String?\n  ssoAcsUrl            String?\n  ssoCertificate       String?\n  ssoClientId          String?\n  ssoClientSecret      String?\n  ssoIssuer            String?\n  ssoRedirectUri       String?\n  ssoLogoutUrl         String?\n  ssoJwksUrl           String?\n  roleMappings         Json?\n  previousCertificates Json?\n  metadataCache        Json?\n  metadataFetchedAt    DateTime?\n  metadataValidatedAt  DateTime?\n  allowSelfSignedCerts Boolean      @default(false)\n  createdAt            DateTime     @default(now())\n  updatedAt            DateTime     @updatedAt\n\n  @@map(\"organization_sso_configs\")\n}\n\nmodel OrganizationConfig {\n  id              String       @id @default(cuid())\n  organizationId  String\n  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  namespace       String\n  data            Json\n  updatedByUserId String?\n  createdAt       DateTime     @default(now())\n  updatedAt       DateTime     @updatedAt\n\n  @@unique([organizationId, namespace])\n  @@index([organizationId])\n  @@map(\"organization_configs\")\n}\n\nmodel OrganizationTenant {\n  id             String       @id @default(cuid())\n  organizationId String\n  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  tenantId       String\n  createdAt      DateTime     @default(now())\n\n  @@unique([organizationId, tenantId])\n  @@unique([tenantId])\n  @@map(\"organization_tenants\")\n}\n",
+  "inlineSchemaHash": "66ec8d673b9cd7aee1311f34b8f3573b7aac38b60fbe39d3c34688183f726d6c",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryContactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryContactEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryContactPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"billingModel\",\"kind\":\"enum\",\"type\":\"BillingModel\"},{\"name\":\"stripeCustomerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripeSubscriptionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subscriptionStatus\",\"kind\":\"enum\",\"type\":\"OrganizationSubscriptionStatus\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"OrganizationStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tenantLinks\",\"kind\":\"object\",\"type\":\"OrganizationTenant\",\"relationName\":\"OrganizationToOrganizationTenant\"},{\"name\":\"configs\",\"kind\":\"object\",\"type\":\"OrganizationConfig\",\"relationName\":\"OrganizationToOrganizationConfig\"}],\"dbName\":\"organizations\"},\"OrganizationConfig\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToOrganizationConfig\"},{\"name\":\"namespace\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"updatedByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"organization_configs\"},\"OrganizationTenant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToOrganizationTenant\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"organization_tenants\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryContactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryContactEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryContactPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"billingModel\",\"kind\":\"enum\",\"type\":\"BillingModel\"},{\"name\":\"stripeCustomerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripeSubscriptionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subscriptionStatus\",\"kind\":\"enum\",\"type\":\"OrganizationSubscriptionStatus\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"OrganizationStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tenantLinks\",\"kind\":\"object\",\"type\":\"OrganizationTenant\",\"relationName\":\"OrganizationToOrganizationTenant\"},{\"name\":\"configs\",\"kind\":\"object\",\"type\":\"OrganizationConfig\",\"relationName\":\"OrganizationToOrganizationConfig\"},{\"name\":\"ssoConfig\",\"kind\":\"object\",\"type\":\"OrganizationSsoConfig\",\"relationName\":\"OrganizationToOrganizationSsoConfig\"}],\"dbName\":\"organizations\"},\"OrganizationSsoConfig\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToOrganizationSsoConfig\"},{\"name\":\"ssoEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"ssoProtocol\",\"kind\":\"enum\",\"type\":\"SsoProtocol\"},{\"name\":\"ssoMetadataUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoEntityId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoAcsUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoCertificate\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoClientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoClientSecret\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoIssuer\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoRedirectUri\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoLogoutUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ssoJwksUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"roleMappings\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"previousCertificates\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadataCache\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadataFetchedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"metadataValidatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"allowSelfSignedCerts\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"organization_sso_configs\"},\"OrganizationConfig\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToOrganizationConfig\"},{\"name\":\"namespace\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"updatedByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"organization_configs\"},\"OrganizationTenant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToOrganizationTenant\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"organization_tenants\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

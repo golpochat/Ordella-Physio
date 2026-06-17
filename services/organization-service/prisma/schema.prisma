@@ -42,8 +42,42 @@ model Organization {
   updatedAt           DateTime                        @updatedAt
   tenantLinks         OrganizationTenant[]
   configs             OrganizationConfig[]
+  ssoConfig           OrganizationSsoConfig?
 
   @@map("organizations")
+}
+
+enum SsoProtocol {
+  SAML
+  OIDC
+}
+
+model OrganizationSsoConfig {
+  id                   String       @id @default(cuid())
+  organizationId       String       @unique
+  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ssoEnabled           Boolean      @default(false)
+  ssoProtocol          SsoProtocol?
+  ssoMetadataUrl       String?
+  ssoEntityId          String?
+  ssoAcsUrl            String?
+  ssoCertificate       String?
+  ssoClientId          String?
+  ssoClientSecret      String?
+  ssoIssuer            String?
+  ssoRedirectUri       String?
+  ssoLogoutUrl         String?
+  ssoJwksUrl           String?
+  roleMappings         Json?
+  previousCertificates Json?
+  metadataCache        Json?
+  metadataFetchedAt    DateTime?
+  metadataValidatedAt  DateTime?
+  allowSelfSignedCerts Boolean      @default(false)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  @@map("organization_sso_configs")
 }
 
 model OrganizationConfig {

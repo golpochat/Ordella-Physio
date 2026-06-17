@@ -46,7 +46,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
   "super-admin": {
     id: "super-admin",
     brandTitle: "Super Admin",
-    allowedRoles: ["SYSTEM"],
+    allowedRoles: ["SYSTEM", "SUPER_ADMIN"],
     profileHref: "/super-admin/settings",
     settingsHref: "/super-admin/settings",
     sections: [
@@ -81,7 +81,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
   clinic: {
     id: "clinic",
     brandTitle: "Clinic Admin",
-    allowedRoles: ["CLINIC_ADMIN", "ADMIN", "OWNER"],
+    allowedRoles: ["CLINIC_ADMIN", "ADMIN", "OWNER", "TENANT_OWNER"],
     profileHref: adminRoutes.profile,
     settingsHref: adminRoutes.settings,
     sections: [
@@ -91,6 +91,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
           item("dashboard", "Overview", adminRoutes.overview, ["admin"]),
           item("patients", "Patients", adminRoutes.patients, ["admin"]),
           item("calendar", "Appointments", adminRoutes.appointments, ["admin"]),
+          item("notes", "Pharmacy", adminRoutes.pharmacy, ["admin"]),
           item("users", "Therapists", adminRoutes.therapists, ["admin"]),
           item("users", "Staff", adminRoutes.staff, ["admin"]),
         ],
@@ -119,7 +120,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
   organization: {
     id: "organization",
     brandTitle: "Organization",
-    allowedRoles: ["CLINIC_ADMIN", "ADMIN", "OWNER"],
+    allowedRoles: ["ORG_ADMIN", "ORG_BILLING_ADMIN"],
     profileHref: "/clinic/settings",
     settingsHref: "/clinic/settings",
     sections: [

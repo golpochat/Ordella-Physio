@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
+import { getGatewayBaseUrl } from "@/lib/gateway-proxy";
 import type { TenantLoginOption } from "@/lib/auth-client";
 
 const LOGIN_REASON_MESSAGES: Record<string, string> = {
@@ -27,6 +29,21 @@ export default function LoginPage() {
   const message = searchParams.get("message");
   const [tenantOptions, setTenantOptions] = useState<TenantLoginOption[] | null>(null);
   const [selectedTenantId, setSelectedTenantId] = useState<string | undefined>();
+  const tenantIdForSso = selectedTenantId ?? tenantOptions?.[0]?.id ?? searchParams.get("tenantId") ?? undefined;
+
+  function startSso(protocol: "saml" | "oidc") {
+    if (!tenantIdForSso) {
+      return;
+    }
+
+    const gateway = getGatewayBaseUrl();
+    const path =
+      protocol === "saml"
+        ? `/enterprise/sso/saml/login?tenantId=${encodeURIComponent(tenantIdForSso)}`
+        : `/enterprise/sso/oauth/start?tenantId=${encodeURIComponent(tenantIdForSso)}`;
+
+    window.location.href = `${gateway}${path}`;
+  }
 
   return (
     <div className="auth-page-shell">
@@ -60,6 +77,33 @@ export default function LoginPage() {
               }
             }}
           />
+
+          <div className="space-y-2 border-t pt-4">
+            <p className="text-sm text-muted-foreground">Enterprise SSO</p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!tenantIdForSso}
+                onClick={() => startSso("oidc")}
+              >
+                Sign in with OIDC
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!tenantIdForSso}
+                onClick={() => startSso("saml")}
+              >
+                Sign in with SAML
+              </Button>
+            </div>
+            {!tenantIdForSso ? (
+              <p className="text-xs text-muted-foreground">
+                Enter your email above to resolve your clinic tenant before using SSO.
+              </p>
+            ) : null}
+          </div>
 
           <div className="auth-form-stack">
             <div className="flex flex-col gap-2 text-sm sm:flex-row sm:justify-between">

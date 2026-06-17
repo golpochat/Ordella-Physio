@@ -19,7 +19,7 @@ describe("Workflow: file upload → audit-service", () => {
         : -1;
 
     const response = await authenticatedGateway(tenantA.owner)
-      .post("/files")
+      .post("/api/files/upload")
       .attach("file", Buffer.from("workflow test file contents"), {
         filename: "workflow-test.txt",
         contentType: "text/plain",
@@ -28,7 +28,8 @@ describe("Workflow: file upload → audit-service", () => {
       .field("entityId", tenantA.tenantId);
 
     expect([200, 201]).toContain(response.status);
-    const fileId = response.body.file?.id ?? response.body.id;
+    const fileId =
+      response.body.fileId ?? response.body.file?.id ?? response.body.id;
     expect(fileId).toBeTruthy();
 
     const audit = await authenticatedGateway(tenantA.owner).get("/audit-logs").query({

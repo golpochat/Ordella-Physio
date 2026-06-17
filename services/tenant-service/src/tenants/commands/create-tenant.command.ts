@@ -26,7 +26,7 @@ export class CreateTenantCommand {
   ) {}
 
   async execute(input: CreateTenantCommandInput) {
-    const tenantId = input.dto.id ?? randomString(24);
+    const tenantId = input.dto.id ?? `c${randomString(24)}`;
     const aggregateResult = TenantAggregate.create({
       id: tenantId,
       name: input.dto.name,

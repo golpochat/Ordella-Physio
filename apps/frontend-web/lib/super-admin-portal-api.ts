@@ -617,9 +617,9 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     getBillingOverview() {
-      return api
-        .get<PlatformBillingMetrics>("billing", "/platform-metrics", { context: GLOBAL_CONTEXT })
-        .catch(() => null);
+      return api.get<PlatformBillingMetrics>("billing", "/platform-metrics", {
+        context: GLOBAL_CONTEXT,
+      });
     },
 
     getReportingOverview() {

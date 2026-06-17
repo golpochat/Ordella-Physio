@@ -4,8 +4,12 @@ import type { SecurityRole } from "../rbac/roles";
 export type TokenPayloadBase = {
   sub: string;
   userId: string;
-  tenantId: string;
+  tenantId?: string;
+  organizationId?: string;
   role: SecurityRole;
+  effectiveRole?: string;
+  permissions?: string[];
+  resolvedPermissions?: string[];
   email?: string;
   tokenId?: string;
 };

@@ -28,6 +28,7 @@ const CLINIC_BACKEND_PREFIX: Partial<Record<ApiServiceKey, string>> = {
   staffMember: "/api/staff",
   tenant: "/api/tenant",
   userRole: "/api/rbac",
+  files: "/api/files",
 };
 
 export function isClinicBackendService(service: ApiServiceKey): boolean {

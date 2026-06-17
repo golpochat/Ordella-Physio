@@ -49,16 +49,33 @@ export class EnterpriseService {
     return this.ssoService.getSamlMetadata(tenantId);
   }
 
-  handleSamlAcs(tenantId: string, payload: unknown) {
-    return this.ssoService.handleSamlAcs(tenantId, payload);
+  handleSamlAcs(
+    tenantId: string,
+    payload: Record<string, string>,
+    options?: { ipAddress?: string; deviceInfo?: string },
+  ) {
+    return this.ssoService.handleSamlAcs(tenantId, payload, options);
   }
 
-  startSsoOAuth(tenantId: string, provider: string) {
-    return this.ssoService.createOAuthAuthorizationUrl(tenantId, provider);
+  startSamlLogin(tenantId: string) {
+    return this.ssoService.startSamlLogin(tenantId);
   }
 
-  handleSsoOAuthCallback(code: string, state: string) {
-    return this.ssoService.handleOAuthCallback(code, state);
+  startSsoOAuth(tenantId: string, _provider?: string) {
+    return this.ssoService.startOidcLogin(tenantId);
+  }
+
+  handleSsoOAuthCallback(
+    code: string,
+    state: string,
+    callbackUrl: URL,
+    options?: { ipAddress?: string; deviceInfo?: string },
+  ) {
+    return this.ssoService.handleOidcCallback(code, state, callbackUrl, options);
+  }
+
+  logoutSso(input: { tenantId: string; userId: string; idTokenHint?: string; ipAddress?: string }) {
+    return this.ssoService.logout(input);
   }
 
   listPermissionGroups(tenantId: string) {

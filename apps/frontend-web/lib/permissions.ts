@@ -33,7 +33,7 @@ export type PermissionUser = {
   roles?: string[];
 } | null | undefined;
 
-const PERMISSION_ALIASES: Partial<Record<PermissionValue | string, AuthPermission>> = {
+const PERMISSION_ALIASES: Record<string, string> = {
   [Permission.REPORTING_VIEW]: "reporting.read",
   [Permission.PATIENT_EDIT]: "patient.edit",
 };
@@ -42,7 +42,7 @@ function isAuthPermission(value: string): value is AuthPermission {
   return value in PERMISSIONS;
 }
 
-function resolveAuthPermission(permission: string): AuthPermission | null {
+function resolveAuthPermission(permission: string): string | null {
   const alias = PERMISSION_ALIASES[permission];
   if (alias) {
     return alias;

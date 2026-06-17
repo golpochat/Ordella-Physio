@@ -1,6 +1,7 @@
 import type { UploadFilePayload } from "@/validators/file.types";
 import { fileTooLargeError, fileValidationError, invalidPaginationError } from "@/utils/file-errors";
 import { loadStorageConfig } from "@/config/storage.config";
+import { validateFileSecurity } from "@/utils/file-security";
 
 export type UploadMultipartFile = {
   buffer: Buffer;
@@ -97,9 +98,16 @@ export function validateUploadFile(
     throw fileValidationError(fields);
   }
 
-  return {
+  const secured = validateFileSecurity({
     filename,
     mimeType,
+    sizeBytes,
+    maxBytes,
+  });
+
+  return {
+    filename: secured.filename,
+    mimeType: secured.mimeType,
     sizeBytes,
     entityType,
     entityId,
@@ -196,11 +204,18 @@ export function validateInternalUploadPayload(payload: {
     throw fileTooLargeError();
   }
 
+  const secured = validateFileSecurity({
+    filename: filename!,
+    mimeType: mimeType!,
+    sizeBytes: buffer.length,
+    maxBytes,
+  });
+
   return {
     tenantId: tenantId!,
     ownerUserId: ownerUserId!,
-    filename: filename!,
-    mimeType: mimeType!,
+    filename: secured.filename,
+    mimeType: secured.mimeType,
     buffer,
     sizeBytes: buffer.length,
     entityType,

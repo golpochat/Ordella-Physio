@@ -74,9 +74,11 @@ export function invalidSignedUrlError(message = "The file access link is invalid
   });
 }
 
-export function virusDetectedError(message = "The uploaded file contains a virus.") {
+export function virusDetectedError(
+  message = "This file appears to be unsafe and cannot be uploaded.",
+) {
   return new HttpError({
-    statusCode: 422,
+    statusCode: 400,
     code: ERROR_CODES.FILE.VIRUS_DETECTED,
     message,
     metadata: { error: "VIRUS_DETECTED" },

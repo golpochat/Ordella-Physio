@@ -2,12 +2,17 @@ import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { FileController } from "@/controllers/file.controller";
 import { InternalFileController } from "@/controllers/internal-file.controller";
+import {
+  FileSignedUrlController,
+  UploadPipelineController,
+} from "@/controllers/upload-pipeline.controller";
 import { AuditLogClient } from "@/integrations/audit-log.client";
 import { SubscriptionBillingClient } from "@/integrations/subscription-billing.client";
 import { FileObjectRepository } from "@/repositories/file-object.repository";
 import { FileLifecycleService } from "@/services/file-lifecycle.service";
 import { FileStorageService } from "@/services/file-storage.service";
 import { ImageTransformService } from "@/services/image-transform.service";
+import { S3ClientService } from "@/services/s3-client.service";
 import { StorageProviderService } from "@/services/storage-provider.service";
 import { ThumbnailService } from "@/services/thumbnail.service";
 import { VirusScanService } from "@/services/virus-scan.service";
@@ -16,9 +21,10 @@ import { JwtGuard } from "@/guards/jwt.guard";
 
 @Module({
   imports: [PassportModule.register({ defaultStrategy: "jwt" })],
-  controllers: [FileController, InternalFileController],
+  controllers: [FileController, InternalFileController, UploadPipelineController, FileSignedUrlController],
   providers: [
     FileStorageService,
+    S3ClientService,
     StorageProviderService,
     ImageTransformService,
     ThumbnailService,

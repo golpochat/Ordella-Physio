@@ -21,7 +21,7 @@ export function authMiddleware(request: AuthenticatedRequest, _response: Respons
     const payload = verifyAccessToken(token);
     request.user = {
       userId: payload.userId ?? payload.sub,
-      tenantId: payload.tenantId,
+      tenantId: payload.tenantId ?? "",
       role: payload.role,
       email: payload.email,
     };

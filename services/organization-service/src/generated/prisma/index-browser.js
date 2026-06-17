@@ -138,6 +138,31 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrganizationSsoConfigScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  ssoEnabled: 'ssoEnabled',
+  ssoProtocol: 'ssoProtocol',
+  ssoMetadataUrl: 'ssoMetadataUrl',
+  ssoEntityId: 'ssoEntityId',
+  ssoAcsUrl: 'ssoAcsUrl',
+  ssoCertificate: 'ssoCertificate',
+  ssoClientId: 'ssoClientId',
+  ssoClientSecret: 'ssoClientSecret',
+  ssoIssuer: 'ssoIssuer',
+  ssoRedirectUri: 'ssoRedirectUri',
+  ssoLogoutUrl: 'ssoLogoutUrl',
+  ssoJwksUrl: 'ssoJwksUrl',
+  roleMappings: 'roleMappings',
+  previousCertificates: 'previousCertificates',
+  metadataCache: 'metadataCache',
+  metadataFetchedAt: 'metadataFetchedAt',
+  metadataValidatedAt: 'metadataValidatedAt',
+  allowSelfSignedCerts: 'allowSelfSignedCerts',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.OrganizationConfigScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -158,6 +183,11 @@ exports.Prisma.OrganizationTenantScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.JsonNullValueInput = {
@@ -196,8 +226,14 @@ exports.OrganizationStatus = exports.$Enums.OrganizationStatus = {
   INACTIVE: 'INACTIVE'
 };
 
+exports.SsoProtocol = exports.$Enums.SsoProtocol = {
+  SAML: 'SAML',
+  OIDC: 'OIDC'
+};
+
 exports.Prisma.ModelName = {
   Organization: 'Organization',
+  OrganizationSsoConfig: 'OrganizationSsoConfig',
   OrganizationConfig: 'OrganizationConfig',
   OrganizationTenant: 'OrganizationTenant'
 };

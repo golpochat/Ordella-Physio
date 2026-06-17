@@ -145,4 +145,12 @@ export class StripeBillingRepository {
   countIssuedInvoices() {
     return this.database.invoice.count({ where: { status: { in: ["ISSUED", "PAID"] } } });
   }
+
+  deleteTenantBillingAccount(tenantId: string) {
+    return this.database.tenantBillingAccount.deleteMany({ where: { tenantId } });
+  }
+
+  deleteOrganizationBillingAccount(organizationId: string) {
+    return this.database.organizationBillingAccount.deleteMany({ where: { organizationId } });
+  }
 }

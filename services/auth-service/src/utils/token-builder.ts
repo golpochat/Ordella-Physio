@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { authConfig } from "@ordella/config";
 import {
   createJwtConfigFromEnv,
-  getPermissionsForRole,
+  resolvePermissions,
   signAccessToken,
   signRefreshToken,
   type AccessTokenPayload,
@@ -24,34 +24,49 @@ export class TokenBuilder {
 
   buildAccessToken(input: {
     userId: string;
-    tenantId: string;
+    tenantId?: string | null;
     role: SecurityRole;
     email: string;
     sessionId: string;
     jti?: string;
     tokenVersion?: number;
+    organizationId?: string | null;
+    permissionOverrides?: string[] | null;
   }): string {
-    const permissions = getPermissionsForRole(input.role);
+    const { effectiveRole, resolvedPermissions } = resolvePermissions({
+      role: input.role,
+      organizationId: input.organizationId,
+      permissionOverrides: input.permissionOverrides,
+    });
     const jti = input.jti ?? input.sessionId;
     const payload = {
       sub: input.userId,
       userId: input.userId,
-      tenantId: input.tenantId,
+      tenantId: input.tenantId ?? undefined,
+      organizationId: input.organizationId ?? undefined,
       role: input.role,
+      effectiveRole,
       email: input.email,
       type: TOKEN_TYPES.ACCESS,
-      permissions,
+      permissions: resolvedPermissions,
+      resolvedPermissions,
       sessionId: input.sessionId,
       jti,
       tv: input.tokenVersion ?? 0,
-    } as AccessTokenPayload & { jti: string; tv: number };
+    } as AccessTokenPayload & {
+      jti: string;
+      tv: number;
+      effectiveRole: string;
+      resolvedPermissions: string[];
+      organizationId?: string;
+    };
 
     return signAccessToken(payload, authConfig.jwtExpiresIn, this.jwtConfig);
   }
 
   buildRefreshToken(input: {
     userId: string;
-    tenantId: string;
+    tenantId?: string | null;
     role: SecurityRole;
     email: string;
     sessionId: string;
@@ -60,7 +75,7 @@ export class TokenBuilder {
       {
         sub: input.userId,
         userId: input.userId,
-        tenantId: input.tenantId,
+        tenantId: input.tenantId ?? undefined,
         role: input.role,
         email: input.email,
         tokenId: input.sessionId,

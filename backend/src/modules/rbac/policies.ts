@@ -93,4 +93,17 @@ export const policies = {
     denyPatientClinician,
     requireAny([Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE]),
   ),
+
+  filesUpload: composePolicy(
+    denyPatient,
+    requireAny([Permission.PATIENT_ATTACHMENTS, "files.upload"]),
+  ),
+  filesRead: composePolicy(
+    denyPatient,
+    requireAny([Permission.PATIENT_ATTACHMENTS, Permission.PATIENT_VIEW, "files.view"]),
+  ),
+  filesDelete: composePolicy(
+    denyPatient,
+    requireAny([Permission.PATIENT_ATTACHMENTS, "files.delete", Permission.USER_MANAGE]),
+  ),
 };

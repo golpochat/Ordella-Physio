@@ -1,18 +1,19 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
   Param,
   Post,
+  Req,
   Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Body,
 } from "@nestjs/common";
+import type { Request, Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
-import type { Response } from "express";
 import { TenantGuard } from "@ordella/security";
 import { PatientAttachmentService } from "@/patient-attachments/patient-attachment.service";
 import { PatientAttachmentsGuard } from "@/patient-attachments/guards/patient-attachments.guard";
@@ -69,6 +70,7 @@ export class PatientAttachmentController {
     @Param("patientId") patientId: string,
     @Param("attachmentId") attachmentId: string,
     @CurrentUser() user: AuthenticatedPatientUser,
+    @Req() request: Request,
     @Res() response: Response,
   ) {
     await this.patientAttachmentService.downloadAttachment(
@@ -76,6 +78,7 @@ export class PatientAttachmentController {
       attachmentId,
       user,
       response,
+      request.headers.authorization,
     );
   }
 
@@ -93,7 +96,13 @@ export class PatientAttachmentController {
     @Param("patientId") patientId: string,
     @Param("attachmentId") attachmentId: string,
     @CurrentUser() user: AuthenticatedPatientUser,
+    @Req() request: Request,
   ) {
-    return this.patientAttachmentService.deleteAttachment(patientId, attachmentId, user);
+    return this.patientAttachmentService.deleteAttachment(
+      patientId,
+      attachmentId,
+      user,
+      request.headers.authorization,
+    );
   }
 }

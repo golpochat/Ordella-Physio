@@ -8,6 +8,7 @@ import { MfaController } from "@/controllers/mfa.controller";
 import { TokenController } from "@/controllers/token.controller";
 import { AuditController } from "@/controllers/audit.controller";
 import { InternalUsersController } from "@/controllers/internal-users.controller";
+import { InternalSsoController } from "@/controllers/internal-sso.controller";
 import { UserController } from "@/controllers/user.controller";
 import { InternalOwnerService } from "@/services/internal-owner.service";
 import { UserManagementService } from "@/services/user.service";
@@ -15,6 +16,7 @@ import { PlatformSettingsController } from "@/auth/platform-settings.controller"
 import { PlatformSettingsService } from "@/auth/platform-settings.service";
 import { AuthService } from "@/auth/auth.service";
 import { LoginCommand } from "@/auth/commands/login.command";
+import { SsoLoginCommand } from "@/auth/commands/sso-login.command";
 import { RegisterCommand } from "@/auth/commands/register.command";
 import { RefreshTokenCommand } from "@/auth/commands/refresh-token.command";
 import { JwtStrategy } from "@/auth/strategies/jwt.strategy";
@@ -50,6 +52,7 @@ import { AuditModule } from "@/audit/audit.module";
     MfaController,
     AuditController,
     InternalUsersController,
+    InternalSsoController,
     PlatformSettingsController,
     UserController,
   ],
@@ -62,6 +65,7 @@ import { AuditModule } from "@/audit/audit.module";
     VerificationService,
     MfaService,
     LoginCommand,
+    SsoLoginCommand,
     RegisterCommand,
     RefreshTokenCommand,
     JwtStrategy,

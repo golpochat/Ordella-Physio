@@ -11,32 +11,23 @@ export function PharmacyFulfillmentDetail({ order }: { order: PharmacyFulfillmen
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
-            <CardTitle>{order.medication}</CardTitle>
-            <Badge>{order.status}</Badge>
+            <CardTitle>{order.medicationName}</CardTitle>
+            <Badge>{order.fulfillment?.status ?? order.status}</Badge>
           </div>
         </CardHeader>
         <CardBody className="space-y-4 text-sm">
           <div>
             <p className="font-medium">Patient</p>
-            <p className="text-muted-foreground">{order.patientName}</p>
+            <p className="text-muted-foreground">{order.patientId}</p>
           </div>
           <div>
             <p className="font-medium">Prescription</p>
-            <p className="text-muted-foreground">{order.prescriptionId}</p>
+            <p className="text-muted-foreground">{order.id}</p>
           </div>
-          {order.appointmentId ? (
-            <div>
-              <p className="font-medium">Linked appointment</p>
-              <p className="text-muted-foreground">{order.appointmentId}</p>
-            </div>
-          ) : null}
           <div>
             <p className="font-medium">Last updated</p>
             <p className="text-muted-foreground">{formatPortalDateTime(order.updatedAt)}</p>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Placeholder detail — status updates will be wired when fulfillment API is available.
-          </p>
         </CardBody>
       </Card>
       <Button asChild variant="outline">

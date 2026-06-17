@@ -55,3 +55,14 @@ export function patientAttachmentInvalidFileError(message = "Unsupported file ty
     message,
   });
 }
+
+export function patientAttachmentUnsafeFileError(
+  message = "This file appears to be unsafe and cannot be uploaded.",
+) {
+  return new HttpError({
+    statusCode: 400,
+    code: ERROR_CODES.FILE.VIRUS_DETECTED,
+    message,
+    metadata: { error: "VIRUS_DETECTED" },
+  });
+}

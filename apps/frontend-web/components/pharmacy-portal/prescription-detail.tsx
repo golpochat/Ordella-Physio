@@ -15,34 +15,41 @@ export function PharmacyPrescriptionDetail({
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
-            <CardTitle>{prescription.medication}</CardTitle>
+            <CardTitle>{prescription.medicationName}</CardTitle>
             <Badge>{prescription.status}</Badge>
           </div>
         </CardHeader>
         <CardBody className="space-y-4 text-sm">
           <div>
             <p className="font-medium">Patient</p>
-            <p className="text-muted-foreground">{prescription.patientName}</p>
+            <p className="text-muted-foreground">{prescription.patientId}</p>
+          </div>
+          <div>
+            <p className="font-medium">Therapist</p>
+            <p className="text-muted-foreground">{prescription.therapistId}</p>
           </div>
           <div>
             <p className="font-medium">Dosage</p>
-            <p className="text-muted-foreground">{prescription.dosage}</p>
-          </div>
-          <div>
-            <p className="font-medium">Requested</p>
             <p className="text-muted-foreground">
-              {formatPortalDateTime(prescription.requestedAt)}
+              {prescription.dosage} · {prescription.frequency} · {prescription.duration}
             </p>
           </div>
-          {prescription.appointmentId ? (
+          {prescription.notes ? (
             <div>
-              <p className="font-medium">Linked appointment</p>
-              <p className="text-muted-foreground">{prescription.appointmentId}</p>
+              <p className="font-medium">Notes</p>
+              <p className="text-muted-foreground">{prescription.notes}</p>
             </div>
           ) : null}
-          <p className="text-xs text-muted-foreground">
-            Placeholder detail — approval and dispensing actions will be wired later.
-          </p>
+          <div>
+            <p className="font-medium">Created</p>
+            <p className="text-muted-foreground">{formatPortalDateTime(prescription.createdAt)}</p>
+          </div>
+          {prescription.fulfillment ? (
+            <div>
+              <p className="font-medium">Fulfillment status</p>
+              <p className="text-muted-foreground">{prescription.fulfillment.status}</p>
+            </div>
+          ) : null}
         </CardBody>
       </Card>
       <Button asChild variant="outline">

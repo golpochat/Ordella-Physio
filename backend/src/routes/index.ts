@@ -11,6 +11,7 @@ import { notesRouter } from "../modules/notes";
 import { reportsRouter } from "../modules/reports";
 import { notificationsRouter } from "../modules/notifications";
 import { rbacRouter } from "../modules/rbac";
+import { filesRouter } from "../modules/files";
 import { authMiddleware, requireAuth } from "../middleware/tenant.middleware";
 import { requireTenant } from "../middleware/tenant";
 import { enforceTenantAccess } from "../middleware/tenant-access";
@@ -41,6 +42,7 @@ tenantScoped.use("/notes", notesRouter);
 tenantScoped.use("/reports", reportsRouter);
 tenantScoped.use("/notifications", notificationsRouter);
 tenantScoped.use("/rbac", rbacRouter);
+tenantScoped.use("/files", filesRouter);
 
 tenantScoped.get(
   "/audit-logs",

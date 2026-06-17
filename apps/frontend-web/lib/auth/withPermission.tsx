@@ -4,13 +4,12 @@ import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
-import type { AuthPermission } from "@/lib/auth/permissions";
 import { can, canAll, type PermissionValue } from "@/lib/permissions";
 import { getStoredAuthUser, getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { useAuthStore } from "@/store/auth.store";
 
 export type WithPermissionOptions = {
-  permission: AuthPermission;
+  permission: string;
   fallback?: ReactNode;
 };
 
@@ -20,7 +19,7 @@ export function WithPermission({
   fallback,
 }: {
   children: ReactNode;
-  permission: AuthPermission;
+  permission: string;
   fallback?: ReactNode;
 }) {
   const router = useRouter();
@@ -47,7 +46,7 @@ export function WithPermission({
     }
 
     if (!allowed) {
-      router.replace("/forbidden");
+      router.replace("/access-denied");
     }
   }, [allowed, authenticated, hydrated, router, user]);
 
@@ -82,7 +81,7 @@ export function IfHasPermission({
   permission,
 }: {
   children: ReactNode;
-  permission: AuthPermission;
+  permission: string;
 }) {
   const storeUser = useAuthStore((state) => state.user);
   const [hydrated, setHydrated] = useState(false);
@@ -105,7 +104,7 @@ export function WithAllPermissions({
   fallback,
 }: {
   children: ReactNode;
-  permissions: AuthPermission[];
+  permissions: string[];
   fallback?: ReactNode;
 }) {
   const router = useRouter();
@@ -133,7 +132,7 @@ export function WithAllPermissions({
     }
 
     if (!allowed) {
-      router.replace("/forbidden");
+      router.replace("/access-denied");
     }
   }, [allowed, authenticated, hydrated, permissions, router, user]);
 

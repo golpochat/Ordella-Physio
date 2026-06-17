@@ -61,6 +61,7 @@ export type ServiceEnvKey =
   | "AI_SECURITY_SERVICE_URL"
   | "AI_OBSERVABILITY_SERVICE_URL"
   | "AI_AGENTS_SERVICE_URL"
+  | "PHARMACY_SERVICE_URL"
   | "CLINIC_BACKEND_URL";
 
 export type ServiceDefinition = {
@@ -268,6 +269,12 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     envKey: "AI_AGENTS_SERVICE_URL",
     healthPath: "/ai/agents/health",
     defaultUrl: "http://ai-agents-service:3084",
+  },
+  {
+    name: "pharmacy",
+    envKey: "PHARMACY_SERVICE_URL",
+    healthPath: "/pharmacy/health",
+    defaultUrl: "http://pharmacy-service:3085",
   },
 ];
 

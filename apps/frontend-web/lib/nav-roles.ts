@@ -4,11 +4,17 @@ import { resolveUserRoles } from "@/lib/rbac";
 
 const ROLE_ALIASES: Record<PortalRole, string[]> = {
   SYSTEM: ["system", "superadmin", "super-admin"],
+  SUPER_ADMIN: ["system", "superadmin", "super-admin"],
+  TENANT_OWNER: ["admin", "owner"],
   OWNER: ["admin", "owner"],
   ADMIN: ["admin"],
   CLINIC_ADMIN: ["admin", "clinic_admin", "clinic-admin"],
   THERAPIST: ["therapist"],
   STAFF: ["staff"],
+  BILLING_ADMIN: ["billing", "staff"],
+  READ_ONLY: ["staff", "readonly"],
+  ORG_ADMIN: ["organization", "org_admin"],
+  ORG_BILLING_ADMIN: ["organization", "org_billing"],
   PHARMACY: ["pharmacy"],
   PATIENT: ["patient"],
   USER: ["user"],

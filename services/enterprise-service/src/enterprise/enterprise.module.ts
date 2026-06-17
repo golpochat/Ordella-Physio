@@ -7,6 +7,12 @@ import { EnterpriseController } from "@/enterprise/enterprise.controller";
 import { EnterpriseRepository } from "@/enterprise/enterprise.repository";
 import { EnterpriseService } from "@/enterprise/enterprise.service";
 import { SsoService } from "@/enterprise/sso.service";
+import { SsoSamlService } from "@/enterprise/sso-saml.service";
+import { SsoOidcService } from "@/enterprise/sso-oidc.service";
+import { SsoProvisioningService } from "@/enterprise/sso-provisioning.service";
+import { SsoAuditService } from "@/enterprise/sso-audit.service";
+import { OrganizationServiceClient } from "@/integrations/organization-service.client";
+import { AuthServiceClient } from "@/integrations/auth-service.client";
 import { WebhookDispatcherService } from "@/enterprise/webhook-dispatcher.service";
 import { EnterprisePlanGuard } from "@/enterprise/guards/enterprise-plan.guard";
 import { EnterpriseTenantGuard } from "@/enterprise/guards/enterprise-tenant.guard";
@@ -26,6 +32,12 @@ import { JwtStrategy } from "@/enterprise/strategies/jwt.strategy";
     EnterpriseService,
     EnterpriseRepository,
     SsoService,
+    SsoSamlService,
+    SsoOidcService,
+    SsoProvisioningService,
+    SsoAuditService,
+    OrganizationServiceClient,
+    AuthServiceClient,
     WebhookDispatcherService,
     JwtStrategy,
     JwtGuard,

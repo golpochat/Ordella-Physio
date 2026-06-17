@@ -1,98 +1,33 @@
-import type { SecurityRole } from "@ordella/security";
+import {
+  PERMISSION_ROLE_MAP,
+  roleHasMappedPermission,
+  type RolePermissionKey,
+} from "@ordella/security/rbac";
+import { userHasPlatformPermission } from "@/lib/platform-rbac";
 
-export const PERMISSIONS = {
-  "tenant.manage": ["SYSTEM", "OWNER"],
-  "user.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "billing.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "billing.analytics.view": ["SYSTEM", "OWNER", "ADMIN"],
-  "appointment.manage": ["SYSTEM", "ADMIN", "THERAPIST"],
-  "inventory.manage": ["SYSTEM", "ADMIN", "PHARMACY"],
-  "patient.view": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PHARMACY"],
-  "patient.edit": ["SYSTEM", "ADMIN", "THERAPIST"],
-  "patient.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "patient.notes": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "patient.attachments": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "notes.read": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PATIENT"],
-  "notes.write": ["SYSTEM", "ADMIN", "THERAPIST"],
-  "messaging.read": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PATIENT", "PHARMACY"],
-  "messaging.write": ["SYSTEM", "ADMIN", "THERAPIST", "STAFF", "PHARMACY"],
-  "reporting.read": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF", "PHARMACY"],
-  "reporting.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "settings.manage": ["SYSTEM"],
-  "organization.manage": ["SYSTEM"],
-  "location.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "terminal.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "role.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "audit.view": ["SYSTEM", "OWNER", "ADMIN"],
-  "audit.export": ["SYSTEM", "OWNER", "ADMIN"],
-  "audit.write_internal": ["SYSTEM"],
-  "files.upload": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "files.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "files.delete": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "files.delete.hard": ["SYSTEM", "OWNER", "ADMIN"],
-  "files.generateThumbnail": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "notification.providers.view": ["SYSTEM", "OWNER", "ADMIN"],
-  "notification.providers.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "notification.send": ["SYSTEM", "OWNER", "ADMIN", "STAFF"],
-  "notification.logs.view": ["SYSTEM", "OWNER", "ADMIN"],
-  "notification.analytics.view": ["SYSTEM", "OWNER", "ADMIN"],
-  "search.index": ["SYSTEM", "OWNER", "ADMIN"],
-  "search.query": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "search.admin": ["SYSTEM", "OWNER", "ADMIN"],
-  "subscription.read": ["SYSTEM", "OWNER", "ADMIN"],
-  "subscription.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "subscription.admin": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.use": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "ai.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.dataset.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "ai.dataset.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.dataset.label": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST"],
-  "ai.training.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST"],
-  "ai.training.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.model.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
-  "ai.model.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.admin": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.evaluation.run": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.promotion.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "ai.drift.view": ["SYSTEM", "OWNER", "ADMIN", "THERAPIST"],
-  "ai.drift.mitigate": ["SYSTEM", "OWNER", "ADMIN"],
-  "automation.view": ["SYSTEM", "OWNER", "ADMIN", "STAFF"],
-  "automation.manage": ["SYSTEM", "OWNER", "ADMIN"],
-  "automation.monitor": ["SYSTEM", "OWNER", "ADMIN"],
-  "automation.versioning": ["SYSTEM", "OWNER", "ADMIN"],
-} as const satisfies Record<string, SecurityRole[]>;
+export { PERMISSION_ROLE_MAP, type RolePermissionKey, PERMISSIONS, type Permission as AuthPermission } from "@ordella/security/rbac";
 
-export type AuthPermission = keyof typeof PERMISSIONS;
-
-function normalizePortalRole(role: string): string {
-  return role === "CLINIC_ADMIN" ? "ADMIN" : role;
-}
-
-export function roleHasPermission(role: string | undefined, permission: AuthPermission): boolean {
+export function roleHasPermission(role: string | undefined, permission: RolePermissionKey): boolean {
   if (!role) {
     return false;
   }
-
-  if (role === "SYSTEM") {
-    return true;
-  }
-
-  const allowedRoles = PERMISSIONS[permission] as readonly string[];
-  return allowedRoles.includes(normalizePortalRole(role));
+  return roleHasMappedPermission(role as never, permission);
 }
 
 export function userHasPermission(
-  user: { role?: string; roles?: string[]; permissions?: string[] } | null | undefined,
-  permission: AuthPermission,
+  user: { role?: string; roles?: string[]; permissions?: string[]; effectiveRole?: string } | null | undefined,
+  permission: RolePermissionKey | string,
 ): boolean {
   if (!user) {
     return false;
   }
 
-  if (user.permissions?.includes(permission)) {
+  if (userHasPlatformPermission(user, permission)) {
     return true;
   }
 
   const roles = user.roles?.length ? user.roles : user.role ? [user.role] : [];
-  return roles.some((role) => roleHasPermission(role, permission));
+  return roles.some((role) => roleHasPermission(role, permission as RolePermissionKey));
 }
+
+export { userHasPlatformPermission, PLATFORM_PERMISSIONS } from "@/lib/platform-rbac";

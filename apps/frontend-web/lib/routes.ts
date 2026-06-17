@@ -58,6 +58,10 @@ export const routes: Record<PortalRouteRole, readonly string[]> = {
     "/clinic/marketplace",
     "/clinic/enterprise",
     "/clinic/ai",
+    "/clinic/pharmacy",
+    "/clinic/pharmacy/new",
+    "/clinic/pharmacy/[id]",
+    "/clinic/pharmacy/[id]/fulfillment",
   ],
   staff: [
     "/staff",
@@ -236,6 +240,10 @@ export const adminRoutes = {
   marketplace: "/clinic/marketplace",
   enterprise: "/clinic/enterprise",
   ai: "/clinic/ai/models",
+  pharmacy: "/clinic/pharmacy",
+  pharmacyNew: "/clinic/pharmacy/new",
+  pharmacyPrescription: (id: string) => `/clinic/pharmacy/${id}`,
+  pharmacyFulfillment: (id: string) => `/clinic/pharmacy/${id}/fulfillment`,
 } as const;
 
 export const staffRoutes = {

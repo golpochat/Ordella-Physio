@@ -1,15 +1,25 @@
+import { normalizePermissionKey } from "./platform-permissions";
+import { getPlatformPermissionsForRole } from "./platform-role-permissions";
+import { normalizeEffectiveRole } from "./platform-roles";
 import { PERMISSIONS, type Permission } from "./permissions";
-import { ROLES, type SecurityRole } from "./roles";
+import { ROLES, isSystemRole, type SecurityRole } from "./roles";
 
 export type SecurityUser = {
   userId: string;
-  tenantId: string;
+  tenantId?: string;
+  organizationId?: string | null;
   role: SecurityRole;
+  effectiveRole?: string;
+  permissions?: string[];
   email?: string;
 };
 
-const ROLE_PERMISSIONS: Record<SecurityRole, Permission[]> = {
+const LEGACY_ROLE_PERMISSIONS: Record<SecurityRole, Permission[]> = {
+  SUPER_ADMIN: Object.values(PERMISSIONS),
   SYSTEM: Object.values(PERMISSIONS),
+  TENANT_OWNER: Object.values(PERMISSIONS).filter(
+    (permission) => permission !== PERMISSIONS.AUDIT_WRITE_INTERNAL,
+  ),
   OWNER: Object.values(PERMISSIONS).filter(
     (permission) => permission !== PERMISSIONS.AUDIT_WRITE_INTERNAL,
   ),
@@ -118,6 +128,26 @@ const ROLE_PERMISSIONS: Record<SecurityRole, Permission[]> = {
     PERMISSIONS.NOTIFICATIONS_WRITE,
     PERMISSIONS.REPORTING_READ,
   ],
+  BILLING_ADMIN: [
+    PERMISSIONS.BILLING_READ,
+    PERMISSIONS.BILLING_WRITE,
+    PERMISSIONS.BILLING_MANAGE,
+    PERMISSIONS.PAYMENTS_READ,
+    PERMISSIONS.PAYMENTS_WRITE,
+    PERMISSIONS.SUBSCRIPTION_READ,
+    PERMISSIONS.SUBSCRIPTION_MANAGE,
+  ],
+  READ_ONLY: [
+    PERMISSIONS.PATIENT_READ,
+    PERMISSIONS.APPOINTMENT_READ,
+    PERMISSIONS.NOTES_READ,
+    PERMISSIONS.BILLING_READ,
+    PERMISSIONS.REPORTING_READ,
+    PERMISSIONS.MESSAGING_READ,
+    PERMISSIONS.NOTIFICATIONS_READ,
+  ],
+  ORG_ADMIN: [PERMISSIONS.ORGANIZATION_MANAGE, PERMISSIONS.BILLING_MANAGE],
+  ORG_BILLING_ADMIN: [PERMISSIONS.BILLING_MANAGE, PERMISSIONS.SUBSCRIPTION_MANAGE],
   PATIENT: [
     PERMISSIONS.PATIENT_READ,
     PERMISSIONS.APPOINTMENT_READ,
@@ -146,15 +176,36 @@ export class RbacService {
     return user.role === role;
   }
 
-  hasPermission(user: SecurityUser, permission: Permission): boolean {
-    return getPermissionsForRole(user.role).includes(permission);
+  hasPermission(user: SecurityUser, permission: Permission | string): boolean {
+    const normalized = normalizePermissionKey(permission);
+    if (user.permissions?.includes(normalized) || user.permissions?.includes(permission)) {
+      return true;
+    }
+
+    const effective = normalizeEffectiveRole(user.effectiveRole ?? user.role);
+    if (effective === "SUPER_ADMIN") {
+      return true;
+    }
+
+    if (effective) {
+      const platformPermissions = getPlatformPermissionsForRole(effective);
+      if (platformPermissions.includes(normalized as never)) {
+        return true;
+      }
+    }
+
+    const legacy = getPermissionsForRole(user.role);
+    return legacy.includes(permission as Permission) || legacy.includes(normalized as Permission);
   }
 
   enforceTenantIsolation(user: SecurityUser, tenantId: string): boolean {
+    if (isSystemRole(user.role)) {
+      return true;
+    }
     return user.tenantId === tenantId;
   }
 
-  assertPermission(user: SecurityUser, permission: Permission): void {
+  assertPermission(user: SecurityUser, permission: Permission | string): void {
     if (!this.hasPermission(user, permission)) {
       throw new Error(`Missing permission: ${permission}`);
     }
@@ -168,7 +219,11 @@ export class RbacService {
 }
 
 export function getPermissionsForRole(role: SecurityRole): Permission[] {
-  return ROLE_PERMISSIONS[role] ?? [];
+  const effective = normalizeEffectiveRole(role);
+  if (effective) {
+    return getPlatformPermissionsForRole(effective) as unknown as Permission[];
+  }
+  return LEGACY_ROLE_PERMISSIONS[role] ?? [];
 }
 
 export const rbacService = new RbacService();
