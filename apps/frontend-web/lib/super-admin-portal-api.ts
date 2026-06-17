@@ -62,6 +62,33 @@ export type SuperAdminApiClient = ReturnType<typeof createApiClient>;
 
 const GLOBAL_CONTEXT = { tenantId: null as string | null };
 
+type TenantDirectoryEntry = {
+  id: string;
+  name: string;
+  code?: string;
+  slug: string;
+};
+
+function mapDirectoryEntryToPlatformTenant(entry: TenantDirectoryEntry): PlatformTenant {
+  const code = entry.code ?? entry.slug;
+
+  return {
+    id: entry.id,
+    name: entry.name,
+    code,
+    tenantCode: code,
+    slug: entry.slug,
+    timezone: "UTC",
+    currency: "USD",
+    address: null,
+    phone: null,
+    isActive: true,
+    status: "ACTIVE",
+    createdAt: "",
+    updatedAt: "",
+  };
+}
+
 export function normalizeTenantList(
   response: PlatformTenant[] | { data: PlatformTenant[] } | undefined,
 ): PlatformTenant[] {
@@ -200,11 +227,29 @@ export function normalizeOrganizationList(
 
 export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
   return {
-    listTenants(params?: { page?: number; limit?: number }) {
-      return api.get<PlatformTenant[] | { data: PlatformTenant[] }>("tenant", "", {
-        params,
-        context: GLOBAL_CONTEXT,
-      });
+    async listTenants(params?: { page?: number; limit?: number }) {
+      const response = await api.get<TenantDirectoryEntry[] | PlatformTenant[] | { data: PlatformTenant[] }>(
+        "tenant",
+        "/directory",
+        {
+          params: { limit: params?.limit ?? 100 },
+          context: GLOBAL_CONTEXT,
+        },
+      );
+
+      if (Array.isArray(response)) {
+        if (response.length === 0) {
+          return [];
+        }
+
+        if ("timezone" in response[0]) {
+          return response as PlatformTenant[];
+        }
+
+        return response.map((entry) => mapDirectoryEntryToPlatformTenant(entry));
+      }
+
+      return normalizeTenantList(response);
     },
 
     getTenant(id: string) {
@@ -597,11 +642,12 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     async getRole(id: string) {
-      try {
-        return await api.get<PlatformRole>("auth", `/roles/${id}`, { context: GLOBAL_CONTEXT });
-      } catch {
-        return BUILTIN_PLATFORM_ROLES.find((role) => role.id === id) ?? null;
+      const builtin = BUILTIN_PLATFORM_ROLES.find((role) => role.id === id);
+      if (builtin) {
+        return builtin;
       }
+
+      return api.get<PlatformRole>("auth", `/roles/${id}`, { context: GLOBAL_CONTEXT });
     },
 
     createRole(payload: CreatePlatformRolePayload) {
@@ -617,9 +663,11 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
     },
 
     getBillingOverview() {
-      return api.get<PlatformBillingMetrics>("billing", "/platform-metrics", {
-        context: GLOBAL_CONTEXT,
-      });
+      return api
+        .get<PlatformBillingMetrics>("billing", "/platform-metrics", {
+          context: GLOBAL_CONTEXT,
+        })
+        .catch(() => null);
     },
 
     getReportingOverview() {

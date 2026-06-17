@@ -7,6 +7,7 @@ import { usePlatformBilling } from "@/hooks/useSuperAdminPortal";
 
 export default function SuperAdminBillingPage() {
   const { data: metrics, isLoading, isError, refetch } = usePlatformBilling();
+  const showError = isError || (!isLoading && metrics == null);
 
   return (
     <>
@@ -15,7 +16,7 @@ export default function SuperAdminBillingPage() {
         subtitle="Stripe-live platform revenue and subscription metrics. No plan estimates or database-derived values."
       />
 
-      {isError ? (
+      {showError ? (
         <PageError
           message="Unable to load Stripe-live platform metrics. Verify billing-service credentials and super-admin access."
           onRetry={() => void refetch()}

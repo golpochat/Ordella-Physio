@@ -1,7 +1,7 @@
 # Ordella Physio — Implementation Audit & Tracker
 
 > **Purpose:** Living reference for what is implemented, what appears on the website, gaps, and planned work.  
-> **Last updated:** 2026-06-17 (P1–P3 shipped; Stripe webhook smoke + AI notes metered billing path)  
+> **Last updated:** 2026-06-17 (login + super-admin fixes; enterprise SSO + secure uploads shipped; local dev ops notes)  
 > **Primary frontend:** `apps/frontend-web` (port 3010)  
 > **Primary backends:** `backend/` (clinic monolith) + `services/*` (35 microservices via API gateway)
 
@@ -43,7 +43,7 @@ Ordella Physio runs on **two parallel backend paths**:
 
 The **live website** is **`apps/frontend-web`**. Legacy apps (`apps/web`, `apps/marketing-site`, `apps/app`, `apps/admin-dashboard`) are not deployed in Docker and largely duplicate older splits.
 
-**Overall:** Marketing + auth/onboarding + clinic portal core are implemented and wired. **Gateway-mode billing** (hybrid tenant/org truth, Stripe Checkout, webhook lifecycle) shipped 2026-06-17. **P1–P3 tracker work** shipped through 2026-06-17 (billing consolidation, org portal, pharmacy BFF, platform metrics, contact webhook). **Stripe test-key webhook smoke** verified via Stripe CLI (`201` on forwarded events). **Remaining:** full browser checkout E2E, AI notes invoice-item verification in Stripe Dashboard, ClamAV on production uploads, dedicated pharmacy service, Stripe-live MRR (vs plan estimates).
+**Overall:** Marketing + auth/onboarding + clinic portal core are implemented and wired. **Gateway-mode billing** (hybrid tenant/org truth, Stripe Checkout, webhook lifecycle) shipped 2026-06-17. **Enterprise SSO** (SAML/OIDC, org-level config, encrypted secrets, role mapping, logout, audit) and **secure file uploads** (S3 signed URLs, ClamAV scan path, BFF → clinic-backend → file-storage-service) shipped 2026-06-17. **Local dev login + super-admin overview** fixed 2026-06-17 (`USE_CLINIC_BACKEND` flag-only routing, `demo-tenant` seed alignment, tenant directory API, auth query hydration). **Stripe test-key webhook smoke** verified via Stripe CLI (`201` on forwarded events). **Remaining:** full browser checkout E2E, AI notes invoice-item verification in Stripe Dashboard, ClamAV required in production upload handlers, dedicated pharmacy service, Stripe-live MRR when billing-service keys configured, commit uncommitted frontend routing fixes.
 
 ---
 
@@ -57,8 +57,10 @@ The **live website** is **`apps/frontend-web`**. Legacy apps (`apps/web`, `apps/
 | Audit logging                               | ✅                  | ✅      | ✅       | Done             |     | Docker dev stack (18 svc + gateway + frontend) | ✅  | N/A | N/A | Done |
 | Docker full stack (34+ svc + observability) | ✅                  | N/A     | N/A      | Done             |
 | Encrypted backups + cron                    | ✅                  | N/A     | N/A      | Done             |
-| Dual-backend routing (`USE_CLINIC_BACKEND`) | ✅                  | ✅      | ✅       | Done             |
-| ClamAV on upload                            | Built, unwired      | N/A     | N/A      | 🔒 Deferred (P3) |
+| Dual-backend routing (`USE_CLINIC_BACKEND`) | ✅                  | ✅      | ✅       | Done — flag-only (URL presence no longer enables monolith mode; fix uncommitted) |
+| Enterprise SSO (SAML/OIDC)                  | ✅ org + enterprise + auth services | ✅ `/clinic/enterprise` + login SSO button | ✅ | Done (2026-06-17) |
+| Secure file uploads (S3 + ClamAV pipeline)  | ✅ file-storage + clinic-backend proxy | ✅ `file-api.ts` signed URL flow | ⚠️ | Partial — wire `validateAndScanUpload()` on production upload handlers; set `CLAMAV_REQUIRED=true` |
+| ClamAV on upload                            | Built + scan service; production handlers unwired | N/A | N/A | 🔒 Deferred until upload routes ship in prod |
 | Automated JWT key rotation                  | Manual overlap only | N/A     | N/A      | 🔒 Deferred      |
 
 ---
@@ -102,7 +104,7 @@ Base path: `/api`. Tenant-scoped routes require auth + tenant header.
 | RBAC                        | ⚠️ Assign only          | Users, roles                          | ⚠️       | Partial                 |
 | Audit logs                  | ✅                      | Audit logs                            | ✅       | Done                    |
 | Locations (data model)      | ❌ Monolith             | `/clinic/locations` via gateway       | ⚠️       | Depends on backend mode |
-| File uploads                | ❌ Unwired              | Attachments UI                        | ❌       | **Not started**         |
+| File uploads                | ⚠️ Gateway path via file-storage-service | Attachments UI (`file-api.ts`) | ⚠️ | Partial — monolith path still unwired |
 
 ### Clinic-backend endpoint quick reference
 
@@ -138,8 +140,8 @@ Routed via **api-gateway** (`:3049`). Dev compose runs **17** domain services + 
 | Billing                   | billing (primary), payment, subscription-billing (deprecated)                                 | Hybrid truth, Checkout Session, webhooks, lifecycle sync, platform metrics | ⚠️                          | Partial — subscription-billing deprecated; Stripe-live MRR pending |
 | Comms                     | notification, notification-provider, communication, messaging                                 | Stubbed channels                                                           | ✅ Topbar                   | Partial                                                            |
 | Reporting & search        | reporting, search-index                                                                       | Placeholder exports, ES stub                                               | ✅ Search topbar            | Partial                                                            |
-| Integrations              | file-storage, marketplace                                                                     | Complete                                                                   | ✅ Clinic nav               | Done (nav)                                                         |
-| Enterprise                | enterprise                                                                                    | SSO, API keys, webhooks                                                    | ✅ Clinic nav               | Done (nav)                                                         |
+| Integrations              | file-storage, marketplace                                                                     | S3 signed URLs + virus scan path; marketplace catalog                      | ✅ Clinic nav               | Partial — uploads live on gateway path                             |
+| Enterprise                | enterprise                                                                                    | SAML/OIDC SSO flows, API keys, webhooks, org SSO config                    | ✅ Clinic nav + SSO login   | Done (2026-06-17)                                                  |
 | AI platform (10 services) | ai, ai-notes, ai-gateway, training, monitoring, deploy, security, cost, observability, agents | Scaffold + mocks                                                           | ✅ Clinic nav (AI platform) | Partial — routes + nav                                             |
 
 ---
@@ -153,7 +155,7 @@ Routed via **api-gateway** (`:3049`). Dev compose runs **17** domain services + 
 | Clinic portal       | ~110                          | ✅ Core in sidebar + API                                         | Done                                         |
 | Staff portal        | ~18                           | ✅ Live                                                          | Done                                         |
 | Therapist portal    | ~17                           | ✅ Live                                                          | Done                                         |
-| Super admin         | ~33                           | Provisioning + org/tenant CRUD + platform billing metrics        | Partial — polish + Stripe-live MRR pending   |
+| Super admin         | ~33                           | Provisioning + org/tenant CRUD + platform billing metrics        | ⚠️ Login + overview fixed locally; Stripe metrics need keys |
 | Organization portal | 2+                            | `/organization/billing` (+ upgrade + org shell/nav)              | Partial — billing-focused nav                |
 | Patient portal      | ~10                           | ✅ Full nav                                                      | Done (nav) — **keep `/patient` APIs/routes** |
 | Pharmacy portal     | ~13                           | ⚠️ BFF-derived prescriptions/fulfillment (not dedicated service) | In progress                                  |
@@ -197,7 +199,10 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | Legacy `/patients`, `/billing` scaffolds       | ✅       | Redirect to `/clinic/`\*                                                    | P3       | Done                                             |
 | Notes edit/delete                              | ✅       | PATCH/DELETE on monolith                                                    | P3       | Done                                             |
 | Pharmacy real API                              | ⚠️       | BFF derives from patient/appointment; no dedicated pharmacy service yet     | P3       | In progress                                      |
-| Super-admin MRR/revenue                        | ⚠️       | `billing-service` platform metrics are plan-estimated, not Stripe-live MRR  | P3       | In progress                                      |
+| Super-admin login (gateway mode)               | ✅       | `USE_CLINIC_BACKEND=false` + `demo-tenant`; flag-only backend toggle        | P1       | Done (local; uncommitted)                        |
+| Super-admin overview API noise                 | ⚠️       | Tenant directory, auth hydration, builtin roles; billing optional on overview | P2     | Done (local; uncommitted)                        |
+| Super-admin MRR/revenue                        | ⚠️       | `GET /billing/platform-metrics` needs Stripe creds; graceful empty in dev | P3       | Partial — route shipped; live data env-dependent |
+| Local dev: port 3010 conflict                  | ⚠️       | `next dev` and Docker `frontend` both bind `:3010` — use one at a time      | P2       | Documented — see ops-reference                   |
 
 ---
 
@@ -268,6 +273,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 ### Phase 5 — Enterprise & compliance
 
 - [x] Enterprise SSO UI (`/clinic/enterprise` in nav)
+- [x] Enterprise SSO backend (SAML/OIDC, org config, encrypted secrets, auth provisioning, audit)
 - [x] JWT rotation runbook ([runbooks/jwt-rotation.md](./runbooks/jwt-rotation.md))
 - [ ] ClamAV on uploads before PHI documents ship (🔒 deferred)
 
@@ -275,8 +281,10 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 
 - [x] Atomic org → tenant → owner provisioning (`POST /super-admin/provisioning/full`)
 - [x] Owner assignment during tenant create (`ownerUserId` or `ownerEmail`)
+- [x] Super-admin login via gateway BFF (`demo-tenant` seed, `USE_CLINIC_BACKEND=false`)
+- [x] Super-admin overview: tenant directory list, auth-ready queries, builtin role resolution
 - [ ] Super-admin platform users CRUD polish (list filters, create form edge cases)
-- [x] Super-admin MRR / revenue dashboard (billing-service platform metrics, plan-estimated)
+- [x] Super-admin MRR / revenue dashboard (`GET /billing/platform-metrics`; Stripe-live when keys set)
 - [ ] E2E tests: provisioning rollback + billing checkout + webhook activation
 
 ---
@@ -300,7 +308,8 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | AI notes therapist UX         | ✅ Already in `NotesEditor` / `AiNotesAssistant`                                        |
 | AI notes usage display        | ✅ `aiNotesUsageCount` on billing context + clinic billing panel                        |
 | AI notes metered billing sync | ✅ `tenant-service` → `billing-service` internal invoice item (`STRIPE_PRICE_AI_NOTES`) |
-| File uploads + ClamAV         | ⚠️ file-storage scans when `CLAMAV_HOST` set; compose docs added                        |
+| File uploads + ClamAV         | ✅ S3 signed URL pipeline + `validateAndScanUpload()`; ⚠️ call in prod upload handlers  |
+| Local dev frontend            | ⚠️ Use **either** `pnpm --filter @ordella/frontend-web dev` **or** Docker `frontend` on `:3010` |
 
 **Still open (P2):** Confirm AI notes metered invoice items in Stripe dashboard during tenant/org billing cycles.
 
@@ -314,7 +323,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | Marketing contact form backend | ✅ Optional `CONTACT_WEBHOOK_URL` delivery                                 |
 | E2E workflow tests             | ✅ `billing-platform-metrics.spec.ts` (gateway onboarding + metrics route) |
 
-**Still open (P3):** Full Playwright provisioning rollback suite; pharmacy dedicated microservice; live Stripe MRR from Stripe API (current MRR uses plan estimates from DB).
+**Still open (P3):** Full Playwright provisioning rollback suite; pharmacy dedicated microservice; live Stripe MRR from Stripe API when `STRIPE_*` keys configured; commit frontend dual-backend + super-admin fixes.
 
 ---
 
@@ -364,6 +373,8 @@ flowchart TB
 | 2026-06-17 | P2 completeness: gateway onboarding proxy, organization portal nav, AI notes usage on billing UI, ClamAV compose notes.                                                                                                                                                                       |
 | 2026-06-17 | P3 (local): pharmacy BFF API, billing-service platform-metrics + super-admin MRR UI, architecture.md refresh, contact webhook delivery, workflow e2e stubs.                                                                                                                                   |
 | 2026-06-17 | Stripe smoke run (test keys): Stripe CLI forwarding to `POST /billing/webhook` returned `201` on checkout/session/payment fixture events; added AI notes metered billing sync path (`tenant-service` internal usage → `billing-service` invoice item via `STRIPE_PRICE_AI_NOTES`).            |
+| 2026-06-17 | Enterprise SSO + secure uploads: organization SSO config, enterprise SAML/OIDC handlers, auth SSO provisioning, file-storage S3 pipeline, clinic-backend upload proxy, frontend SSO UI + `file-api.ts`; Docker monorepo/build fixes (`3917ffd`).                                              |
+| 2026-06-17 | Local dev fixes (uncommitted): `useClinicBackend()` / `isClinicBackendClient()` honor explicit flags only; BFF skips default `x-tenant-id` on authenticated auth proxy; super-admin tenant list → `/tenants/directory`; `useSuperAdminQueryReady`; builtin roles without API 404; billing graceful on overview. |
 
 ---
 
@@ -372,7 +383,8 @@ flowchart TB
 Trigger an audit pass when any of these land:
 
 - Full browser checkout E2E with production Stripe keys
-- File upload routes ship with ClamAV enabled in production
+- Frontend dual-backend + super-admin fixes committed to `main`
+- File upload routes ship with ClamAV enabled in production (`CLAMAV_REQUIRED=true`)
 - AI notes invoice items confirmed in Stripe Dashboard during billing cycles
 - Dedicated pharmacy service replaces BFF-derived data
 - Stripe-live MRR metrics replace plan-estimated aggregation

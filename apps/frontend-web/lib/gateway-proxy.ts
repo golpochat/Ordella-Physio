@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { TENANT_HEADER, GATEWAY_PATHS, type ApiServiceKey } from "./constants";
+import { AUTHORIZATION_HEADER, TENANT_HEADER, GATEWAY_PATHS, type ApiServiceKey } from "./constants";
 import { getDefaultTenantId } from "./tenant-config";
 import {
   proxyToClinicBackend,
@@ -119,9 +119,12 @@ export async function proxyToGateway(
   }
 
   if (service === "auth" && !headers.get(TENANT_HEADER)) {
-    const defaultTenantId = getDefaultTenantId();
-    if (defaultTenantId) {
-      headers.set(TENANT_HEADER, defaultTenantId);
+    const hasBearer = headers.get(AUTHORIZATION_HEADER)?.startsWith("Bearer ");
+    if (!hasBearer) {
+      const defaultTenantId = getDefaultTenantId();
+      if (defaultTenantId) {
+        headers.set(TENANT_HEADER, defaultTenantId);
+      }
     }
   }
 

@@ -6,7 +6,6 @@ import { Card } from "@/components/dashboard/Card";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
-  usePlatformBilling,
   usePlatformRoles,
   usePlatformSystemHealth,
   usePlatformTenants,
@@ -24,7 +23,6 @@ export function PlatformHomeOverview() {
     page: 1,
   });
   const rolesQuery = usePlatformRoles();
-  const billingQuery = usePlatformBilling();
   const healthQuery = usePlatformSystemHealth();
 
   const isLoading = tenantsQuery.isLoading || usersQuery.isLoading;
@@ -41,7 +39,6 @@ export function PlatformHomeOverview() {
           void tenantsQuery.refetch();
           void usersQuery.refetch();
           void rolesQuery.refetch();
-          void billingQuery.refetch();
           void healthQuery.refetch();
         }}
       />

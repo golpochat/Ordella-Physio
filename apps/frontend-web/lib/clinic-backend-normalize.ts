@@ -199,8 +199,7 @@ export function mapStaffListItemsToPortalMembers(items: ClinicStaffListItem[]): 
 export function isClinicBackendClient(): boolean {
   return (
     process.env.NEXT_PUBLIC_USE_CLINIC_BACKEND === "true" ||
-    process.env.NEXT_PUBLIC_USE_CLINIC_BACKEND === "1" ||
-    Boolean(process.env.NEXT_PUBLIC_CLINIC_BACKEND_URL)
+    process.env.NEXT_PUBLIC_USE_CLINIC_BACKEND === "1"
   );
 }
 

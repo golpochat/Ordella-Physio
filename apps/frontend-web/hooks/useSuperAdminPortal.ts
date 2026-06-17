@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import {
   createSuperAdminPortalApi,
@@ -36,6 +36,8 @@ import {
   PLATFORM_OPERATOR_ROLE,
   TENANT_STAFF_EXCLUDE_ROLES,
 } from "@/lib/super-admin-portal-utils";
+import { isSystemUser } from "@/lib/auth/roleRedirect";
+import { resolveUserRoles } from "@/lib/rbac";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 
@@ -52,6 +54,24 @@ export function useSuperAdminContext() {
   return { user, displayName, platformTenantId: user?.tenantId ?? null };
 }
 
+/** Wait for persisted auth before super-admin API queries (system users do not need tenant scope). */
+export function useSuperAdminQueryReady(): boolean {
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const tenantId = useTenantStore((state) => state.tenant?.id) ?? user?.tenantId ?? null;
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const roles = user ? resolveUserRoles(user) : [];
+  const scopeReady = isSystemUser(roles) || Boolean(tenantId);
+
+  return hydrated && isAuthenticated && Boolean(accessToken) && scopeReady;
+}
+
 function requireApi(api: ReturnType<typeof createSuperAdminPortalApi> | null) {
   if (!api) throw new Error("API client is required");
   return api;
@@ -59,10 +79,12 @@ function requireApi(api: ReturnType<typeof createSuperAdminPortalApi> | null) {
 
 export function usePlatformTenants() {
   const portalApi = useSuperAdminPortalApi();
+  const queryReady = useSuperAdminQueryReady();
 
   return useQuery({
     queryKey: ["super-admin", "tenants"],
     queryFn: async () => normalizeTenantList(await requireApi(portalApi).listTenants({ limit: 100 })),
+    enabled: queryReady,
   });
 }
 
@@ -487,6 +509,7 @@ export function useReactivatePlatformTenant(id: string) {
 
 export function usePlatformUsers(filters?: PlatformUserListFilters) {
   const portalApi = useSuperAdminPortalApi();
+  const queryReady = useSuperAdminQueryReady();
   const resolvedFilters: PlatformUserListFilters = filters ?? {
     page: 1,
     limit: 20,
@@ -497,6 +520,7 @@ export function usePlatformUsers(filters?: PlatformUserListFilters) {
     queryKey: ["super-admin", "users", resolvedFilters],
     queryFn: async () =>
       normalizeUserListResponse(await requireApi(portalApi).listUsers(resolvedFilters)),
+    enabled: queryReady,
   });
 }
 
@@ -623,10 +647,12 @@ export function useDeletePlatformRole() {
 
 export function usePlatformBilling() {
   const portalApi = useSuperAdminPortalApi();
+  const queryReady = useSuperAdminQueryReady();
 
   return useQuery({
     queryKey: ["super-admin", "billing"],
     queryFn: () => requireApi(portalApi).getBillingOverview(),
+    enabled: queryReady,
     refetchInterval: 60_000,
     staleTime: 30_000,
   });
@@ -643,10 +669,12 @@ export function usePlatformReporting() {
 
 export function usePlatformSystemHealth() {
   const portalApi = useSuperAdminPortalApi();
+  const queryReady = useSuperAdminQueryReady();
 
   return useQuery({
     queryKey: ["super-admin", "system"],
     queryFn: () => requireApi(portalApi).getSystemHealth(),
+    enabled: queryReady,
   });
 }
 
