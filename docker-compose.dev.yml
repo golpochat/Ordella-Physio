@@ -348,8 +348,8 @@ services:
       PORT: 3056
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_billing?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_local_dev_stripe_secret_key}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_local_dev_stripe_webhook_secret}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-price_local_starter}
       STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO:-price_local_pro}
       STRIPE_PRICE_ENTERPRISE: ${STRIPE_PRICE_ENTERPRISE:-price_local_enterprise}
@@ -439,8 +439,8 @@ services:
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_subscription_billing?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
       CORS_ORIGIN: "*"
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_local_dev_stripe_secret_key}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_local_dev_stripe_webhook_secret}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       FRONTEND_URL: http://localhost:3010
       TENANT_SERVICE_URL: http://tenant-service:3052
       PATIENT_SERVICE_URL: http://patient-service:3053
@@ -586,6 +586,7 @@ services:
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_pharmacy?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
       PATIENT_SERVICE_URL: http://patient-service:3053
+      THERAPIST_SERVICE_URL: http://core-service:3051
       STAFF_SERVICE_URL: http://staff-service:3069
       APPOINTMENT_SERVICE_URL: http://appointment-service:3054
       AUDIT_SERVICE_URL: http://audit-service:3070
@@ -593,6 +594,8 @@ services:
       db:
         condition: service_healthy
       patient-service:
+        condition: service_started
+      core-service:
         condition: service_started
       staff-service:
         condition: service_started
@@ -627,6 +630,7 @@ services:
       AUDIT_SERVICE_URL: http://audit-service:3070
       SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
       CLAMAV_ENABLED: "true"
+      CLAMAV_REQUIRED: "true"
       CLAMAV_HOST: clamav
       CLAMAV_PORT: 3310
     depends_on:
@@ -764,6 +768,7 @@ services:
       TENANT_HEADER: x-tenant-id
       FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
       FILE_STORAGE_MAX_BYTES: 52428800
+      CLAMAV_REQUIRED: "true"
     depends_on:
       clinic-backend-db:
         condition: service_healthy

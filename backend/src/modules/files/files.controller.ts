@@ -1,9 +1,6 @@
 import type { Request, Response } from "express";
 import { ValidationError } from "../../utils/api-error";
-import {
-  forwardFileStorageRequest,
-  forwardUploadToFileStorage,
-} from "../../integrations/file-storage.client";
+import { forwardFileStorageRequest } from "../../integrations/file-storage.client";
 
 function getAuthorizationHeader(request: Request): string {
   const header = request.headers.authorization;
@@ -70,34 +67,6 @@ function sanitizeFileApiPayload(payload: unknown): unknown {
 }
 
 export const filesController = {
-  async upload(request: Request, response: Response) {
-    if (!request.file) {
-      throw new ValidationError("File is required.");
-    }
-
-    const result = await forwardUploadToFileStorage({
-      authorization: getAuthorizationHeader(request),
-      tenantId: request.tenantId!,
-      file: request.file,
-      fields: {
-        entityType: typeof request.body.entityType === "string" ? request.body.entityType : undefined,
-        entityId: typeof request.body.entityId === "string" ? request.body.entityId : undefined,
-        isPublic: typeof request.body.isPublic === "string" ? request.body.isPublic : undefined,
-        replaceFileId:
-          typeof request.body.replaceFileId === "string" ? request.body.replaceFileId : undefined,
-        expiresAt: typeof request.body.expiresAt === "string" ? request.body.expiresAt : undefined,
-      },
-    });
-
-    response.status(201).json({
-      fileId: result.fileId ?? result.file?.id,
-      fileName: result.fileName ?? result.file?.filename,
-      mimeType: result.mimeType ?? result.file?.mimeType,
-      size: result.size ?? result.file?.sizeBytes,
-      signedUrl: result.signedUrl ?? result.accessUrl ?? null,
-    });
-  },
-
   async getSignedUrl(request: Request, response: Response) {
     const upstream = await forwardFileStorageRequest("GET", `/file/${request.params.id}/signed-url`, {
       authorization: getAuthorizationHeader(request),

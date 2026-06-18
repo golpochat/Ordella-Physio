@@ -17,6 +17,15 @@ const BLOCKED_EXTENSIONS = new Set([
   ".7z",
   ".tar",
   ".gz",
+  ".dll",
+  ".bin",
+  ".apk",
+  ".app",
+  ".dmg",
+  ".iso",
+  ".hta",
+  ".cpl",
+  ".msc",
 ]);
 
 const ALLOWED_MIME_TYPES = new Set([
@@ -82,11 +91,15 @@ export function validateFileSecurity(input: FileSecurityInput): { filename: stri
     ]);
   }
 
-  const extension = extensions[0] ?? "";
-  if (extension && BLOCKED_EXTENSIONS.has(extension)) {
-    throw fileValidationError([{ field: "filename", message: "Executable or archive file types are not allowed." }]);
+  for (const extension of extensions) {
+    if (BLOCKED_EXTENSIONS.has(extension)) {
+      throw fileValidationError([
+        { field: "filename", message: "Executable or archive file types are not allowed." },
+      ]);
+    }
   }
 
+  const extension = extensions[0] ?? "";
   if (extension && !ALLOWED_EXTENSIONS.has(extension)) {
     throw fileValidationError([{ field: "filename", message: "File extension is not allowed." }]);
   }

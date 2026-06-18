@@ -808,3 +808,54 @@ export function subscriptionIdsFromContext(context: BillingContext) {
     subscriptionId: context.stripeSubscriptionId ?? `sub_e2e_${Date.now()}`,
   };
 }
+
+const STRIPE_SUBSCRIPTION_STATUS_MAP: Record<string, string> = {
+  active: "ACTIVE",
+  past_due: "PAST_DUE",
+  canceled: "CANCELED",
+  trialing: "TRIALING",
+  unpaid: "UNPAID",
+  incomplete: "INCOMPLETE",
+  incomplete_expired: "INCOMPLETE_EXPIRED",
+  paused: "PAUSED",
+};
+
+export async function assertBillingContextMatchesStripe(auth: AuthSession): Promise<void> {
+  const apiContext = await getBillingContext(auth);
+  const internalContext = await getBillingTruth(auth.tenantId);
+
+  if (apiContext.subscriptionStatus !== internalContext.subscriptionStatus) {
+    throw new Error(
+      `billing-context API (${apiContext.subscriptionStatus}) != internal truth (${internalContext.subscriptionStatus})`,
+    );
+  }
+
+  if (apiContext.stripeCustomerId !== internalContext.stripeCustomerId) {
+    throw new Error("billing-context stripeCustomerId does not match internal billing truth");
+  }
+
+  if (apiContext.stripeSubscriptionId !== internalContext.stripeSubscriptionId) {
+    throw new Error("billing-context stripeSubscriptionId does not match internal billing truth");
+  }
+
+  if (!stripeApiReady() || !apiContext.stripeCustomerId) {
+    return;
+  }
+
+  const stripe = new Stripe(BILLING_E2E_CONFIG.stripeSecretKey);
+  await stripe.customers.retrieve(apiContext.stripeCustomerId);
+
+  if (!apiContext.stripeSubscriptionId) {
+    return;
+  }
+
+  const subscription = await stripe.subscriptions.retrieve(apiContext.stripeSubscriptionId);
+  const mappedStatus =
+    STRIPE_SUBSCRIPTION_STATUS_MAP[subscription.status] ?? subscription.status.toUpperCase();
+
+  if (apiContext.subscriptionStatus?.toUpperCase() !== mappedStatus) {
+    throw new Error(
+      `billing-context (${apiContext.subscriptionStatus}) does not match Stripe subscription (${subscription.status})`,
+    );
+  }
+}

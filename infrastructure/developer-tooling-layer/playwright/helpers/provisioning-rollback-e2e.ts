@@ -420,9 +420,45 @@ export async function assertProvisioningSuccess(
   }
 }
 
+export type ProvisioningFailStage = "org" | "tenant" | "owner" | "billing";
+
+function normalizeProvisioningFailStage(
+  value: string | null | undefined,
+): ProvisioningFailStage | null {
+  if (!value?.trim()) {
+    return null;
+  }
+
+  const aliases: Record<string, ProvisioningFailStage> = {
+    org: "org",
+    organization: "org",
+    tenant: "tenant",
+    owner: "owner",
+    billing: "billing",
+  };
+
+  return aliases[value.trim().toLowerCase()] ?? null;
+}
+
+function resolveFailStageFromPage(
+  page: Page,
+  explicitFailAt?: ProvisioningFailStage,
+): ProvisioningFailStage | null {
+  if (explicitFailAt) {
+    return explicitFailAt;
+  }
+
+  try {
+    const failAt = normalizeProvisioningFailStage(new URL(page.url()).searchParams.get("failAt"));
+    return failAt ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function installProvisioningFailInjection(
   page: Page,
-  failAt: "org" | "tenant" | "owner" | "billing",
+  failAt?: ProvisioningFailStage,
 ): () => void {
   const handler = async (route: import("@playwright/test").Route) => {
     const request = route.request();
@@ -430,10 +466,11 @@ export function installProvisioningFailInjection(
       request.method() === "POST" &&
       request.url().includes("/api/super-admin/provisioning/full")
     ) {
-      const headers = {
-        ...request.headers(),
-        [PROVISIONING_E2E_CONFIG.failHeader]: failAt,
-      };
+      const stage = resolveFailStageFromPage(page, failAt);
+      const headers = { ...request.headers() };
+      if (stage) {
+        headers[PROVISIONING_E2E_CONFIG.failHeader] = stage;
+      }
       await route.continue({ headers });
       return;
     }
@@ -447,8 +484,18 @@ export function installProvisioningFailInjection(
   };
 }
 
-export async function fillProvisioningWizard(page: Page, markers: ProvisioningMarkers): Promise<void> {
-  await page.goto("/super-admin/provisioning/new");
+/** Reads `?failAt=org|tenant|owner|billing` from the wizard URL and forwards it as the fail header. */
+export function installProvisioningFailFromQuery(page: Page): () => void {
+  return installProvisioningFailInjection(page);
+}
+
+export async function fillProvisioningWizard(
+  page: Page,
+  markers: ProvisioningMarkers,
+  options?: { failAt?: ProvisioningFailStage },
+): Promise<void> {
+  const query = options?.failAt ? `?failAt=${options.failAt}` : "";
+  await page.goto(`/super-admin/provisioning/new${query}`);
 
   await page.getByLabel("Organization name").fill(markers.organizationName);
   await page.getByLabel("Primary contact name").fill("Rollback Contact");

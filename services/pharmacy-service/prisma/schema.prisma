@@ -31,7 +31,7 @@ model Prescription {
   dosage          String
   frequency       String
   duration        String
-  notes           String             @default("")
+  notes           String?
   status          PrescriptionStatus @default(DRAFT)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
@@ -51,7 +51,7 @@ model PharmacyFulfillment {
   status         FulfillmentStatus @default(PENDING)
   filledBy       String?
   filledAt       DateTime?
-  notes          String            @default("")
+  notes          String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 

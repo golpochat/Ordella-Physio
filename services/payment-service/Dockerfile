@@ -14,6 +14,24 @@ COPY --from=workspace packages ./packages
 COPY --from=workspace shared ./shared
 COPY package.json ./services/payment-service/package.json
 COPY prisma ./services/payment-service/prisma
+# Force Linux-only binaries + disable strict SSL
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
+  && echo "shamefully-hoist=true" >> /root/.npmrc
+
+RUN pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
 RUN pnpm install --frozen-lockfile --filter @ordella/payment-service...
 
 # ---------------------------------------------------------
@@ -22,6 +40,24 @@ RUN pnpm install --frozen-lockfile --filter @ordella/payment-service...
 FROM base AS build
 COPY . ./services/payment-service
 RUN rm -rf services/payment-service/node_modules
+# Force Linux-only binaries + disable strict SSL
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
+  && echo "shamefully-hoist=true" >> /root/.npmrc
+
+RUN pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
 RUN pnpm install --frozen-lockfile --filter @ordella/payment-service...
 RUN pnpm turbo run build --filter=@ordella/payment-service
 WORKDIR /app/services/payment-service

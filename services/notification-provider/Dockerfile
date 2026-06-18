@@ -14,6 +14,24 @@ COPY --from=workspace packages ./packages
 COPY --from=workspace shared ./shared
 COPY package.json ./services/notification-provider/package.json
 COPY prisma ./services/notification-provider/prisma
+# Force Linux-only binaries + disable strict SSL
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
+  && echo "shamefully-hoist=true" >> /root/.npmrc
+
+RUN pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
 RUN pnpm install --frozen-lockfile --filter @ordella/notification-provider-service...
 
 # ---------------------------------------------------------
@@ -22,6 +40,24 @@ RUN pnpm install --frozen-lockfile --filter @ordella/notification-provider-servi
 FROM base AS build
 COPY . ./services/notification-provider
 RUN rm -rf services/notification-provider/node_modules
+# Force Linux-only binaries + disable strict SSL
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
+  && echo "shamefully-hoist=true" >> /root/.npmrc
+
+RUN pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
 RUN pnpm install --frozen-lockfile --filter @ordella/notification-provider-service...
 RUN pnpm turbo run build --filter=@ordella/notification-provider-service
 WORKDIR /app/services/notification-provider

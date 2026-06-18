@@ -14,6 +14,7 @@ import {
 } from "@/repositories/pharmacy.repository";
 import { PatientServiceClient } from "@/integrations/patient-service.client";
 import { StaffServiceClient } from "@/integrations/staff-service.client";
+import { TherapistServiceClient } from "@/integrations/therapist-service.client";
 import { AuditLogClient } from "@/integrations/audit-log.client";
 
 @Module({
@@ -27,6 +28,7 @@ import { AuditLogClient } from "@/integrations/audit-log.client";
     FulfillmentRepository,
     PharmacyAuditRepository,
     PatientServiceClient,
+    TherapistServiceClient,
     StaffServiceClient,
     AuditLogClient,
   ],

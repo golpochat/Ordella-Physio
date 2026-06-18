@@ -7,7 +7,7 @@ import {
 import type { PrescriptionStatus } from "@/generated/prisma";
 import { AuditLogClient } from "@/integrations/audit-log.client";
 import { PatientServiceClient } from "@/integrations/patient-service.client";
-import { StaffServiceClient } from "@/integrations/staff-service.client";
+import { TherapistServiceClient } from "@/integrations/therapist-service.client";
 import {
   FulfillmentRepository,
   PharmacyAuditRepository,
@@ -25,7 +25,7 @@ export class PrescriptionsService {
     private readonly auditRepository: PharmacyAuditRepository,
     private readonly auditClient: AuditLogClient,
     private readonly patientClient: PatientServiceClient,
-    private readonly staffClient: StaffServiceClient,
+    private readonly therapistClient: TherapistServiceClient,
   ) {}
 
   async create(
@@ -139,7 +139,7 @@ export class PrescriptionsService {
   private async validateReferences(tenantId: string, patientId: string, therapistId: string) {
     const [patientOk, therapistOk] = await Promise.all([
       this.patientClient.validatePatient(tenantId, patientId),
-      this.staffClient.validateTherapist(tenantId, therapistId),
+      this.therapistClient.validateTherapist(tenantId, therapistId),
     ]);
 
     if (!patientOk) {

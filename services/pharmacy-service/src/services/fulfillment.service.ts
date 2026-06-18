@@ -46,7 +46,7 @@ export class FulfillmentService {
 
     await this.fulfillmentRepository.updateByPrescriptionId(prescriptionId, {
       status: "IN_PROGRESS",
-      notes: payload.notes ?? fulfillment.notes,
+      notes: payload.notes ?? fulfillment.notes ?? undefined,
     });
 
     await this.recordAudit(tenantId, prescriptionId, user, "fulfill.start", payload);
@@ -78,7 +78,7 @@ export class FulfillmentService {
       status: "COMPLETED",
       filledBy,
       filledAt: new Date(),
-      notes: payload.notes ?? fulfillment.notes,
+      notes: payload.notes ?? fulfillment.notes ?? undefined,
     });
     await this.prescriptionsRepository.update(tenantId, prescriptionId, { status: "DISPENSED" });
 
@@ -106,7 +106,7 @@ export class FulfillmentService {
 
     await this.fulfillmentRepository.updateByPrescriptionId(prescriptionId, {
       status: "FAILED",
-      notes: payload.notes ?? fulfillment.notes,
+      notes: payload.notes ?? fulfillment.notes ?? undefined,
     });
 
     await this.recordAudit(tenantId, prescriptionId, user, "fulfill.fail", payload);

@@ -13,6 +13,24 @@ COPY --from=workspace package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json
 COPY --from=workspace packages ./packages
 COPY package.json ./apps/app/package.json
 COPY --from=workspace shared ./shared
+# Force Linux-only binaries + disable strict SSL
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
+  && echo "shamefully-hoist=true" >> /root/.npmrc
+
+RUN pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
 RUN pnpm install --frozen-lockfile --filter @ordella/app...
 
 # ---------------------------------------------------------
@@ -21,6 +39,24 @@ RUN pnpm install --frozen-lockfile --filter @ordella/app...
 FROM base AS build
 COPY . ./apps/app
 RUN rm -rf apps/app/node_modules
+# Force Linux-only binaries + disable strict SSL
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
+  && echo "shamefully-hoist=true" >> /root/.npmrc
+
+RUN pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
 RUN pnpm install --frozen-lockfile --filter=@ordella/app
 WORKDIR /app/apps/app
 ENV NEXT_TELEMETRY_DISABLED=1

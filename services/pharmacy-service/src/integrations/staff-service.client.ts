@@ -18,14 +18,6 @@ export class StaffServiceClient {
     return Boolean(record && record.status !== "INACTIVE");
   }
 
-  async validateTherapist(tenantId: string, therapistId: string): Promise<boolean> {
-    const record = await this.getStaffRecord(tenantId, therapistId);
-    if (!record || record.status === "INACTIVE") {
-      return false;
-    }
-    return true;
-  }
-
   private async getStaffRecord(tenantId: string, staffId: string): Promise<StaffRecord | null> {
     try {
       const url = `${this.baseUrl}/staff/internal/record/${encodeURIComponent(staffId)}?tenantId=${encodeURIComponent(tenantId)}`;

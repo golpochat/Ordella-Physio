@@ -1,0 +1,102 @@
+name: E2E Reusable (Billing + Provisioning)
+
+on:
+  workflow_call:
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.15.4"
+  PLAYWRIGHT_BASE_URL: http://localhost:3010
+  API_GATEWAY_URL: http://localhost:3049
+  PLAYWRIGHT_SKIP_WEBSERVER: "true"
+  STRIPE_WEBHOOK_SECRET: whsec_local_dev_stripe_webhook_secret
+  TEST_TENANT_ID: demo-tenant
+  TEST_SUPER_ADMIN_EMAIL: superadmin@ordella.dev
+  TEST_SUPER_ADMIN_PASSWORD: SuperAdmin123!
+
+jobs:
+  billing-provisioning-e2e:
+    name: Billing + Provisioning E2E (Docker dev)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Refuse live Stripe keys
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        run: |
+          if [ -z "${STRIPE_SECRET_KEY}" ]; then
+            echo "STRIPE_SECRET_KEY repository secret is required for billing E2E."
+            exit 1
+          fi
+          if [[ ! "${STRIPE_SECRET_KEY}" =~ ^sk_test_ ]]; then
+            echo "Refusing to run E2E against non-test Stripe keys."
+            exit 1
+          fi
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Install Stripe CLI
+        uses: stripe/stripe-cli-action@v1
+        with:
+          api-key: ${{ secrets.STRIPE_SECRET_KEY }}
+
+      - name: Start Docker dev stack
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: whsec_local_dev_stripe_webhook_secret
+          JWT_ACCESS_SECRET: change-me-ci-jwt-secret-min-32-characters
+          POSTGRES_PASSWORD: physio
+          POSTGRES_USER: physio
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for Docker dev stack
+        run: bash scripts/testing/wait-for-e2e-stack.sh
+
+      - name: Seed demo tenant and super-admin user
+        run: |
+          docker compose -f docker-compose.dev.yml run --rm --no-deps core-service \
+            sh -c "pnpm exec prisma db push --skip-generate && pnpm exec prisma db seed"
+          docker compose -f docker-compose.dev.yml run --rm --no-deps tenant-service \
+            sh -c "pnpm exec prisma db seed"
+          docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate core-service
+
+      - name: Run billing E2E suite
+        env:
+          CI: true
+          PLAYWRIGHT_HEADLESS: true
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_PRICE_AI_NOTES: ${{ secrets.STRIPE_PRICE_AI_NOTES }}
+        run: pnpm test:e2e:billing
+
+      - name: Run provisioning rollback E2E suite
+        env:
+          CI: true
+          PLAYWRIGHT_HEADLESS: true
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        run: pnpm test:e2e:provisioning
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-playwright-report
+          path: playwright-report
+          retention-days: 7
+
+      - name: Tear down Docker dev stack
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

@@ -1290,7 +1290,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes: string
+    notes: string | null
     status: $Enums.PrescriptionStatus
     createdAt: Date
     updatedAt: Date
@@ -1400,7 +1400,7 @@ export namespace Prisma {
       dosage: string
       frequency: string
       duration: string
-      notes: string
+      notes: string | null
       status: $Enums.PrescriptionStatus
       createdAt: Date
       updatedAt: Date
@@ -2447,7 +2447,7 @@ export namespace Prisma {
     status: $Enums.FulfillmentStatus
     filledBy: string | null
     filledAt: Date | null
-    notes: string
+    notes: string | null
     createdAt: Date
     updatedAt: Date
     _count: PharmacyFulfillmentCountAggregateOutputType | null
@@ -2538,7 +2538,7 @@ export namespace Prisma {
       status: $Enums.FulfillmentStatus
       filledBy: string | null
       filledAt: Date | null
-      notes: string
+      notes: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["pharmacyFulfillment"]>
@@ -4671,7 +4671,7 @@ export namespace Prisma {
     dosage?: StringFilter<"Prescription"> | string
     frequency?: StringFilter<"Prescription"> | string
     duration?: StringFilter<"Prescription"> | string
-    notes?: StringFilter<"Prescription"> | string
+    notes?: StringNullableFilter<"Prescription"> | string | null
     status?: EnumPrescriptionStatusFilter<"Prescription"> | $Enums.PrescriptionStatus
     createdAt?: DateTimeFilter<"Prescription"> | Date | string
     updatedAt?: DateTimeFilter<"Prescription"> | Date | string
@@ -4688,7 +4688,7 @@ export namespace Prisma {
     dosage?: SortOrder
     frequency?: SortOrder
     duration?: SortOrder
-    notes?: SortOrder
+    notes?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -4708,7 +4708,7 @@ export namespace Prisma {
     dosage?: StringFilter<"Prescription"> | string
     frequency?: StringFilter<"Prescription"> | string
     duration?: StringFilter<"Prescription"> | string
-    notes?: StringFilter<"Prescription"> | string
+    notes?: StringNullableFilter<"Prescription"> | string | null
     status?: EnumPrescriptionStatusFilter<"Prescription"> | $Enums.PrescriptionStatus
     createdAt?: DateTimeFilter<"Prescription"> | Date | string
     updatedAt?: DateTimeFilter<"Prescription"> | Date | string
@@ -4725,7 +4725,7 @@ export namespace Prisma {
     dosage?: SortOrder
     frequency?: SortOrder
     duration?: SortOrder
-    notes?: SortOrder
+    notes?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -4746,7 +4746,7 @@ export namespace Prisma {
     dosage?: StringWithAggregatesFilter<"Prescription"> | string
     frequency?: StringWithAggregatesFilter<"Prescription"> | string
     duration?: StringWithAggregatesFilter<"Prescription"> | string
-    notes?: StringWithAggregatesFilter<"Prescription"> | string
+    notes?: StringNullableWithAggregatesFilter<"Prescription"> | string | null
     status?: EnumPrescriptionStatusWithAggregatesFilter<"Prescription"> | $Enums.PrescriptionStatus
     createdAt?: DateTimeWithAggregatesFilter<"Prescription"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Prescription"> | Date | string
@@ -4761,7 +4761,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFilter<"PharmacyFulfillment"> | $Enums.FulfillmentStatus
     filledBy?: StringNullableFilter<"PharmacyFulfillment"> | string | null
     filledAt?: DateTimeNullableFilter<"PharmacyFulfillment"> | Date | string | null
-    notes?: StringFilter<"PharmacyFulfillment"> | string
+    notes?: StringNullableFilter<"PharmacyFulfillment"> | string | null
     createdAt?: DateTimeFilter<"PharmacyFulfillment"> | Date | string
     updatedAt?: DateTimeFilter<"PharmacyFulfillment"> | Date | string
     prescription?: XOR<PrescriptionScalarRelationFilter, PrescriptionWhereInput>
@@ -4773,7 +4773,7 @@ export namespace Prisma {
     status?: SortOrder
     filledBy?: SortOrderInput | SortOrder
     filledAt?: SortOrderInput | SortOrder
-    notes?: SortOrder
+    notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     prescription?: PrescriptionOrderByWithRelationInput
@@ -4788,7 +4788,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFilter<"PharmacyFulfillment"> | $Enums.FulfillmentStatus
     filledBy?: StringNullableFilter<"PharmacyFulfillment"> | string | null
     filledAt?: DateTimeNullableFilter<"PharmacyFulfillment"> | Date | string | null
-    notes?: StringFilter<"PharmacyFulfillment"> | string
+    notes?: StringNullableFilter<"PharmacyFulfillment"> | string | null
     createdAt?: DateTimeFilter<"PharmacyFulfillment"> | Date | string
     updatedAt?: DateTimeFilter<"PharmacyFulfillment"> | Date | string
     prescription?: XOR<PrescriptionScalarRelationFilter, PrescriptionWhereInput>
@@ -4800,7 +4800,7 @@ export namespace Prisma {
     status?: SortOrder
     filledBy?: SortOrderInput | SortOrder
     filledAt?: SortOrderInput | SortOrder
-    notes?: SortOrder
+    notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: PharmacyFulfillmentCountOrderByAggregateInput
@@ -4817,7 +4817,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusWithAggregatesFilter<"PharmacyFulfillment"> | $Enums.FulfillmentStatus
     filledBy?: StringNullableWithAggregatesFilter<"PharmacyFulfillment"> | string | null
     filledAt?: DateTimeNullableWithAggregatesFilter<"PharmacyFulfillment"> | Date | string | null
-    notes?: StringWithAggregatesFilter<"PharmacyFulfillment"> | string
+    notes?: StringNullableWithAggregatesFilter<"PharmacyFulfillment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PharmacyFulfillment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"PharmacyFulfillment"> | Date | string
   }
@@ -4896,7 +4896,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4913,7 +4913,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4930,7 +4930,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4947,7 +4947,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4964,7 +4964,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4979,7 +4979,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4994,7 +4994,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5005,7 +5005,7 @@ export namespace Prisma {
     status?: $Enums.FulfillmentStatus
     filledBy?: string | null
     filledAt?: Date | string | null
-    notes?: string
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     prescription: PrescriptionCreateNestedOneWithoutFulfillmentInput
@@ -5017,7 +5017,7 @@ export namespace Prisma {
     status?: $Enums.FulfillmentStatus
     filledBy?: string | null
     filledAt?: Date | string | null
-    notes?: string
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5027,7 +5027,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFieldUpdateOperationsInput | $Enums.FulfillmentStatus
     filledBy?: NullableStringFieldUpdateOperationsInput | string | null
     filledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     prescription?: PrescriptionUpdateOneRequiredWithoutFulfillmentNestedInput
@@ -5039,7 +5039,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFieldUpdateOperationsInput | $Enums.FulfillmentStatus
     filledBy?: NullableStringFieldUpdateOperationsInput | string | null
     filledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5050,7 +5050,7 @@ export namespace Prisma {
     status?: $Enums.FulfillmentStatus
     filledBy?: string | null
     filledAt?: Date | string | null
-    notes?: string
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5060,7 +5060,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFieldUpdateOperationsInput | $Enums.FulfillmentStatus
     filledBy?: NullableStringFieldUpdateOperationsInput | string | null
     filledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5071,7 +5071,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFieldUpdateOperationsInput | $Enums.FulfillmentStatus
     filledBy?: NullableStringFieldUpdateOperationsInput | string | null
     filledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5160,6 +5160,21 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type EnumPrescriptionStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.PrescriptionStatus | EnumPrescriptionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PrescriptionStatus[] | ListEnumPrescriptionStatusFieldRefInput<$PrismaModel>
@@ -5187,6 +5202,11 @@ export namespace Prisma {
     every?: PharmacyAuditLogWhereInput
     some?: PharmacyAuditLogWhereInput
     none?: PharmacyAuditLogWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type PharmacyAuditLogOrderByRelationAggregateInput = {
@@ -5256,6 +5276,24 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type EnumPrescriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.PrescriptionStatus | EnumPrescriptionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PrescriptionStatus[] | ListEnumPrescriptionStatusFieldRefInput<$PrismaModel>
@@ -5287,21 +5325,6 @@ export namespace Prisma {
     not?: NestedEnumFulfillmentStatusFilter<$PrismaModel> | $Enums.FulfillmentStatus
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -5316,11 +5339,6 @@ export namespace Prisma {
   export type PrescriptionScalarRelationFilter = {
     is?: PrescriptionWhereInput
     isNot?: PrescriptionWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type PharmacyFulfillmentCountOrderByAggregateInput = {
@@ -5364,24 +5382,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumFulfillmentStatusFilter<$PrismaModel>
     _max?: NestedEnumFulfillmentStatusFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5505,6 +5505,10 @@ export namespace Prisma {
     set?: string
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type EnumPrescriptionStatusFieldUpdateOperationsInput = {
     set?: $Enums.PrescriptionStatus
   }
@@ -5571,10 +5575,6 @@ export namespace Prisma {
     set?: $Enums.FulfillmentStatus
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
   }
@@ -5613,6 +5613,20 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumPrescriptionStatusFilter<$PrismaModel = never> = {
@@ -5661,6 +5675,34 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumPrescriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.PrescriptionStatus | EnumPrescriptionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PrescriptionStatus[] | ListEnumPrescriptionStatusFieldRefInput<$PrismaModel>
@@ -5692,20 +5734,6 @@ export namespace Prisma {
     not?: NestedEnumFulfillmentStatusFilter<$PrismaModel> | $Enums.FulfillmentStatus
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -5725,34 +5753,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumFulfillmentStatusFilter<$PrismaModel>
     _max?: NestedEnumFulfillmentStatusFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5797,7 +5797,7 @@ export namespace Prisma {
     status?: $Enums.FulfillmentStatus
     filledBy?: string | null
     filledAt?: Date | string | null
-    notes?: string
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5807,7 +5807,7 @@ export namespace Prisma {
     status?: $Enums.FulfillmentStatus
     filledBy?: string | null
     filledAt?: Date | string | null
-    notes?: string
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5861,7 +5861,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFieldUpdateOperationsInput | $Enums.FulfillmentStatus
     filledBy?: NullableStringFieldUpdateOperationsInput | string | null
     filledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5871,7 +5871,7 @@ export namespace Prisma {
     status?: EnumFulfillmentStatusFieldUpdateOperationsInput | $Enums.FulfillmentStatus
     filledBy?: NullableStringFieldUpdateOperationsInput | string | null
     filledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5914,7 +5914,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5930,7 +5930,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5962,7 +5962,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5978,7 +5978,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5994,7 +5994,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6010,7 +6010,7 @@ export namespace Prisma {
     dosage: string
     frequency: string
     duration: string
-    notes?: string
+    notes?: string | null
     status?: $Enums.PrescriptionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6042,7 +6042,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6058,7 +6058,7 @@ export namespace Prisma {
     dosage?: StringFieldUpdateOperationsInput | string
     frequency?: StringFieldUpdateOperationsInput | string
     duration?: StringFieldUpdateOperationsInput | string
-    notes?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPrescriptionStatusFieldUpdateOperationsInput | $Enums.PrescriptionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

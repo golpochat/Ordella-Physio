@@ -25,7 +25,7 @@ export class PrescriptionsRepository {
     return this.database.prescription.create({
       data: {
         ...data,
-        notes: data.notes ?? "",
+        notes: data.notes,
         fulfillment: { create: {} },
       },
       include: { fulfillment: true },

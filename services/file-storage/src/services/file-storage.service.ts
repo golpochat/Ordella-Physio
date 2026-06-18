@@ -197,7 +197,7 @@ export class FileStorageService {
 
     const result = await this.uploadFile(payload, file, requestingUser);
 
-    return this.toUploadPipelineResponse(result.file, result.accessUrl);
+    return this.toUploadPipelineResponse(result.file, result.accessUrl, result.scanResult);
 
   }
 
@@ -227,6 +227,8 @@ export class FileStorageService {
 
     signedUrl?: string,
 
+    scanResult: "OK" | "FOUND" = "OK",
+
   ) {
 
     return {
@@ -242,6 +244,8 @@ export class FileStorageService {
       s3Key: file.storageKey,
 
       signedUrl: signedUrl ?? null,
+
+      scanResult,
 
     };
 
@@ -968,6 +972,8 @@ export class FileStorageService {
       file: toFileObjectResponse(record),
 
       accessUrl: access.url,
+
+      scanResult,
 
       message: "File uploaded successfully.",
 

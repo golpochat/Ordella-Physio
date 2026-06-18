@@ -206,6 +206,7 @@ const proxyControllers = [
     skipTenant: true,
   }),
   createProxyController(STAFF_ROUTES.base, "STAFF_SERVICE_URL"),
+  // /pharmacy/* → pharmacy-service (prescriptions + fulfillment)
   createProxyController(PHARMACY_ROUTES.base, "PHARMACY_SERVICE_URL"),
   createProxyController("/audit-logs/internal", "AUDIT_SERVICE_URL", {
     public: true,

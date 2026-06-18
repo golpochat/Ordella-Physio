@@ -1,31 +1,12 @@
 import { Router } from "express";
-import multer from "multer";
 import { asyncHandler } from "../../utils/async-handler";
 import { policies } from "../rbac/policies";
 import { filesController } from "./files.controller";
-
-const MAX_UPLOAD_BYTES = Number(process.env.FILE_STORAGE_MAX_BYTES ?? String(50 * 1024 * 1024));
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_UPLOAD_BYTES },
-});
+import { uploadRouter } from "../../routes/uploads";
 
 const filesRouter = Router();
 
-filesRouter.post(
-  "/upload",
-  policies.filesUpload,
-  upload.single("file"),
-  asyncHandler(filesController.upload),
-);
-
-filesRouter.post(
-  "/",
-  policies.filesUpload,
-  upload.single("file"),
-  asyncHandler(filesController.upload),
-);
+filesRouter.use(uploadRouter);
 
 filesRouter.get("/", policies.filesRead, asyncHandler(filesController.list));
 

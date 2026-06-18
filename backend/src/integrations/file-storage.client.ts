@@ -1,4 +1,5 @@
 import { env } from "../config";
+import { ForbiddenError } from "../utils/api-error";
 
 const FILE_STORAGE_PREFIX = "file-storage:";
 
@@ -9,6 +10,7 @@ export type FileStorageUploadResult = {
   size?: number;
   s3Key?: string;
   signedUrl?: string | null;
+  scanResult?: "OK" | "FOUND" | string;
   file?: {
     id: string;
     filename: string;
@@ -85,6 +87,13 @@ export async function forwardUploadToFileStorage(
   return payload as FileStorageUploadResult;
 }
 
+export function assertFileStorageScanOk(result: FileStorageUploadResult): void {
+  const scanResult = result.scanResult ?? "OK";
+  if (scanResult !== "OK") {
+    throw new ForbiddenError("The uploaded file failed virus scanning.");
+  }
+}
+
 export async function forwardFileStorageRequest(
   method: string,
   path: string,
@@ -147,5 +156,6 @@ export async function uploadBufferToFileStorageInternal(input: {
     throw error;
   }
 
+  assertFileStorageScanOk(payload);
   return payload;
 }

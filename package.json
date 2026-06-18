@@ -11,6 +11,8 @@
     "test:cov:report": "node scripts/testing/coverage-report.mjs",
     "test:watch": "turbo run test:watch",
     "test:e2e": "pnpm --filter @ordella/developer-tooling-layer test:e2e",
+    "test:e2e:billing": "playwright test tests/billing-e2e.spec.ts",
+    "test:e2e:provisioning": "playwright test tests/provisioning-rollback-e2e.spec.ts",
     "billing-e2e": "pnpm --filter @ordella/developer-tooling-layer billing-e2e",
     "test:workflow": "pnpm --filter @ordella/workflow-tests test",
     "test:all": "pnpm test && pnpm test:workflow && pnpm test:e2e",
@@ -19,10 +21,12 @@
     "db:migrate:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "eslint": "^8.57.0",
     "has-flag": "^4.0.0",
     "picocolors": "^1.1.1",
     "rimraf": "^6.0.1",
+    "stripe": "^17.5.0",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2"
   },

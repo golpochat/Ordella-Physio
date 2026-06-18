@@ -37,10 +37,17 @@ export class VirusScanService implements OnModuleInit {
     return (process.env.NODE_ENV ?? "development") === "production";
   }
 
+  private isRequired(): boolean {
+    const raw = process.env.CLAMAV_REQUIRED?.trim().toLowerCase();
+    return raw === "true" || raw === "1";
+  }
+
   async onModuleInit(): Promise<void> {
+    const required = this.isRequired() || this.isProduction();
+
     if (!this.isEnabled()) {
-      if (this.isProduction()) {
-        throw new Error("CLAMAV_ENABLED must be true in production");
+      if (required) {
+        throw new Error("CLAMAV_ENABLED must be true when CLAMAV_REQUIRED=true");
       }
       return;
     }
@@ -55,7 +62,13 @@ export class VirusScanService implements OnModuleInit {
   }
 
   async scanBuffer(fileBuffer: Buffer, context?: VirusScanContext): Promise<VirusScanResult> {
+    const required = this.isRequired() || this.isProduction();
+
     if (!this.isEnabled()) {
+      if (required) {
+        this.logScan(context, "FOUND", "ClamAV disabled but required");
+        throw fileStorageError("Virus scanning is required but ClamAV is disabled.");
+      }
       this.logScan(context, "OK", "ClamAV disabled");
       return "OK";
     }
