@@ -104,6 +104,53 @@ exports.Prisma.TerminalScalarFieldEnum = {
   macAddress: 'macAddress',
   status: 'status',
   lastSeenAt: 'lastSeenAt',
+  deviceToken: 'deviceToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TerminalPairingCodeScalarFieldEnum = {
+  id: 'id',
+  terminalId: 'terminalId',
+  code: 'code',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PosSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  terminalId: 'terminalId',
+  operatorId: 'operatorId',
+  status: 'status',
+  openingCash: 'openingCash',
+  closingCash: 'closingCash',
+  expectedTotal: 'expectedTotal',
+  actualTotal: 'actualTotal',
+  variance: 'variance',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt',
+  reconciledAt: 'reconciledAt'
+};
+
+exports.Prisma.PosSessionItemScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  description: 'description',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PosPaymentScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  stripeIntentId: 'stripeIntentId',
+  paymentIntentId: 'paymentIntentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -135,8 +182,25 @@ exports.TerminalStatus = exports.$Enums.TerminalStatus = {
   INACTIVE: 'INACTIVE'
 };
 
+exports.PosSessionStatus = exports.$Enums.PosSessionStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  RECONCILED: 'RECONCILED'
+};
+
+exports.PosPaymentStatus = exports.$Enums.PosPaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
-  Terminal: 'Terminal'
+  Terminal: 'Terminal',
+  TerminalPairingCode: 'TerminalPairingCode',
+  PosSession: 'PosSession',
+  PosSessionItem: 'PosSessionItem',
+  PosPayment: 'PosPayment'
 };
 /**
  * Create the Client
@@ -167,7 +231,8 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.19.3",
@@ -185,13 +250,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum TerminalType {\n  POS\n  KIOSK\n  PRINTER\n  TABLET\n  OTHER\n}\n\nenum TerminalStatus {\n  ACTIVE\n  INACTIVE\n}\n\nmodel Terminal {\n  id         String         @id @default(cuid())\n  tenantId   String\n  locationId String\n  name       String\n  code       String\n  type       TerminalType\n  ipAddress  String?\n  macAddress String?\n  status     TerminalStatus @default(ACTIVE)\n  lastSeenAt DateTime?\n  createdAt  DateTime       @default(now())\n  updatedAt  DateTime       @updatedAt\n\n  @@unique([locationId, code])\n  @@index([tenantId])\n  @@map(\"terminals\")\n}\n",
-  "inlineSchemaHash": "2380f36db5c0690867fefa80885b25eb9ea3645e83a33a50e51c1d9b5e1f38ae",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum TerminalType {\n  POS\n  KIOSK\n  PRINTER\n  TABLET\n  OTHER\n}\n\nenum TerminalStatus {\n  ACTIVE\n  INACTIVE\n}\n\nenum PosSessionStatus {\n  OPEN\n  CLOSED\n  RECONCILED\n}\n\nenum PosPaymentStatus {\n  PENDING\n  SUCCEEDED\n  FAILED\n  CANCELLED\n}\n\nmodel Terminal {\n  id           String                @id @default(cuid())\n  tenantId     String\n  locationId   String\n  name         String\n  code         String\n  type         TerminalType\n  ipAddress    String?\n  macAddress   String?\n  status       TerminalStatus        @default(ACTIVE)\n  lastSeenAt   DateTime?\n  deviceToken  String?               @unique\n  createdAt    DateTime              @default(now())\n  updatedAt    DateTime              @updatedAt\n  pairingCodes TerminalPairingCode[]\n  posSessions  PosSession[]\n\n  @@unique([locationId, code])\n  @@index([tenantId])\n  @@map(\"terminals\")\n}\n\nmodel TerminalPairingCode {\n  id         String    @id @default(cuid())\n  terminalId String\n  terminal   Terminal  @relation(fields: [terminalId], references: [id], onDelete: Cascade)\n  code       String    @unique\n  expiresAt  DateTime\n  usedAt     DateTime?\n  createdAt  DateTime  @default(now())\n\n  @@index([terminalId])\n  @@map(\"terminal_pairing_codes\")\n}\n\nmodel PosSession {\n  id            String           @id @default(cuid())\n  tenantId      String\n  terminalId    String\n  terminal      Terminal         @relation(fields: [terminalId], references: [id])\n  operatorId    String\n  status        PosSessionStatus @default(OPEN)\n  openingCash   Int              @default(0)\n  closingCash   Int?\n  expectedTotal Int?\n  actualTotal   Int?\n  variance      Int?\n  openedAt      DateTime         @default(now())\n  closedAt      DateTime?\n  reconciledAt  DateTime?\n  items         PosSessionItem[]\n  payments      PosPayment[]\n\n  @@index([tenantId, terminalId])\n  @@index([tenantId, status])\n  @@map(\"pos_sessions\")\n}\n\nmodel PosSessionItem {\n  id          String     @id @default(cuid())\n  sessionId   String\n  session     PosSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)\n  description String\n  quantity    Int        @default(1)\n  unitPrice   Int\n  createdAt   DateTime   @default(now())\n\n  @@index([sessionId])\n  @@map(\"pos_session_items\")\n}\n\nmodel PosPayment {\n  id              String           @id @default(cuid())\n  sessionId       String\n  session         PosSession       @relation(fields: [sessionId], references: [id], onDelete: Cascade)\n  amount          Int\n  currency        String           @default(\"usd\")\n  status          PosPaymentStatus @default(PENDING)\n  stripeIntentId  String?\n  paymentIntentId String?\n  createdAt       DateTime         @default(now())\n  updatedAt       DateTime         @updatedAt\n\n  @@index([sessionId])\n  @@map(\"pos_payments\")\n}\n",
+  "inlineSchemaHash": "15b1cc3fd07df123775f38b62cf994e844183f159fbaf9bf762c8a21c441e7e1",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Terminal\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"locationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"TerminalType\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"macAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TerminalStatus\"},{\"name\":\"lastSeenAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"terminals\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Terminal\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"locationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"TerminalType\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"macAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TerminalStatus\"},{\"name\":\"lastSeenAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deviceToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"pairingCodes\",\"kind\":\"object\",\"type\":\"TerminalPairingCode\",\"relationName\":\"TerminalToTerminalPairingCode\"},{\"name\":\"posSessions\",\"kind\":\"object\",\"type\":\"PosSession\",\"relationName\":\"PosSessionToTerminal\"}],\"dbName\":\"terminals\"},\"TerminalPairingCode\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"terminalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"terminal\",\"kind\":\"object\",\"type\":\"Terminal\",\"relationName\":\"TerminalToTerminalPairingCode\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"usedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"terminal_pairing_codes\"},\"PosSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"terminalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"terminal\",\"kind\":\"object\",\"type\":\"Terminal\",\"relationName\":\"PosSessionToTerminal\"},{\"name\":\"operatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PosSessionStatus\"},{\"name\":\"openingCash\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"closingCash\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"expectedTotal\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"actualTotal\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"variance\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"openedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"closedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"reconciledAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"PosSessionItem\",\"relationName\":\"PosSessionToPosSessionItem\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"PosPayment\",\"relationName\":\"PosPaymentToPosSession\"}],\"dbName\":\"pos_sessions\"},\"PosSessionItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"session\",\"kind\":\"object\",\"type\":\"PosSession\",\"relationName\":\"PosSessionToPosSessionItem\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unitPrice\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"pos_session_items\"},\"PosPayment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"session\",\"kind\":\"object\",\"type\":\"PosSession\",\"relationName\":\"PosPaymentToPosSession\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PosPaymentStatus\"},{\"name\":\"stripeIntentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"paymentIntentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"pos_payments\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

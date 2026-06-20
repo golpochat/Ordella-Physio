@@ -92,12 +92,25 @@ export function getGatewayBaseUrl(): string {
   );
 }
 
+/** Onboarding clinic profile/trial live on clinic-backend, not tenant-service `:id` routes. */
+function isClinicBackendTenantOnboardingPath(pathname: string): boolean {
+  const suffix = pathname.slice(SERVICE_API_PREFIX.tenant.length);
+  return suffix === "/profile" || suffix === "/trial";
+}
+
 export async function proxyToGateway(
   request: NextRequest,
   service: ApiServiceKey,
   pathSuffix = "",
 ): Promise<NextResponse> {
   if (service === "files") {
+    return proxyToClinicBackend(request, service);
+  }
+
+  if (
+    service === "tenant" &&
+    isClinicBackendTenantOnboardingPath(request.nextUrl.pathname)
+  ) {
     return proxyToClinicBackend(request, service);
   }
 

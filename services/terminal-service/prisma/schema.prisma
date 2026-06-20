@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -21,21 +22,102 @@ enum TerminalStatus {
   INACTIVE
 }
 
+enum PosSessionStatus {
+  OPEN
+  CLOSED
+  RECONCILED
+}
+
+enum PosPaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
 model Terminal {
-  id         String         @id @default(cuid())
-  tenantId   String
-  locationId String
-  name       String
-  code       String
-  type       TerminalType
-  ipAddress  String?
-  macAddress String?
-  status     TerminalStatus @default(ACTIVE)
-  lastSeenAt DateTime?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  id           String                @id @default(cuid())
+  tenantId     String
+  locationId   String
+  name         String
+  code         String
+  type         TerminalType
+  ipAddress    String?
+  macAddress   String?
+  status       TerminalStatus        @default(ACTIVE)
+  lastSeenAt   DateTime?
+  deviceToken  String?               @unique
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  pairingCodes TerminalPairingCode[]
+  posSessions  PosSession[]
 
   @@unique([locationId, code])
   @@index([tenantId])
   @@map("terminals")
+}
+
+model TerminalPairingCode {
+  id         String    @id @default(cuid())
+  terminalId String
+  terminal   Terminal  @relation(fields: [terminalId], references: [id], onDelete: Cascade)
+  code       String    @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([terminalId])
+  @@map("terminal_pairing_codes")
+}
+
+model PosSession {
+  id            String           @id @default(cuid())
+  tenantId      String
+  terminalId    String
+  terminal      Terminal         @relation(fields: [terminalId], references: [id])
+  operatorId    String
+  status        PosSessionStatus @default(OPEN)
+  openingCash   Int              @default(0)
+  closingCash   Int?
+  expectedTotal Int?
+  actualTotal   Int?
+  variance      Int?
+  openedAt      DateTime         @default(now())
+  closedAt      DateTime?
+  reconciledAt  DateTime?
+  items         PosSessionItem[]
+  payments      PosPayment[]
+
+  @@index([tenantId, terminalId])
+  @@index([tenantId, status])
+  @@map("pos_sessions")
+}
+
+model PosSessionItem {
+  id          String     @id @default(cuid())
+  sessionId   String
+  session     PosSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int        @default(1)
+  unitPrice   Int
+  createdAt   DateTime   @default(now())
+
+  @@index([sessionId])
+  @@map("pos_session_items")
+}
+
+model PosPayment {
+  id              String           @id @default(cuid())
+  sessionId       String
+  session         PosSession       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  amount          Int
+  currency        String           @default("usd")
+  status          PosPaymentStatus @default(PENDING)
+  stripeIntentId  String?
+  paymentIntentId String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([sessionId])
+  @@map("pos_payments")
 }

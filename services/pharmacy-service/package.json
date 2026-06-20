@@ -48,6 +48,7 @@
     "@nestjs/testing": "^10.4.15",
     "@ordella/config-eslint": "workspace:*",
     "@ordella/config-typescript": "workspace:*",
+    "@ordella/testing": "workspace:*",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",

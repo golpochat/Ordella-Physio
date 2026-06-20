@@ -279,6 +279,18 @@ export {
   type UpdateWebhookInput,
 } from "./enterprise.dto";
 export {
+  createPrescriptionSchema,
+  updatePrescriptionSchema,
+  listPrescriptionsSchema,
+  fulfillmentActionSchema,
+  prescriptionStatusSchema,
+  fulfillmentStatusSchema,
+  type CreatePrescriptionInput,
+  type UpdatePrescriptionInput,
+  type ListPrescriptionsInput,
+  type FulfillmentActionInput,
+} from "./pharmacy.dto";
+export {
   upsertOrganizationSsoConfigSchema,
   refreshOrganizationSsoMetadataSchema,
   ssoProtocolSchema,

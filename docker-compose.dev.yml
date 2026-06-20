@@ -19,7 +19,6 @@ x-gateway-urls: &gateway-urls
   REPORTING_SERVICE_URL: http://reporting-service:3059
   MESSAGING_SERVICE_URL: http://messaging-service:3061
   NOTIFICATION_SERVICE_URL: http://notification-service:3062
-  AI_NOTES_SERVICE_URL: http://ai-notes-service:3063
   MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
   ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
   ORGANIZATION_SERVICE_URL: http://organization-service:3066
@@ -30,19 +29,8 @@ x-gateway-urls: &gateway-urls
   FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
   NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
   SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
-  SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
-  AI_SERVICE_URL: http://ai-service:3075
-  AI_TRAINING_SERVICE_URL: http://ai-training-service:3076
-  AI_MONITORING_SERVICE_URL: http://ai-monitoring-service:3077
-  AI_DEPLOY_SERVICE_URL: http://ai-deploy-service:3078
-  FEATURE_FLAGS_SERVICE_URL: http://feature-flags-service:3079
-  AI_GATEWAY_SERVICE_URL: http://ai-gateway-service:3080
-  AI_COST_SERVICE_URL: http://ai-cost-service:3081
-  AI_SECURITY_SERVICE_URL: http://ai-security-service:3082
-  AI_OBSERVABILITY_SERVICE_URL: http://ai-observability-service:3083
-  AI_AGENTS_SERVICE_URL: http://ai-agents-service:3084
   PHARMACY_SERVICE_URL: http://pharmacy-service:3085
-  CLINIC_BACKEND_URL: ${CLINIC_BACKEND_URL:-http://host.docker.internal:4000}
+  CLINIC_BACKEND_URL: ${CLINIC_BACKEND_URL:-http://clinic-backend:4000}
 
 services:
   api-gateway:
@@ -83,7 +71,7 @@ services:
         condition: service_started
       reporting-service:
         condition: service_started
-      subscription-billing-service:
+      notification-provider-service:
         condition: service_started
       staff-service:
         condition: service_started
@@ -149,6 +137,7 @@ services:
       DISABLE_NONCE_CSP: "true"
       NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
       API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
+      CLINIC_BACKEND_INTERNAL_URL: http://clinic-backend:4000
       USE_CLINIC_BACKEND: "false"
       NEXT_PUBLIC_USE_CLINIC_BACKEND: "false"
       NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
@@ -199,6 +188,7 @@ services:
     environment:
       PORT: 3052
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_tenant?schema=public
+      JWT_SECRET: *jwt-secret
       JWT_ACCESS_SECRET: *jwt-secret
       AUTH_SERVICE_URL: http://core-service:3051
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
@@ -290,7 +280,7 @@ services:
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_patient?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
       TENANT_SERVICE_URL: http://tenant-service:3052
-      SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
+      BILLING_SERVICE_URL: http://billing-service:3056
       FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
       NATS_URL: nats://nats:4222
     depends_on:
@@ -321,7 +311,7 @@ services:
       TENANT_SERVICE_URL: http://tenant-service:3052
       PATIENT_SERVICE_URL: http://patient-service:3053
       STAFF_SERVICE_URL: http://staff-service:3069
-      SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
+      BILLING_SERVICE_URL: http://billing-service:3056
       NATS_URL: nats://nats:4222
     depends_on:
       db:
@@ -353,7 +343,7 @@ services:
       STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-price_local_starter}
       STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO:-price_local_pro}
       STRIPE_PRICE_ENTERPRISE: ${STRIPE_PRICE_ENTERPRISE:-price_local_enterprise}
-      STRIPE_PRICE_AI_NOTES: ${STRIPE_PRICE_AI_NOTES:-}
+      STRIPE_PRICE_AI_NOTES: ${STRIPE_PRICE_AI_NOTES:-price_local_ai_notes}
       TENANT_SERVICE_URL: http://tenant-service:3052
       ORGANIZATION_SERVICE_URL: http://organization-service:3066
       FRONTEND_URL: http://localhost:3010
@@ -382,10 +372,35 @@ services:
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_notification?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
       NATS_URL: nats://nats:4222
+      NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
     depends_on:
       db:
         condition: service_healthy
       nats:
+        condition: service_started
+      notification-provider-service:
+        condition: service_started
+    networks:
+      - ordella-physio-network
+
+  notification-provider-service:
+    container_name: ordella-physio-notification-provider-service
+    build:
+      context: ./services/notification-provider
+      dockerfile: Dockerfile
+      target: production
+      additional_contexts:
+        workspace: .
+    image: ordella-physio-notification-provider-service:latest
+    environment:
+      PORT: 3072
+      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_notification_provider?schema=public
+      JWT_ACCESS_SECRET: *jwt-secret
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
         condition: service_started
     networks:
       - ordella-physio-network
@@ -421,38 +436,6 @@ services:
       appointment-service:
         condition: service_started
       billing-service:
-        condition: service_started
-    networks:
-      - ordella-physio-network
-
-  subscription-billing-service:
-    container_name: ordella-physio-subscription-billing-service
-    build:
-      context: ./services/subscription-billing
-      dockerfile: Dockerfile
-      target: production
-      additional_contexts:
-        workspace: .
-    image: ordella-physio-subscription-billing-service:latest
-    environment:
-      PORT: 3074
-      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_subscription_billing?schema=public
-      JWT_ACCESS_SECRET: *jwt-secret
-      CORS_ORIGIN: "*"
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      FRONTEND_URL: http://localhost:3010
-      TENANT_SERVICE_URL: http://tenant-service:3052
-      PATIENT_SERVICE_URL: http://patient-service:3053
-      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
-      STAFF_SERVICE_URL: http://staff-service:3069
-      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
-      NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
-      DEFAULT_TRIAL_DAYS: 14
-    depends_on:
-      db:
-        condition: service_healthy
-      tenant-service:
         condition: service_started
     networks:
       - ordella-physio-network
@@ -557,7 +540,7 @@ services:
       TENANT_SERVICE_URL: http://tenant-service:3052
       USER_ROLE_SERVICE_URL: http://user-role-service:3068
       APPOINTMENT_SERVICE_URL: http://appointment-service:3054
-      SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
+      BILLING_SERVICE_URL: http://billing-service:3056
     depends_on:
       db:
         condition: service_healthy
@@ -566,8 +549,6 @@ services:
       user-role-service:
         condition: service_started
       appointment-service:
-        condition: service_started
-      subscription-billing-service:
         condition: service_started
     networks:
       - ordella-physio-network
@@ -628,7 +609,7 @@ services:
       S3_REGION: eu-west-1
       # Set STORAGE_DEFAULT_PROVIDER=S3 and S3_ACCESS_KEY/S3_SECRET_KEY in production.
       AUDIT_SERVICE_URL: http://audit-service:3070
-      SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
+      BILLING_SERVICE_URL: http://billing-service:3056
       CLAMAV_ENABLED: "true"
       CLAMAV_REQUIRED: "true"
       CLAMAV_HOST: clamav
@@ -727,10 +708,11 @@ services:
 
 # ---------------------------------------------------------
 # OPTIONAL: Monolithic clinic backend (portal E2E without microservices)
-# Usage: docker compose -f docker-compose.dev.yml up -d clinic-backend-db clinic-backend
+# Usage: docker compose -f docker-compose.dev.yml --profile clinic-backend up -d clinic-backend-db clinic-backend
 # ---------------------------------------------------------
 
   clinic-backend-db:
+    profiles: ["clinic-backend"]
     container_name: ordella-clinic-backend-db
     image: postgres:16-alpine
     environment:
@@ -750,6 +732,7 @@ services:
       - ordella-physio-network
 
   clinic-backend:
+    profiles: ["clinic-backend"]
     container_name: ordella-clinic-backend
     build:
       context: ./backend

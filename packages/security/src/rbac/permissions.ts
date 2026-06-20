@@ -68,6 +68,7 @@ export const PERMISSIONS = {
   AUDIT_EXPORT: "audit.export",
   AUDIT_WRITE_INTERNAL: "audit.write_internal",
   PRESCRIPTIONS_CREATE: "prescriptions.create",
+  PRESCRIPTIONS_UPDATE: "prescriptions.update",
   PRESCRIPTIONS_ISSUE: "prescriptions.issue",
   PRESCRIPTIONS_READ: "prescriptions.read",
   FULFILLMENT_START: "fulfillment.start",

@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { tenantConfig } from "@ordella/config";
-import type { AccessTokenPayload } from "@ordella/security";
+import { createJwtConfigFromEnv, type AccessTokenPayload } from "@ordella/security";
 import type { AuthenticatedTenantUser } from "@/utils/tenant-helpers";
 
 @Injectable()
@@ -11,7 +10,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: tenantConfig.jwtSecret,
+      secretOrKeyProvider: (_request, _rawJwtToken, done) => {
+        const secret = createJwtConfigFromEnv().secret;
+        if (!secret) {
+          done(new Error("JWT secret is not configured"));
+          return;
+        }
+        done(null, secret);
+      },
     });
   }
 

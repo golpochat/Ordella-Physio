@@ -1,3 +1,4 @@
+import "@/configure-prisma-engine";
 import { NestFactory } from "@nestjs/core";
 import { terminalConfig } from "@ordella/config";
 import { GlobalExceptionFilter } from "@ordella/errors";

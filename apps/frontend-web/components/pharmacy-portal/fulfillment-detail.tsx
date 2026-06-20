@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { PharmacyFulfillmentWorkflow } from "@/components/pharmacy-portal/fulfillment-workflow";
 import type { PharmacyFulfillmentOrder } from "@/lib/pharmacy-portal-types";
 import { formatPortalDateTime } from "@/lib/pharmacy-portal-utils";
 
@@ -30,6 +33,9 @@ export function PharmacyFulfillmentDetail({ order }: { order: PharmacyFulfillmen
           </div>
         </CardBody>
       </Card>
+
+      <PharmacyFulfillmentWorkflow prescription={order} />
+
       <Button asChild variant="outline">
         <Link href="/pharmacy/fulfillment">Back to fulfillment</Link>
       </Button>

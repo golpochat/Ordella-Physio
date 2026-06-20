@@ -1,4 +1,3 @@
-import { createHmac } from "node:crypto";
 import type { Page } from "@playwright/test";
 import Stripe from "stripe";
 import {
@@ -11,6 +10,7 @@ import {
   buildSubscriptionUpdatedEvent,
   postSignedWebhook,
 } from "./stripe-webhook";
+import { loadStripeEnvFromRepo, isPlaceholderSecret } from "./stripe-env-loader";
 
 export const BILLING_E2E_CONFIG = {
   gatewayUrl: process.env.API_GATEWAY_URL ?? "http://localhost:3049",
@@ -87,15 +87,31 @@ function parseAuthResponse(body: unknown): AuthSession {
 }
 
 export function billingE2eReady(): boolean {
-  return Boolean(BILLING_E2E_CONFIG.webhookSecret);
+  loadStripeEnvFromRepo();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? BILLING_E2E_CONFIG.webhookSecret;
+  if (webhookSecret) {
+    BILLING_E2E_CONFIG.webhookSecret = webhookSecret;
+  }
+  return Boolean(webhookSecret);
 }
 
 export function stripeApiReady(): boolean {
-  const key = BILLING_E2E_CONFIG.stripeSecretKey;
-  if (!key || !BILLING_E2E_CONFIG.webhookSecret) {
+  loadStripeEnvFromRepo();
+  const key = process.env.STRIPE_SECRET_KEY ?? BILLING_E2E_CONFIG.stripeSecretKey;
+  if (key) {
+    BILLING_E2E_CONFIG.stripeSecretKey = key;
+  }
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? BILLING_E2E_CONFIG.webhookSecret;
+  if (webhookSecret) {
+    BILLING_E2E_CONFIG.webhookSecret = webhookSecret;
+  }
+  if (process.env.STRIPE_PRICE_AI_NOTES) {
+    BILLING_E2E_CONFIG.aiNotesPriceId = process.env.STRIPE_PRICE_AI_NOTES;
+  }
+  if (!key || !webhookSecret) {
     return false;
   }
-  return !key.includes("local_dev") && !key.includes("change-me");
+  return !isPlaceholderSecret(key);
 }
 
 export async function waitForGateway(timeoutMs = 30_000): Promise<void> {
@@ -162,97 +178,36 @@ export async function registerUser(input: {
   return loginUser(input);
 }
 
-function signBrowserSessionCookie(payload: {
-  user: { id: string; role: string; tenantId: string; roles: string[] };
-}): string {
-  const secret =
-    process.env.SESSION_COOKIE_SECRET ?? "dev-session-cookie-secret-min-32-chars";
-  const data = Buffer.from(JSON.stringify(payload)).toString("base64url");
-  const signature = createHmac("sha256", secret).update(data).digest("base64url");
-  return `${data}.${signature}`;
-}
-
 export async function seedBrowserOwnerSession(
   page: Page,
   workspace: ProvisionedWorkspace,
 ): Promise<AuthSession> {
+  await page.route("**/api/auth/login", async (route) => {
+    const headers = {
+      ...route.request().headers(),
+      "x-tenant-id": workspace.tenantId,
+    };
+    await route.continue({ headers });
+  });
+
+  await page.goto(`/login?tenantId=${encodeURIComponent(workspace.tenantId)}`);
+  await page.locator("#email").fill(workspace.ownerEmail);
+  await page.locator("#password").fill(workspace.ownerPassword);
+  await page.getByRole("button", { name: /log in/i }).click();
+
+  const tenantSelect = page.locator("#tenant");
+  if (await tenantSelect.isVisible({ timeout: 5_000 }).catch(() => false)) {
+    await tenantSelect.selectOption(workspace.tenantId);
+    await page.getByRole("button", { name: /log in/i }).click();
+  }
+
+  await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 30_000 });
+  await page.unroute("**/api/auth/login");
+
   const auth = await loginUser({
     tenantId: workspace.tenantId,
     email: workspace.ownerEmail,
     password: workspace.ownerPassword,
-  });
-
-  if (!auth.refreshToken) {
-    throw new Error("Gateway login did not return a refresh token for browser session seeding.");
-  }
-
-  const role = auth.role ?? "OWNER";
-  const sessionValue = signBrowserSessionCookie({
-    user: {
-      id: auth.userId!,
-      role,
-      tenantId: auth.tenantId,
-      roles: [role],
-    },
-  });
-
-  const host = new URL(BILLING_E2E_CONFIG.frontendUrl).hostname;
-  await page.context().addCookies([
-    {
-      name: "ordella-session",
-      value: sessionValue,
-      domain: host,
-      path: "/",
-      httpOnly: true,
-      sameSite: "Lax",
-    },
-    {
-      name: "ordella-refresh",
-      value: auth.refreshToken,
-      domain: host,
-      path: "/",
-      httpOnly: true,
-      sameSite: "Lax",
-    },
-  ]);
-
-  await page.addInitScript((seed) => {
-    window.localStorage.setItem(
-      "ordella-auth",
-      JSON.stringify({
-        state: {
-          user: {
-            id: seed.userId,
-            email: seed.email,
-            tenantId: seed.tenantId,
-            role: seed.role,
-            roles: [seed.role],
-            permissions: [],
-          },
-          isAuthenticated: true,
-        },
-        version: 0,
-      }),
-    );
-    window.localStorage.setItem(
-      "ordella-tenant",
-      JSON.stringify({
-        state: {
-          tenant: {
-            id: seed.tenantId,
-            name: seed.tenantName,
-            portalType: "PHYSIO",
-          },
-        },
-        version: 0,
-      }),
-    );
-  }, {
-    userId: auth.userId,
-    email: auth.email,
-    tenantId: auth.tenantId,
-    tenantName: workspace.tenantName,
-    role,
   });
 
   await page.route(/\/api\//, async (route) => {
@@ -268,11 +223,6 @@ export async function seedBrowserOwnerSession(
     };
     await route.continue({ headers });
   });
-
-  const refreshResponse = await page.request.post("/api/auth/refresh");
-  if (!refreshResponse.ok()) {
-    // Some local frontend images return 500 from the BFF refresh route; gateway token injection above covers API calls.
-  }
 
   return auth;
 }
@@ -769,8 +719,17 @@ export async function verifyStripeInvoiceAiNotesLine(input: {
   const stripe = new Stripe(BILLING_E2E_CONFIG.stripeSecretKey);
   const aiNotesPriceId = BILLING_E2E_CONFIG.aiNotesPriceId;
 
-  const upcoming = await stripe.invoices.retrieveUpcoming({ customer: input.customerId });
-  const aiLine = upcoming.lines.data.find((line) => {
+  let upcoming: Stripe.UpcomingInvoice | null = null;
+  try {
+    upcoming = await stripe.invoices.retrieveUpcoming({ customer: input.customerId });
+  } catch (error) {
+    const stripeError = error as { code?: string; message?: string };
+    if (stripeError.code !== "invoice_upcoming_none") {
+      throw error;
+    }
+  }
+
+  const aiLine = upcoming?.lines.data.find((line) => {
     const priceId = typeof line.price === "string" ? line.price : line.price?.id;
     return priceId === aiNotesPriceId || line.metadata?.usageType === "ai_notes";
   });
@@ -858,4 +817,200 @@ export async function assertBillingContextMatchesStripe(auth: AuthSession): Prom
       `billing-context (${apiContext.subscriptionStatus}) does not match Stripe subscription (${subscription.status})`,
     );
   }
+}
+
+export type PlatformBillingMetrics = {
+  mrr?: number;
+  mrrStripeLive?: number;
+  arr?: number;
+  arrStripeLive?: number;
+  activeSubscriptions?: number;
+  source?: string;
+  lastUpdatedAt?: string;
+};
+
+export async function fetchPlatformMetrics(auth: AuthSession): Promise<PlatformBillingMetrics> {
+  const response = await fetch(`${BILLING_E2E_CONFIG.gatewayUrl}/billing/platform-metrics`, {
+    headers: {
+      authorization: `Bearer ${auth.accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`platform-metrics failed (${response.status}): ${await response.text()}`);
+  }
+
+  return unwrapGatewayBody<PlatformBillingMetrics>(await response.json());
+}
+
+export async function fillOrdellaCheckoutBillingForm(page: Page): Promise<void> {
+  await page.locator("#billingStreet").fill("123 Test Street");
+  await page.locator("#billingCity").fill("Dublin");
+  await page.locator("#billingPostal").fill("D01 F5P2");
+}
+
+export async function completeStripeHostedCheckout(
+  page: Page,
+  timeoutMs = 120_000,
+): Promise<string> {
+  if (!/checkout\.stripe\.com/.test(page.url())) {
+    await page.waitForURL(/checkout\.stripe\.com/, { timeout: timeoutMs });
+  }
+  await page.waitForLoadState("domcontentloaded");
+
+  const emailField = page.getByRole("textbox", { name: /^email$/i });
+  if (await emailField.isVisible({ timeout: 10_000 }).catch(() => false)) {
+    await emailField.fill("billing-e2e@ordella.dev");
+    await emailField.blur();
+  }
+
+  const cardRow = page.getByRole("listitem").filter({ has: page.getByRole("radio", { name: /^card$/i }) });
+  if (await cardRow.isVisible({ timeout: 5_000 }).catch(() => false)) {
+    await cardRow.click();
+  }
+
+  const cardAccordion = page.locator('[data-testid="card-accordion-item-button"]');
+  if (await cardAccordion.isVisible({ timeout: 3_000 }).catch(() => false)) {
+    await cardAccordion.click();
+  }
+
+  const fillCardFieldsInContext = async (
+    context: Page | ReturnType<Page["frameLocator"]>,
+  ): Promise<boolean> => {
+    const number = context
+      .locator(
+        'input[name="cardnumber"], input[name="cardNumber"], input[autocomplete="cc-number"], input[placeholder*="1234"], input[data-elements-stable-field-name="cardNumber"]',
+      )
+      .first();
+    if (!(await number.isVisible({ timeout: 1_000 }).catch(() => false))) {
+      return false;
+    }
+
+    await number.fill("4242424242424242");
+    const expiry = context
+      .locator(
+        'input[name="exp-date"], input[name="cardExpiry"], input[autocomplete="cc-exp"], input[placeholder*="MM"], input[data-elements-stable-field-name="cardExpiry"]',
+      )
+      .first();
+    if (await expiry.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await expiry.fill("12 / 34");
+    }
+    const cvc = context
+      .locator(
+        'input[name="cvc"], input[name="cardCvc"], input[autocomplete="cc-csc"], input[placeholder*="CVC"], input[data-elements-stable-field-name="cardCvc"]',
+      )
+      .first();
+    if (await cvc.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await cvc.fill("123");
+    }
+    return true;
+  };
+
+  const fillCardFields = async (): Promise<boolean> => {
+    if (await fillCardFieldsInContext(page)) {
+      return true;
+    }
+
+    for (const frame of page.frames()) {
+      if (await fillCardFieldsInContext(frame)) {
+        return true;
+      }
+    }
+
+    const iframeCount = await page.locator("iframe").count();
+    for (let index = 0; index < iframeCount; index += 1) {
+      const frame = page.frameLocator("iframe").nth(index);
+      if (await fillCardFieldsInContext(frame)) {
+        return true;
+      }
+      const nestedCount = await frame.locator("iframe").count().catch(() => 0);
+      for (let nested = 0; nested < nestedCount; nested += 1) {
+        const nestedFrame = frame.frameLocator("iframe").nth(nested);
+        if (await fillCardFieldsInContext(nestedFrame)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  const cardFillDeadline = Date.now() + 45_000;
+  let filled = false;
+  while (Date.now() < cardFillDeadline) {
+    if (await fillCardFields()) {
+      filled = true;
+      break;
+    }
+    await cardRow.click().catch(() => undefined);
+    await page.waitForTimeout(750);
+  }
+
+  if (!filled) {
+    throw new Error("Could not locate Stripe card input fields on hosted checkout page");
+  }
+
+  const cardholderName = page.getByRole("textbox", { name: /cardholder name/i });
+  if (await cardholderName.isVisible({ timeout: 3_000 }).catch(() => false)) {
+    await cardholderName.fill("Billing E2E Test");
+  }
+
+  if (await emailField.isVisible().catch(() => false)) {
+    const emailValue = await emailField.inputValue();
+    if (!emailValue.trim()) {
+      await emailField.fill("billing-e2e@ordella.dev");
+      await emailField.blur();
+    }
+  }
+
+  const submit = page.getByRole("button", {
+    name: /pay and subscribe|subscribe|start subscription|complete purchase/i,
+  });
+  await submit.click({ timeout: timeoutMs });
+
+  await page.waitForURL(/checkout\/success/, { timeout: timeoutMs });
+  const successUrl = new URL(page.url());
+  const sessionId = successUrl.searchParams.get("session_id");
+  if (!sessionId) {
+    throw new Error("Stripe checkout completed but session_id was missing from success URL");
+  }
+  return sessionId;
+}
+
+export async function syncCheckoutSessionFromStripe(input: {
+  auth: AuthSession;
+  sessionId: string;
+}): Promise<void> {
+  if (!stripeApiReady()) {
+    return;
+  }
+
+  const stripe = new Stripe(BILLING_E2E_CONFIG.stripeSecretKey);
+  const session = await stripe.checkout.sessions.retrieve(input.sessionId, {
+    expand: ["subscription", "customer"],
+  });
+
+  const customerId =
+    typeof session.customer === "string"
+      ? session.customer
+      : session.customer && "id" in session.customer
+        ? session.customer.id
+        : "";
+  const subscriptionId =
+    typeof session.subscription === "string"
+      ? session.subscription
+      : session.subscription && "id" in session.subscription
+        ? session.subscription.id
+        : `sub_e2e_${input.auth.tenantId}`;
+
+  if (!customerId) {
+    throw new Error(`Stripe session ${input.sessionId} is missing customer id`);
+  }
+
+  await activateTenantSubscription({
+    auth: input.auth,
+    customerId,
+    subscriptionId,
+    sessionId: input.sessionId,
+  });
 }

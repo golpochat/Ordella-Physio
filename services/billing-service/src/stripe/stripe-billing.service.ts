@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { isUniqueConstraintError } from "@ordella/database";
 import type Stripe from "stripe";
 import {
   buildStripeCustomerMetadata,
@@ -486,18 +487,29 @@ export class StripeBillingService {
           }),
         });
 
-    const account = await this.repository.createAccount({
-      tenantId: dto.tenantId,
-      stripeCustomerId: customer.id,
-      email: dto.email ?? customer.email ?? null,
-    });
+    try {
+      const account = await this.repository.createAccount({
+        tenantId: dto.tenantId,
+        stripeCustomerId: customer.id,
+        email: dto.email ?? customer.email ?? null,
+      });
 
-    await this.tenantSync.syncBilling({
-      tenantId: dto.tenantId,
-      stripeCustomerId: customer.id,
-    });
+      await this.tenantSync.syncBilling({
+        tenantId: dto.tenantId,
+        stripeCustomerId: customer.id,
+      });
 
-    return this.toCustomerResponse(account, "tenant");
+      return this.toCustomerResponse(account, "tenant");
+    } catch (error) {
+      if (isUniqueConstraintError(error)) {
+        const raced = await this.repository.findAccountByTenantId(dto.tenantId);
+        if (raced) {
+          return this.toCustomerResponse(raced, "tenant");
+        }
+      }
+
+      throw error;
+    }
   }
 
   private async createOrganizationCustomer(
@@ -533,22 +545,39 @@ export class StripeBillingService {
           }),
         });
 
-    const account = await this.repository.createOrganizationAccount({
-      organizationId: context.organizationId,
-      stripeCustomerId: customer.id,
-      email: dto.email ?? customer.email ?? null,
-    });
+    try {
+      const account = await this.repository.createOrganizationAccount({
+        organizationId: context.organizationId,
+        stripeCustomerId: customer.id,
+        email: dto.email ?? customer.email ?? null,
+      });
 
-    await this.organizationSync.syncBilling({
-      organizationId: context.organizationId,
-      stripeCustomerId: customer.id,
-    });
+      await this.organizationSync.syncBilling({
+        organizationId: context.organizationId,
+        stripeCustomerId: customer.id,
+      });
 
-    return {
-      organizationId: context.organizationId,
-      stripeCustomerId: account.stripeCustomerId,
-      billingEntity: "organization",
-    };
+      return {
+        organizationId: context.organizationId,
+        stripeCustomerId: account.stripeCustomerId,
+        billingEntity: "organization",
+      };
+    } catch (error) {
+      if (isUniqueConstraintError(error)) {
+        const raced = await this.repository.findOrganizationAccountByOrganizationId(
+          context.organizationId,
+        );
+        if (raced) {
+          return {
+            organizationId: context.organizationId,
+            stripeCustomerId: raced.stripeCustomerId,
+            billingEntity: "organization",
+          };
+        }
+      }
+
+      throw error;
+    }
   }
 
   private async createTenantSubscription(

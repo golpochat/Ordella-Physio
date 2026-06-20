@@ -83,10 +83,20 @@ export class ProxyService {
     response: Response,
     serviceEnvKey: ServiceEnvKey,
     user?: GatewayUser,
+    options: { forwardPath?: string; rewritePathPrefix?: { from: string; to: string } } = {},
   ): Promise<void> {
     const baseUrl = getServiceUrl(serviceEnvKey);
     const requestPath = request.originalUrl.split("?")[0] ?? request.path;
-    const targetUrl = `${baseUrl}${requestPath}`;
+    let path = options.forwardPath ?? requestPath;
+    if (
+      options.rewritePathPrefix &&
+      path.startsWith(options.rewritePathPrefix.from)
+    ) {
+      path =
+        options.rewritePathPrefix.to +
+        path.slice(options.rewritePathPrefix.from.length);
+    }
+    const targetUrl = `${baseUrl}${path}`;
     const config = gatewayConfig;
 
     try {

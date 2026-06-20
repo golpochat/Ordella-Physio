@@ -113,6 +113,41 @@ export class FulfillmentService {
     return this.prescriptionsRepository.findByIdOrThrow(tenantId, prescriptionId);
   }
 
+  async retry(tenantId: string, prescriptionId: string, user: AuthenticatedPharmacyUser) {
+    this.assertTenant(tenantId, user);
+    this.assertPermission(user, "fulfillment.start");
+
+    const prescription = await this.requireIssuedPrescription(tenantId, prescriptionId);
+    const fulfillment = prescription.fulfillment;
+    if (!fulfillment || fulfillment.status !== "FAILED") {
+      throw new BadRequestException("Only failed fulfillment can be retried");
+    }
+
+    await this.fulfillmentRepository.updateByPrescriptionId(prescriptionId, {
+      status: "PENDING",
+      filledBy: null,
+      filledAt: null,
+    });
+
+    await this.recordAudit(tenantId, prescriptionId, user, "fulfill.retry", {});
+    return this.prescriptionsRepository.findByIdOrThrow(tenantId, prescriptionId);
+  }
+
+  async list(
+    tenantId: string,
+    user: AuthenticatedPharmacyUser,
+    filters: { fulfillmentStatus?: import("@/generated/prisma").FulfillmentStatus; patientId?: string },
+  ) {
+    this.assertTenant(tenantId, user);
+    this.assertPermission(user, "prescriptions.read");
+
+    return this.prescriptionsRepository.list(tenantId, {
+      patientId: filters.patientId,
+      status: "ISSUED",
+      fulfillmentStatus: filters.fulfillmentStatus,
+    });
+  }
+
   private async requireIssuedPrescription(tenantId: string, prescriptionId: string) {
     const prescription = await this.prescriptionsRepository.findById(tenantId, prescriptionId);
     if (!prescription) {

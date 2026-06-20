@@ -6,6 +6,7 @@ import {
   Post,
   Query,
   Req,
+  ServiceUnavailableException,
   UseGuards,
 } from "@nestjs/common";
 import {
@@ -21,6 +22,7 @@ import { JwtGuard } from "@/messaging/guards/jwt.guard";
 import { MessagingTenantGuard } from "@/messaging/guards/messaging-tenant.guard";
 import { TenantId } from "@/messaging/guards/tenant-id.decorator";
 import { MessagingService } from "@/messaging/messaging.service";
+import { DatabaseService } from "@/database/database.module";
 import type { AuthenticatedMessagingUser } from "@/utils/messaging-helpers";
 import type { CreateConversationInput } from "@ordella/validation";
 import type { CreateMessageInput } from "@ordella/validation";
@@ -29,11 +31,27 @@ import type { MessageTypingInput } from "@ordella/validation";
 
 @Controller("messaging")
 export class MessagingController {
-  constructor(private readonly messagingService: MessagingService) {}
+  constructor(
+    private readonly messagingService: MessagingService,
+    private readonly database: DatabaseService,
+  ) {}
 
   @Get("health")
   health() {
     return { status: "ok", service: "messaging-service" };
+  }
+
+  @Get("ready")
+  async readiness() {
+    try {
+      await this.database.$queryRaw`SELECT 1`;
+      return { status: "ready", service: "messaging-service" };
+    } catch {
+      throw new ServiceUnavailableException({
+        status: "not_ready",
+        service: "messaging-service",
+      });
+    }
   }
 
   @Get("unread-count")

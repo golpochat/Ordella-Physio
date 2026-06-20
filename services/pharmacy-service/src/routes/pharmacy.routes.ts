@@ -1,6 +1,7 @@
 export const PHARMACY_ROUTES = {
   base: "/pharmacy",
   health: "/pharmacy/health",
+  ready: "/pharmacy/ready",
   prescriptions: "/pharmacy/prescriptions",
   prescriptionById: "/pharmacy/prescriptions/:id",
   prescriptionIssue: "/pharmacy/prescriptions/:id/issue",

@@ -7,6 +7,8 @@ import {
   handleApiAuthError,
   redirectToForbidden,
 } from "@/lib/session-manager";
+import { getStoredIsAuthenticated } from "@/lib/auth-storage";
+import { useAuthStore } from "@/store/auth.store";
 import { useUiStore } from "@/store/ui.store";
 import { API_ROUTES, AUTHORIZATION_HEADER, CORRELATION_ID_HEADER, TENANT_HEADER } from "./constants";
 import { isGatewayOnlyWhenClinicBackend } from "./clinic-backend-client-scope";
@@ -77,6 +79,14 @@ export function createApiClient(getContext: () => ApiClientContext) {
     const { service, path = "", params, context, headers, jsonBody, formData, unwrapData, suppressForbiddenRedirect, ...init } = options;
     let session = { ...getContext(), ...context };
     const correlationId = session.correlationId ?? uuidv4();
+
+    const hasPersistedSession =
+      useAuthStore.getState().isAuthenticated || getStoredIsAuthenticated();
+
+    if (!session.accessToken && hasPersistedSession) {
+      await attemptTokenRefresh();
+      session = { ...getContext(), ...context };
+    }
 
     if (session.accessToken) {
       await ensureFreshAccessToken();

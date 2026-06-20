@@ -2,35 +2,9 @@
 # ordella-physio — @ordella/clinic-backend
 # Build context: ./backend  |  workspace: repo root
 
-FROM node:22-alpine AS base
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
-WORKDIR /app
-COPY --from=workspace package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
-COPY --from=workspace packages ./packages
-COPY --from=workspace shared ./shared
-COPY package.json ./backend/package.json
-COPY prisma ./backend/prisma
-# Force Linux-only binaries + disable strict SSL
-RUN echo "strict-ssl=false" >> /root/.npmrc \
-  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
-  && echo "engine-strict=false" >> /root/.npmrc \
-  && echo "prefer-offline=true" >> /root/.npmrc \
-  && echo "fetch-retries=5" >> /root/.npmrc \
-  && echo "fetch-retry-factor=2" >> /root/.npmrc \
-  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
-  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
-  && echo "shamefully-hoist=true" >> /root/.npmrc
-
-RUN pnpm config set strict-ssl false \
-  && pnpm config set registry https://registry.npmjs.org/ \
-  && pnpm config set prefer-offline true \
-  && pnpm config set fetch-retries 5 \
-  && pnpm config set fetch-retry-factor 2 \
-  && pnpm config set fetch-retry-mintimeout 1000 \
-  && pnpm config set fetch-retry-maxtimeout 60000
-RUN pnpm install --frozen-lockfile --filter @ordella/clinic-backend...
-
+FROM ordella-base:latest AS base
 FROM base AS build
+ENV CI=true
 COPY . ./backend
 RUN rm -rf backend/node_modules
 # Force Linux-only binaries + disable strict SSL
@@ -51,7 +25,7 @@ RUN pnpm config set strict-ssl false \
   && pnpm config set fetch-retry-factor 2 \
   && pnpm config set fetch-retry-mintimeout 1000 \
   && pnpm config set fetch-retry-maxtimeout 60000
-RUN pnpm install --frozen-lockfile --filter @ordella/clinic-backend...
+RUN pnpm install --filter @ordella/clinic-backend... --offline
 WORKDIR /app/backend
 RUN pnpm exec prisma generate
 RUN pnpm run build

@@ -1,0 +1,32 @@
+FROM node:20
+
+ENV CI=true
+
+WORKDIR /app
+
+# Copy only package manager + workspace files first for better caching
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
+
+# Global npm/pnpm settings to stabilise registry access
+RUN echo "strict-ssl=false" >> /root/.npmrc \
+  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
+  && echo "engine-strict=false" >> /root/.npmrc \
+  && echo "prefer-offline=true" >> /root/.npmrc \
+  && echo "fetch-retries=5" >> /root/.npmrc \
+  && echo "fetch-retry-factor=2" >> /root/.npmrc \
+  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
+  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc
+
+RUN corepack enable \
+  && pnpm config set strict-ssl false \
+  && pnpm config set registry https://registry.npmjs.org/ \
+  && pnpm config set prefer-offline true \
+  && pnpm config set fetch-retries 5 \
+  && pnpm config set fetch-retry-factor 2 \
+  && pnpm config set fetch-retry-mintimeout 1000 \
+  && pnpm config set fetch-retry-maxtimeout 60000
+
+# Pre-fetch and install workspace deps ONCE
+COPY . .
+RUN pnpm fetch \
+  && pnpm install --frozen-lockfile

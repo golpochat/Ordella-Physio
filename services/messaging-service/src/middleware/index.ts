@@ -24,21 +24,21 @@ const metricsRegistry = createMetricsRegistry({ serviceName: "messaging-service"
 setDefaultMetricsRegistry(metricsRegistry);
 
 export const MessagingServiceDomainResolverMiddleware = createDomainResolverMiddleware({
-  skipPaths: ["/messaging/health"],
+  skipPaths: ["/messaging/health", "/messaging/ready"],
 });
 
 export const MessagingServiceTenantMiddleware = createTenantMiddleware({
   required: true,
-  skipPaths: ["/messaging/health"],
+  skipPaths: ["/messaging/health", "/messaging/ready"],
 });
 
 export const MessagingServiceTenantStatusMiddleware = createTenantStatusMiddleware({
-  skipPaths: ["/messaging/health"],
+  skipPaths: ["/messaging/health", "/messaging/ready"],
 });
 
 export const MessagingServiceAuthContextMiddleware = createAuthContextMiddleware({
   required: false,
-  skipPaths: ["/messaging/health"],
+  skipPaths: ["/messaging/health", "/messaging/ready"],
 });
 
 export const MessagingServiceRequestLoggingMiddleware = createRequestLoggingMiddleware({
@@ -57,7 +57,7 @@ export const MessagingServiceRateLimitMiddleware = createRateLimitMiddleware({
   windowMs: 60_000,
   maxRequestsPerIp: 100,
   maxRequestsPerTenant: 200,
-  skipPaths: ["/messaging/health"],
+  skipPaths: ["/messaging/health", "/messaging/ready"],
 });
 
 export function configureMessagingMiddleware(consumer: MiddlewareConsumer): void {

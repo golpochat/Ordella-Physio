@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useClinicPortalApi } from "@/hooks/useClinicPortal";
 import { useMessagingContext } from "@/hooks/useMessaging";
 import { useTherapistPortalApi } from "@/hooks/useTherapistPortal";
@@ -20,6 +20,7 @@ export function useMessagingParticipants() {
   const { role } = useMessagingContext();
   const clinicApi = useClinicPortalApi();
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   const staffQuery = useQuery({
     queryKey: ["messaging", "participants", "staff", tenantId],
@@ -35,7 +36,7 @@ export function useMessagingParticipants() {
       const staff = await fallbackApi.listStaff();
       return mapStaffToParticipants(Array.isArray(staff) ? staff : []);
     },
-    enabled: Boolean(tenantId),
+    enabled: authReady && Boolean(tenantId),
   });
 
   const patientsQuery = useQuery({
@@ -57,7 +58,7 @@ export function useMessagingParticipants() {
       const patients = await fallbackTherapistApi.listPatients({ limit: 100 }).catch(() => []);
       return mapPatientsToParticipants(normalizePatientList(patients));
     },
-    enabled: Boolean(tenantId) && role !== "PATIENT",
+    enabled: authReady && Boolean(tenantId) && role !== "PATIENT",
   });
 
   return useMemo(() => {

@@ -69,7 +69,7 @@ export const TenantServiceRateLimitMiddleware = createRateLimitMiddleware({
   windowMs: 60_000,
   maxRequestsPerIp: 100,
   maxRequestsPerTenant: 200,
-  skipPaths: ["/tenants/health"],
+  skipPaths: ["/tenants/health", "/tenants/internal", "/super-admin"],
 });
 
 export function configureTenantMiddleware(consumer: MiddlewareConsumer): void {

@@ -44,7 +44,11 @@ setDefaultMetricsRegistry(metricsRegistry);
 
 
 
-const skipPaths = ["/notification-providers/health", "/notification-providers/internal"];
+const skipPaths = [
+  "/notification-providers/health",
+  "/notification-providers/ready",
+  "/notification-providers/internal",
+];
 
 
 

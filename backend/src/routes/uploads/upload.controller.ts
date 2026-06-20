@@ -1,9 +1,14 @@
 import type { Request, Response } from "express";
-import { ValidationError } from "../../utils/api-error";
+import { ForbiddenError, ValidationError } from "../../utils/api-error";
 import {
   assertFileStorageScanOk,
   forwardUploadToFileStorage,
 } from "../../integrations/file-storage.client";
+import {
+  stripExifFromImageBuffer,
+  validateAndScanUpload,
+} from "../../modules/security/file-upload";
+import { logSecurityEvent } from "../../modules/security/security-events.service";
 
 function getAuthorizationHeader(request: Request): string {
   const header = request.headers.authorization;
@@ -20,10 +25,37 @@ export const uploadController = {
       throw new ValidationError("File is required.");
     }
 
+    const file = request.file;
+    let buffer = file.buffer;
+
+    const validation = await validateAndScanUpload({
+      fileName: file.originalname,
+      mimeType: file.mimetype,
+      sizeBytes: file.size,
+      buffer,
+    });
+
+    if (!validation.ok) {
+      logSecurityEvent({
+        type: "virus_scan",
+        message: validation.reason,
+        req: request,
+        tenantId: request.tenantId,
+        userId: request.user?.id,
+        metadata: {
+          fileName: file.originalname,
+          mimeType: file.mimetype,
+        },
+      });
+      throw new ForbiddenError(validation.reason);
+    }
+
+    buffer = stripExifFromImageBuffer(buffer, file.mimetype);
+
     const result = await forwardUploadToFileStorage({
       authorization: getAuthorizationHeader(request),
       tenantId: request.tenantId!,
-      file: request.file,
+      file: { ...file, buffer },
       fields: {
         entityType: typeof request.body.entityType === "string" ? request.body.entityType : undefined,
         entityId: typeof request.body.entityId === "string" ? request.body.entityId : undefined,

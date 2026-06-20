@@ -6,6 +6,7 @@ import { ConversationDetail } from "@/components/messaging/conversation-detail";
 import { ConversationList } from "@/components/messaging/conversation-list";
 import { NewConversationModal } from "@/components/messaging/new-conversation-modal";
 import { useConversations, useMessagingContext } from "@/hooks/useMessaging";
+import { useMessagingRealtime } from "@/hooks/useMessagingRealtime";
 import { useMessagingParticipants } from "@/hooks/useMessagingParticipants";
 
 type MessagingWorkspaceProps = {
@@ -13,6 +14,7 @@ type MessagingWorkspaceProps = {
 };
 
 export function MessagingWorkspace({ className }: MessagingWorkspaceProps) {
+  useMessagingRealtime();
   const { userId } = useMessagingContext();
   const conversationsQuery = useConversations();
   const { participants } = useMessagingParticipants();

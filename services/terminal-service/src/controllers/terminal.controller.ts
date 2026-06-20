@@ -1,18 +1,35 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Query, ServiceUnavailableException, UseGuards } from "@nestjs/common";
 import type { CreateTerminalPayload, UpdateTerminalPayload } from "@/models/Terminal";
 import { TerminalService } from "@/services/terminal.service";
 import { JwtGuard } from "@/guards/jwt.guard";
 import { TerminalManageGuard } from "@/guards/terminal-manage.guard";
 import { CurrentUser } from "@/guards/current-user.decorator";
 import type { AuthenticatedTerminalUser } from "@/utils/terminal-helpers";
+import { DatabaseService } from "@/database/database.module";
 
 @Controller("terminals")
 export class TerminalController {
-  constructor(private readonly terminalService: TerminalService) {}
+  constructor(
+    private readonly terminalService: TerminalService,
+    private readonly database: DatabaseService,
+  ) {}
 
   @Get("health")
   health() {
     return { status: "ok", service: "terminal-service" };
+  }
+
+  @Get("ready")
+  async readiness() {
+    try {
+      await this.database.$queryRaw`SELECT 1`;
+      return { status: "ready", service: "terminal-service" };
+    } catch {
+      throw new ServiceUnavailableException({
+        status: "not_ready",
+        service: "terminal-service",
+      });
+    }
   }
 
   @Get()

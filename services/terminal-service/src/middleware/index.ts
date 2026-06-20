@@ -22,7 +22,7 @@ import { TERMINAL_ROUTES } from "@/routes/terminal.routes";
 const metricsRegistry = createMetricsRegistry({ serviceName: "terminal-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
-const skipPaths = [TERMINAL_ROUTES.health];
+const skipPaths = [TERMINAL_ROUTES.health, TERMINAL_ROUTES.ready, TERMINAL_ROUTES.pair];
 
 export const TerminalAuthContextMiddleware = createAuthContextMiddleware({
   required: false,

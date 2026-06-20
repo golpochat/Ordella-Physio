@@ -39,13 +39,20 @@ export class PrescriptionsRepository {
     });
   }
 
-  list(tenantId: string, filters: { patientId?: string; status?: PrescriptionStatus }) {
+  list(tenantId: string, filters: {
+    patientId?: string;
+    status?: PrescriptionStatus;
+    fulfillmentStatus?: FulfillmentStatus;
+  }) {
     const where: Prisma.PrescriptionWhereInput = { tenantId };
     if (filters.patientId) {
       where.patientId = filters.patientId;
     }
     if (filters.status) {
       where.status = filters.status;
+    }
+    if (filters.fulfillmentStatus) {
+      where.fulfillment = { status: filters.fulfillmentStatus };
     }
 
     return this.database.prescription.findMany({

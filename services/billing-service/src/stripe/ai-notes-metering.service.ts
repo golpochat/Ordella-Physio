@@ -40,43 +40,8 @@ export class AiNotesMeteringService {
     const resolved = await this.resolveMeteringAccount(tenantId);
     const events = Math.max(1, quantity);
 
-    if (this.stripeClient.isMockMode()) {
-      const aiNotesPriceId =
-        billingConfig.stripePriceAiNotes ??
-        process.env.STRIPE_PRICE_AI_NOTES ??
-        "price_e2e_ai_notes_mock";
-      const subscriptionItemId =
-        resolved.cachedSubscriptionItemId ?? `si_mock_ai_${resolved.tenantId.slice(0, 18)}`;
-      const usageRecordIds: string[] = [];
-
-      for (let index = 0; index < events; index += 1) {
-        const mockUsageRecordId = `ur_mock_${resolved.tenantId}_${Date.now()}_${index}`;
-        usageRecordIds.push(mockUsageRecordId);
-
-        await this.meteringRepository.createUsageRecord({
-          tenantId: resolved.tenantId,
-          organizationId: resolved.organizationId ?? null,
-          billingEntity: resolved.entity,
-          stripeCustomerId: resolved.stripeCustomerId,
-          stripeSubscriptionId: resolved.stripeSubscriptionId,
-          stripeSubscriptionItemId: subscriptionItemId,
-          stripeUsageRecordId: mockUsageRecordId,
-          quantity: 1,
-        });
-      }
-
-      await this.persistSubscriptionItemId(resolved, subscriptionItemId);
-      this.logger.log(
-        `Recorded ${events} mock AI notes usage event(s) for tenant ${tenantId} (Stripe mock mode)`,
-      );
-
-      return {
-        synced: true,
-        tenantId,
-        quantity: events,
-        billedTo: resolved.entity,
-        stripeUsageRecordIds: usageRecordIds,
-      };
+    if (this.shouldUseMockAiNotesMetering(resolved.stripeSubscriptionId)) {
+      return this.recordMockUsage(resolved, tenantId, events);
     }
 
     const aiNotesPriceId = billingConfig.stripePriceAiNotes ?? process.env.STRIPE_PRICE_AI_NOTES;
@@ -343,5 +308,67 @@ export class AiNotesMeteringService {
   ): string {
     if (!customer) return "";
     return typeof customer === "string" ? customer : customer.id;
+  }
+
+  private shouldUseMockAiNotesMetering(subscriptionId: string): boolean {
+    if (this.stripeClient.isMockMode()) {
+      return true;
+    }
+
+    const aiNotesPriceId =
+      billingConfig.stripePriceAiNotes ?? process.env.STRIPE_PRICE_AI_NOTES ?? "";
+    if (!aiNotesPriceId.trim() || this.isPlaceholderStripePrice(aiNotesPriceId)) {
+      return true;
+    }
+
+    return /^sub_(ai|e2e|org|pastdue)_/i.test(subscriptionId);
+  }
+
+  private isPlaceholderStripePrice(priceId: string): boolean {
+    const normalized = priceId.trim().toLowerCase();
+    return (
+      normalized.includes("change-me") ||
+      normalized.includes("change_me") ||
+      normalized.startsWith("price_local_")
+    );
+  }
+
+  private async recordMockUsage(
+    resolved: ResolvedMeteringAccount,
+    tenantId: string,
+    events: number,
+  ) {
+    const subscriptionItemId =
+      resolved.cachedSubscriptionItemId ?? `si_mock_ai_${resolved.tenantId.slice(0, 18)}`;
+    const usageRecordIds: string[] = [];
+
+    for (let index = 0; index < events; index += 1) {
+      const mockUsageRecordId = `ur_mock_${resolved.tenantId}_${Date.now()}_${index}`;
+      usageRecordIds.push(mockUsageRecordId);
+
+      await this.meteringRepository.createUsageRecord({
+        tenantId: resolved.tenantId,
+        organizationId: resolved.organizationId ?? null,
+        billingEntity: resolved.entity,
+        stripeCustomerId: resolved.stripeCustomerId,
+        stripeSubscriptionId: resolved.stripeSubscriptionId,
+        stripeSubscriptionItemId: subscriptionItemId,
+        stripeUsageRecordId: mockUsageRecordId,
+        quantity: 1,
+      });
+    }
+
+    await this.persistSubscriptionItemId(resolved, subscriptionItemId);
+    this.logger.log(
+      `Recorded ${events} mock AI notes usage event(s) for tenant ${tenantId} (local/E2E metering)`,
+    );
+
+    return {
+      synced: true as const,
+      tenantId,
+      quantity: events,
+      billedTo: resolved.entity,
+      stripeUsageRecordIds: usageRecordIds,
+    };
   }
 }

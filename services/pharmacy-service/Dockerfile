@@ -1,35 +1,9 @@
 # syntax=docker/dockerfile:1.4
 # ordella-physio — @ordella/pharmacy-service
 
-FROM node:18-alpine AS base
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
-WORKDIR /app
-COPY --from=workspace package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
-COPY --from=workspace packages ./packages
-COPY --from=workspace shared ./shared
-COPY package.json ./services/pharmacy-service/package.json
-COPY prisma ./services/pharmacy-service/prisma
-# Force Linux-only binaries + disable strict SSL
-RUN echo "strict-ssl=false" >> /root/.npmrc \
-  && echo "registry=https://registry.npmjs.org/" >> /root/.npmrc \
-  && echo "engine-strict=false" >> /root/.npmrc \
-  && echo "prefer-offline=true" >> /root/.npmrc \
-  && echo "fetch-retries=5" >> /root/.npmrc \
-  && echo "fetch-retry-factor=2" >> /root/.npmrc \
-  && echo "fetch-retry-mintimeout=1000" >> /root/.npmrc \
-  && echo "fetch-retry-maxtimeout=60000" >> /root/.npmrc \
-  && echo "shamefully-hoist=true" >> /root/.npmrc
-
-RUN pnpm config set strict-ssl false \
-  && pnpm config set registry https://registry.npmjs.org/ \
-  && pnpm config set prefer-offline true \
-  && pnpm config set fetch-retries 5 \
-  && pnpm config set fetch-retry-factor 2 \
-  && pnpm config set fetch-retry-mintimeout 1000 \
-  && pnpm config set fetch-retry-maxtimeout 60000
-RUN pnpm install --frozen-lockfile --filter @ordella/pharmacy-service...
-
+FROM ordella-base:latest AS base
 FROM base AS build
+ENV CI=true
 COPY . ./services/pharmacy-service
 RUN rm -rf services/pharmacy-service/node_modules
 # Force Linux-only binaries + disable strict SSL
@@ -50,15 +24,18 @@ RUN pnpm config set strict-ssl false \
   && pnpm config set fetch-retry-factor 2 \
   && pnpm config set fetch-retry-mintimeout 1000 \
   && pnpm config set fetch-retry-maxtimeout 60000
-RUN pnpm install --frozen-lockfile --filter @ordella/pharmacy-service...
+RUN pnpm install --filter @ordella/pharmacy-service... --offline
 RUN pnpm turbo run build --filter=@ordella/pharmacy-service
 WORKDIR /app/services/pharmacy-service
+RUN rm -rf src/generated/prisma
+RUN pnpm exec prisma generate
 RUN find dist -type f -name '*.js' -exec sed -i \
     -e 's|require("\.\./\.\./\.\./packages/\([^/]*\)/src/index\.ts")|require("@ordella/\1")|g' \
     -e 's|require("\.\./\.\./packages/\([^/]*\)/src/index\.ts")|require("@ordella/\1")|g' {} +
 RUN cp -r src/generated dist/services/pharmacy-service/src/
 
 FROM node:18-alpine AS production
+RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 WORKDIR /app
 ENV NODE_ENV=production

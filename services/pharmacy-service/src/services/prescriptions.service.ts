@@ -50,7 +50,11 @@ export class PrescriptionsService {
   async list(
     tenantId: string,
     user: AuthenticatedPharmacyUser,
-    filters: { patientId?: string; status?: PrescriptionStatus },
+    filters: {
+      patientId?: string;
+      status?: PrescriptionStatus;
+      fulfillmentStatus?: import("@/generated/prisma").FulfillmentStatus;
+    },
   ) {
     this.assertTenant(tenantId, user);
     this.assertPermission(user, "prescriptions.read");
@@ -75,7 +79,7 @@ export class PrescriptionsService {
     user: AuthenticatedPharmacyUser,
   ) {
     this.assertTenant(tenantId, user);
-    this.assertPermission(user, "prescriptions.create");
+    this.assertPermission(user, "prescriptions.update");
 
     const existing = await this.prescriptionsRepository.findById(tenantId, id);
     if (!existing) {
@@ -117,6 +121,14 @@ export class PrescriptionsService {
     }
     if (existing.status === "DISPENSED" || existing.status === "CANCELLED") {
       throw new BadRequestException("Prescription cannot be cancelled");
+    }
+
+    const fulfillment = existing.fulfillment;
+    if (
+      fulfillment &&
+      (fulfillment.status === "IN_PROGRESS" || fulfillment.status === "COMPLETED")
+    ) {
+      throw new BadRequestException("Cannot cancel prescription with active or completed fulfillment");
     }
 
     await this.prescriptionsRepository.update(tenantId, id, { status: "CANCELLED" });

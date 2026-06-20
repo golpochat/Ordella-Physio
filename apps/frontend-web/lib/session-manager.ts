@@ -154,7 +154,15 @@ export async function attemptTokenRefresh(): Promise<boolean> {
 
 export async function ensureFreshAccessToken(): Promise<void> {
   const accessToken = useAuthStore.getState().accessToken;
-  if (!accessToken || !isAccessTokenExpiringSoon(accessToken, ACCESS_TOKEN_REFRESH_BUFFER_MS)) {
+
+  if (!accessToken) {
+    if (useAuthStore.getState().isAuthenticated || getStoredIsAuthenticated()) {
+      await attemptTokenRefresh();
+    }
+    return;
+  }
+
+  if (!isAccessTokenExpiringSoon(accessToken, ACCESS_TOKEN_REFRESH_BUFFER_MS)) {
     return;
   }
 

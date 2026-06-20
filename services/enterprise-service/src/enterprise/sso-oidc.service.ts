@@ -1,8 +1,30 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import type * as OpenIdClient from "openid-client";
 import type { OrganizationSsoInternalConfig } from "@/integrations/organization-service.client";
 
-type OpenIdClientModule = typeof OpenIdClient;
+/** openid-client v6 runtime API (package types resolve to an incomplete namespace). */
+interface OpenIdConfiguration {
+  serverMetadata(): { supportsPKCE(): boolean };
+}
+
+interface OpenIdClientModule {
+  discovery(
+    server: URL,
+    clientId: string,
+    metadata?: string | Record<string, unknown>,
+    clientAuthentication?: unknown,
+  ): Promise<OpenIdConfiguration>;
+  ClientSecretPost(secret: string): unknown;
+  buildAuthorizationUrl(
+    config: OpenIdConfiguration,
+    parameters: Record<string, string>,
+  ): URL;
+  authorizationCodeGrant(
+    config: OpenIdConfiguration,
+    callbackUrl: URL,
+    checks: Record<string, string>,
+  ): Promise<{ claims(): Record<string, unknown> | undefined }>;
+  buildEndSessionUrl(config: OpenIdConfiguration, params: Record<string, string>): URL;
+}
 
 @Injectable()
 export class SsoOidcService {
@@ -10,7 +32,7 @@ export class SsoOidcService {
 
   private loadClient(): Promise<OpenIdClientModule> {
     if (!this.clientModule) {
-      this.clientModule = import("openid-client") as Promise<OpenIdClientModule>;
+      this.clientModule = import("openid-client") as unknown as Promise<OpenIdClientModule>;
     }
 
     return this.clientModule;
@@ -18,7 +40,7 @@ export class SsoOidcService {
 
   private async getConfiguration(
     config: OrganizationSsoInternalConfig,
-  ): Promise<OpenIdClient.Configuration> {
+  ): Promise<OpenIdConfiguration> {
     if (!config.ssoIssuer || !config.ssoClientId || !config.ssoClientSecret) {
       throw new BadRequestException("OIDC issuer, client ID, and client secret are required.");
     }
@@ -108,7 +130,7 @@ export class SsoOidcService {
     }
 
     const groups = Array.isArray(claims.groups)
-      ? claims.groups.map((entry) => String(entry))
+      ? claims.groups.map((entry: unknown) => String(entry))
       : typeof claims.groups === "string"
         ? [claims.groups]
         : [];

@@ -69,6 +69,12 @@ const proxyControllers = [
     public: true,
     skipTenant: true,
   }),
+  createProxyController("/tenants/profile", "CLINIC_BACKEND_URL", {
+    forwardPath: "/api/tenant/profile",
+  }),
+  createProxyController("/tenants/trial", "CLINIC_BACKEND_URL", {
+    forwardPath: "/api/tenant/trial",
+  }),
   createProxyController(TENANT_ROUTES.base, "TENANT_SERVICE_URL"),
   createProxyController(PATIENT_ROUTES.base, "PATIENT_SERVICE_URL"),
   createProxyController(APPOINTMENT_ROUTES.base, "APPOINTMENT_SERVICE_URL"),
@@ -232,15 +238,19 @@ const proxyControllers = [
   }),
   createProxyController(NOTIFICATION_PROVIDER_ROUTES.base, "NOTIFICATION_PROVIDER_SERVICE_URL"),
   createProxyController(SEARCH_INDEX_ROUTES.base, "SEARCH_INDEX_SERVICE_URL"),
-  createProxyController(SUBSCRIPTION_BILLING_ROUTES.webhook, "SUBSCRIPTION_BILLING_SERVICE_URL", {
+  createProxyController(SUBSCRIPTION_BILLING_ROUTES.webhook, "BILLING_SERVICE_URL", {
     public: true,
     skipTenant: true,
+    forwardPath: "/billing/webhook",
   }),
-  createProxyController("/subscription-billing/internal", "SUBSCRIPTION_BILLING_SERVICE_URL", {
+  createProxyController("/subscription-billing/internal", "BILLING_SERVICE_URL", {
     public: true,
     skipTenant: true,
+    rewritePathPrefix: { from: "/subscription-billing", to: "/billing" },
   }),
-  createProxyController(SUBSCRIPTION_BILLING_ROUTES.base, "SUBSCRIPTION_BILLING_SERVICE_URL"),
+  createProxyController(SUBSCRIPTION_BILLING_ROUTES.base, "BILLING_SERVICE_URL", {
+    rewritePathPrefix: { from: "/subscription-billing", to: "/billing" },
+  }),
 ];
 
 @Module({

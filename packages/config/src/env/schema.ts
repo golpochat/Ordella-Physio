@@ -171,6 +171,7 @@ export const aiNotesEnvSchema = coreEnvSchema.extend({
   NOTES_SERVICE_URL: z.string().url().default("http://notes-service:3055"),
 });
 export const billingEnvSchema = coreEnvSchema.extend({
+  STRIPE_MODE: z.enum(["test", "live"]).default("test"),
   STRIPE_SECRET_KEY: z.string().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
   STRIPE_PRICE_STARTER: z.string().optional(),

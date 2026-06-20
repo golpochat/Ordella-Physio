@@ -103,6 +103,7 @@ export function validateUploadFile(
     mimeType,
     sizeBytes,
     maxBytes,
+    buffer: file?.buffer,
   });
 
   return {

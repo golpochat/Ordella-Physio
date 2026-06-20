@@ -12,7 +12,11 @@ export type ClinicPharmacyApiClient = ReturnType<typeof createApiClient>;
 
 export function createClinicPharmacyApi(api: ClinicPharmacyApiClient) {
   return {
-    listPrescriptions(params?: { patientId?: string; status?: PrescriptionStatus }) {
+    listPrescriptions(params?: {
+      patientId?: string;
+      status?: PrescriptionStatus;
+      fulfillmentStatus?: import("@/lib/clinic-pharmacy-types").FulfillmentStatus;
+    }) {
       return api.get<ClinicPrescription[]>("pharmacy", "/prescriptions", { params });
     },
 
@@ -50,6 +54,17 @@ export function createClinicPharmacyApi(api: ClinicPharmacyApiClient) {
 
     failFulfillment(prescriptionId: string, payload?: FulfillmentActionPayload) {
       return api.post<ClinicPrescription>("pharmacy", `/fulfillment/${prescriptionId}/fail`, payload ?? {});
+    },
+
+    retryFulfillment(prescriptionId: string) {
+      return api.post<ClinicPrescription>("pharmacy", `/fulfillment/${prescriptionId}/retry`);
+    },
+
+    listFulfillmentOrders(params?: {
+      fulfillmentStatus?: import("@/lib/clinic-pharmacy-types").FulfillmentStatus;
+      patientId?: string;
+    }) {
+      return api.get<ClinicPrescription[]>("pharmacy", "/fulfillment", { params });
     },
   };
 }

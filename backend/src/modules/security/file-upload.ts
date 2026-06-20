@@ -37,6 +37,11 @@ export function validateUpload(input: UploadValidationInput): UploadValidationRe
     ? `.${input.fileName.split(".").pop()?.toLowerCase()}`
     : "";
 
+  const parts = input.fileName.toLowerCase().split(".");
+  if (parts.length > 2) {
+    return { ok: false, reason: "Files with multiple extensions are not allowed" };
+  }
+
   if (!ALLOWED_EXTENSIONS.has(extension)) {
     return { ok: false, reason: "File extension is not allowed" };
   }

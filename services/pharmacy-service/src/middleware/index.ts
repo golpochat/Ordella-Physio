@@ -22,7 +22,7 @@ import { PHARMACY_ROUTES } from "@/routes/pharmacy.routes";
 const metricsRegistry = createMetricsRegistry({ serviceName: "pharmacy-service" });
 setDefaultMetricsRegistry(metricsRegistry);
 
-const skipPaths = [PHARMACY_ROUTES.health];
+const skipPaths = [PHARMACY_ROUTES.health, PHARMACY_ROUTES.ready];
 
 export const PharmacyAuthContextMiddleware = createAuthContextMiddleware({
   required: false,

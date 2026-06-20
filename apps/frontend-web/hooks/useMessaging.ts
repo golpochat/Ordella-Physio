@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import { shouldUseTenantScopedApi } from "@/lib/auth/portal-scope";
 import { isMessagingAvailable } from "@/lib/clinic-backend-client-scope";
@@ -46,11 +46,12 @@ function canQueryMessaging(
 export function useUnreadMessageCount() {
   const messagingApi = useMessagingApi();
   const { tenantId, userId, tenantScoped } = useMessagingContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["messaging", "unread-count", tenantId, userId],
     queryFn: () => messagingApi.unreadCount(),
-    enabled: canQueryMessaging(tenantId, userId, tenantScoped),
+    enabled: authReady && canQueryMessaging(tenantId, userId, tenantScoped),
     refetchInterval: unreadCountRefetchInterval,
     refetchIntervalInBackground: false,
     retry: false,
@@ -61,11 +62,12 @@ export function useUnreadMessageCount() {
 export function useConversations() {
   const messagingApi = useMessagingApi();
   const { tenantId, userId, tenantScoped } = useMessagingContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["messaging", "conversations", tenantId, userId],
     queryFn: () => messagingApi.listConversations(),
-    enabled: canQueryMessaging(tenantId, userId, tenantScoped),
+    enabled: authReady && canQueryMessaging(tenantId, userId, tenantScoped),
     refetchInterval: messagingPollRefetchInterval,
     refetchIntervalInBackground: false,
     retry: false,
@@ -75,11 +77,12 @@ export function useConversations() {
 export function useConversation(conversationId: string | null) {
   const messagingApi = useMessagingApi();
   const { tenantId, userId, tenantScoped } = useMessagingContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["messaging", "conversation", tenantId, userId, conversationId],
     queryFn: () => messagingApi.getConversation(conversationId!),
-    enabled: canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
+    enabled: authReady && canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
     refetchInterval: messagingPollRefetchInterval,
     refetchIntervalInBackground: false,
     retry: false,
@@ -90,6 +93,7 @@ export function useConversationMessages(conversationId: string | null) {
   const messagingApi = useMessagingApi();
   const { tenantId, userId, tenantScoped } = useMessagingContext();
   const queryClient = useQueryClient();
+  const authReady = useQueryAuthReady();
 
   const query = useQuery({
     queryKey: ["messaging", "messages", tenantId, userId, conversationId],
@@ -117,7 +121,7 @@ export function useConversationMessages(conversationId: string | null) {
 
       return { items: merged, typingUsers: response.typingUsers };
     },
-    enabled: canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
+    enabled: authReady && canQueryMessaging(tenantId, userId, tenantScoped) && Boolean(conversationId),
     refetchInterval: messagingPollRefetchInterval,
     refetchIntervalInBackground: false,
     retry: false,

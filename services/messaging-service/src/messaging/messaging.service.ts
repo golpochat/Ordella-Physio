@@ -11,6 +11,7 @@ import type {
 } from "@ordella/validation";
 import { MessagingEventPublisher } from "@/events/messaging-event.publisher";
 import { MessagingRepository } from "@/messaging/messaging.repository";
+import { MessagingRealtimeService } from "@/messaging/messaging-realtime.service";
 import { toConversationResponse, toMessageResponse } from "@/messaging/messaging.mapper";
 import { TypingService } from "@/messaging/typing.service";
 import type { AuthenticatedMessagingUser } from "@/utils/messaging-helpers";
@@ -21,6 +22,7 @@ export class MessagingService {
     private readonly repository: MessagingRepository,
     private readonly events: MessagingEventPublisher,
     private readonly typingService: TypingService,
+    private readonly realtime: MessagingRealtimeService,
   ) {}
 
   private async assertParticipant(conversationId: string, userId: string) {
@@ -139,6 +141,17 @@ export class MessagingService {
       },
       correlationId,
     );
+
+    for (const recipientUserId of recipientUserIds) {
+      this.realtime.publish({
+        type: "message.created",
+        tenantId,
+        userId: recipientUserId,
+        conversationId,
+        messageId: message.id,
+        createdAt: message.createdAt.toISOString(),
+      });
+    }
 
     return toMessageResponse(message, user.userId);
   }

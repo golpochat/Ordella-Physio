@@ -87,6 +87,12 @@ export function TerminalDetail({ terminal: initialTerminal, locationName }: Term
             <Button asChild variant="outline">
               <Link href={`/clinic/terminals/${terminal.id}/edit`}>Edit terminal</Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link href={`/clinic/terminals/${terminal.id}/pair`}>Pair device</Link>
+            </Button>
+            <Button asChild className="btn-primary">
+              <Link href={`/clinic/pos/${terminal.id}`}>Open POS</Link>
+            </Button>
           </div>
         </CardBody>
       </Card>

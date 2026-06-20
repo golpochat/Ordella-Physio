@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useMemo } from "react";
 
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 
 import { createNotificationProviderApi } from "@/lib/notification-provider-api";
 
@@ -32,40 +32,28 @@ export function useNotificationProviderApi() {
 
 
 export function useProviderConfigs() {
-
   const providerApi = useNotificationProviderApi();
-
-
+  const authReady = useQueryAuthReady();
 
   return useQuery({
-
     queryKey: ["notification-provider-configs"],
-
     queryFn: () => providerApi.listProviders(),
-
+    enabled: authReady,
   });
-
 }
 
 
 
 export function useDeliveryLogs(filters: DeliveryLogListFilters = {}) {
-
   const providerApi = useNotificationProviderApi();
-
-
+  const authReady = useQueryAuthReady();
 
   return useQuery({
-
     queryKey: ["notification-delivery-logs", filters],
-
     queryFn: () => providerApi.listDeliveryLogs(filters),
-
+    enabled: authReady,
   });
-
 }
-
-
 
 export function useCreateProviderConfig() {
 
@@ -134,9 +122,11 @@ export function useDeliverNotification() {
 
 export function useNotificationAnalytics(filters: NotificationAnalyticsFilters = {}) {
   const providerApi = useNotificationProviderApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["notification-analytics", filters],
     queryFn: () => providerApi.getAnalytics(filters),
+    enabled: authReady,
   });
 }

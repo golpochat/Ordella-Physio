@@ -5,7 +5,9 @@ import type {
   ClinicPrescriptionAuditLog,
   CreateClinicPrescriptionPayload,
   FulfillmentActionPayload,
+  FulfillmentStatus,
   PrescriptionStatus,
+  UpdateClinicPrescriptionPayload,
 } from "@/lib/clinic-pharmacy-types";
 import { createClinicPharmacyApi } from "@/lib/clinic-pharmacy-api";
 import type {
@@ -27,6 +29,8 @@ export function normalizeList<T>(response: { data: T[] } | T[] | undefined): T[]
 }
 
 export function createPharmacyPortalApi(api: PharmacyApiClient) {
+  // Prescriptions/fulfillment → pharmacy-service via BFF `/api/pharmacy`.
+  // Patients, appointments, billing invoices → respective gateway services (read-only portal views).
   const pharmacyApi = createClinicPharmacyApi(api);
 
   return {
@@ -69,6 +73,10 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
       return pharmacyApi.createPrescription(payload);
     },
 
+    updatePrescription(id: string, payload: UpdateClinicPrescriptionPayload) {
+      return pharmacyApi.updatePrescription(id, payload);
+    },
+
     issuePrescription(id: string) {
       return pharmacyApi.issuePrescription(id);
     },
@@ -93,8 +101,12 @@ export function createPharmacyPortalApi(api: PharmacyApiClient) {
       return pharmacyApi.failFulfillment(prescriptionId, payload);
     },
 
-    listFulfillmentOrders() {
-      return pharmacyApi.listPrescriptions({ status: "ISSUED" });
+    retryFulfillment(prescriptionId: string) {
+      return pharmacyApi.retryFulfillment(prescriptionId);
+    },
+
+    listFulfillmentOrders(params?: { fulfillmentStatus?: FulfillmentStatus; patientId?: string }) {
+      return pharmacyApi.listFulfillmentOrders(params);
     },
 
     async getFulfillmentOrder(id: string) {

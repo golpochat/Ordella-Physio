@@ -7,6 +7,10 @@ import { ProxyService } from "./proxy.service";
 export type ProxyControllerOptions = {
   public?: boolean;
   skipTenant?: boolean;
+  /** Override upstream path (query string preserved from the incoming request). */
+  forwardPath?: string;
+  /** Replace a path prefix before forwarding (e.g. deprecated route aliases). */
+  rewritePathPrefix?: { from: string; to: string };
 };
 
 type GatewayRequest = Request & { user?: GatewayUser };
@@ -16,7 +20,8 @@ export function createProxyController(
   serviceEnvKey: ServiceEnvKey,
   options: ProxyControllerOptions = {},
 ): Type<unknown> {
-  const { public: isPublic = false, skipTenant = false } = options;
+  const { public: isPublic = false, skipTenant = false, forwardPath, rewritePathPrefix } =
+    options;
 
   @Controller(basePath)
   class ServiceProxyController {
@@ -24,12 +29,18 @@ export function createProxyController(
 
     @All()
     forwardRoot(@Req() request: GatewayRequest, @Res() response: Response) {
-      return this.proxyService.forward(request, response, serviceEnvKey, request.user);
+      return this.proxyService.forward(request, response, serviceEnvKey, request.user, {
+        forwardPath,
+        rewritePathPrefix,
+      });
     }
 
     @All("*")
     forwardWildcard(@Req() request: GatewayRequest, @Res() response: Response) {
-      return this.proxyService.forward(request, response, serviceEnvKey, request.user);
+      return this.proxyService.forward(request, response, serviceEnvKey, request.user, {
+        forwardPath,
+        rewritePathPrefix,
+      });
     }
   }
 

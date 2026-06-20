@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Query, Req, ServiceUnavailableException, UseGuards } from "@nestjs/common";
 import {
   listNotificationsSchema,
   markNotificationsReadSchema,
@@ -12,6 +12,7 @@ import { JwtGuard } from "@/notifications/guards/jwt.guard";
 import { NotificationTenantGuard } from "@/notifications/guards/notification-tenant.guard";
 import { TenantId } from "@/notifications/guards/tenant-id.decorator";
 import { NotificationsService } from "@/notifications/notifications.service";
+import { DatabaseService } from "@/database/database.module";
 import type { AuthenticatedNotificationUser } from "@/utils/notification-helpers";
 import type {
   ListNotificationsInput,
@@ -22,11 +23,27 @@ import type {
 
 @Controller("notifications")
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    private readonly notificationsService: NotificationsService,
+    private readonly database: DatabaseService,
+  ) {}
 
   @Get("health")
   health() {
     return { status: "ok", service: "notification-service" };
+  }
+
+  @Get("ready")
+  async readiness() {
+    try {
+      await this.database.$queryRaw`SELECT 1`;
+      return { status: "ready", service: "notification-service" };
+    } catch {
+      throw new ServiceUnavailableException({
+        status: "not_ready",
+        service: "notification-service",
+      });
+    }
   }
 
   @Get()

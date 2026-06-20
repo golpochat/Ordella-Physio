@@ -91,12 +91,15 @@ export function usePharmacyInvoice(invoiceId: string) {
   });
 }
 
-export function usePharmacyPrescriptions() {
+export function usePharmacyPrescriptions(filters?: {
+  patientId?: string;
+  status?: import("@/lib/clinic-pharmacy-types").PrescriptionStatus;
+}) {
   const pharmacyApi = usePharmacyPortalApi();
 
   return useQuery({
-    queryKey: ["pharmacy", "prescriptions"],
-    queryFn: () => requireApi(pharmacyApi).listPrescriptions(),
+    queryKey: ["pharmacy", "prescriptions", filters],
+    queryFn: () => requireApi(pharmacyApi).listPrescriptions(filters),
   });
 }
 
@@ -110,12 +113,14 @@ export function usePharmacyPrescription(id: string) {
   });
 }
 
-export function usePharmacyFulfillmentOrders() {
+export function usePharmacyFulfillmentOrders(filters?: {
+  fulfillmentStatus?: import("@/lib/clinic-pharmacy-types").FulfillmentStatus;
+}) {
   const pharmacyApi = usePharmacyPortalApi();
 
   return useQuery({
-    queryKey: ["pharmacy", "fulfillment"],
-    queryFn: () => requireApi(pharmacyApi).listFulfillmentOrders(),
+    queryKey: ["pharmacy", "fulfillment", filters],
+    queryFn: () => requireApi(pharmacyApi).listFulfillmentOrders(filters),
   });
 }
 
@@ -164,6 +169,106 @@ export function useUpdatePharmacyProfile() {
           },
         });
       }
+    },
+  });
+}
+
+export function useCreatePharmacyPrescription() {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: import("@/lib/clinic-pharmacy-types").CreateClinicPrescriptionPayload) =>
+      requireApi(pharmacyApi).createPrescription(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions"] });
+    },
+  });
+}
+
+export function useUpdatePharmacyPrescription(id: string) {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: import("@/lib/clinic-pharmacy-types").UpdateClinicPrescriptionPayload) =>
+      requireApi(pharmacyApi).updatePrescription(id, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions"] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions", id] });
+    },
+  });
+}
+
+export function useIssuePharmacyPrescription() {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => requireApi(pharmacyApi).issuePrescription(id),
+    onSuccess: (_data, id) => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions"] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions", id] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment"] });
+    },
+  });
+}
+
+export function useStartPharmacyFulfillment(prescriptionId: string) {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload?: import("@/lib/clinic-pharmacy-types").FulfillmentActionPayload) =>
+      requireApi(pharmacyApi).startFulfillment(prescriptionId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment"] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment", prescriptionId] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions", prescriptionId] });
+    },
+  });
+}
+
+export function useCompletePharmacyFulfillment(prescriptionId: string) {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload?: import("@/lib/clinic-pharmacy-types").FulfillmentActionPayload) =>
+      requireApi(pharmacyApi).completeFulfillment(prescriptionId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment"] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment", prescriptionId] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions", prescriptionId] });
+    },
+  });
+}
+
+export function useFailPharmacyFulfillment(prescriptionId: string) {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload?: import("@/lib/clinic-pharmacy-types").FulfillmentActionPayload) =>
+      requireApi(pharmacyApi).failFulfillment(prescriptionId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment"] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment", prescriptionId] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions", prescriptionId] });
+    },
+  });
+}
+
+export function useRetryPharmacyFulfillment(prescriptionId: string) {
+  const pharmacyApi = usePharmacyPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => requireApi(pharmacyApi).retryFulfillment(prescriptionId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment"] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "fulfillment", prescriptionId] });
+      void queryClient.invalidateQueries({ queryKey: ["pharmacy", "prescriptions", prescriptionId] });
     },
   });
 }

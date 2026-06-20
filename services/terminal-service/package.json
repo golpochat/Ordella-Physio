@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "nest build",
-    "dev": "nest start --watch",
+    "build": "nest build && node -e \"require('node:fs').cpSync('src/generated','dist/services/terminal-service/src/generated',{recursive:true})\"",
+    "dev": "nest start --watch --entryFile services/terminal-service/src/main",
     "start": "node dist/services/terminal-service/src/main.js",
     "start:prod": "node dist/services/terminal-service/src/main.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
@@ -48,6 +48,7 @@
     "@nestjs/testing": "^10.4.15",
     "@ordella/config-eslint": "workspace:*",
     "@ordella/config-typescript": "workspace:*",
+    "@ordella/testing": "workspace:*",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
     "@types/passport-jwt": "^4.0.1",

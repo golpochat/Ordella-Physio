@@ -44,12 +44,22 @@ export class StripeClient {
   }
 
   isMockMode(): boolean {
+    const mode = billingConfig.stripeMode ?? process.env.STRIPE_MODE ?? "test";
+    if (mode === "live") {
+      return process.env.STRIPE_E2E_MOCK === "true";
+    }
+
     const secretKey = billingConfig.stripeSecretKey ?? process.env.STRIPE_SECRET_KEY ?? "";
     return (
       process.env.STRIPE_E2E_MOCK === "true" ||
       secretKey.includes("local_dev") ||
       secretKey.includes("change-me")
     );
+  }
+
+  getStripeMode(): "test" | "live" {
+    const mode = billingConfig.stripeMode ?? process.env.STRIPE_MODE ?? "test";
+    return mode === "live" ? "live" : "test";
   }
 
   buildMockCustomerId(entityId: string): string {

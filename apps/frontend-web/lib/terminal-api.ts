@@ -1,7 +1,4 @@
 import type { createApiClient } from "@/lib/api-client";
-import { isClinicBackendClient } from "@/lib/clinic-backend-normalize";
-
-type TerminalApiClient = ReturnType<typeof createApiClient>;
 import type {
   ClinicTerminal,
   ClinicTerminalListFilters,
@@ -13,18 +10,44 @@ import type {
   UpdateClinicTerminalResponse,
 } from "@/lib/terminal-portal-types";
 
-export function createTerminalApi(api: TerminalApiClient) {
-  const emptyList = (): ClinicTerminalListResponse => ({
-    data: [],
-    pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
-  });
+type TerminalApiClient = ReturnType<typeof createApiClient>;
 
+export type PosSession = {
+  id: string;
+  tenantId: string;
+  terminalId: string;
+  operatorId: string;
+  status: "OPEN" | "CLOSED" | "RECONCILED";
+  openingCash: number;
+  closingCash?: number | null;
+  expectedTotal?: number | null;
+  actualTotal?: number | null;
+  variance?: number | null;
+  openedAt: string;
+  closedAt?: string | null;
+  items: Array<{
+    id: string;
+    description: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
+  payments: Array<{
+    id: string;
+    amount: number;
+    status: string;
+    stripeIntentId?: string | null;
+  }>;
+};
+
+export type PairingCodeResponse = {
+  code: string;
+  expiresAt: string;
+  terminalId: string;
+};
+
+export function createTerminalApi(api: TerminalApiClient) {
   return {
     listTerminals(params?: ClinicTerminalListFilters) {
-      if (isClinicBackendClient()) {
-        return Promise.resolve(emptyList());
-      }
-
       return api.get<ClinicTerminalListResponse>("terminal", "", {
         params,
         unwrapData: false,
@@ -49,6 +72,36 @@ export function createTerminalApi(api: TerminalApiClient) {
 
     activateTerminal(id: string) {
       return api.post<ClinicTerminalStatusActionResponse>("terminal", `/${id}/activate`);
+    },
+
+    generatePairingCode(terminalId: string) {
+      return api.post<PairingCodeResponse>("terminal", `/${terminalId}/pairing-code`);
+    },
+
+    openPosSession(payload: { terminalId: string; openingCash?: number }) {
+      return api.post<PosSession>("terminal", "/pos/sessions/open", payload);
+    },
+
+    getPosSession(sessionId: string) {
+      return api.get<PosSession>("terminal", `/pos/sessions/${sessionId}`);
+    },
+
+    addPosItem(
+      sessionId: string,
+      payload: { description: string; quantity: number; unitPrice: number },
+    ) {
+      return api.post("terminal", `/pos/sessions/${sessionId}/items`, payload);
+    },
+
+    createPosPaymentIntent(sessionId: string) {
+      return api.post<{ payment: PosSession["payments"][0]; clientSecret?: string }>(
+        "terminal",
+        `/pos/sessions/${sessionId}/payment-intent`,
+      );
+    },
+
+    closePosSession(sessionId: string, payload: { closingCash: number }) {
+      return api.post<PosSession>("terminal", `/pos/sessions/${sessionId}/close`, payload);
     },
   };
 }

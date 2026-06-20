@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import type { AccessTokenPayload } from "@ordella/security";
@@ -15,6 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   }
 
   validate(payload: AccessTokenPayload & { permissions?: string[] }): AuthenticatedNotesUser {
+    if (!payload.tenantId) {
+      throw new UnauthorizedException("Missing tenantId in JWT payload");
+    }
+
     return {
       userId: payload.userId,
       tenantId: payload.tenantId,

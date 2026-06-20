@@ -208,7 +208,7 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     name: "subscription-billing",
     envKey: "SUBSCRIPTION_BILLING_SERVICE_URL",
     healthPath: "/subscription-billing/health",
-    defaultUrl: "http://subscription-billing-service:3074",
+    defaultUrl: "http://billing-service:3056",
   },
   {
     name: "ai-service",
@@ -280,6 +280,15 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
 
 export const SERVICE_HEALTH_PATHS = SERVICE_DEFINITIONS.map((service) => service.healthPath);
 
+/** Kubernetes/orchestrator readiness probes — public, no tenant header. */
+export const SERVICE_READY_PATHS = [
+  "/terminals/ready",
+  "/messaging/ready",
+  "/notifications/ready",
+  "/notification-providers/ready",
+  "/pharmacy/ready",
+] as const;
+
 const CORE_PUBLIC_PATHS = [
   "/health",
   "/health/region",
@@ -295,10 +304,10 @@ const CORE_PUBLIC_PATHS = [
   "/files/access",
 ] as const;
 
-export const PUBLIC_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS];
+export const PUBLIC_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS, ...SERVICE_READY_PATHS];
 
-export const SKIP_TENANT_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS];
+export const SKIP_TENANT_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS, ...SERVICE_READY_PATHS];
 
-export const PUBLIC_JWT_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS];
+export const PUBLIC_JWT_PATHS = [...CORE_PUBLIC_PATHS, ...SERVICE_HEALTH_PATHS, ...SERVICE_READY_PATHS];
 
 export const GATEWAY_SERVICE_NAME = "api-gateway";

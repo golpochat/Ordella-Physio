@@ -11,6 +11,7 @@ function createBillingConfig() {
     databaseUrl: env.DATABASE_URL,
     natsUrl: env.NATS_URL,
     redisUrl: env.REDIS_URL,
+    stripeMode: env.STRIPE_MODE,
     stripeSecretKey: env.STRIPE_SECRET_KEY,
     stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
     stripePriceStarter: env.STRIPE_PRICE_STARTER,

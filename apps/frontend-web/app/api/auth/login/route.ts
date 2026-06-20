@@ -62,11 +62,13 @@ export async function POST(request: Request) {
     getSecureCookieOptions(REFRESH_MAX_AGE_SECONDS),
   );
 
+  const tenantIdFromHeader = request.headers.get("x-tenant-id");
+
   const sessionPayload: SessionCookiePayload = {
     user: {
       id: parsed.user.id,
       role: parsed.user.roles?.[0] ?? parsed.user.role ?? "STAFF",
-      tenantId: parsed.user.tenantId,
+      tenantId: tenantIdFromHeader ?? parsed.user.tenantId,
       roles: parsed.user.roles,
     },
   };

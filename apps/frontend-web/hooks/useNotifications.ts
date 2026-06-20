@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import { shouldUseTenantScopedApi } from "@/lib/auth/portal-scope";
 import { createNotificationApi } from "@/lib/notification-api";
@@ -49,11 +49,12 @@ function notificationQueryKey(tenantId: string | null | undefined, userId: strin
 export function useUnreadNotificationCount() {
   const notificationApi = useNotificationApi();
   const { tenantId, userId, tenantScoped } = useNotificationContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["notifications", "unread-count", tenantId, userId],
     queryFn: () => notificationApi.unreadCount(),
-    enabled: canQueryNotifications(tenantId, userId, tenantScoped),
+    enabled: authReady && canQueryNotifications(tenantId, userId, tenantScoped),
     refetchInterval: unreadCountRefetchInterval,
     refetchIntervalInBackground: false,
     retry: false,
@@ -65,6 +66,7 @@ export function useNotifications(options?: { unreadOnly?: boolean; limit?: numbe
   const notificationApi = useNotificationApi();
   const { tenantId, userId, tenantScoped } = useNotificationContext();
   const queryClient = useQueryClient();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: [...notificationQueryKey(tenantId, userId), options?.unreadOnly ?? false],
@@ -94,7 +96,7 @@ export function useNotifications(options?: { unreadOnly?: boolean; limit?: numbe
         (left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
       );
     },
-    enabled: canQueryNotifications(tenantId, userId, tenantScoped),
+    enabled: authReady && canQueryNotifications(tenantId, userId, tenantScoped),
     refetchInterval: notificationPollRefetchInterval,
     refetchIntervalInBackground: false,
     retry: false,

@@ -23,12 +23,12 @@ setDefaultMetricsRegistry(metricsRegistry);
 
 export const NotificationServiceTenantMiddleware = createTenantMiddleware({
   required: true,
-  skipPaths: ["/notifications/health"],
+  skipPaths: ["/notifications/health", "/notifications/ready"],
 });
 
 export const NotificationServiceAuthContextMiddleware = createAuthContextMiddleware({
   required: false,
-  skipPaths: ["/notifications/health"],
+  skipPaths: ["/notifications/health", "/notifications/ready"],
 });
 
 export const NotificationServiceRequestLoggingMiddleware = createRequestLoggingMiddleware({
@@ -47,7 +47,7 @@ export const NotificationServiceRateLimitMiddleware = createRateLimitMiddleware(
   windowMs: 60_000,
   maxRequestsPerIp: 100,
   maxRequestsPerTenant: 200,
-  skipPaths: ["/notifications/health"],
+  skipPaths: ["/notifications/health", "/notifications/ready"],
 });
 
 export function configureNotificationMiddleware(consumer: MiddlewareConsumer): void {

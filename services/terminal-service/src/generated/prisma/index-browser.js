@@ -132,6 +132,53 @@ exports.Prisma.TerminalScalarFieldEnum = {
   macAddress: 'macAddress',
   status: 'status',
   lastSeenAt: 'lastSeenAt',
+  deviceToken: 'deviceToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TerminalPairingCodeScalarFieldEnum = {
+  id: 'id',
+  terminalId: 'terminalId',
+  code: 'code',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PosSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  terminalId: 'terminalId',
+  operatorId: 'operatorId',
+  status: 'status',
+  openingCash: 'openingCash',
+  closingCash: 'closingCash',
+  expectedTotal: 'expectedTotal',
+  actualTotal: 'actualTotal',
+  variance: 'variance',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt',
+  reconciledAt: 'reconciledAt'
+};
+
+exports.Prisma.PosSessionItemScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  description: 'description',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PosPaymentScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  stripeIntentId: 'stripeIntentId',
+  paymentIntentId: 'paymentIntentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -163,8 +210,25 @@ exports.TerminalStatus = exports.$Enums.TerminalStatus = {
   INACTIVE: 'INACTIVE'
 };
 
+exports.PosSessionStatus = exports.$Enums.PosSessionStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  RECONCILED: 'RECONCILED'
+};
+
+exports.PosPaymentStatus = exports.$Enums.PosPaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
-  Terminal: 'Terminal'
+  Terminal: 'Terminal',
+  TerminalPairingCode: 'TerminalPairingCode',
+  PosSession: 'PosSession',
+  PosSessionItem: 'PosSessionItem',
+  PosPayment: 'PosPayment'
 };
 
 /**
