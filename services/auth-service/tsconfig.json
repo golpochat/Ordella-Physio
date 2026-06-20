@@ -19,6 +19,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["src/*"],
+      "@/generated/prisma": ["src/generated/prisma"],
+      "@/generated/prisma/*": ["src/generated/prisma/*"],
       "@ordella/shared": ["../../packages/shared/src/index.ts"],
       "@ordella/config": ["../../packages/config/src/index.ts"],
       "@ordella/utils": ["../../packages/utils/src/index.ts"],

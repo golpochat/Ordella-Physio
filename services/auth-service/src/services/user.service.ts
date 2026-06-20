@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { Role, User } from "@prisma/client";
+import type { Role, User } from "@/generated/prisma";
 import { getRoleLevel, isSystemRole } from "@ordella/security";
 import { generateToken } from "@ordella/utils";
 import type { AuthenticatedRequestUser } from "@/utils/auth-helpers";

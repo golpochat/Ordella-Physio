@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import type { Role } from "@prisma/client";
+import type { Role } from "@/generated/prisma";
 import type { SecurityRole } from "@ordella/security";
 import { generateToken } from "@ordella/utils";
 import { passwordHasher } from "@/utils/password-hasher";

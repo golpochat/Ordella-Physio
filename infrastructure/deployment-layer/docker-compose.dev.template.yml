@@ -30,7 +30,6 @@ x-gateway-urls: &gateway-urls
   FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
   NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
   SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
-  BILLING_SERVICE_URL: http://billing-service:3056
   AI_SERVICE_URL: http://ai-service:3075
   AI_TRAINING_SERVICE_URL: http://ai-training-service:3076
   AI_MONITORING_SERVICE_URL: http://ai-monitoring-service:3077

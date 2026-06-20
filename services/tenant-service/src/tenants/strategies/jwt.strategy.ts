@@ -7,17 +7,15 @@ import type { AuthenticatedTenantUser } from "@/utils/tenant-helpers";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor() {
+    const secret = createJwtConfigFromEnv().secret;
+    if (!secret) {
+      throw new Error("JWT secret is not configured");
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKeyProvider: (_request, _rawJwtToken, done) => {
-        const secret = createJwtConfigFromEnv().secret;
-        if (!secret) {
-          done(new Error("JWT secret is not configured"));
-          return;
-        }
-        done(null, secret);
-      },
+      secretOrKey: secret,
     });
   }
 

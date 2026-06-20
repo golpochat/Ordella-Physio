@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import type { Role } from "@prisma/client";
+import type { Role } from "@/generated/prisma";
 import { TokenService } from "@/services/token.service";
 import { AuditService } from "@/services/audit.service";
 import { UsersRepository } from "@/users/users.repository";

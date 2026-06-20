@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import type { User } from "@/generated/prisma";
 import type { SecurityRole } from "@ordella/security";
 
 export type UserRecord = User;

@@ -1,10 +1,10 @@
 import { Global, Injectable, Module, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
 import { TransactionManager } from "@ordella/database";
 
 @Injectable()
 export class DatabaseService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  readonly transactions = new TransactionManager(async () => this);
+  readonly transactions = new TransactionManager(async () => this as never);
 
   async onModuleInit() {
     await this.$connect();

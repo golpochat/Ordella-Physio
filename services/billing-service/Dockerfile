@@ -9,6 +9,8 @@
 FROM ordella-base:latest AS base
 FROM base AS build
 ENV CI=true
+COPY --from=workspace packages ./packages
+COPY --from=workspace shared ./shared
 COPY . ./services/billing-service
 RUN rm -rf services/billing-service/node_modules
 # Force Linux-only binaries + disable strict SSL

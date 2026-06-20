@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { Prisma, Role } from "@prisma/client";
+import type { Prisma, Role } from "@/generated/prisma";
 import { DatabaseService } from "@/database/database.module";
 import type { ListUsersSortField } from "@/validators/user.validator";
 
