@@ -27,8 +27,9 @@ export class SubscriptionBillingHttpClient {
   constructor(options: SubscriptionBillingClientOptions = {}) {
     this.baseUrl = (
       options.baseUrl ??
+      process.env.BILLING_SERVICE_URL ??
       process.env.SUBSCRIPTION_BILLING_SERVICE_URL ??
-      "http://localhost:3074"
+      "http://localhost:3056"
     ).replace(/\/$/, "");
     this.logger = options.logger ?? console;
     this.failOpen = options.failOpen ?? process.env.NODE_ENV !== "production";
@@ -36,7 +37,7 @@ export class SubscriptionBillingHttpClient {
 
   async enforce(input: SubscriptionEnforceInput): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/subscription-billing/internal/enforce`, {
+      const response = await fetch(`${this.baseUrl}/billing/internal/enforce`, {
         method: "POST",
         headers: {
           accept: "application/json",
@@ -69,7 +70,7 @@ export class SubscriptionBillingHttpClient {
 
   async recordUsage(tenantId: string, metric: string, quantity = 1): Promise<void> {
     try {
-      await fetch(`${this.baseUrl}/subscription-billing/internal/usage`, {
+      await fetch(`${this.baseUrl}/billing/internal/usage`, {
         method: "POST",
         headers: {
           accept: "application/json",

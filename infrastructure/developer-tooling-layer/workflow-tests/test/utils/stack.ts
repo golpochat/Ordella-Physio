@@ -37,7 +37,6 @@ const SERVICE_PATHS: Record<string, { path: string; public?: boolean }> = {
   appointment: { path: "/appointments/health" },
   notes: { path: "/notes/health" },
   billing: { path: "/billing/health" },
-  "subscription-billing": { path: "/billing/health" },
   "ai-notes": { path: "/ai/notes/health" },
   marketplace: { path: "/marketplace/health" },
   "file-storage": { path: "/files/health" },

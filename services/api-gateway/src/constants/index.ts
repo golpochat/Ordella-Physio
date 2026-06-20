@@ -50,7 +50,6 @@ export type ServiceEnvKey =
   | "FILE_STORAGE_SERVICE_URL"
   | "NOTIFICATION_PROVIDER_SERVICE_URL"
   | "SEARCH_INDEX_SERVICE_URL"
-  | "SUBSCRIPTION_BILLING_SERVICE_URL"
   | "AI_SERVICE_URL"
   | "AI_TRAINING_SERVICE_URL"
   | "AI_MONITORING_SERVICE_URL"
@@ -203,12 +202,6 @@ export const SERVICE_DEFINITIONS: ServiceDefinition[] = [
     envKey: "SEARCH_INDEX_SERVICE_URL",
     healthPath: "/search-index/health",
     defaultUrl: "http://search-index-service:3073",
-  },
-  {
-    name: "subscription-billing",
-    envKey: "SUBSCRIPTION_BILLING_SERVICE_URL",
-    healthPath: "/subscription-billing/health",
-    defaultUrl: "http://billing-service:3056",
   },
   {
     name: "ai-service",

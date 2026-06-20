@@ -170,7 +170,7 @@ Full repo contains **36 service packages** (some not in dev compose).
 |---------|--------|------|----------------|-----------|--------|-------|
 | **Billing** | `services/billing-service` | 3056 | `/billing` | Yes | **Partial** | Clinical invoices + **platform Stripe**; live keys E2E pending |
 | **Payment** | `services/payment-service` | 3057 | `/payments` | No | **Waiting** | Webhook handlers; not in dev compose |
-| **Subscription billing** | `services/subscription-billing` | 3074 | `/subscription-billing` | Yes | **Deprecated** | Use billing-service instead |
+| **Subscription billing** | — | — | `/subscription-billing` (gateway alias → billing) | — | **Removed** | Merged into billing-service (2026-06-20) |
 
 #### Billing-service sub-capabilities
 

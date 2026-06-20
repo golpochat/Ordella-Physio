@@ -34,7 +34,6 @@ export function getServiceUrl(envKey: ServiceEnvKey): string {
     FILE_STORAGE_SERVICE_URL: config.fileStorageServiceUrl,
     NOTIFICATION_PROVIDER_SERVICE_URL: config.notificationProviderServiceUrl,
     SEARCH_INDEX_SERVICE_URL: config.searchIndexServiceUrl,
-    SUBSCRIPTION_BILLING_SERVICE_URL: config.subscriptionBillingServiceUrl,
     AI_SERVICE_URL: config.aiServiceUrl,
     AI_TRAINING_SERVICE_URL: config.aiTrainingServiceUrl,
     AI_MONITORING_SERVICE_URL: config.aiMonitoringServiceUrl,

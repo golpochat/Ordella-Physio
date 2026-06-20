@@ -32,7 +32,6 @@ const SERVICE_DIR_OVERRIDES = {
   "file-storage-service": "file-storage",
   "notification-provider-service": "notification-provider",
   "search-index-service": "search-index",
-  "subscription-billing-service": "subscription-billing",
 };
 
 const FULL_PRISMA_SERVICES = [
@@ -68,7 +67,6 @@ const FULL_PRISMA_SERVICES = [
   "file-storage-service",
   "notification-provider-service",
   "search-index-service",
-  "subscription-billing-service",
 ];
 
 const DEV_PRISMA_SERVICES = ["core-service"];

@@ -56,8 +56,6 @@ process.env.NOTIFICATION_PROVIDER_SERVICE_URL =
   process.env.NOTIFICATION_PROVIDER_SERVICE_URL ?? serviceUrl(3071);
 process.env.SEARCH_INDEX_SERVICE_URL =
   process.env.SEARCH_INDEX_SERVICE_URL ?? serviceUrl(3072);
-process.env.SUBSCRIPTION_BILLING_SERVICE_URL =
-  process.env.SUBSCRIPTION_BILLING_SERVICE_URL ?? serviceUrl(3073);
 process.env.AI_SERVICE_URL = process.env.AI_SERVICE_URL ?? serviceUrl(3074);
 process.env.AI_TRAINING_SERVICE_URL =
   process.env.AI_TRAINING_SERVICE_URL ?? serviceUrl(3075);

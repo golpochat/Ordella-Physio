@@ -48,9 +48,9 @@ Trial upgrade redirects:
 - [implementation-audit-tracker.md](./implementation-audit-tracker.md)
 - [ops-reference.md](./ops-reference.md)
 
-## Deprecated: subscription-billing-service
+## Removed: subscription-billing-service
 
-`services/subscription-billing-service` is **deprecated** (2026-06-17). Do not add features or wire new webhooks there.
+`services/subscription-billing/` was **deleted** on 2026-06-20. Plan enforcement and internal usage endpoints live on **billing-service** at `/billing/internal/enforce` and `/billing/internal/usage`. The API gateway still rewrites legacy `/subscription-billing/*` paths to `/billing/*` for backward-compatible clients.
 
 | Legacy | Replacement |
 |--------|-------------|

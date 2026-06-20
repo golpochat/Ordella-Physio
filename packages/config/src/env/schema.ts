@@ -80,19 +80,6 @@ export const notificationProviderEnvSchema = coreEnvSchema.extend({
   { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
 );
 
-export const subscriptionBillingEnvSchema = coreEnvSchema.extend({
-  JWT_SECRET: z.string().min(32).optional(),
-  JWT_ACCESS_SECRET: z.string().min(32).optional(),
-  STRIPE_SECRET_KEY: z.string().min(1).optional(),
-  STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
-  FRONTEND_URL: z.string().url().default("http://localhost:3010"),
-  TENANT_SERVICE_URL: z.string().url().default("http://localhost:3052"),
-  DEFAULT_TRIAL_DAYS: z.coerce.number().int().nonnegative().default(14),
-}).refine(
-  (value) => Boolean(value.JWT_SECRET ?? value.JWT_ACCESS_SECRET),
-  { message: "JWT_SECRET or JWT_ACCESS_SECRET is required", path: ["JWT_SECRET"] },
-);
-
 export const aiServiceEnvSchema = coreEnvSchema.extend({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
@@ -229,7 +216,6 @@ export const gatewayServiceUrlsSchema = z.object({
   FILE_STORAGE_SERVICE_URL: z.string().url(),
   NOTIFICATION_PROVIDER_SERVICE_URL: z.string().url(),
   SEARCH_INDEX_SERVICE_URL: z.string().url(),
-  SUBSCRIPTION_BILLING_SERVICE_URL: z.string().url(),
   AI_SERVICE_URL: z.string().url(),
   AI_TRAINING_SERVICE_URL: z.string().url(),
   AI_MONITORING_SERVICE_URL: z.string().url(),

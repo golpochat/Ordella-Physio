@@ -29,10 +29,6 @@ export {
 } from "./services/notification-provider";
 export { aiServiceConfig, type AiServiceConfig } from "./services/ai";
 export { searchIndexConfig, type SearchIndexConfig } from "./services/search-index";
-export {
-  subscriptionBillingConfig,
-  type SubscriptionBillingConfig,
-} from "./services/subscription-billing";
 export { eventBusConfig, type EventBusConfig } from "./services/event-bus";
 export { gatewayConfig, type GatewayConfig } from "./services/gateway";
 export * from "./regions/constants";

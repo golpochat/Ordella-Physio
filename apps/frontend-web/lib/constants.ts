@@ -31,7 +31,6 @@ export const API_ROUTES = {
   files: "/api/files",
   notificationProviders: "/api/notification-providers",
   searchIndex: "/api/search-index",
-  subscriptionBilling: "/api/subscription-billing",
   pharmacy: "/api/pharmacy",
 } as const;
 
@@ -61,7 +60,6 @@ export const GATEWAY_PATHS = {
   files: "/api/files",
   notificationProviders: "/notification-providers",
   searchIndex: "/search-index",
-  subscriptionBilling: "/subscription-billing",
   pharmacy: "/pharmacy",
   onboarding: "/onboarding",
 } as const;

@@ -36,7 +36,6 @@ function createGatewayConfig() {
     fileStorageServiceUrl: env.FILE_STORAGE_SERVICE_URL,
     notificationProviderServiceUrl: env.NOTIFICATION_PROVIDER_SERVICE_URL,
     searchIndexServiceUrl: env.SEARCH_INDEX_SERVICE_URL,
-    subscriptionBillingServiceUrl: env.SUBSCRIPTION_BILLING_SERVICE_URL,
     aiServiceUrl: env.AI_SERVICE_URL,
     aiTrainingServiceUrl: env.AI_TRAINING_SERVICE_URL,
     aiMonitoringServiceUrl: env.AI_MONITORING_SERVICE_URL,

@@ -97,6 +97,11 @@ export class TenantsController {
     return status;
   }
 
+  @Get("internal/subscription/:tenantId")
+  getInternalSubscription(@Param("tenantId") tenantId: string) {
+    return this.tenantsService.getSubscription(tenantId);
+  }
+
   @Get("internal/organization-tenants/:organizationId")
   listOrganizationTenants(@Param("organizationId") organizationId: string) {
     return this.tenantOrganizationService.listByOrganizationId(organizationId);

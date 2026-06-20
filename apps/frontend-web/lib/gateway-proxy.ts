@@ -34,7 +34,6 @@ const SERVICE_GATEWAY_MAP: Record<ApiServiceKey, string> = {
   files: GATEWAY_PATHS.files,
   notificationProviders: GATEWAY_PATHS.notificationProviders,
   searchIndex: GATEWAY_PATHS.searchIndex,
-  subscriptionBilling: GATEWAY_PATHS.subscriptionBilling,
   pharmacy: GATEWAY_PATHS.pharmacy,
 };
 
@@ -65,7 +64,6 @@ const SERVICE_API_PREFIX: Record<ApiServiceKey, string> = {
   files: "/api/files",
   notificationProviders: "/api/notification-providers",
   searchIndex: "/api/search-index",
-  subscriptionBilling: "/api/subscription-billing",
   pharmacy: "/api/pharmacy",
 };
 

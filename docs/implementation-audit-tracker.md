@@ -332,7 +332,7 @@ Overview → `/clinic`, Patients, Appointments, Therapists, Staff, Billing, Note
 | Stripe E2E catalog bootstrap   | ✅ Playwright global-setup syncs lookup-key prices → `.env` + billing-service |
 | subscription-billing deprecation | ✅ `DEPRECATED.md` + gateway alias; directory removal deferred           |
 
-**Still open (P3):** Commit frontend dual-backend + super-admin fixes; delete `services/subscription-billing/` after client migration; production Stripe keys in deploy env.
+**Still open (P3):** Production Stripe keys in deploy env.
 
 ---
 
@@ -388,7 +388,7 @@ flowchart TB
 | 2026-06-20 | **Pharmacy + POS:** `pharmacy-service` CRUD/fulfillment + portal UI; `terminal-service` pairing, POS sessions, payments, readiness; clinic routes `/clinic/terminals/[id]/pair`, `/clinic/pos/[terminalId]`. |
 | 2026-06-20 | **Dev stack:** `subscription-billing-service` removed from `docker-compose.dev.yml`; gateway aliases `/subscription-billing/*` → billing-service; `SERVICE_READY_PATHS` allowlist for `/terminals/ready`, `/messaging/ready`, etc. |
 | 2026-06-20 | **Comms + uploads:** Messaging SSE stream; notification-provider Twilio/Firebase (env-gated); ClamAV/MIME hardening on clinic-backend + file-storage; delivery logs page. |
-| 2026-06-20 | **Ops hardening:** Prisma `linux-musl-openssl-3.0.x` binary targets for notification-provider, pharmacy, terminal Docker images; `subscription-billing/DEPRECATED.md`; workflow tests use `/billing/webhook`. |
+| 2026-06-20 | **subscription-billing removed:** deleted `services/subscription-billing/`; plan enforcement on billing-service `/billing/internal/*`; admin revenue uses `/billing/platform-metrics`; gateway legacy path rewrite retained. |
 
 ---
 
@@ -400,7 +400,7 @@ Trigger an audit pass when any of these land:
 - Frontend dual-backend + super-admin + gateway readiness fixes committed to `main`
 - File upload routes with `CLAMAV_REQUIRED=true` in production
 - Pharmacy portal fully on pharmacy-service (BFF fallback removed) — **done**; auxiliary reads via patient/appointment/billing APIs
-- `services/subscription-billing/` directory deleted — **deferred**; see `services/subscription-billing/DEPRECATED.md`
+- `services/subscription-billing/` directory **deleted** (2026-06-20); enforcement moved to `billing-service` `/billing/internal/*`; gateway keeps `/subscription-billing/*` rewrite alias
 - Notification-provider Docker image fixed for Alpine (Prisma engine)
 
 **Docs to update alongside code:** [billing-architecture.md](./billing-architecture.md), [ops-reference.md](./ops-reference.md) (Stripe local dev), [master-index.md](./master-index.md).

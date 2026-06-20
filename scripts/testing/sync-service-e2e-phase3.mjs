@@ -14,7 +14,6 @@ const CRITICAL_SERVICES = [
   { dir: "patient-service", threshold: 40 },
   { dir: "appointment-service", threshold: 40 },
   { dir: "billing-service", threshold: 40 },
-  { dir: "subscription-billing", threshold: 40 },
   { dir: "file-storage", threshold: 40 },
   { dir: "search-index", threshold: 40 },
   { dir: "ai-gateway", threshold: 40 },

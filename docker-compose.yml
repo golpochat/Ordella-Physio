@@ -841,51 +841,6 @@ services:
     networks:
       - ordella-physio-network
 
-  subscription-billing-service:
-    build:
-      context: ./services/subscription-billing
-      dockerfile: Dockerfile
-      target: production
-      additional_contexts:
-        workspace: .
-    image: ordella-physio-subscription-billing-service:latest
-    container_name: ordella-physio-subscription-billing-service
-    restart: unless-stopped
-    env_file:
-      - infrastructure/deployment-layer/.env.local
-    environment:
-      PORT: 3074
-      DATABASE_URL: postgresql://physio:physio@postgres:5432/ordella_subscription_billing?schema=public
-      JWT_ACCESS_SECRET: *jwt-secret
-      CORS_ORIGIN: "*"
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_local_dev_stripe_secret_key}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_local_dev_stripe_webhook_secret}
-      FRONTEND_URL: http://localhost:3010
-      TENANT_SERVICE_URL: http://tenant-service:3052
-      PATIENT_SERVICE_URL: http://patient-service:3053
-      APPOINTMENT_SERVICE_URL: http://appointment-service:3054
-      STAFF_SERVICE_URL: http://staff-service:3069
-      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
-      NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
-      DEFAULT_TRIAL_DAYS: 14
-    depends_on:
-      postgres:
-        condition: service_healthy
-      tenant-service:
-        condition: service_started
-      patient-service:
-        condition: service_started
-      appointment-service:
-        condition: service_started
-      staff-service:
-        condition: service_started
-      file-storage-service:
-        condition: service_started
-      notification-provider-service:
-        condition: service_started
-    networks:
-      - ordella-physio-network
-
   marketplace-service:
     build:
       context: ./services/marketplace-service
@@ -1124,7 +1079,6 @@ services:
       FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
       NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
       SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
-      SUBSCRIPTION_BILLING_SERVICE_URL: http://subscription-billing-service:3074
       CORS_ORIGIN: "*"
       GATEWAY_RATE_LIMIT_IP: 5000
       GATEWAY_RATE_LIMIT_TENANT: 10000
@@ -1163,7 +1117,6 @@ services:
       - file-storage-service
       - notification-provider-service
       - search-index-service
-      - subscription-billing-service
     networks:
       - ordella-physio-network
 

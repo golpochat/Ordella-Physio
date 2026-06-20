@@ -91,7 +91,6 @@ const nestServices = [
   { dir: "file-storage", pkg: "@ordella/file-storage-service", port: 3071, prisma: true, postBuild: ["cp -r src/generated dist/services/file-storage/src/"], start: "migrate" },
   { dir: "notification-provider", pkg: "@ordella/notification-provider-service", port: 3072, prisma: true, postBuild: ["cp -r src/generated dist/services/notification-provider/src/"], start: "migrate" },
   { dir: "search-index", pkg: "@ordella/search-index-service", port: 3073, prisma: true, postBuild: ["cp -r src/generated dist/services/search-index/src/"], start: "migrate" },
-  { dir: "subscription-billing", pkg: "@ordella/subscription-billing-service", port: 3074, prisma: true, postBuild: ["cp -r src/generated dist/services/subscription-billing/src/"], start: "migrate" },
   { dir: "ai", pkg: "@ordella/ai-service", port: 3075, prisma: true, postBuild: ["cp -r src/generated dist/services/ai/src/"], start: "migrate" },
   { dir: "ai-training", pkg: "@ordella/ai-training-service", port: 3076, prisma: true, postBuild: ["cp -r src/generated dist/services/ai-training/src/"], start: "migrate" },
   { dir: "ai-monitoring", pkg: "@ordella/ai-monitoring-service", port: 3077, prisma: true, postBuild: ["cp -r src/generated dist/services/ai-monitoring/src/"], start: "migrate" },
