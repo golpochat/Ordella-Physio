@@ -91,6 +91,7 @@ export const NAV_PERMISSION_REQUIREMENTS: Record<string, PlatformPermission | st
   "/settings/notifications/analytics": PLATFORM_PERMISSIONS.SETTINGS_READ,
   "/settings/notifications/logs": PLATFORM_PERMISSIONS.SETTINGS_READ,
   "/organization": PLATFORM_PERMISSIONS.ORG_TENANTS_READ,
+  "/organization/tenants": PLATFORM_PERMISSIONS.ORG_TENANTS_READ,
   "/organization/billing": PLATFORM_PERMISSIONS.ORG_BILLING_MANAGE,
   "/super-admin": PLATFORM_PERMISSIONS.PLATFORM_USERS_MANAGE,
   "/super-admin/billing": PLATFORM_PERMISSIONS.PLATFORM_BILLING_METRICS,

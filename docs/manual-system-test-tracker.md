@@ -86,6 +86,7 @@
 | 5.6 | 5 | Organization — profile | http://localhost:3010/organization/profile | `orgadmin@ordella.dev` | Profile page loads; org context + account form; `GET /api/auth/users/me` 200 | OK; probe 5.6–5.8 4/4 | **PASS** | New org profile page |
 | 5.7 | 5 | Organization — profile nav + APIs | http://localhost:3010/organization/profile | `orgadmin@ordella.dev` | Profile menu works (not `/access-denied`); no billing-context 403 | billing-context 200; org roles skip tenant notification/messaging polls | **PASS** | RBAC + `portal-scope` fix |
 | 5.8 | 5 | Organization — billing regression | http://localhost:3010/organization/billing | `orgadmin@ordella.dev` | Org billing still loads after profile work | OK | **PASS** | |
+| 5.9 | 5 | Organization — clinics | http://localhost:3010/organization/tenants | `orgadmin@ordella.dev` | Linked clinics list loads; assign/unlink UI for org admin | OK | **PASS** | BL-5.1 |
 | 6.1 | 6 | Clinic — patients | http://localhost:3010/clinic/patients | `clinicadmin@ordella.dev` | Patients list loads; nav link visible | OK | **PASS** | Fix #5 verified |
 | 6.2 | 6 | Clinic — appointments | http://localhost:3010/clinic/appointments | `clinicadmin@ordella.dev` | Appointments page loads; no blocking 403 on locations API | OK | **PASS** | Fix #6 verified |
 | 6.3 | 6 | Clinic — therapists | http://localhost:3010/clinic/therapists | `clinicadmin@ordella.dev` | Therapists list loads; seeded therapist visible; no blocking console errors | OK | **PASS** | |
@@ -245,7 +246,7 @@
 
 | ID | Item | Why | Trigger / finish line |
 |----|------|-----|------------------------|
-| BL-5.1 | **Org tenants UI** — list/link clinics under `demo-org` at e.g. `/organization/tenants` | Org admin can `GET /organizations` via API but has no tenant-management screen; Phase 5 finish line implied org dashboard beyond billing | Org admin can view linked tenants without super-admin portal |
+| BL-5.1 | **Org tenants UI** — list/link clinics under `demo-org` at e.g. `/organization/tenants` | Org admin can `GET /organizations` via API but has no tenant-management screen; Phase 5 finish line implied org dashboard beyond billing | Org admin can view linked tenants without super-admin portal | **DONE** (2026-06-21) |
 | BL-5.2 | **`ORG_BILLING_ADMIN` role** — seed user + manual test login/billing/profile | Only `ORG_ADMIN` exercised in Phase 5; billing-only role permissions differ (`ORG_BILLING_MANAGE` without `ORG_TENANTS_*`) | Login lands on org portal; billing + profile work; no spurious 403s |
 | BL-5.3 | **Commit Phase 5 work** — org seeds, RBAC (`billing.read` on org roles), `portal-scope`, `/organization/profile`, probes | All local/uncommitted after manual test fixes | Single reviewable commit on `main` |
 | BL-5.4 | **Profile enhancements** — password change, MFA status on org profile | Account form only updates name/email today | Parity with therapist/staff profile |
@@ -281,8 +282,8 @@
 
 ### Suggested pick order
 
-1. **BL-5.3** — commit current fixes while context is fresh  
-2. **BL-5.1** — org tenants UI (biggest org-portal product gap)  
+1. ~~**BL-5.3** — commit current fixes while context is fresh~~
+2. ~~**BL-5.1** — org tenants UI (biggest org-portal product gap)~~
 3. **BL-5.2** — `ORG_BILLING_ADMIN` seed + smoke test  
 4. **BL-D.3** — Stripe keys for end-to-end billing demo  
 5. **BL-S.1** — AI stack in dev (only if actively developing AI features)

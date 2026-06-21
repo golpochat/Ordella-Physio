@@ -128,6 +128,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
         title: "Platform",
         items: [
           item("settings", "Profile", "/organization/profile", ["admin"]),
+          item("clinic", "Clinics", "/organization/tenants", ["org_admin"]),
           item("billing", "Billing", "/organization/billing", ["admin"]),
         ],
       },
