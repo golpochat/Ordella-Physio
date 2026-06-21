@@ -32,13 +32,17 @@ export class ReportConfigService {
     private readonly scheduledReportRepository: ScheduledReportRepository,
   ) {}
 
+  private tenantIdFor(user: SecurityUser): string {
+    return user.tenantId ?? "";
+  }
+
   async createSavedReport(user: SecurityUser, payload: CreateSavedReportInput) {
     if (!payload.config || typeof payload.config !== "object") {
       throw invalidReportConfigError();
     }
 
     const report = await this.savedReportRepository.create({
-      tenantId: user.tenantId,
+      tenantId: this.tenantIdFor(user),
       name: payload.name.trim(),
       type: payload.type,
       config: payload.config as Prisma.InputJsonValue,
@@ -49,7 +53,7 @@ export class ReportConfigService {
   }
 
   async updateSavedReport(user: SecurityUser, id: string, payload: UpdateSavedReportInput) {
-    const existing = await this.savedReportRepository.findById(user.tenantId, id);
+    const existing = await this.savedReportRepository.findById(this.tenantIdFor(user), id);
     if (!existing) {
       throw savedReportNotFoundError();
     }
@@ -58,12 +62,12 @@ export class ReportConfigService {
       throw invalidReportConfigError();
     }
 
-    await this.savedReportRepository.update(user.tenantId, id, {
+    await this.savedReportRepository.update(this.tenantIdFor(user), id, {
       ...(payload.name ? { name: payload.name.trim() } : {}),
       ...(payload.config ? { config: payload.config as Prisma.InputJsonValue } : {}),
     });
 
-    const updated = await this.savedReportRepository.findById(user.tenantId, id);
+    const updated = await this.savedReportRepository.findById(this.tenantIdFor(user), id);
     if (!updated) {
       throw savedReportNotFoundError();
     }
@@ -72,7 +76,7 @@ export class ReportConfigService {
   }
 
   async listSavedReports(user: SecurityUser, query: ListSavedReportsInput) {
-    const result = await this.savedReportRepository.list(user.tenantId, query);
+    const result = await this.savedReportRepository.list(this.tenantIdFor(user), query);
     return {
       items: result.items.map(toSavedReportResponse),
       total: result.total,
@@ -82,12 +86,12 @@ export class ReportConfigService {
   }
 
   async deleteSavedReport(user: SecurityUser, id: string) {
-    const existing = await this.savedReportRepository.findById(user.tenantId, id);
+    const existing = await this.savedReportRepository.findById(this.tenantIdFor(user), id);
     if (!existing) {
       throw savedReportNotFoundError();
     }
 
-    await this.savedReportRepository.delete(user.tenantId, id);
+    await this.savedReportRepository.delete(this.tenantIdFor(user), id);
     return { message: "Saved report deleted" };
   }
 
@@ -97,7 +101,7 @@ export class ReportConfigService {
     }
 
     const savedReport = await this.savedReportRepository.findById(
-      user.tenantId,
+      this.tenantIdFor(user),
       payload.savedReportId,
     );
     if (!savedReport) {
@@ -112,7 +116,7 @@ export class ReportConfigService {
     });
 
     const scheduled = await this.scheduledReportRepository.create({
-      tenantId: user.tenantId,
+      tenantId: this.tenantIdFor(user),
       savedReport: { connect: { id: savedReport.id } },
       frequency: payload.frequency,
       timeOfDay: payload.timeOfDay,
@@ -132,7 +136,7 @@ export class ReportConfigService {
     id: string,
     payload: UpdateScheduledReportInput,
   ) {
-    const existing = await this.scheduledReportRepository.findById(user.tenantId, id);
+    const existing = await this.scheduledReportRepository.findById(this.tenantIdFor(user), id);
     if (!existing) {
       throw scheduledReportNotFoundError();
     }
@@ -156,7 +160,7 @@ export class ReportConfigService {
       ? computeNextRunAt({ frequency, timeOfDay, dayOfWeek, dayOfMonth })
       : existing.nextRunAt;
 
-    await this.scheduledReportRepository.update(user.tenantId, id, {
+    await this.scheduledReportRepository.update(this.tenantIdFor(user), id, {
       ...(payload.frequency ? { frequency: payload.frequency } : {}),
       ...(payload.timeOfDay ? { timeOfDay: payload.timeOfDay } : {}),
       ...(payload.dayOfWeek !== undefined ? { dayOfWeek: payload.dayOfWeek } : {}),
@@ -166,7 +170,7 @@ export class ReportConfigService {
       ...(shouldRecompute ? { nextRunAt } : {}),
     });
 
-    const updated = await this.scheduledReportRepository.findById(user.tenantId, id);
+    const updated = await this.scheduledReportRepository.findById(this.tenantIdFor(user), id);
     if (!updated) {
       throw scheduledReportNotFoundError();
     }
@@ -175,12 +179,12 @@ export class ReportConfigService {
   }
 
   async listScheduledReports(user: SecurityUser) {
-    const items = await this.scheduledReportRepository.listByTenant(user.tenantId);
+    const items = await this.scheduledReportRepository.listByTenant(this.tenantIdFor(user));
     return { items: items.map(toScheduledReportResponse) };
   }
 
   assertTenantAccess(user: SecurityUser, tenantId: string) {
-    if (user.tenantId !== tenantId) {
+    if (this.tenantIdFor(user) !== tenantId) {
       throw tenantMismatchError();
     }
   }

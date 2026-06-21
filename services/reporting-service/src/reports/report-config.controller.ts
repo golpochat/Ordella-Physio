@@ -37,7 +37,7 @@ export class ReportConfigController {
   @Get("saved")
   @UseGuards(JwtGuard, ReportingTenantGuard, PermissionGuard)
   @RequirePermissions("reporting.read")
-  @UseZodValidation(listSavedReportsSchema)
+  @UseZodValidation(listSavedReportsSchema, "query")
   listSaved(@Req() request: OrdellaRequest, @Query() query: ListSavedReportsInput) {
     return this.reportConfigService.listSavedReports(request.user as SecurityUser, query);
   }

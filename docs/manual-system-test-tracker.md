@@ -136,6 +136,41 @@
 | 9.9 | 9 | Clinic — patient attachments | http://localhost:3010/clinic/patients/{id}/attachments | `clinicadmin@ordella.dev` | Attachments page loads; files API 200 | OK after fixes #9.1–9.3 | **PASS** | Patient ID `c3L8xtzMQFQqOm45DMXqEG6O` |
 | 9.10 | 9 | API — enterprise SSO | `GET /api/enterprise/sso` | `clinicadmin@ordella.dev` | Feature gate or config UI (403 OK for non-enterprise plan) | 403 "Enterprise plan required" | **PASS*** | Expected for demo tenant without enterprise plan |
 | 9.11 | 9 | API — files list | `GET /api/files?patientId=...` | `clinicadmin@ordella.dev` | 200 with empty list or attachments | 200 empty list | **PASS** | After fix #9.3 |
+| 10.1 | 10 | Gateway — reporting health | http://localhost:3049/reporting/health | — | 200 | 200 | **PASS** | After fix #10.2 |
+| 10.2 | 10 | Gateway — audit health | http://localhost:3049/audit-logs/health | — | 200 | 200 | **PASS** | |
+| 10.3 | 10 | Clinic — reports hub | http://localhost:3010/clinic/reports | `clinicadmin@ordella.dev` | Reports dashboard loads; no blocking errors | OK | **PASS** | |
+| 10.4 | 10 | Clinic — appointment reports | http://localhost:3010/clinic/reports/appointments | `clinicadmin@ordella.dev` | Appointments report UI loads | OK | **PASS** | |
+| 10.5 | 10 | Clinic — revenue reports | http://localhost:3010/clinic/reports/revenue | `clinicadmin@ordella.dev` | Revenue report UI loads | OK | **PASS** | |
+| 10.6 | 10 | Clinic — patient reports | http://localhost:3010/clinic/reports/patients | `clinicadmin@ordella.dev` | Patient report UI loads | OK | **PASS** | |
+| 10.7 | 10 | Clinic — saved reports | http://localhost:3010/clinic/reports/saved | `clinicadmin@ordella.dev` | Saved reports page loads; list API 200 | OK after fix #10.1 | **PASS** | |
+| 10.8 | 10 | Clinic — audit logs | http://localhost:3010/clinic/audit-logs | `clinicadmin@ordella.dev` | Audit log viewer loads; audit API 200 | OK | **PASS** | |
+| 10.9 | 10 | Super admin — reports | http://localhost:3010/super-admin/reports | `superadmin@ordella.dev` | Platform reports UI loads | OK | **PASS** | |
+| 10.10 | 10 | Super admin — audit logs | http://localhost:3010/super-admin/audit-logs | `superadmin@ordella.dev` | Platform audit logs load | OK | **PASS** | |
+| 10.11 | 10 | API — audit list | `GET /api/audit` | `clinicadmin@ordella.dev` | 200 with audit entries | 200 with seeded logs | **PASS** | |
+| 10.12 | 10 | API — reporting (no date range) | `GET /api/reporting/reports/*` | `clinicadmin@ordella.dev` | 400 validation without params (UI sends range) | 400 INVALID_DATE_RANGE | **PASS*** | Raw probe omits date params; UI pages pass |
+| 11.1 | 11 | Gateway — AI platform health | http://localhost:3049/ai/platform/health | — | 200 or 502 (services not in dev stack) | 502 | **PASS*** | AI microservices not in `docker-compose.dev.yml` |
+| 11.2 | 11 | Gateway — AI training/drift/flags/gateway/cost/security/observability/agents | various `/ai/*/health` | — | 502 expected without AI stack | All 502 | **PASS*** | |
+| 11.3 | 11 | Clinic — AI model registry | http://localhost:3010/clinic/ai/models | `clinicadmin@ordella.dev` | Page loads; no access-denied or React crash | OK; graceful 502 error state | **PASS*** | Fix #11.1 |
+| 11.4 | 11 | Clinic — AI training | http://localhost:3010/clinic/ai/training | `clinicadmin@ordella.dev` | Training jobs UI loads | OK | **PASS*** | |
+| 11.5 | 11 | Clinic — AI datasets | http://localhost:3010/clinic/ai/datasets | `clinicadmin@ordella.dev` | Datasets UI loads | OK | **PASS*** | |
+| 11.6 | 11 | Clinic — AI experiments | http://localhost:3010/clinic/ai/experiments | `clinicadmin@ordella.dev` | Experiments UI loads | OK | **PASS*** | |
+| 11.7 | 11 | Clinic — AI agents | http://localhost:3010/clinic/ai/agents | `clinicadmin@ordella.dev` | Agents UI loads | OK | **PASS*** | |
+| 11.8 | 11 | Clinic — AI feature flags | http://localhost:3010/clinic/ai/flags | `clinicadmin@ordella.dev` | Flags UI loads | OK | **PASS*** | |
+| 11.9 | 11 | Clinic — AI cost | http://localhost:3010/clinic/ai/cost | `clinicadmin@ordella.dev` | Cost dashboard loads | OK | **PASS*** | |
+| 11.10 | 11 | Clinic — AI gateway keys | http://localhost:3010/clinic/ai/gateway/keys | `clinicadmin@ordella.dev` | Gateway keys UI loads | OK | **PASS*** | |
+| 11.11 | 11 | Clinic — AI observability | http://localhost:3010/clinic/ai/observability | `clinicadmin@ordella.dev` | Observability UI loads | OK | **PASS*** | |
+| 11.12 | 11 | Clinic — AI security audit | http://localhost:3010/clinic/ai/security/audit | `clinicadmin@ordella.dev` | Security audit UI loads | OK | **PASS*** | |
+| 11.13 | 11 | Therapist — AI notes create | http://localhost:3010/therapist/notes/create | `therapist@ordella.dev` | Create note + AI assistant loads | OK (Phase 7.2) | **PASS** | Retest in Phase 11 |
+| 11.14 | 11 | API — AI platform | `GET /api/ai/models`, `/datasets`, `/training/jobs` | `clinicadmin@ordella.dev` | 502 without AI stack | 502 SERVICE_UNAVAILABLE | **PASS*** | Expected |
+| 12.1 | 12 | Gateway — health | http://localhost:3049/health | — | 200 | 200 | **PASS** | |
+| 12.2 | 12 | Dev stack — service health (20) | `/auth`, `/tenants`, `/patients`, `/appointments`, `/notes`, `/billing`, `/reporting`, `/messaging`, `/notifications`, `/marketplace`, `/enterprise`, `/organizations`, `/terminals`, `/roles`, `/staff`, `/audit-logs`, `/files`, `/notification-providers`, `/pharmacy` `/health` | — | All 200 via gateway | All 200 | **PASS** | `_probe-phase12.mjs` |
+| 12.3 | 12 | Off-stack — service health (14) | `/payments`, `/communication`, `/ai/*`, `/search-index` `/health` | — | 502 (services not in dev stack) | All 502 | **PASS*** | payment, communication, AI platform, search-index not in `docker-compose.dev.yml` |
+| 12.4 | 12 | Gateway — messaging ready | http://localhost:3049/messaging/ready | — | 200 | 200 | **PASS** | |
+| 12.5 | 12 | Gateway — notifications ready | http://localhost:3049/notifications/ready | — | 200 (no tenant header) | 200 after fix #12.1 | **PASS** | Was 400 — stale image missing `/notifications/ready` skipPaths |
+| 12.6 | 12 | Gateway — notification-providers ready | http://localhost:3049/notification-providers/ready | — | 200 | 200 | **PASS** | |
+| 12.7 | 12 | Gateway — terminals ready | http://localhost:3049/terminals/ready | — | 200 (no JWT) | 200 after fix #12.2 | **PASS** | Was 401 — stale image routed `ready` to `GET /:id` with JwtGuard |
+| 12.8 | 12 | Gateway — pharmacy ready | http://localhost:3049/pharmacy/ready | — | 200 | 200 | **PASS** | |
+| 12.9 | 12 | Phase 12 probe summary | `_probe-phase12.mjs` | — | 39/39 pass | 39/39 pass | **PASS** | Phase 12 complete |
 
 ---
 
@@ -163,6 +198,11 @@
 | 9.1 | `enterprise-service` crash (Prisma Alpine binary mismatch) | Added `binaryTargets` to `enterprise-service/prisma/schema.prisma`; rebuilt via `docker-compose.dev.yml` | 9.2, 9.6 |
 | 9.2 | Files BFF routed to unavailable clinic-backend in microservices mode | `gateway-proxy.ts`: proxy files to gateway unless `useClinicBackend()`; added `/files` proxy in api-gateway; `GATEWAY_PATHS.files` → `/files` | 9.9, 9.11 |
 | 9.3 | `GET /api/files` → 403 "Missing required permission"; attachments page permission crash | Added `files.view/upload/delete` to platform RBAC; attachments page uses `patients.read` only; rebuilt `core-service` for JWT permissions | 9.9, 9.11 |
+| 10.1 | `GET /api/reporting/reports/saved?limit=100` → 500 (`take` string not coerced) | Zod validation source `"query"` on list saved; numeric coercion in repository; TS fixes for reporting-service build | 10.7 |
+| 10.2 | `reporting-service` crash after rebuild (Prisma Alpine engine missing) | Added `binaryTargets` to `reporting-service/prisma/schema.prisma`; rebuilt via `docker-compose.dev.yml` | 10.1, 10.3–10.7 |
+| 11.1 | Clinic AI pages React crash (`ai.model.view` unmapped in stale `PERMISSION_ROLE_MAP`; `.includes` on undefined) | Local AI permission overrides in `auth/permissions.ts`; AI entries in `role-permission-map.ts`; guard unmapped permissions; rebuilt `frontend-web` | 11.3–11.12 |
+| 12.1 | `GET /notifications/ready` → 400 Missing `x-tenant-id`; notification-service crash on start (Prisma Alpine engine) | Rebuilt `notification-service` with `/notifications/ready` in middleware skipPaths; `binaryTargets` in Prisma schema; JWT strategy `tenantId ?? ""` | 12.5 |
+| 12.2 | `GET /terminals/ready` → 401 Unauthorized (stale image: no ready route; matched `GET /:id` + JwtGuard) | Rebuilt `terminal-service` with `@Get("ready")` + ready/pair in middleware skipPaths | 12.7 |
 
 ---
 
@@ -180,5 +220,8 @@
 - **Phase 7 complete** (2026-06-21): 7.1–7.28 therapist, staff, patient, and pharmacy portal sidebar routes all PASS/PASS*.
 - **Phase 8 complete** (2026-06-21): 8.0–8.12 communications — clinic/therapist/staff messages & notifications; settings notification providers/analytics/logs; gateway messaging health OK.
 - **Phase 9 complete** (2026-06-21): 9.1–9.11 integrations — marketplace, enterprise SSO UI, terminals, patient attachments/files API; gateway integration health OK; enterprise SSO API 403 expected (PASS*).
-- **Next:** Phase 10 — Reporting & audit.
+- **Phase 10 complete** (2026-06-21): 10.1–10.12 reporting & audit — clinic reports (hub, appointments, revenue, patients, saved), audit logs, super-admin reports/audit; staff/pharmacy reports verified in Phase 7 (7.13, 7.25).
+- **Phase 11 complete** (2026-06-21): 11.1–11.14 AI platform UI — clinic AI routes render with graceful upstream 502; therapist AI notes create OK; AI microservices not in dev stack (PASS*).
+- **Phase 12 complete** (2026-06-21): 12.1–12.9 direct service health — 20 dev-stack `/health` + 5 `/ready` probes all 200 via gateway; 14 off-stack services 502 (PASS*); `_probe-phase12.mjs` 39/39.
+- **Manual full-system test run complete** (Phases 0–12; Phase 5 skipped — no org-admin seed).
 - Login → trial onboarding is a 2-step funnel: `/checkout?intent=trial` first, then `/register` after "Start Free Trial" (not a direct link to `/register`).

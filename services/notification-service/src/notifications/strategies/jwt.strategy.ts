@@ -16,8 +16,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 
   validate(payload: AccessTokenPayload & { permissions?: string[] }): AuthenticatedNotificationUser {
     return {
-      userId: payload.userId,
-      tenantId: payload.tenantId,
+      userId: payload.userId ?? payload.sub,
+      tenantId: payload.tenantId ?? "",
       role: payload.role,
       email: payload.email,
       permissions: payload.permissions,
