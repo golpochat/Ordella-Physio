@@ -11,13 +11,13 @@ import {
   useRetryPharmacyFulfillment,
   useStartPharmacyFulfillment,
 } from "@/hooks/usePharmacyPortal";
-import type { ClinicPrescription } from "@/lib/clinic-pharmacy-types";
+import type { PharmacyPrescription } from "@/lib/pharmacy-portal-types";
 import { WithPermission } from "@/lib/auth/withPermission";
 
 export function PharmacyFulfillmentWorkflow({
   prescription,
 }: {
-  prescription: ClinicPrescription;
+  prescription: PharmacyPrescription;
 }) {
   const [notes, setNotes] = useState(prescription.fulfillment?.notes ?? "");
   const startMutation = useStartPharmacyFulfillment(prescription.id);

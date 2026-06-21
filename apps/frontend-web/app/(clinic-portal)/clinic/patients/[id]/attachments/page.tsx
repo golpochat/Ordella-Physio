@@ -35,7 +35,7 @@ export default function ClinicPatientAttachmentsPage({ params }: ClinicPatientAt
     : "Patient";
 
   return (
-    <WithAllPermissions permissions={["patient.attachments", "files.view"]}>
+    <WithAllPermissions permissions={["patients.read"]}>
       <ListPage
         title={`Attachments — ${patientName}`}
         subtitle="Upload and manage patient documents via secure file storage."
@@ -49,13 +49,11 @@ export default function ClinicPatientAttachmentsPage({ params }: ClinicPatientAt
         onRetry={() => void patientQuery.refetch()}
         loadingRows={4}
       >
-        <WithAllPermissions permissions={["files.upload"]}>
-          <FileUploadField
-            entityType="PATIENT"
-            entityId={params.id}
-            onUploaded={() => setFileListKey((value) => value + 1)}
-          />
-        </WithAllPermissions>
+        <FileUploadField
+          entityType="PATIENT"
+          entityId={params.id}
+          onUploaded={() => setFileListKey((value) => value + 1)}
+        />
 
         <FileList key={fileListKey} entityType="PATIENT" entityId={params.id} />
       </ListPage>

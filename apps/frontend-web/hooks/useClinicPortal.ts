@@ -509,6 +509,7 @@ export function useClinicLocations() {
       return coerceListData<ClinicLocation>(response.data);
     },
     enabled: Boolean(tenantId && clinicApi && authReady),
+    retry: false,
   });
 }
 
@@ -532,6 +533,7 @@ export function useClinicLocationsList(filters: ClinicLocationListFilters = {}) 
       };
     },
     enabled: Boolean(tenantId && clinicApi && authReady),
+    retry: false,
   });
 }
 
@@ -756,16 +758,18 @@ export function useClinicSubscription() {
   });
 }
 
-export function useBillingContext() {
+export function useBillingContext(options?: { enabled?: boolean }) {
   const clinicApi = useClinicPortalApi();
   const { tenantId } = useClinicContext();
   const authReady = useQueryAuthReady();
+  const enabled = options?.enabled ?? true;
 
   return useQuery<BillingTruthContext>({
     queryKey: ["billing", "context", tenantId],
     queryFn: () => requireApi(clinicApi).getBillingContext(),
-    enabled: Boolean(tenantId && clinicApi && authReady),
+    enabled: enabled && Boolean(tenantId && clinicApi && authReady),
     staleTime: 5 * 60 * 1000,
+    retry: false,
   });
 }
 

@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { resolveSessionPermissions } from "@/lib/auth/build-session-user";
 import {
   authClient,
   isMfaRequiredResponse,
@@ -15,19 +16,28 @@ import {
 } from "@/lib/auth-client";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { resolveUserRoles } from "@/lib/rbac";
-import { getPortalForRoles, isSystemUser, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
+import {
+  getPortalForRoles,
+  isSystemUser,
+  mapAuthRoleToPortalRole,
+} from "@/lib/auth/roleRedirect";
 import { clearAuthSession, syncTenantFromSession } from "@/lib/session-manager";
 import { buildTenantStateFromUser } from "@/lib/tenant-sync";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 
-function normalizeAuthResponse(response: AuthTokensResponse): AuthTokensResponse {
+function normalizeAuthResponse(
+  response: AuthTokensResponse,
+): AuthTokensResponse {
   const roles = resolveUserRoles(response.user);
   const primaryRole = roles[0] ?? mapAuthRoleToPortalRole(response.user.role);
-  const permissions =
-    response.user.permissions ??
-    (response.user as { resolvedPermissions?: string[] }).resolvedPermissions ??
-    [];
+  const { effectiveRole, permissions } = resolveSessionPermissions({
+    role: primaryRole,
+    roles,
+    organizationId: response.user.organizationId,
+    permissionOverrides: (response.user as { permissionOverrides?: string[] })
+      .permissionOverrides,
+  });
 
   return {
     ...response,
@@ -36,16 +46,15 @@ function normalizeAuthResponse(response: AuthTokensResponse): AuthTokensResponse
       role: primaryRole,
       roles,
       permissions,
-      effectiveRole:
-        response.user.effectiveRole ??
-        (response.user as { effectiveRole?: string }).effectiveRole,
+      effectiveRole: response.user.effectiveRole ?? effectiveRole,
     },
   };
 }
 
 export function useAuth() {
   const router = useRouter();
-  const { accessToken, user, isAuthenticated, setSession, updateTokens } = useAuthStore();
+  const { accessToken, user, isAuthenticated, setSession, updateTokens } =
+    useAuthStore();
   const { tenant, setTenant, clearTenant } = useTenantStore();
 
   const applySession = useCallback(
@@ -90,7 +99,12 @@ export function useAuth() {
         const session = applySession(response, response.user.tenantId);
         router.push(getPortalForRoles(session.user.roles));
       } catch (error) {
-        throw new Error(getApiErrorMessage(error, "Unable to sign in. Check your credentials."));
+        throw new Error(
+          getApiErrorMessage(
+            error,
+            "Unable to sign in. Check your credentials.",
+          ),
+        );
       }
     },
     [applySession, router],
@@ -100,10 +114,20 @@ export function useAuth() {
     async (payload: RegisterWorkspacePayload) => {
       try {
         const result = await authClient.registerWorkspace(payload);
-        const { tenant: tenantInfo, intent, billingCycle, plan, ...auth } = result;
+        const {
+          tenant: tenantInfo,
+          intent,
+          billingCycle,
+          plan,
+          ...auth
+        } = result;
         const session = applySession(auth, tenantInfo.name);
 
-        if (billingCycle && plan && (intent === "checkout" || intent === "trial")) {
+        if (
+          billingCycle &&
+          plan &&
+          (intent === "checkout" || intent === "trial")
+        ) {
           const params = new URLSearchParams({
             plan,
             cycle: billingCycle,
@@ -116,7 +140,9 @@ export function useAuth() {
         router.push(getPortalForRoles(session.user.roles));
         return session;
       } catch (error) {
-        throw new Error(getApiErrorMessage(error, "Unable to create your clinic workspace."));
+        throw new Error(
+          getApiErrorMessage(error, "Unable to create your clinic workspace."),
+        );
       }
     },
     [applySession, router],
@@ -157,7 +183,9 @@ export function useAuth() {
         await refresh();
         router.push(getPortalForRoles(resolveUserRoles(user)));
       } catch (error) {
-        throw new Error(getApiErrorMessage(error, "Unable to complete payment."));
+        throw new Error(
+          getApiErrorMessage(error, "Unable to complete payment."),
+        );
       }
     },
     [accessToken, refresh, router, user],

@@ -12,6 +12,7 @@ import {
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/auth/cookie-names";
 import { signSessionPayload } from "@/lib/auth/session-signing";
+import { buildSessionUser } from "@/lib/auth/build-session-user";
 import type { SessionCookiePayload } from "@/lib/auth/session";
 
 export async function POST() {
@@ -53,10 +54,17 @@ export async function POST() {
     return NextResponse.json({ error: { message: "Invalid refresh response" } }, { status: 502 });
   }
 
+  const sessionUser = buildSessionUser(data.user);
+
   const response = NextResponse.json({
     data: {
       accessToken: data.accessToken,
-      user: data.user,
+      user: {
+        ...data.user,
+        permissions: sessionUser.permissions,
+        resolvedPermissions: sessionUser.resolvedPermissions,
+        effectiveRole: sessionUser.effectiveRole,
+      },
     },
   });
 
@@ -69,12 +77,7 @@ export async function POST() {
   }
 
   const sessionPayload: SessionCookiePayload = {
-    user: {
-      id: data.user.id,
-      role: data.user.roles?.[0] ?? data.user.role ?? "STAFF",
-      tenantId: data.user.tenantId,
-      roles: data.user.roles,
-    },
+    user: sessionUser,
   };
 
   response.cookies.set(

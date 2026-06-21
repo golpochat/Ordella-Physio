@@ -42,6 +42,7 @@ export const ROUTE_ROLE_ACCESS: Record<string, PortalRole[]> = {
     "OWNER",
     "TENANT_OWNER",
     "ADMIN",
+    "CLINIC_ADMIN",
     "STAFF",
     "THERAPIST",
     "PATIENT",

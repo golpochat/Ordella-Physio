@@ -6,6 +6,7 @@ export type AuthenticatedTenantUser = {
   tenantId: string;
   role: string;
   email?: string;
+  effectiveRole?: string;
   permissions?: string[];
 };
 

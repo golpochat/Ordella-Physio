@@ -146,8 +146,7 @@ exports.Prisma.DeliveryLogScalarFieldEnum = {
   responsePayload: 'responsePayload',
   retryCount: 'retryCount',
   nextAttemptAt: 'nextAttemptAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {

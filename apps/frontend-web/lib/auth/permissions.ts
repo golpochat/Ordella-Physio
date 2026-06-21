@@ -1,5 +1,6 @@
 import {
   PERMISSION_ROLE_MAP,
+  normalizeEffectiveRole,
   roleHasMappedPermission,
   type RolePermissionKey,
 } from "@ordella/security/rbac";
@@ -11,6 +12,12 @@ export function roleHasPermission(role: string | undefined, permission: RolePerm
   if (!role) {
     return false;
   }
+
+  const effectiveRole = normalizeEffectiveRole(role);
+  if (effectiveRole && roleHasMappedPermission(effectiveRole as never, permission)) {
+    return true;
+  }
+
   return roleHasMappedPermission(role as never, permission);
 }
 

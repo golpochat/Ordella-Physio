@@ -57,7 +57,7 @@ export const GATEWAY_PATHS = {
   userRole: "/roles",
   staffMember: "/staff",
   audit: "/audit-logs",
-  files: "/api/files",
+  files: "/files",
   notificationProviders: "/notification-providers",
   searchIndex: "/search-index",
   pharmacy: "/pharmacy",
@@ -100,6 +100,7 @@ export const PUBLIC_ROUTES = [
   "/verify-email",
   "/mfa/verify",
   "/forbidden",
+  "/access-denied",
 ] as const;
 
 export const TOKEN_REFRESH_BUFFER_MS = 60_000;

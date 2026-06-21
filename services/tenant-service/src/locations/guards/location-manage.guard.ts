@@ -17,10 +17,18 @@ export class LocationManageGuard implements CanActivate {
       return true;
     }
 
-    if (!rbacService.hasPermission(
-      { userId: user.userId, tenantId: user.tenantId, role: user.role as never },
-      PERMISSIONS.LOCATION_MANAGE,
-    )) {
+    if (
+      !rbacService.hasPermission(
+        {
+          userId: user.userId,
+          tenantId: user.tenantId,
+          role: user.role as never,
+          effectiveRole: user.effectiveRole,
+          permissions: user.permissions,
+        },
+        PERMISSIONS.LOCATION_MANAGE,
+      )
+    ) {
       throw locationForbiddenError();
     }
 

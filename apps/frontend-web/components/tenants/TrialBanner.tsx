@@ -6,10 +6,30 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBillingContext } from "@/hooks/useClinicPortal";
+import { getUserPortalRoles } from "@/lib/nav-roles";
+import { can, Permission } from "@/lib/permissions";
+
+function canLoadBillingContext(
+  user: ReturnType<typeof useAuth>["user"],
+): boolean {
+  if (!user) {
+    return false;
+  }
+
+  const roles = getUserPortalRoles(user);
+  const isClinicBillingManager =
+    roles.some((role) =>
+      ["ADMIN", "CLINIC_ADMIN", "OWNER", "TENANT_OWNER", "BILLING_ADMIN"].includes(role),
+    ) || can(user, Permission.BILLING_MANAGE);
+
+  return isClinicBillingManager;
+}
 
 export function TrialBanner() {
-  const { accessToken } = useAuth();
-  const billingContextQuery = useBillingContext();
+  const { accessToken, user } = useAuth();
+  const billingContextQuery = useBillingContext({
+    enabled: canLoadBillingContext(user),
+  });
 
   const trialQuery = useQuery({
     queryKey: ["tenant-trial"],

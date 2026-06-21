@@ -14,13 +14,20 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  validate(payload: AccessTokenPayload & { permissions?: string[] }): AuthenticatedBillingUser {
+  validate(
+    payload: AccessTokenPayload & {
+      permissions?: string[];
+      effectiveRole?: string;
+      resolvedPermissions?: string[];
+    },
+  ): AuthenticatedBillingUser {
     return {
       userId: payload.userId,
       tenantId: payload.tenantId ?? "",
       role: payload.role,
+      effectiveRole: payload.effectiveRole,
       email: payload.email,
-      permissions: payload.permissions,
+      permissions: payload.resolvedPermissions ?? payload.permissions,
     };
   }
 }

@@ -2,6 +2,7 @@ export type AuthenticatedBillingUser = {
   userId: string;
   tenantId: string;
   role: string;
+  effectiveRole?: string;
   email?: string;
   permissions?: string[];
 };

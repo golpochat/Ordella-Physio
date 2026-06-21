@@ -1,4 +1,4 @@
-import { PERMISSIONS, userHasPermission, type AuthPermission } from "@/lib/auth/permissions";
+import { PERMISSION_ROLE_MAP, PERMISSIONS, userHasPermission, userHasPlatformPermission, type AuthPermission } from "@/lib/auth/permissions";
 
 export const Permission = {
   PATIENT_VIEW: "patient.view",
@@ -12,6 +12,7 @@ export const Permission = {
   NOTES_WRITE: "notes.write",
 
   BILLING_MANAGE: "billing.manage",
+  BILLING_READ: "billing.read",
 
   REPORTING_VIEW: "reporting.view",
   REPORTING_READ: "reporting.read",
@@ -38,6 +39,8 @@ const PERMISSION_ALIASES: Record<string, string> = {
   [Permission.PATIENT_EDIT]: "patient.edit",
 };
 
+const PERMISSION_VALUES = new Set<string>(Object.values(PERMISSIONS));
+
 function isAuthPermission(value: string): value is AuthPermission {
   return value in PERMISSIONS;
 }
@@ -48,7 +51,19 @@ function resolveAuthPermission(permission: string): string | null {
     return alias;
   }
 
-  return isAuthPermission(permission) ? permission : null;
+  if (isAuthPermission(permission)) {
+    return permission;
+  }
+
+  if (PERMISSION_VALUES.has(permission)) {
+    return permission;
+  }
+
+  if (permission in PERMISSION_ROLE_MAP) {
+    return permission;
+  }
+
+  return null;
 }
 
 export function can(user: PermissionUser, permission: PermissionValue | string): boolean {
@@ -57,6 +72,10 @@ export function can(user: PermissionUser, permission: PermissionValue | string):
   }
 
   if (user.permissions?.includes(permission)) {
+    return true;
+  }
+
+  if (userHasPlatformPermission(user, permission)) {
     return true;
   }
 

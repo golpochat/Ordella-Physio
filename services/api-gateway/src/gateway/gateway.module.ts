@@ -69,11 +69,14 @@ const proxyControllers = [
     public: true,
     skipTenant: true,
   }),
-  createProxyController("/tenants/profile", "CLINIC_BACKEND_URL", {
-    forwardPath: "/api/tenant/profile",
+  createProxyController("/tenants/profile", "TENANT_SERVICE_URL"),
+  createProxyController("/tenants/trial", "TENANT_SERVICE_URL"),
+  /** Legacy clinic-backend paths used by frontend BFF when profile/trial proxy to CLINIC_BACKEND_URL. */
+  createProxyController("/api/tenant/profile", "TENANT_SERVICE_URL", {
+    forwardPath: "/tenants/profile",
   }),
-  createProxyController("/tenants/trial", "CLINIC_BACKEND_URL", {
-    forwardPath: "/api/tenant/trial",
+  createProxyController("/api/tenant/trial", "TENANT_SERVICE_URL", {
+    forwardPath: "/tenants/trial",
   }),
   createProxyController(TENANT_ROUTES.base, "TENANT_SERVICE_URL"),
   createProxyController(PATIENT_ROUTES.base, "PATIENT_SERVICE_URL"),
@@ -219,6 +222,7 @@ const proxyControllers = [
     skipTenant: true,
   }),
   createProxyController(AUDIT_ROUTES.base, "AUDIT_SERVICE_URL"),
+  createProxyController(FILE_STORAGE_ROUTES.base, "FILE_STORAGE_SERVICE_URL"),
   createProxyController(FILE_STORAGE_ROUTES.access, "FILE_STORAGE_SERVICE_URL", {
     public: true,
     skipTenant: true,

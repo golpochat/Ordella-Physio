@@ -40,6 +40,15 @@ export const PERMISSION_ROLE_MAP = {
   "fulfillment.start": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "STAFF", "PHARMACY"],
   "fulfillment.complete": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "STAFF", "PHARMACY"],
   "fulfillment.fail": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "STAFF", "PHARMACY"],
+  "notification.providers.view": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
+  "notification.providers.manage": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
+  "notification.logs.view": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
+  "notification.analytics.view": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
+  "notification.send": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
+  "files.view": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
+  "files.upload": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
+  "files.delete": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "THERAPIST", "STAFF"],
+  "files.delete.hard": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
 } as const satisfies Record<string, SecurityRole[]>;
 
 export type RolePermissionKey = keyof typeof PERMISSION_ROLE_MAP;
@@ -53,6 +62,10 @@ export function roleHasMappedPermission(role: SecurityRole, permission: RolePerm
     return true;
   }
 
-  const allowedRoles = PERMISSION_ROLE_MAP[permission] as readonly SecurityRole[];
+  const allowedRoles = PERMISSION_ROLE_MAP[permission] as readonly SecurityRole[] | undefined;
+  if (!allowedRoles) {
+    return false;
+  }
+
   return (allowedRoles as SecurityRole[]).includes(role);
 }

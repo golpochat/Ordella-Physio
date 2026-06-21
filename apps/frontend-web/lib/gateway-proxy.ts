@@ -101,11 +101,12 @@ export async function proxyToGateway(
   service: ApiServiceKey,
   pathSuffix = "",
 ): Promise<NextResponse> {
-  if (service === "files") {
+  if (service === "files" && useClinicBackend()) {
     return proxyToClinicBackend(request, service);
   }
 
   if (
+    useClinicBackend() &&
     service === "tenant" &&
     isClinicBackendTenantOnboardingPath(request.nextUrl.pathname)
   ) {

@@ -1,10 +1,13 @@
 import {
   hasResolvedPermission,
+  getPlatformPermissionsForRole,
   isOrganizationRole,
   isSuperAdminRole,
   isTenantRole,
   normalizeEffectiveRole,
+  normalizePermissionKey,
   PLATFORM_PERMISSIONS,
+  type EffectiveRole,
   type PlatformPermission,
 } from "@ordella/security/rbac";
 
@@ -33,7 +36,19 @@ export function userHasPlatformPermission(
   }
 
   const effectiveRole = getEffectiveRole(subject);
-  return hasResolvedPermission(subject.permissions ?? [], permission, effectiveRole as never);
+  const permissions = subject.permissions ?? [];
+
+  if (hasResolvedPermission(permissions, permission, effectiveRole as never)) {
+    return true;
+  }
+
+  if (effectiveRole) {
+    const normalized = normalizePermissionKey(permission);
+    const rolePermissions = getPlatformPermissionsForRole(effectiveRole as EffectiveRole);
+    return rolePermissions.includes(normalized as PlatformPermission);
+  }
+
+  return false;
 }
 
 export function canAccessTenantPortal(subject: PermissionSubject | null | undefined): boolean {
@@ -68,6 +83,13 @@ export const NAV_PERMISSION_REQUIREMENTS: Record<string, PlatformPermission | st
   "/therapist/patients": PLATFORM_PERMISSIONS.PATIENTS_READ,
   "/therapist/billing": PLATFORM_PERMISSIONS.BILLING_READ,
   "/therapist/notes": PLATFORM_PERMISSIONS.NOTES_WRITE,
+  "/patient/appointments": PLATFORM_PERMISSIONS.APPOINTMENTS_READ,
+  "/patient/notes": PLATFORM_PERMISSIONS.NOTES_READ,
+  "/patient/billing": PLATFORM_PERMISSIONS.BILLING_READ,
+  "/patient/profile": PLATFORM_PERMISSIONS.PATIENTS_READ,
+  "/settings/notifications/providers": PLATFORM_PERMISSIONS.SETTINGS_READ,
+  "/settings/notifications/analytics": PLATFORM_PERMISSIONS.SETTINGS_READ,
+  "/settings/notifications/logs": PLATFORM_PERMISSIONS.SETTINGS_READ,
   "/organization": PLATFORM_PERMISSIONS.ORG_TENANTS_READ,
   "/organization/billing": PLATFORM_PERMISSIONS.ORG_BILLING_MANAGE,
   "/super-admin": PLATFORM_PERMISSIONS.PLATFORM_USERS_MANAGE,

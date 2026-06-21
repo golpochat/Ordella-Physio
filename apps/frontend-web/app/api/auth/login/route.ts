@@ -11,6 +11,7 @@ import {
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/auth/cookie-names";
 import { signSessionPayload } from "@/lib/auth/session-signing";
+import { buildSessionUser } from "@/lib/auth/build-session-user";
 import type { SessionCookiePayload } from "@/lib/auth/session";
 
 export async function POST(request: Request) {
@@ -49,29 +50,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: { message: "Invalid login response" } }, { status: 502 });
   }
 
+  const tenantIdFromHeader = request.headers.get("x-tenant-id");
+  const sessionUser = buildSessionUser(parsed.user, tenantIdFromHeader ?? parsed.user.tenantId);
+
   const response = NextResponse.json({
     data: {
       accessToken: parsed.accessToken,
-      user: parsed.user,
+      user: {
+        ...parsed.user,
+        permissions: sessionUser.permissions,
+        resolvedPermissions: sessionUser.resolvedPermissions,
+        effectiveRole: sessionUser.effectiveRole,
+      },
     },
   });
+
+  const sessionPayload: SessionCookiePayload = {
+    user: sessionUser,
+  };
 
   response.cookies.set(
     REFRESH_COOKIE_NAME,
     parsed.refreshToken,
     getSecureCookieOptions(REFRESH_MAX_AGE_SECONDS),
   );
-
-  const tenantIdFromHeader = request.headers.get("x-tenant-id");
-
-  const sessionPayload: SessionCookiePayload = {
-    user: {
-      id: parsed.user.id,
-      role: parsed.user.roles?.[0] ?? parsed.user.role ?? "STAFF",
-      tenantId: tenantIdFromHeader ?? parsed.user.tenantId,
-      roles: parsed.user.roles,
-    },
-  };
 
   response.cookies.set(
     SESSION_COOKIE_NAME,

@@ -1,9 +1,10 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
+import { can, Permission } from "@/lib/permissions";
 import { createStaffPortalApi, normalizeList } from "@/lib/staff-portal-api";
 import type { UpdateStaffProfilePayload } from "@/lib/staff-portal-types";
 import { useAuthStore } from "@/store/auth.store";
@@ -17,7 +18,9 @@ export function useStaffContext() {
   const user = useAuthStore((state) => state.user);
   const { tenantId } = useTenant();
   const displayName =
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Staff";
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    user?.email ||
+    "Staff";
 
   return { user, tenantId, displayName };
 }
@@ -30,94 +33,115 @@ function requireApi(api: ReturnType<typeof createStaffPortalApi> | null) {
 export function useStaffAppointments() {
   const staffApi = useStaffPortalApi();
   const { tenantId } = useStaffContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "appointments", tenantId],
     queryFn: async () =>
-      normalizeList(await requireApi(staffApi).listAppointments({ limit: 100 })),
-    enabled: Boolean(tenantId),
+      normalizeList(
+        await requireApi(staffApi).listAppointments({ limit: 100 }),
+      ),
+    enabled: authReady && Boolean(tenantId),
   });
 }
 
 export function useStaffAppointment(id: string) {
   const staffApi = useStaffPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "appointments", id],
     queryFn: () => requireApi(staffApi).getAppointment(id),
-    enabled: Boolean(id),
+    enabled: authReady && Boolean(id),
   });
 }
 
 export function useStaffPatients() {
   const staffApi = useStaffPortalApi();
   const { tenantId } = useStaffContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "patients", tenantId],
-    queryFn: async () => normalizeList(await requireApi(staffApi).listPatients({ limit: 100 })),
-    enabled: Boolean(tenantId),
+    queryFn: async () =>
+      normalizeList(await requireApi(staffApi).listPatients({ limit: 100 })),
+    enabled: authReady && Boolean(tenantId),
   });
 }
 
 export function useStaffPatient(id: string) {
   const staffApi = useStaffPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "patients", id],
     queryFn: () => requireApi(staffApi).getPatient(id),
-    enabled: Boolean(id),
+    enabled: authReady && Boolean(id),
   });
 }
 
 export function useStaffBilling() {
   const staffApi = useStaffPortalApi();
-  const { tenantId } = useStaffContext();
+  const { tenantId, user } = useStaffContext();
+  const authReady = useQueryAuthReady();
+  const canReadBilling = can(user, Permission.BILLING_READ);
 
   return useQuery({
     queryKey: ["staff", "billing", tenantId],
-    queryFn: async () => normalizeList(await requireApi(staffApi).listBilling()),
-    enabled: Boolean(tenantId),
+    queryFn: async () =>
+      normalizeList(await requireApi(staffApi).listBilling()),
+    enabled: authReady && Boolean(tenantId) && canReadBilling,
+    retry: false,
   });
+}
+
+export function useStaffBillingOptional() {
+  return useStaffBilling();
 }
 
 export function useStaffInvoice(invoiceId: string) {
   const staffApi = useStaffPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "billing", invoiceId],
     queryFn: () => requireApi(staffApi).getInvoice(invoiceId),
-    enabled: Boolean(invoiceId),
+    enabled: authReady && Boolean(invoiceId),
   });
 }
 
 export function useStaffNotes() {
   const staffApi = useStaffPortalApi();
   const { tenantId } = useStaffContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "notes", tenantId],
-    queryFn: async () => normalizeList(await requireApi(staffApi).listNotes({ limit: 100 })),
-    enabled: Boolean(tenantId),
+    queryFn: async () =>
+      normalizeList(await requireApi(staffApi).listNotes({ limit: 100 })),
+    enabled: authReady && Boolean(tenantId),
   });
 }
 
 export function useStaffNote(id: string) {
   const staffApi = useStaffPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "notes", id],
     queryFn: () => requireApi(staffApi).getNote(id),
-    enabled: Boolean(id),
+    enabled: authReady && Boolean(id),
   });
 }
 
 export function useStaffProfile() {
   const staffApi = useStaffPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["staff", "profile"],
     queryFn: () => requireApi(staffApi).getProfile(),
+    enabled: authReady,
   });
 }
 

@@ -5,7 +5,7 @@ import { WithAllPermissions } from "@/lib/auth/withPermission";
 
 export default function NotificationAnalyticsPage() {
   return (
-    <WithAllPermissions permissions={["notification.analytics.view"]}>
+    <WithAllPermissions permissions={["settings.read"]}>
       <NotificationAnalyticsDashboard />
     </WithAllPermissions>
   );

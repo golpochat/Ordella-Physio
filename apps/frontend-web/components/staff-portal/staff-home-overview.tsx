@@ -8,10 +8,10 @@ import { StaffAppointmentList } from "@/components/staff-portal/appointment-list
 import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import {
   useStaffAppointments,
-  useStaffBilling,
   useStaffContext,
   useStaffNotes,
   useStaffPatients,
+  useStaffBillingOptional,
 } from "@/hooks/useStaffPortal";
 import { partitionStaffAppointments } from "@/lib/staff-portal-utils";
 
@@ -20,18 +20,12 @@ export function StaffHomeOverview() {
   const appointmentsQuery = useStaffAppointments();
   const patientsQuery = useStaffPatients();
   const notesQuery = useStaffNotes();
-  const billingQuery = useStaffBilling();
+  const billingQuery = useStaffBillingOptional();
 
   const isLoading =
-    appointmentsQuery.isLoading ||
-    patientsQuery.isLoading ||
-    notesQuery.isLoading ||
-    billingQuery.isLoading;
+    appointmentsQuery.isLoading || patientsQuery.isLoading || notesQuery.isLoading;
   const isError =
-    appointmentsQuery.isError ||
-    patientsQuery.isError ||
-    notesQuery.isError ||
-    billingQuery.isError;
+    appointmentsQuery.isError || patientsQuery.isError || notesQuery.isError;
 
   if (isLoading) {
     return <PageLoading rows={5} />;

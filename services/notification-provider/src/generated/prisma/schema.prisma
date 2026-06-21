@@ -1,67 +1,47 @@
 generator client {
-  provider = "prisma-client-js"
-
-  output = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
-
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum NotificationChannel {
   EMAIL
-
   SMS
-
   PUSH
-
   WHATSAPP
-
   VIBER
 }
 
 enum NotificationProviderName {
   SENDGRID
-
   TWILIO
-
   FIREBASE
-
   VIBER
-
   NONE
 }
 
 enum DeliveryStatus {
   SUCCESS
-
   FAILED
 }
 
 model ProviderConfig {
-  id String @id @default(cuid())
-
-  tenantId String
-
-  channel NotificationChannel
-
-  provider NotificationProviderName
-
-  credentials Json
-
-  isActive Boolean @default(true)
-
-  priority Int @default(1)
-
-  isHealthy Boolean @default(true)
-
+  id                String                   @id @default(cuid())
+  tenantId          String
+  channel           NotificationChannel
+  provider          NotificationProviderName
+  credentials       Json
+  isActive          Boolean                  @default(true)
+  priority          Int                      @default(1)
+  isHealthy         Boolean                  @default(true)
   lastHealthCheckAt DateTime?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
 
   @@index([tenantId])
   @@index([tenantId, channel])
@@ -69,29 +49,17 @@ model ProviderConfig {
 }
 
 model DeliveryLog {
-  id String @id @default(cuid())
-
-  tenantId String
-
-  channel NotificationChannel
-
-  provider NotificationProviderName
-
-  status DeliveryStatus
-
-  errorMessage String?
-
-  requestPayload Json
-
+  id              String                   @id @default(cuid())
+  tenantId        String
+  channel         NotificationChannel
+  provider        NotificationProviderName
+  status          DeliveryStatus
+  errorMessage    String?
+  requestPayload  Json
   responsePayload Json?
-
-  retryCount Int @default(0)
-
-  nextAttemptAt DateTime?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  retryCount      Int                      @default(0)
+  nextAttemptAt   DateTime?
+  createdAt       DateTime                 @default(now())
 
   @@index([tenantId])
   @@index([channel])

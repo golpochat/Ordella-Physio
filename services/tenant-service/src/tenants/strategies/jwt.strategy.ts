@@ -19,13 +19,18 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  validate(payload: AccessTokenPayload & { permissions?: string[] }): AuthenticatedTenantUser {
+  validate(payload: AccessTokenPayload & {
+    permissions?: string[];
+    resolvedPermissions?: string[];
+    effectiveRole?: string;
+  }): AuthenticatedTenantUser {
     return {
       userId: payload.userId,
       tenantId: payload.tenantId ?? "",
       role: payload.role,
       email: payload.email,
-      permissions: payload.permissions,
+      effectiveRole: payload.effectiveRole,
+      permissions: payload.resolvedPermissions ?? payload.permissions,
     };
   }
 }

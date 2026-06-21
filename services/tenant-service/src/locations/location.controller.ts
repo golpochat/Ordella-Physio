@@ -25,7 +25,7 @@ export class LocationController {
   }
 
   @Get()
-  @UseGuards(JwtGuard, TenantMatchGuard, TenantGuard, LocationManageGuard)
+  @UseGuards(JwtGuard, TenantMatchGuard, TenantGuard)
   listLocations(
     @Param("tenantId") tenantId: string,
     @Query() query: Record<string, string | string[] | undefined>,
@@ -35,7 +35,7 @@ export class LocationController {
   }
 
   @Get(":locationId")
-  @UseGuards(JwtGuard, TenantMatchGuard, TenantGuard, LocationManageGuard)
+  @UseGuards(JwtGuard, TenantMatchGuard, TenantGuard)
   getLocation(
     @Param("tenantId") tenantId: string,
     @Param("locationId") locationId: string,

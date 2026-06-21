@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { TenantsController } from "@/tenants/tenants.controller";
+import { TenantOnboardingController } from "@/tenants/tenant-onboarding.controller";
+import { TenantOnboardingService } from "@/tenants/tenant-onboarding.service";
 import { SuperAdminTenantController } from "@/tenants/controllers/super-admin-tenant.controller";
 import { SuperAdminProvisioningController } from "@/tenants/controllers/super-admin-provisioning.controller";
 import { TenantsService } from "@/tenants/tenants.service";
@@ -40,8 +42,14 @@ import { TenantDomainRepository } from "@/tenant-domains/tenant-domain.repositor
     BrandingModule,
     SubscriptionModule,
   ],
-  controllers: [TenantsController, SuperAdminTenantController, SuperAdminProvisioningController],
+  controllers: [
+    TenantOnboardingController,
+    TenantsController,
+    SuperAdminTenantController,
+    SuperAdminProvisioningController,
+  ],
   providers: [
+    TenantOnboardingService,
     TenantsService,
     TenantsRepository,
     CreateTenantCommand,

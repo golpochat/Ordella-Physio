@@ -53,10 +53,6 @@ export function useAiAcceptOutput() {
 
 export function useAiTranscribeNote() {
   const api = useAiNotesApi();
-  const session = useAuthStore((s) => ({
-    accessToken: s.accessToken,
-    user: s.user,
-  }));
 
   return useMutation({
     mutationFn: ({
@@ -68,12 +64,13 @@ export function useAiTranscribeNote() {
       audio: Blob;
       filename: string;
     }) => {
-      const roles = session.user ? resolveUserRoles(session.user) : [];
-      const tenantId = isSystemUser(roles) ? null : session.user?.tenantId;
+      const { accessToken, user } = useAuthStore.getState();
+      const roles = user ? resolveUserRoles(user) : [];
+      const tenantId = isSystemUser(roles) ? null : user?.tenantId;
       const headers: Record<string, string> = {};
 
-      if (session.accessToken) {
-        headers[AUTHORIZATION_HEADER] = `Bearer ${session.accessToken}`;
+      if (accessToken) {
+        headers[AUTHORIZATION_HEADER] = `Bearer ${accessToken}`;
       }
 
       if (tenantId) {

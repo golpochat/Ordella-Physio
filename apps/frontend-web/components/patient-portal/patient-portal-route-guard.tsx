@@ -5,7 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const ALLOWED_PREFIXES = ["/patient/profile"];
+const ALLOWED_PREFIXES = [
+  "/patient/profile",
+  "/patient/appointments",
+  "/patient/notes",
+  "/patient/billing",
+  "/patient/messages",
+  "/patient/notifications",
+];
 
 function isAllowedPatientRoute(pathname: string): boolean {
   if (pathname === "/patient") {

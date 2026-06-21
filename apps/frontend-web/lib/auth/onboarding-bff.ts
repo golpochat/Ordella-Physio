@@ -8,6 +8,7 @@ import {
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/auth/cookie-names";
 import { signSessionPayload } from "@/lib/auth/session-signing";
+import { buildSessionUser } from "@/lib/auth/build-session-user";
 import type { SessionCookiePayload } from "@/lib/auth/session";
 
 type OnboardingUpstreamUser = {
@@ -56,12 +57,7 @@ export async function buildOnboardingAuthResponse(data: OnboardingAuthUpstreamDa
   );
 
   const sessionPayload: SessionCookiePayload = {
-    user: {
-      id: data.user.id,
-      role: data.user.roles?.[0] ?? data.user.role ?? "ADMIN",
-      tenantId: data.user.tenantId,
-      roles: data.user.roles,
-    },
+    user: buildSessionUser(data.user),
   };
 
   response.cookies.set(

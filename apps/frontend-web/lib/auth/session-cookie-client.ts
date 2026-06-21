@@ -1,6 +1,7 @@
 import type { AuthUser } from "@/store/auth.store";
 
 import { clearCsrfTokenCache } from "@/lib/auth/csrf";
+import { buildSessionUser } from "@/lib/auth/build-session-user";
 
 import type { SessionCookiePayload } from "@/lib/auth/session-types";
 
@@ -12,16 +13,7 @@ const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 function buildSessionPayload(user: AuthUser): SessionCookiePayload {
   return {
-    user: {
-      id: user.id,
-      role: user.role,
-      effectiveRole: user.effectiveRole,
-      tenantId: user.tenantId,
-      organizationId: user.organizationId,
-      roles: user.roles,
-      permissions: user.permissions,
-      resolvedPermissions: user.permissions,
-    },
+    user: buildSessionUser(user),
   };
 }
 

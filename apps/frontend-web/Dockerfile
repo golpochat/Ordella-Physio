@@ -10,6 +10,9 @@ FROM ordella-base:latest AS base
 FROM base AS build
 ENV CI=true
 COPY . ./apps/frontend-web
+RUN rm -rf apps/frontend-web/app/api/subscription-billing \
+  && rm -f apps/frontend-web/lib/subscription-billing-api.ts \
+  && rm -f apps/frontend-web/hooks/useSubscriptionBilling.ts
 RUN rm -rf apps/frontend-web/node_modules
 # Force Linux-only binaries + disable strict SSL
 RUN echo "strict-ssl=false" >> /root/.npmrc \

@@ -1,3 +1,4 @@
+import { resolveSessionPermissions } from "@/lib/auth/build-session-user";
 import { authClient } from "@/lib/auth-client";
 import { ApiError } from "@/lib/api-client";
 import { getStoredIsAuthenticated } from "@/lib/auth-storage";
@@ -115,13 +116,22 @@ export async function attemptTokenRefresh(): Promise<boolean> {
     try {
       const response = await authClient.refresh();
       const roles = resolveUserRoles(response.user);
+      const primaryRole = roles[0] ?? response.user.role;
+      const { effectiveRole, permissions } = resolveSessionPermissions({
+        role: primaryRole,
+        roles,
+        organizationId: response.user.organizationId,
+        permissionOverrides: (response.user as { permissionOverrides?: string[] }).permissionOverrides,
+      });
 
       useAuthStore.getState().setSession({
         accessToken: response.accessToken,
         user: {
           ...response.user,
+          role: primaryRole,
           roles,
-          permissions: response.user.permissions ?? [],
+          permissions,
+          effectiveRole: response.user.effectiveRole ?? effectiveRole,
         },
       });
       syncTenantFromSession();

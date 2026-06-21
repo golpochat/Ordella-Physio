@@ -2132,7 +2132,6 @@ export namespace Prisma {
     retryCount: number | null
     nextAttemptAt: Date | null
     createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type DeliveryLogMaxAggregateOutputType = {
@@ -2145,7 +2144,6 @@ export namespace Prisma {
     retryCount: number | null
     nextAttemptAt: Date | null
     createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type DeliveryLogCountAggregateOutputType = {
@@ -2160,7 +2158,6 @@ export namespace Prisma {
     retryCount: number
     nextAttemptAt: number
     createdAt: number
-    updatedAt: number
     _all: number
   }
 
@@ -2183,7 +2180,6 @@ export namespace Prisma {
     retryCount?: true
     nextAttemptAt?: true
     createdAt?: true
-    updatedAt?: true
   }
 
   export type DeliveryLogMaxAggregateInputType = {
@@ -2196,7 +2192,6 @@ export namespace Prisma {
     retryCount?: true
     nextAttemptAt?: true
     createdAt?: true
-    updatedAt?: true
   }
 
   export type DeliveryLogCountAggregateInputType = {
@@ -2211,7 +2206,6 @@ export namespace Prisma {
     retryCount?: true
     nextAttemptAt?: true
     createdAt?: true
-    updatedAt?: true
     _all?: true
   }
 
@@ -2313,7 +2307,6 @@ export namespace Prisma {
     retryCount: number
     nextAttemptAt: Date | null
     createdAt: Date
-    updatedAt: Date
     _count: DeliveryLogCountAggregateOutputType | null
     _avg: DeliveryLogAvgAggregateOutputType | null
     _sum: DeliveryLogSumAggregateOutputType | null
@@ -2347,7 +2340,6 @@ export namespace Prisma {
     retryCount?: boolean
     nextAttemptAt?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["deliveryLog"]>
 
   export type DeliveryLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2362,7 +2354,6 @@ export namespace Prisma {
     retryCount?: boolean
     nextAttemptAt?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["deliveryLog"]>
 
   export type DeliveryLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2377,7 +2368,6 @@ export namespace Prisma {
     retryCount?: boolean
     nextAttemptAt?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["deliveryLog"]>
 
   export type DeliveryLogSelectScalar = {
@@ -2392,10 +2382,9 @@ export namespace Prisma {
     retryCount?: boolean
     nextAttemptAt?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }
 
-  export type DeliveryLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "channel" | "provider" | "status" | "errorMessage" | "requestPayload" | "responsePayload" | "retryCount" | "nextAttemptAt" | "createdAt" | "updatedAt", ExtArgs["result"]["deliveryLog"]>
+  export type DeliveryLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "channel" | "provider" | "status" | "errorMessage" | "requestPayload" | "responsePayload" | "retryCount" | "nextAttemptAt" | "createdAt", ExtArgs["result"]["deliveryLog"]>
 
   export type $DeliveryLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "DeliveryLog"
@@ -2412,7 +2401,6 @@ export namespace Prisma {
       retryCount: number
       nextAttemptAt: Date | null
       createdAt: Date
-      updatedAt: Date
     }, ExtArgs["result"]["deliveryLog"]>
     composites: {}
   }
@@ -2847,7 +2835,6 @@ export namespace Prisma {
     readonly retryCount: FieldRef<"DeliveryLog", 'Int'>
     readonly nextAttemptAt: FieldRef<"DeliveryLog", 'DateTime'>
     readonly createdAt: FieldRef<"DeliveryLog", 'DateTime'>
-    readonly updatedAt: FieldRef<"DeliveryLog", 'DateTime'>
   }
     
 
@@ -3256,8 +3243,7 @@ export namespace Prisma {
     responsePayload: 'responsePayload',
     retryCount: 'retryCount',
     nextAttemptAt: 'nextAttemptAt',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    createdAt: 'createdAt'
   };
 
   export type DeliveryLogScalarFieldEnum = (typeof DeliveryLogScalarFieldEnum)[keyof typeof DeliveryLogScalarFieldEnum]
@@ -3537,7 +3523,6 @@ export namespace Prisma {
     retryCount?: IntFilter<"DeliveryLog"> | number
     nextAttemptAt?: DateTimeNullableFilter<"DeliveryLog"> | Date | string | null
     createdAt?: DateTimeFilter<"DeliveryLog"> | Date | string
-    updatedAt?: DateTimeFilter<"DeliveryLog"> | Date | string
   }
 
   export type DeliveryLogOrderByWithRelationInput = {
@@ -3552,7 +3537,6 @@ export namespace Prisma {
     retryCount?: SortOrder
     nextAttemptAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type DeliveryLogWhereUniqueInput = Prisma.AtLeast<{
@@ -3570,7 +3554,6 @@ export namespace Prisma {
     retryCount?: IntFilter<"DeliveryLog"> | number
     nextAttemptAt?: DateTimeNullableFilter<"DeliveryLog"> | Date | string | null
     createdAt?: DateTimeFilter<"DeliveryLog"> | Date | string
-    updatedAt?: DateTimeFilter<"DeliveryLog"> | Date | string
   }, "id">
 
   export type DeliveryLogOrderByWithAggregationInput = {
@@ -3585,7 +3568,6 @@ export namespace Prisma {
     retryCount?: SortOrder
     nextAttemptAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
     _count?: DeliveryLogCountOrderByAggregateInput
     _avg?: DeliveryLogAvgOrderByAggregateInput
     _max?: DeliveryLogMaxOrderByAggregateInput
@@ -3608,7 +3590,6 @@ export namespace Prisma {
     retryCount?: IntWithAggregatesFilter<"DeliveryLog"> | number
     nextAttemptAt?: DateTimeNullableWithAggregatesFilter<"DeliveryLog"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"DeliveryLog"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"DeliveryLog"> | Date | string
   }
 
   export type ProviderConfigCreateInput = {
@@ -3721,7 +3702,6 @@ export namespace Prisma {
     retryCount?: number
     nextAttemptAt?: Date | string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type DeliveryLogUncheckedCreateInput = {
@@ -3736,7 +3716,6 @@ export namespace Prisma {
     retryCount?: number
     nextAttemptAt?: Date | string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type DeliveryLogUpdateInput = {
@@ -3751,7 +3730,6 @@ export namespace Prisma {
     retryCount?: IntFieldUpdateOperationsInput | number
     nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DeliveryLogUncheckedUpdateInput = {
@@ -3766,7 +3744,6 @@ export namespace Prisma {
     retryCount?: IntFieldUpdateOperationsInput | number
     nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DeliveryLogCreateManyInput = {
@@ -3781,7 +3758,6 @@ export namespace Prisma {
     retryCount?: number
     nextAttemptAt?: Date | string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type DeliveryLogUpdateManyMutationInput = {
@@ -3796,7 +3772,6 @@ export namespace Prisma {
     retryCount?: IntFieldUpdateOperationsInput | number
     nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DeliveryLogUncheckedUpdateManyInput = {
@@ -3811,7 +3786,6 @@ export namespace Prisma {
     retryCount?: IntFieldUpdateOperationsInput | number
     nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -4130,7 +4104,6 @@ export namespace Prisma {
     retryCount?: SortOrder
     nextAttemptAt?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type DeliveryLogAvgOrderByAggregateInput = {
@@ -4147,7 +4120,6 @@ export namespace Prisma {
     retryCount?: SortOrder
     nextAttemptAt?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type DeliveryLogMinOrderByAggregateInput = {
@@ -4160,7 +4132,6 @@ export namespace Prisma {
     retryCount?: SortOrder
     nextAttemptAt?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type DeliveryLogSumOrderByAggregateInput = {

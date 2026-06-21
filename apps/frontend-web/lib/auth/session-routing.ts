@@ -144,6 +144,12 @@ export function canAccessGuardedPath(
       : true;
   }
 
+  if (isClinicOperator && pathname.startsWith("/settings")) {
+    return session
+      ? canAccessNavHrefByPermission(pathname, toPermissionSubject(session))
+      : true;
+  }
+
   return false;
 }
 

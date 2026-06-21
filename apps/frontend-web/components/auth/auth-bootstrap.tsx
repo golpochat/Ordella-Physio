@@ -1,10 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { PageLoading } from "@/components/patient-portal/page-state";
 import { SystemRouteEnforcer } from "@/components/navigation/system-route-enforcer";
+import { eraseSessionCookie } from "@/lib/auth/session-cookie-client";
 import {
+  clearAuthSession,
   clearStaleAuthOnPublicPath,
   ensureFreshAccessToken,
   isPublicPath,
@@ -21,8 +23,19 @@ import { useAuthStore } from "@/store/auth.store";
 
 export function AuthBootstrap({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [ready, setReady] = useState(false);
+
+  // Stale refresh cookies after DB resets trigger TOKEN_REUSE_DETECTED — clear before retrying login.
+  useEffect(() => {
+    if (searchParams.get("reason") !== "token-reuse-detected") {
+      return;
+    }
+
+    clearAuthSession();
+    void eraseSessionCookie();
+  }, [searchParams]);
 
   // Validate session once per sign-in — not on every client navigation.
   useEffect(() => {

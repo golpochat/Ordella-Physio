@@ -17,6 +17,7 @@ describe("productized RBAC", () => {
 
   it("maps THERAPIST to clinical workflow permissions", () => {
     const { resolvedPermissions } = resolvePermissions({ role: "THERAPIST" });
+    expect(resolvedPermissions).toContain(PLATFORM_PERMISSIONS.PATIENTS_READ);
     expect(resolvedPermissions).toContain(PLATFORM_PERMISSIONS.AI_NOTES_GENERATE);
     expect(resolvedPermissions).not.toContain(PLATFORM_PERMISSIONS.PATIENTS_DELETE);
   });

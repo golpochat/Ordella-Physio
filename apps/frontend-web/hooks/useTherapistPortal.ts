@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import {
   createTherapistPortalApi,
   normalizeAppointmentList,
@@ -26,7 +26,9 @@ export function useTherapistContext() {
   const user = useAuthStore((state) => state.user);
   const therapistId = user?.id;
   const displayName =
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Therapist";
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    user?.email ||
+    "Therapist";
 
   return { user, therapistId, displayName };
 }
@@ -34,29 +36,35 @@ export function useTherapistContext() {
 export function useTherapistAppointments() {
   const therapistApi = useTherapistPortalApi();
   const { therapistId } = useTherapistContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "appointments", therapistId],
     queryFn: async () => {
-      const response = await therapistApi.listAppointments({ therapistId, limit: 100 });
+      const response = await therapistApi.listAppointments({
+        therapistId,
+        limit: 100,
+      });
       return normalizeAppointmentList(response);
     },
-    enabled: Boolean(therapistId),
+    enabled: authReady && Boolean(therapistId),
   });
 }
 
 export function useTherapistAppointment(id: string) {
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "appointments", id],
     queryFn: () => therapistApi.getAppointment(id),
-    enabled: Boolean(id),
+    enabled: authReady && Boolean(id),
   });
 }
 
 export function useTherapistPatients() {
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "patients"],
@@ -64,40 +72,47 @@ export function useTherapistPatients() {
       const response = await therapistApi.listPatients({ limit: 100 });
       return normalizePatientList(response);
     },
+    enabled: authReady,
   });
 }
 
 export function useTherapistPatient(id: string) {
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "patients", id],
     queryFn: () => therapistApi.getPatient(id),
-    enabled: Boolean(id),
+    enabled: authReady && Boolean(id),
   });
 }
 
 export function useTherapistNotes() {
   const therapistApi = useTherapistPortalApi();
   const { therapistId } = useTherapistContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "notes", therapistId],
     queryFn: async () => {
-      const response = await therapistApi.listNotes({ therapistId, limit: 100 });
+      const response = await therapistApi.listNotes({
+        therapistId,
+        limit: 100,
+      });
       return normalizeNoteList(response);
     },
-    enabled: Boolean(therapistId),
+    enabled: authReady && Boolean(therapistId),
   });
 }
 
 export function useTherapistNote(id: string) {
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "notes", id],
     queryFn: () => therapistApi.getNote(id),
-    enabled: Boolean(id),
+    enabled: authReady && Boolean(id),
   });
 }
 
@@ -106,7 +121,8 @@ export function useCreateTherapistNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateTherapistNotePayload) => therapistApi.createNote(payload),
+    mutationFn: (payload: CreateTherapistNotePayload) =>
+      therapistApi.createNote(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["therapist", "notes"] });
     },
@@ -118,7 +134,8 @@ export function useUpdateTherapistNote(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: UpdateTherapistNotePayload) => therapistApi.updateNote(id, payload),
+    mutationFn: (payload: UpdateTherapistNotePayload) =>
+      therapistApi.updateNote(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["therapist", "notes"] });
       queryClient.invalidateQueries({ queryKey: ["therapist", "notes", id] });
@@ -140,6 +157,7 @@ export function useDeleteTherapistNote() {
 
 export function useTherapistBilling() {
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "billing"],
@@ -147,15 +165,18 @@ export function useTherapistBilling() {
       const response = await therapistApi.listBilling();
       return normalizeInvoiceList(response);
     },
+    enabled: authReady,
   });
 }
 
 export function useTherapistProfile() {
   const therapistApi = useTherapistPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["therapist", "profile"],
     queryFn: () => therapistApi.getProfile(),
+    enabled: authReady,
   });
 }
 
@@ -167,7 +188,8 @@ export function useUpdateTherapistProfile() {
   const user = useAuthStore((state) => state.user);
 
   return useMutation({
-    mutationFn: (payload: UpdateTherapistProfilePayload) => therapistApi.updateProfile(payload),
+    mutationFn: (payload: UpdateTherapistProfilePayload) =>
+      therapistApi.updateProfile(payload),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["therapist", "profile"] });
       if (user && accessToken) {

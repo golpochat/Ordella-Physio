@@ -60,6 +60,11 @@ const LEGACY_ROLE_PERMISSIONS: Record<SecurityRole, Permission[]> = {
     PERMISSIONS.MESSAGING_WRITE,
     PERMISSIONS.NOTIFICATIONS_READ,
     PERMISSIONS.NOTIFICATIONS_WRITE,
+    PERMISSIONS.NOTIFICATION_PROVIDERS_VIEW,
+    PERMISSIONS.NOTIFICATION_PROVIDERS_MANAGE,
+    PERMISSIONS.NOTIFICATION_LOGS_VIEW,
+    PERMISSIONS.NOTIFICATION_ANALYTICS_VIEW,
+    PERMISSIONS.NOTIFICATION_SEND,
     PERMISSIONS.AI_NOTES_READ,
     PERMISSIONS.AI_NOTES_WRITE,
     PERMISSIONS.AI_USE,
@@ -220,10 +225,14 @@ export class RbacService {
 
 export function getPermissionsForRole(role: SecurityRole): Permission[] {
   const effective = normalizeEffectiveRole(role);
+  const legacy = LEGACY_ROLE_PERMISSIONS[role] ?? [];
+
   if (effective) {
-    return getPlatformPermissionsForRole(effective) as unknown as Permission[];
+    const platform = getPlatformPermissionsForRole(effective) as unknown as Permission[];
+    return [...new Set([...platform, ...legacy])];
   }
-  return LEGACY_ROLE_PERMISSIONS[role] ?? [];
+
+  return legacy;
 }
 
 export const rbacService = new RbacService();
