@@ -245,6 +245,7 @@ Run the seed script in [section 5](#5-seed-script-instructions) before first use
 |--------------|-----------|-------|----------|
 | Super Admin | `SYSTEM` | superadmin@ordella.dev | SuperAdmin123! |
 | Org Admin | `ORG_ADMIN` | orgadmin@ordella.dev | OrgAdmin123! |
+| Org Billing Admin | `ORG_BILLING_ADMIN` | orgbillingadmin@ordella.dev | OrgBillingAdmin123! |
 | Clinic Admin | `ADMIN` | clinicadmin@ordella.dev | ClinicAdmin123! |
 | Therapist | `THERAPIST` | therapist@ordella.dev | Therapist123! |
 | Staff | `STAFF` | staff@ordella.dev | Staff123! |
@@ -266,7 +267,15 @@ Run the seed script in [section 5](#5-seed-script-instructions) before first use
 - **Role:** `ORG_ADMIN`  
 - **Tenant:** `demo-tenant` (required on login)  
 - **Organization:** `demo-org` (organization-level billing)  
-- **Portal:** `/organization` → `/organization/billing`
+- **Portal:** `/organization` → billing, profile, and clinics
+
+## Org Billing Admin
+- **Email:** orgbillingadmin@ordella.dev  
+- **Password:** OrgBillingAdmin123!  
+- **Role:** `ORG_BILLING_ADMIN`  
+- **Tenant:** `demo-tenant` (required on login)  
+- **Organization:** `demo-org` (organization-level billing)  
+- **Portal:** `/organization` → billing and profile only (no clinics management)
 
 ## Clinic Admin
 - **Email:** clinicadmin@ordella.dev  

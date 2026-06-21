@@ -83,6 +83,15 @@ export const DEV_SEED_USERS: SeedUser[] = [
     lastName: "Admin",
     organizationId: DEMO_ORG_ID,
   },
+  {
+    id: "dev_user_orgbillingadmin",
+    email: "orgbillingadmin@ordella.dev",
+    password: "OrgBillingAdmin123!",
+    role: "ORG_BILLING_ADMIN",
+    firstName: "Org",
+    lastName: "Billing",
+    organizationId: DEMO_ORG_ID,
+  },
 ];
 
 async function main() {
