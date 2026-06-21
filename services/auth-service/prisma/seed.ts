@@ -1,9 +1,10 @@
-import { PrismaClient, type Role } from "@/generated/prisma";
+import { PrismaClient, type Role } from "../src/generated/prisma";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 export const DEMO_TENANT_ID = "demo-tenant";
+export const DEMO_ORG_ID = "demo-org";
 const BCRYPT_ROUNDS = 12;
 
 type SeedUser = {
@@ -13,6 +14,7 @@ type SeedUser = {
   role: Role;
   firstName: string;
   lastName: string;
+  organizationId?: string;
 };
 
 export const DEV_SEED_USERS: SeedUser[] = [
@@ -72,6 +74,15 @@ export const DEV_SEED_USERS: SeedUser[] = [
     firstName: "Patient",
     lastName: "Two",
   },
+  {
+    id: "dev_user_orgadmin",
+    email: "orgadmin@ordella.dev",
+    password: "OrgAdmin123!",
+    role: "ORG_ADMIN",
+    firstName: "Org",
+    lastName: "Admin",
+    organizationId: DEMO_ORG_ID,
+  },
 ];
 
 async function main() {
@@ -90,6 +101,7 @@ async function main() {
       create: {
         id: user.id,
         tenantId: DEMO_TENANT_ID,
+        organizationId: user.organizationId,
         email: user.email,
         passwordHash,
         role: user.role,
@@ -100,6 +112,7 @@ async function main() {
       update: {
         passwordHash,
         role: user.role,
+        organizationId: user.organizationId,
         firstName: user.firstName,
         lastName: user.lastName,
         emailVerified: true,

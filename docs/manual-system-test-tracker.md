@@ -11,6 +11,7 @@
 | Role | Email | Password | Portal |
 |------|-------|----------|--------|
 | Super Admin | `superadmin@ordella.dev` | `SuperAdmin123!` | `/super-admin` |
+| Org Admin | `orgadmin@ordella.dev` | `OrgAdmin123!` | `/organization` |
 | Clinic Admin | `clinicadmin@ordella.dev` | `ClinicAdmin123!` | `/clinic` |
 | Therapist | `therapist@ordella.dev` | `Therapist123!` | `/therapist` |
 | Staff | `staff@ordella.dev` | `Staff123!` | `/staff` |
@@ -77,7 +78,14 @@
 | 4.4 | 4 | Super admin — users | http://localhost:3010/super-admin/users | `superadmin@ordella.dev` | Users list loads; seeded accounts visible; no 5xx or blocking console errors | OK | **PASS** | |
 | 4.5 | 4 | Super admin — billing metrics | http://localhost:3010/super-admin/billing | `superadmin@ordella.dev` | Platform metrics load (MRR, subs, churn); no 5xx or blocking console errors | Metrics OK; amounts shown as `$` (USD hardcoded in UI) | **PASS*** | Currency display ≠ platform EUR default — cosmetic/config debt |
 | 4.6 | 4 | Super admin — provisioning | http://localhost:3010/super-admin/provisioning/new | `superadmin@ordella.dev` | Provision workspace wizard loads; no redirect loop or blocking errors | OK | **PASS** | Phase 4 complete |
-| 5.1 | 5 | Organization portal — billing | http://localhost:3010/organization/billing | — | Org billing page loads for `ORG_ADMIN` | No seeded org-admin user; org login path not in demo creds | **SKIP** | Phase 5 deferred — seed org admin or complete provisioning first |
+| 5.1 | 5 | Organization portal — billing | http://localhost:3010/organization/billing | `orgadmin@ordella.dev` | Org billing page loads; organization-level billing context | OK after demo org seed | **PASS** | Login tenant: `demo-tenant` |
+| 5.2 | 5 | Login — Org Admin | http://localhost:3010/login | `orgadmin@ordella.dev` | Lands on `/organization` (→ billing) | API + role ORG_ADMIN OK | **PASS** | |
+| 5.3 | 5 | API — billing context | `GET /tenants/internal/billing-context/demo-tenant` | `orgadmin@ordella.dev` | `billingModel: organization-level`, `organizationId: demo-org` | OK | **PASS** | |
+| 5.4 | 5 | API — organizations list | `GET /organizations` | `orgadmin@ordella.dev` | 200 | 200 | **PASS** | |
+| 5.5 | 5 | Org billing upgrade route | http://localhost:3010/organization/billing/upgrade | `orgadmin@ordella.dev` | Page loads (auth redirect OK unauthenticated) | 307 unauthenticated probe | **PASS*** | Full UI: log in manually |
+| 5.6 | 5 | Organization — profile | http://localhost:3010/organization/profile | `orgadmin@ordella.dev` | Profile page loads; org context + account form; `GET /api/auth/users/me` 200 | OK; probe 5.6–5.8 4/4 | **PASS** | New org profile page |
+| 5.7 | 5 | Organization — profile nav + APIs | http://localhost:3010/organization/profile | `orgadmin@ordella.dev` | Profile menu works (not `/access-denied`); no billing-context 403 | billing-context 200; org roles skip tenant notification/messaging polls | **PASS** | RBAC + `portal-scope` fix |
+| 5.8 | 5 | Organization — billing regression | http://localhost:3010/organization/billing | `orgadmin@ordella.dev` | Org billing still loads after profile work | OK | **PASS** | |
 | 6.1 | 6 | Clinic — patients | http://localhost:3010/clinic/patients | `clinicadmin@ordella.dev` | Patients list loads; nav link visible | OK | **PASS** | Fix #5 verified |
 | 6.2 | 6 | Clinic — appointments | http://localhost:3010/clinic/appointments | `clinicadmin@ordella.dev` | Appointments page loads; no blocking 403 on locations API | OK | **PASS** | Fix #6 verified |
 | 6.3 | 6 | Clinic — therapists | http://localhost:3010/clinic/therapists | `clinicadmin@ordella.dev` | Therapists list loads; seeded therapist visible; no blocking console errors | OK | **PASS** | |
@@ -182,7 +190,8 @@
 | 3.3 | Therapist/staff dashboards: 401 race + notes-service down (502) | notes-service Docker/Prisma fix; `useQueryAuthReady()` on therapist/staff portal hooks | 3.3a, 3.4a |
 | 3.4a | Staff `/access-denied` on reports/billing; billing API 403; dashboard blocked by billing errors | Session cookie now includes resolved permissions; middleware role fallback; `billing.read` on STAFF; optional billing on dashboard; TrialBanner gated | 3.4a |
 | 4.2 | Create organization + org pages redirect (WithPermission false negative) | `can()` now resolves dot-notation permission values (`organization.manage`, etc.) | 4.2 |
-| 5.1 | No `ORG_ADMIN` in demo seed; cannot exercise `/organization/*` login flow | Deferred — add seeded org admin or finish provisioning wizard with known owner creds | 5.x |
+| 5.1 | No `ORG_ADMIN` in demo seed; cannot exercise `/organization/*` login flow | Added `demo-org` (ORGANIZATION_LEVEL), linked `demo-tenant`, seeded `orgadmin@ordella.dev`; org + tenant + auth seeds | 5.1–5.5 |
+| 5.6 | Org admin: `/access-denied` on profile; billing-context + unread-count 403; profile pointed at `/clinic/settings` | `billing.read`/`billing.pay` on org roles; org excluded from tenant-scoped notification/messaging polls; `/organization/profile` page; nav `profileHref` fixed | 5.6–5.8 |
 | 6.1 | Clinic nav missing Patients/Appointments/etc. (`patient.view` not in `can()`) | Legacy permission aliases + `CLINIC_ADMIN`→`ADMIN` in `roleHasPermission` | 6.1 |
 | 6.2 | Appointments 403 on tenant locations list (`location.manage` not in platform ADMIN perms) | GET locations no longer requires `location.manage`; JWT passes `resolvedPermissions`; removed font preload warnings | 6.2 |
 | 7.1 | Therapist `/therapist/patients` → access-denied (nav shows link but middleware denies `patients.read`) | Added `patients.read`, `patients.write`, `billing.read` to THERAPIST in `platform-role-permissions.ts` | 7.1a |
@@ -215,7 +224,8 @@
 - **Phase 2 complete** (2026-06-21): 2.1–2.4 + 2.2b all PASS.
 - **Phase 3 complete** (2026-06-21): 3.1–3.6 + 3.2a, 3.3a, 3.4a all PASS.
 - **Phase 4 complete** (2026-06-21): 4.1–4.6 all PASS.
-- **Phase 5 skipped** (2026-06-21): no seeded `ORG_ADMIN` / org-portal login in demo creds; UI exists at `/organization/billing` but needs provisioned org owner.
+- **Phase 5 complete** (2026-06-21): 5.1–5.8 organization portal — `orgadmin@ordella.dev` + `demo-org` org-level billing + profile; probes `_probe-phase5.mjs` 7/7, `_probe-phase5-retest.mjs` 4/4.
+- **Manual full-system test run complete** (Phases 0–12; Phase 5 previously skipped, now complete).
 - **Phase 6 complete** (2026-06-21): 6.1–6.6 all PASS/PASS* — clinic core ops UI verified under `clinicadmin@ordella.dev`.
 - **Phase 7 complete** (2026-06-21): 7.1–7.28 therapist, staff, patient, and pharmacy portal sidebar routes all PASS/PASS*.
 - **Phase 8 complete** (2026-06-21): 8.0–8.12 communications — clinic/therapist/staff messages & notifications; settings notification providers/analytics/logs; gateway messaging health OK.
@@ -223,5 +233,57 @@
 - **Phase 10 complete** (2026-06-21): 10.1–10.12 reporting & audit — clinic reports (hub, appointments, revenue, patients, saved), audit logs, super-admin reports/audit; staff/pharmacy reports verified in Phase 7 (7.13, 7.25).
 - **Phase 11 complete** (2026-06-21): 11.1–11.14 AI platform UI — clinic AI routes render with graceful upstream 502; therapist AI notes create OK; AI microservices not in dev stack (PASS*).
 - **Phase 12 complete** (2026-06-21): 12.1–12.9 direct service health — 20 dev-stack `/health` + 5 `/ready` probes all 200 via gateway; 14 off-stack services 502 (PASS*); `_probe-phase12.mjs` 39/39.
-- **Manual full-system test run complete** (Phases 0–12; Phase 5 skipped — no org-admin seed).
 - Login → trial onboarding is a 2-step funnel: `/checkout?intent=trial` first, then `/register` after "Start Free Trial" (not a direct link to `/register`).
+
+---
+
+## Post-manual-test backlog
+
+> **Status:** Manual run Phases 0–12 complete (2026-06-21). Items below are follow-ups, not blockers for closing the test run.
+
+### P1 — Organization portal (product gaps)
+
+| ID | Item | Why | Trigger / finish line |
+|----|------|-----|------------------------|
+| BL-5.1 | **Org tenants UI** — list/link clinics under `demo-org` at e.g. `/organization/tenants` | Org admin can `GET /organizations` via API but has no tenant-management screen; Phase 5 finish line implied org dashboard beyond billing | Org admin can view linked tenants without super-admin portal |
+| BL-5.2 | **`ORG_BILLING_ADMIN` role** — seed user + manual test login/billing/profile | Only `ORG_ADMIN` exercised in Phase 5; billing-only role permissions differ (`ORG_BILLING_MANAGE` without `ORG_TENANTS_*`) | Login lands on org portal; billing + profile work; no spurious 403s |
+| BL-5.3 | **Commit Phase 5 work** — org seeds, RBAC (`billing.read` on org roles), `portal-scope`, `/organization/profile`, probes | All local/uncommitted after manual test fixes | Single reviewable commit on `main` |
+| BL-5.4 | **Profile enhancements** — password change, MFA status on org profile | Account form only updates name/email today | Parity with therapist/staff profile |
+
+### P2 — Demo data & PASS\* debt from manual run
+
+| ID | Item | Notes from tracker |
+|----|------|-------------------|
+| BL-D.1 | **Staff members seed** | 6.4 — `staff@ordella.dev` exists in auth; `staff_members` table empty |
+| BL-D.2 | **Clinical notes seed** | 6.5, 7.3 — therapist notes list always empty in demo |
+| BL-D.3 | **Stripe local wiring** | 6.6 — platform subscription `none`; clinic/org billing panels need `STRIPE_*` keys for subscribe/portal flows |
+| BL-D.4 | **Super-admin billing currency** | 4.5 — metrics show `$` (USD hardcoded); platform default may be EUR |
+| BL-D.5 | **Enterprise plan on demo tenant** | 9.10 — SSO API returns 403 "Enterprise plan required" (expected PASS\*) |
+
+### P2 — Dev stack completeness
+
+| ID | Item | Notes |
+|----|------|-------|
+| BL-S.1 | **AI microservices in `docker-compose.dev.yml`** | Phase 11/12 — 14 services 502 off-stack; clinic AI pages show graceful 502 |
+| BL-S.2 | **payment, communication, search-index** in dev compose | Phase 12.3 — gateway health 502 |
+| BL-S.3 | **Messaging SSE stream** | 7.18, 7.26 — `/api/messaging/stream` 404; inbox UI OK without realtime |
+| BL-S.4 | **Docker build hygiene** | Full `docker compose build` can fail on unrelated services (e.g. `search-index-service`); prefer targeted rebuilds via `docker-compose.dev.yml` |
+| BL-S.5 | **Rebuild images with Phase 5 seeds** | Org admin seed applied via `docker cp` + manual seed; bake into images or document re-seed runbook |
+
+### P3 — Production & security (existing docs)
+
+| ID | Item | Reference |
+|----|------|-----------|
+| BL-P.1 | Replace `change-me-*` secrets, Redis/Upstash, backup cron | `.cursor/rules/security-hardening-deferred.mdc` |
+| BL-P.2 | JWT automated rotation runbook | `docs/runbooks/jwt-rotation.md` |
+| BL-P.3 | ClamAV on uploads (`CLAMAV_ENABLED=true`) | Already wired; enable in prod compose |
+| BL-P.4 | `subscription-billing` service directory removal | `docs/implementation-audit-tracker.md` — deprecation complete, delete deferred |
+
+### Suggested pick order
+
+1. **BL-5.3** — commit current fixes while context is fresh  
+2. **BL-5.1** — org tenants UI (biggest org-portal product gap)  
+3. **BL-5.2** — `ORG_BILLING_ADMIN` seed + smoke test  
+4. **BL-D.3** — Stripe keys for end-to-end billing demo  
+5. **BL-S.1** — AI stack in dev (only if actively developing AI features)
+

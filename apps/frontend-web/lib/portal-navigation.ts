@@ -121,14 +121,14 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
     id: "organization",
     brandTitle: "Organization",
     allowedRoles: ["ORG_ADMIN", "ORG_BILLING_ADMIN"],
-    profileHref: "/clinic/settings",
-    settingsHref: "/clinic/settings",
+    profileHref: "/organization/profile",
+    settingsHref: "/organization/profile",
     sections: [
       {
         title: "Platform",
         items: [
+          item("settings", "Profile", "/organization/profile", ["admin"]),
           item("billing", "Billing", "/organization/billing", ["admin"]),
-          item("clinic", "Clinic portal", "/clinic", ["admin"]),
         ],
       },
     ],

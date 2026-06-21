@@ -244,6 +244,7 @@ Run the seed script in [section 5](#5-seed-script-instructions) before first use
 | Portal label | Auth role | Email | Password |
 |--------------|-----------|-------|----------|
 | Super Admin | `SYSTEM` | superadmin@ordella.dev | SuperAdmin123! |
+| Org Admin | `ORG_ADMIN` | orgadmin@ordella.dev | OrgAdmin123! |
 | Clinic Admin | `ADMIN` | clinicadmin@ordella.dev | ClinicAdmin123! |
 | Therapist | `THERAPIST` | therapist@ordella.dev | Therapist123! |
 | Staff | `STAFF` | staff@ordella.dev | Staff123! |
@@ -258,6 +259,14 @@ Run the seed script in [section 5](#5-seed-script-instructions) before first use
 - **Password:** SuperAdmin123!  
 - **Role:** `SYSTEM`  
 - **Portal:** `/super-admin`
+
+## Org Admin
+- **Email:** orgadmin@ordella.dev  
+- **Password:** OrgAdmin123!  
+- **Role:** `ORG_ADMIN`  
+- **Tenant:** `demo-tenant` (required on login)  
+- **Organization:** `demo-org` (organization-level billing)  
+- **Portal:** `/organization` → `/organization/billing`
 
 ## Clinic Admin
 - **Email:** clinicadmin@ordella.dev  
@@ -337,6 +346,7 @@ docker compose -f docker-compose.dev.yml run --rm --no-deps patient-service \
 | Service | Seed file |
 |---------|-----------|
 | Auth users | `services/auth-service/prisma/seed.ts` |
+| Demo organization | `services/organization-service/prisma/seed.ts` |
 | Demo tenant + staff | `services/tenant-service/prisma/seed.ts` |
 | Patient records | `services/patient-service/prisma/seed.ts` |
 

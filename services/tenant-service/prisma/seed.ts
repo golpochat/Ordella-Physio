@@ -3,6 +3,7 @@ import { PrismaClient } from "../src/generated/prisma";
 const prisma = new PrismaClient();
 
 const DEMO_TENANT_ID = "demo-tenant";
+const DEMO_ORG_ID = "demo-org";
 
 const STAFF_MEMBERS: Array<{ userId: string; role: string; label: string }> = [
   { userId: "dev_user_clinicadmin", role: "ADMIN", label: "clinicadmin@ordella.dev" },
@@ -15,7 +16,7 @@ async function main() {
   console.log(`Seeding tenant "${DEMO_TENANT_ID}"...`);
 
   await prisma.$executeRaw`
-    INSERT INTO tenants (id, name, code, slug, timezone, currency, address, phone, status, "isActive", "createdAt", "updatedAt")
+    INSERT INTO tenants (id, name, code, slug, timezone, currency, address, phone, "organizationId", status, "isActive", "createdAt", "updatedAt")
     VALUES (
       ${DEMO_TENANT_ID},
       'Demo Clinic',
@@ -25,6 +26,7 @@ async function main() {
       'GBP',
       '1 Demo Street, London',
       '+44 20 7946 0958',
+      ${DEMO_ORG_ID},
       'ACTIVE'::"TenantStatus",
       true,
       NOW(),
@@ -33,6 +35,7 @@ async function main() {
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       code = EXCLUDED.code,
+      "organizationId" = EXCLUDED."organizationId",
       status = 'ACTIVE',
       "isActive" = true,
       "updatedAt" = NOW()

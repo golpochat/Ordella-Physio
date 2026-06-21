@@ -1,7 +1,12 @@
+import { isOrganizationRole, normalizeEffectiveRole } from "@ordella/security/rbac";
 import { isSystemRole } from "@/lib/auth/roleRedirect";
 
 export function isSystemPortalUser(role: string | undefined): boolean {
   return isSystemRole(role);
+}
+
+export function isOrganizationPortalUser(role: string | undefined): boolean {
+  return isOrganizationRole(normalizeEffectiveRole(role));
 }
 
 export function shouldUseTenantScopedApi(role: string | undefined): boolean {
@@ -9,7 +14,11 @@ export function shouldUseTenantScopedApi(role: string | undefined): boolean {
     return false;
   }
 
-  return !isSystemPortalUser(role);
+  if (isSystemPortalUser(role) || isOrganizationPortalUser(role)) {
+    return false;
+  }
+
+  return true;
 }
 
 export function resolveScopedTenantId(
