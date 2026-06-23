@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -8,6 +9,7 @@ import { ListPage } from "@/components/dashboard/ListPage";
 import { useAuth } from "@/hooks/useAuth";
 import { useCostBudget, useUpdateCostBudget } from "@/hooks/useAiCost";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiCostSectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -20,11 +22,7 @@ export default function ClinicCostBudgetPage() {
   return (
     <WithPermission permission="ai.model.view">
       <ListPage title="AI budget" subtitle="Monthly token and cost limits." isLoading={budget.isLoading} isError={budget.isError} onRetry={() => void budget.refetch()} loadingRows={4}>
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.cost} className="ai-admin-nav-link">Dashboard</Link>
-          <Link href={clinicAiPaths.costBudget} className="ai-admin-nav-link ai-admin-nav-link-active">Budget</Link>
-          <Link href={clinicAiPaths.costAlerts} className="ai-admin-nav-link">Alerts</Link>
-        </div>
+        <AiAdminSectionNav items={aiCostSectionNav(clinicAiPaths)} />
         <BudgetUsageBar budget={budget.data} />
         {canManage ? (
           <BudgetConfigPanel

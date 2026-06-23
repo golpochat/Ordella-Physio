@@ -78,7 +78,7 @@ export function SaveReportModal({
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
-      <ModalContent>
+      <ModalContent className="max-w-lg">
         <form onSubmit={(event) => void handleSubmit(event)}>
           <ModalHeader>
             <ModalTitle>Save report</ModalTitle>

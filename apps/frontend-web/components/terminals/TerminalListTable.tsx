@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import type { ClinicLocation } from "@/lib/clinic-portal-types";
@@ -153,14 +154,18 @@ export function TerminalListTable({
             <div className="dashboard-cell-muted">{terminal.status}</div>
             <div className="dashboard-cell-muted">{formatDateTime(terminal.lastSeenAt)}</div>
             <div className="dashboard-cell-muted">{formatCreatedAt(terminal.createdAt)}</div>
-            <div className="user-list-actions">
-              <Link href={`/clinic/terminals/${terminal.id}`} className="dashboard-link">
-                View
-              </Link>
-              <Link href={`/clinic/terminals/${terminal.id}/edit`} className="dashboard-link">
-                Edit
-              </Link>
-            </div>
+            <TableRowActions>
+              <TableActionLink
+                href={`/clinic/terminals/${terminal.id}`}
+                label={`View terminal ${terminal.code}`}
+                icon="view"
+              />
+              <TableActionLink
+                href={`/clinic/terminals/${terminal.id}/edit`}
+                label={`Edit terminal ${terminal.code}`}
+                icon="edit"
+              />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

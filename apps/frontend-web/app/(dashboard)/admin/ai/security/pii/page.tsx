@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { ListPage } from "@/components/dashboard/ListPage";
 import { useAuth } from "@/hooks/useAuth";
 import { usePiiIncidents, useResolvePiiIncident } from "@/hooks/useAiSecurity";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiSecuritySectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 import type { PIIIncidentRecord } from "@/lib/security-types";
@@ -25,11 +27,7 @@ export default function AdminSecurityPiiPage() {
     <WithPermission permission="ai.admin">
       <AiAdminShell>
         <ListPage title="PII incidents" subtitle="Detected and redacted personally identifiable information." isLoading={isLoading} isError={isError} onRetry={() => void refetch()} loadingRows={5}>
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.securityAudit} className="ai-admin-nav-link">Audit</Link>
-            <Link href={adminAiPaths.securityPolicies} className="ai-admin-nav-link">Policies</Link>
-            <Link href={adminAiPaths.securityPii} className="ai-admin-nav-link ai-admin-nav-link-active">PII</Link>
-          </div>
+          <AiAdminSectionNav items={aiSecuritySectionNav(adminAiPaths)} />
           <PIIIncidentList
             incidents={data ?? []}
             onSelect={setSelected}

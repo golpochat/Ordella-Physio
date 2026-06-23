@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -13,6 +14,7 @@ import {
 } from "@/hooks/useAiGateway";
 import { useAuth } from "@/hooks/useAuth";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiGatewaySectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -37,11 +39,7 @@ export default function ClinicGatewayLimitsPage() {
         }}
         loadingRows={4}
       >
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.gatewayKeys} className="ai-admin-nav-link">Keys</Link>
-          <Link href={clinicAiPaths.gatewayUsage} className="ai-admin-nav-link">Usage</Link>
-          <Link href={clinicAiPaths.gatewayLimits} className="ai-admin-nav-link ai-admin-nav-link-active">Limits</Link>
-        </div>
+        <AiAdminSectionNav items={aiGatewaySectionNav(clinicAiPaths)} />
         {canManage ? (
           <>
             <RateLimitConfig

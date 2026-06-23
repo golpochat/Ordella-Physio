@@ -1,23 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { NavItem } from "@/components/navigation/NavItem";
 import { NavSection } from "@/components/navigation/NavSection";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserPortalRoles } from "@/lib/nav-roles";
 import { getBrandAbbreviation } from "@/lib/nav-brand";
 import type { PortalNavConfig } from "@/lib/portal-navigation";
-import { portalHasCapability } from "@/lib/portal-capabilities";
-import type { PortalRole } from "@/lib/rbac";
-import { mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
-import {
-  SIDEBAR_BRAND_TITLE,
-  SIDEBAR_ROLE_PORTAL,
-  sidebarConfig,
-  type SidebarMenuItem,
-  type SidebarRoleKey,
-} from "@/components/navigation/sidebar-config";
 import { useUiStore } from "@/store/ui.store";
 import { cn } from "@/lib/cn";
 
@@ -29,53 +18,6 @@ export type SidebarProps = {
   mobile?: boolean;
   onNavigate?: () => void;
 };
-
-function resolveSidebarRole(user: ReturnType<typeof useAuth>["user"]): SidebarRoleKey | undefined {
-  if (!user) {
-    return undefined;
-  }
-
-  const roles = getUserPortalRoles(user);
-
-  if (roles.some((role) => role === "CLINIC_ADMIN" || role === "ADMIN" || role === "OWNER")) {
-    return "admin";
-  }
-
-  if (roles.includes("STAFF")) {
-    return "staff";
-  }
-
-  if (roles.includes("THERAPIST")) {
-    return "therapist";
-  }
-
-  const mapped = mapAuthRoleToPortalRole(user.role ?? "");
-  if (mapped === "CLINIC_ADMIN" || mapped === "ADMIN") {
-    return "admin";
-  }
-  if (mapped === "STAFF") {
-    return "staff";
-  }
-  if (mapped === "THERAPIST") {
-    return "therapist";
-  }
-
-  return undefined;
-}
-
-function filterMenuItems(
-  items: SidebarMenuItem[],
-  userRoles: PortalRole[],
-  permissions: string[],
-): SidebarMenuItem[] {
-  return items.filter(
-    (item) => !item.permission || portalHasCapability(userRoles, item.permission, permissions),
-  );
-}
-
-function sidebarRoleMatchesPortal(sidebarRole: SidebarRoleKey, portalId: string): boolean {
-  return SIDEBAR_ROLE_PORTAL[sidebarRole] === portalId;
-}
 
 export function Sidebar({
   config,
@@ -89,7 +31,6 @@ export function Sidebar({
   const collapsed = useUiStore((state) => state.sidebarCollapsed);
   const setMobileNavOpen = useUiStore((state) => state.setMobileNavOpen);
   const userRoles = getUserPortalRoles(user);
-  const sidebarRole = resolveSidebarRole(user);
   const [hoverExpanded, setHoverExpanded] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
@@ -101,19 +42,7 @@ export function Sidebar({
     return () => media.removeEventListener("change", update);
   }, []);
 
-  const menuItems = useMemo(() => {
-    if (!sidebarRole || !sidebarRoleMatchesPortal(sidebarRole, config.id)) {
-      return [];
-    }
-
-    return filterMenuItems(sidebarConfig[sidebarRole], userRoles, user?.permissions ?? []);
-  }, [config.id, sidebarRole, userRoles, user?.permissions]);
-
-  const useRbacMenu =
-    Boolean(sidebarRole) && sidebarRoleMatchesPortal(sidebarRole!, config.id);
-
-  const brandTitle = sidebarRole && useRbacMenu ? SIDEBAR_BRAND_TITLE[sidebarRole] : config.brandTitle;
-
+  const brandTitle = config.brandTitle;
   const isCollapsed = mobile ? false : collapsed || isTablet;
   const showLabels = mobile || !isCollapsed || hoverExpanded;
 
@@ -124,7 +53,7 @@ export function Sidebar({
     }
   };
 
-  if (!sidebarRole && !config.sections.length) {
+  if (!config.sections.length) {
     return null;
   }
 
@@ -158,37 +87,16 @@ export function Sidebar({
       </div>
 
       <nav className="sidebar-nav" aria-label={`${brandTitle} navigation`}>
-        {useRbacMenu && menuItems.length > 0 ? (
-          <div className="nav-section">
-            {!showLabels ? null : <p className="nav-section-title">Menu</p>}
-            <div className="nav-section-items">
-              {menuItems.map((item) => (
-                <NavItem
-                  key={item.href}
-                  icon={item.icon}
-                  label={item.label}
-                  href={item.href}
-                  userRoles={userRoles}
-                  collapsed={!showLabels}
-                  onNavigate={handleNavigate}
-                />
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {!useRbacMenu
-          ? config.sections.map((section) => (
-              <NavSection
-                key={section.title}
-                title={section.title}
-                items={section.items}
-                userRoles={userRoles}
-                collapsed={!showLabels}
-                onNavigate={handleNavigate}
-              />
-            ))
-          : null}
+        {config.sections.map((section) => (
+          <NavSection
+            key={section.title}
+            title={section.title}
+            items={section.items}
+            userRoles={userRoles}
+            collapsed={!showLabels}
+            onNavigate={handleNavigate}
+          />
+        ))}
       </nav>
 
       <div className="sidebar-footer">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { TableActionButton, TableRowActions } from "@/components/ui/table-row-actions";
 import { Input, Label } from "@/components/ui/input";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
@@ -197,22 +198,22 @@ export function PatientNotesList({
               <div className="dashboard-cell-muted">{NOTE_TYPE_LABELS[note.noteType]}</div>
               <div className="dashboard-cell-muted">{formatStaffLabel(note.staffId)}</div>
               <div className="dashboard-cell-muted">{formatCreatedAt(note.createdAt)}</div>
-              <div className="user-list-actions">
+              <TableRowActions>
                 {canReadNotes ? (
-                  <button
-                    type="button"
-                    className="dashboard-link"
+                  <TableActionButton
+                    label={`View note ${note.title}`}
+                    icon="view"
                     onClick={() => setViewNote(note)}
-                  >
-                    View
-                  </button>
+                  />
                 ) : null}
                 {canWriteNotes ? (
-                  <button type="button" className="dashboard-link" onClick={() => onEditNote(note)}>
-                    Edit
-                  </button>
+                  <TableActionButton
+                    label={`Edit note ${note.title}`}
+                    icon="edit"
+                    onClick={() => onEditNote(note)}
+                  />
                 ) : null}
-              </div>
+              </TableRowActions>
             </Row>
           ))}
         </DataTable>

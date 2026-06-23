@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { TableActionButton, TableRowActions } from "@/components/ui/table-row-actions";
+import { ConfirmDialog } from "@/components/clinic-ui/confirm-dialog";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
-import {
-  Modal,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from "@/components/ui/modal";
 import { useDeleteClinicPatientAttachment } from "@/hooks/useClinicPortal";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
@@ -173,47 +165,39 @@ export function PatientAttachmentList({
               {formatStaffLabel(attachment.uploadedByStaffId)}
             </div>
             <div className="dashboard-cell-muted">{formatCreatedAt(attachment.createdAt)}</div>
-            <div className="user-list-actions">
-              <button
-                type="button"
-                className="dashboard-link"
+            <TableRowActions>
+              <TableActionButton
+                label={`Download ${attachment.fileName}`}
+                icon="download"
                 disabled={isBusy || downloadingId === attachment.id}
                 onClick={() => void handleDownload(attachment)}
-              >
-                {downloadingId === attachment.id ? "Downloading..." : "Download"}
-              </button>
-              <button
-                type="button"
-                className="dashboard-link"
+              />
+              <TableActionButton
+                label={`Delete ${attachment.fileName}`}
+                icon="delete"
+                destructive
                 disabled={isBusy || isDeleting}
                 onClick={() => setDeleteTarget(attachment)}
-              >
-                Delete
-              </button>
-            </div>
+              />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>
 
-      <Modal open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>Delete attachment</ModalTitle>
-            <ModalDescription>
-              Delete {deleteTarget?.fileName}? This action cannot be undone.
-            </ModalDescription>
-          </ModalHeader>
-          <ModalFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" disabled={isDeleting} onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" disabled={isDeleting} onClick={handleConfirmDelete}>
-              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Delete attachment"
+        description={
+          deleteTarget
+            ? `Delete ${deleteTarget.fileName}? This action cannot be undone.`
+            : undefined
+        }
+        confirmLabel="Delete"
+        destructive
+        loading={isDeleting}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

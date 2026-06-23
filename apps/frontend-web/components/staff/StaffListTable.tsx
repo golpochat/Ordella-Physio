@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import type { ClinicStaffListFilters, ClinicStaffListItem } from "@/lib/clinic-staff-member-types";
@@ -143,14 +144,18 @@ export function StaffListTable({
             <div className="dashboard-cell-muted">{formatLocations(member)}</div>
             <div className="dashboard-cell-muted">{member.status}</div>
             <div className="dashboard-cell-muted">{formatCreatedAt(member.createdAt)}</div>
-            <div className="user-list-actions">
-              <Link href={`/clinic/staff/${member.id}`} className="dashboard-link">
-                View
-              </Link>
-              <Link href={`/clinic/staff/${member.id}/edit`} className="dashboard-link">
-                Edit
-              </Link>
-            </div>
+            <TableRowActions>
+              <TableActionLink
+                href={`/clinic/staff/${member.id}`}
+                label={`View ${member.firstName} ${member.lastName}`}
+                icon="view"
+              />
+              <TableActionLink
+                href={`/clinic/staff/${member.id}/edit`}
+                label={`Edit ${member.firstName} ${member.lastName}`}
+                icon="edit"
+              />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

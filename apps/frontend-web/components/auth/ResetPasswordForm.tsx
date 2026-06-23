@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Button } from "@/components/ui/button";
+import { FormErrorBanner } from "@/components/ui/form-feedback";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { authClient } from "@/lib/auth-client";
 
@@ -67,7 +68,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   return (
     <form className="auth-form-stack" onSubmit={handleSubmit} noValidate>
-      {formError ? <p className="auth-form-error">{formError}</p> : null}
+      {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
 
       <PasswordInput
         id="newPassword"

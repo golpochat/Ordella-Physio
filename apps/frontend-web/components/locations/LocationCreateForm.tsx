@@ -136,7 +136,7 @@ export function LocationCreateForm() {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -154,7 +154,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.name)}
               />
               {fieldErrors.name ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.name}</p>
+                <p className="form-field-error">{fieldErrors.name}</p>
               ) : null}
             </div>
 
@@ -170,7 +170,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.code)}
               />
               {fieldErrors.code ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.code}</p>
+                <p className="form-field-error">{fieldErrors.code}</p>
               ) : null}
             </div>
 
@@ -183,7 +183,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.addressLine1)}
               />
               {fieldErrors.addressLine1 ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.addressLine1}</p>
+                <p className="form-field-error">{fieldErrors.addressLine1}</p>
               ) : null}
             </div>
 
@@ -205,7 +205,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.city)}
               />
               {fieldErrors.city ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.city}</p>
+                <p className="form-field-error">{fieldErrors.city}</p>
               ) : null}
             </div>
 
@@ -227,7 +227,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.postalCode)}
               />
               {fieldErrors.postalCode ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.postalCode}</p>
+                <p className="form-field-error">{fieldErrors.postalCode}</p>
               ) : null}
             </div>
 
@@ -247,7 +247,7 @@ export function LocationCreateForm() {
                 ))}
               </select>
               {fieldErrors.country ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.country}</p>
+                <p className="form-field-error">{fieldErrors.country}</p>
               ) : null}
             </div>
 
@@ -261,7 +261,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.phone)}
               />
               {fieldErrors.phone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.phone}</p>
+                <p className="form-field-error">{fieldErrors.phone}</p>
               ) : null}
             </div>
 
@@ -275,7 +275,7 @@ export function LocationCreateForm() {
                 aria-invalid={Boolean(fieldErrors.email)}
               />
               {fieldErrors.email ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.email}</p>
+                <p className="form-field-error">{fieldErrors.email}</p>
               ) : null}
             </div>
 
@@ -295,7 +295,7 @@ export function LocationCreateForm() {
                 ))}
               </select>
               {fieldErrors.timezone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.timezone}</p>
+                <p className="form-field-error">{fieldErrors.timezone}</p>
               ) : null}
             </div>
           </div>

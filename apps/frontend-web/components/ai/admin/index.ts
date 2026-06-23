@@ -23,3 +23,4 @@ export { DriftEventTimeline } from "@/components/ai/models/DriftEventTimeline";
 export { DriftMitigationPanel } from "@/components/ai/models/DriftMitigationPanel";
 export { AIDashboardStats } from "@/components/ai/admin/AIDashboardStats";
 export { AiAdminShell } from "@/components/ai/admin/AiAdminShell";
+export { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";

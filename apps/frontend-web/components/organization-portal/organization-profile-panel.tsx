@@ -56,12 +56,12 @@ export function OrganizationProfilePanel() {
   );
 
   return (
-    <div className="space-y-6">
+    <>
       <PageHeader
         title="Profile"
         subtitle="Manage your organization admin account and view organization context."
       />
       <AccountProfilePanel context={organizationContext} />
-    </div>
+    </>
   );
 }

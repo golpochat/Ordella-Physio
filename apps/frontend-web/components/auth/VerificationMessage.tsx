@@ -5,6 +5,10 @@ import Link from "next/link";
 import { Loader2 } from "@ordella/shared-icons";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { authClient } from "@/lib/auth-client";
+import {
+  FormErrorBanner,
+  FormSuccessBanner,
+} from "@/components/ui/form-feedback";
 
 type VerificationState = "loading" | "success" | "error";
 
@@ -46,9 +50,13 @@ export function VerificationMessage({ token }: VerificationMessageProps) {
   return (
     <div className="auth-verification-message">
       {state === "loading" ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
-      <p className={state === "error" ? "auth-form-error" : state === "success" ? "auth-form-success" : undefined}>
-        {message}
-      </p>
+      {state === "error" ? (
+        <FormErrorBanner>{message}</FormErrorBanner>
+      ) : state === "success" ? (
+        <FormSuccessBanner>{message}</FormSuccessBanner>
+      ) : (
+        <p>{message}</p>
+      )}
       {state === "success" ? (
         <Link href="/login" className="text-primary hover:underline">
           Continue to sign in

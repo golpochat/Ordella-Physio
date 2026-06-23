@@ -99,7 +99,7 @@ export function AdminResetPasswordForm({ user }: AdminResetPasswordFormProps) {
       </CardHeader>
       <CardBody>
         <form className="tenant-create-form" onSubmit={handleSubmit} noValidate>
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <PasswordInput
             id="password"

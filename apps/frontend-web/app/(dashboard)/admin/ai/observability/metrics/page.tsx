@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { MetricCharts } from "@/components/ai/observability/MetricCharts";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { useObservabilityMetrics } from "@/hooks/useAiObservability";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiObservabilitySectionNav } from "@/lib/ai-admin-section-nav";
 import { WithPermission } from "@/lib/auth/withPermission";
 
 export default function AdminObservabilityMetricsPage() {
@@ -32,12 +34,7 @@ export default function AdminObservabilityMetricsPage() {
           }}
           loadingRows={4}
         >
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.observability} className="ai-admin-nav-link">Dashboard</Link>
-            <Link href={adminAiPaths.observabilityTraces} className="ai-admin-nav-link">Traces</Link>
-            <Link href={adminAiPaths.observabilityLogs} className="ai-admin-nav-link">Logs</Link>
-            <Link href={adminAiPaths.observabilityMetrics} className="ai-admin-nav-link ai-admin-nav-link-active">Metrics</Link>
-          </div>
+          <AiAdminSectionNav items={aiObservabilitySectionNav(adminAiPaths)} />
           <MetricCharts
             latency={latency.data}
             errorRate={errorRate.data}

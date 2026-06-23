@@ -199,7 +199,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <fieldset className="tenant-create-form-section">
             <legend className="tenant-create-form-section-title">Personal info</legend>
@@ -214,7 +214,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setFirstName(event.target.value)}
                 />
                 {fieldErrors.firstName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.firstName}</p>
+                  <p className="form-field-error">{fieldErrors.firstName}</p>
                 ) : null}
               </div>
 
@@ -228,7 +228,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setLastName(event.target.value)}
                 />
                 {fieldErrors.lastName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.lastName}</p>
+                  <p className="form-field-error">{fieldErrors.lastName}</p>
                 ) : null}
               </div>
 
@@ -243,7 +243,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setDateOfBirth(event.target.value)}
                 />
                 {fieldErrors.dateOfBirth ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.dateOfBirth}</p>
+                  <p className="form-field-error">{fieldErrors.dateOfBirth}</p>
                 ) : null}
               </div>
 
@@ -289,7 +289,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setPhone(event.target.value)}
                 />
                 {fieldErrors.phone ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.phone}</p>
+                  <p className="form-field-error">{fieldErrors.phone}</p>
                 ) : null}
               </div>
 
@@ -304,7 +304,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setEmail(event.target.value)}
                 />
                 {fieldErrors.email ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.email}</p>
+                  <p className="form-field-error">{fieldErrors.email}</p>
                 ) : null}
               </div>
             </div>
@@ -323,7 +323,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setAddressLine1(event.target.value)}
                 />
                 {fieldErrors.addressLine1 ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.addressLine1}</p>
+                  <p className="form-field-error">{fieldErrors.addressLine1}</p>
                 ) : null}
               </div>
 
@@ -392,7 +392,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setEmergencyContactName(event.target.value)}
                 />
                 {fieldErrors.emergencyContactName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.emergencyContactName}</p>
+                  <p className="form-field-error">{fieldErrors.emergencyContactName}</p>
                 ) : null}
               </div>
 
@@ -406,7 +406,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                   onChange={(event) => setEmergencyContactPhone(event.target.value)}
                 />
                 {fieldErrors.emergencyContactPhone ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.emergencyContactPhone}</p>
+                  <p className="form-field-error">{fieldErrors.emergencyContactPhone}</p>
                 ) : null}
               </div>
             </div>
@@ -437,7 +437,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                     onChange={(event) => setProviderName(event.target.value)}
                   />
                   {fieldErrors["insurance.providerName"] ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors["insurance.providerName"]}
                     </p>
                   ) : null}
@@ -453,7 +453,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                     onChange={(event) => setPolicyNumber(event.target.value)}
                   />
                   {fieldErrors["insurance.policyNumber"] ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors["insurance.policyNumber"]}
                     </p>
                   ) : null}
@@ -470,7 +470,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                     onChange={(event) => setExpiryDate(event.target.value)}
                   />
                   {fieldErrors["insurance.expiryDate"] ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors["insurance.expiryDate"]}
                     </p>
                   ) : null}

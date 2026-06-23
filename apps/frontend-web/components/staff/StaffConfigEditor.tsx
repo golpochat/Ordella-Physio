@@ -363,7 +363,7 @@ export function StaffConfigEditor({
               });
             }}
           >
-            {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+            {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
             <div className="tenant-config-mode-toggle">
               <button
@@ -414,7 +414,7 @@ export function StaffConfigEditor({
                   onChange={(event) => setJsonText(event.target.value)}
                   rows={12}
                 />
-                {jsonError ? <p className="tenant-create-form-field-error">{jsonError}</p> : null}
+                {jsonError ? <p className="form-field-error">{jsonError}</p> : null}
               </div>
             ) : null}
 
@@ -443,7 +443,7 @@ export function StaffConfigEditor({
                     ))}
                   </select>
                   {fieldErrors.language ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.language}</p>
+                    <p className="form-field-error">{fieldErrors.language}</p>
                   ) : null}
                 </div>
 
@@ -470,7 +470,7 @@ export function StaffConfigEditor({
                     ))}
                   </select>
                   {fieldErrors.timezone ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.timezone}</p>
+                    <p className="form-field-error">{fieldErrors.timezone}</p>
                   ) : null}
                 </div>
 
@@ -666,7 +666,7 @@ export function StaffConfigEditor({
                     }
                   />
                   {fieldErrors.maxDailyAppointments ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.maxDailyAppointments}</p>
+                    <p className="form-field-error">{fieldErrors.maxDailyAppointments}</p>
                   ) : null}
                 </div>
 

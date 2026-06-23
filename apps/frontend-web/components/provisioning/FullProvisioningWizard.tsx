@@ -18,6 +18,10 @@ import {
 } from "@/lib/organization-form-validation";
 import { TENANT_CURRENCY_OPTIONS, TENANT_TIMEZONE_OPTIONS } from "@/lib/tenant-form-options";
 import {
+  PLATFORM_DEFAULT_TIMEZONE,
+  PLATFORM_FALLBACK_CURRENCY,
+} from "@/lib/platform-formatting";
+import {
   validateTenantCurrency,
   validateTenantName,
   validateTenantOwnerSelection,
@@ -114,8 +118,8 @@ export function FullProvisioningWizard() {
   });
   const [tenant, setTenant] = useState<TenantFormState>({
     tenantName: "",
-    timezone: "UTC",
-    currency: "USD",
+    timezone: PLATFORM_DEFAULT_TIMEZONE,
+    currency: PLATFORM_FALLBACK_CURRENCY,
   });
   const [owner, setOwner] = useState<OwnerFormState>({
     mode: "email",
@@ -216,7 +220,7 @@ export function FullProvisioningWizard() {
           })}
         </ol>
 
-        {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+        {generalError ? <p className="form-error-banner">{generalError}</p> : null}
         {generalError ? (
           <div className="provisioning-wizard-actions">
             <Button
@@ -247,7 +251,7 @@ export function FullProvisioningWizard() {
                   aria-invalid={Boolean(fieldError("organizationName"))}
                 />
                 {fieldError("organizationName") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("organizationName")}</p>
+                  <p className="form-field-error">{fieldError("organizationName")}</p>
                 ) : null}
               </div>
 
@@ -262,7 +266,7 @@ export function FullProvisioningWizard() {
                   aria-invalid={Boolean(fieldError("primaryContactName"))}
                 />
                 {fieldError("primaryContactName") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("primaryContactName")}</p>
+                  <p className="form-field-error">{fieldError("primaryContactName")}</p>
                 ) : null}
               </div>
 
@@ -278,7 +282,7 @@ export function FullProvisioningWizard() {
                   aria-invalid={Boolean(fieldError("primaryContactEmail"))}
                 />
                 {fieldError("primaryContactEmail") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("primaryContactEmail")}</p>
+                  <p className="form-field-error">{fieldError("primaryContactEmail")}</p>
                 ) : null}
               </div>
 
@@ -293,7 +297,7 @@ export function FullProvisioningWizard() {
                   aria-invalid={Boolean(fieldError("primaryContactPhone"))}
                 />
                 {fieldError("primaryContactPhone") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("primaryContactPhone")}</p>
+                  <p className="form-field-error">{fieldError("primaryContactPhone")}</p>
                 ) : null}
               </div>
 
@@ -319,7 +323,7 @@ export function FullProvisioningWizard() {
                   <option value="organization-level">Organization-level billing</option>
                 </select>
                 {fieldError("billingModel") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("billingModel")}</p>
+                  <p className="form-field-error">{fieldError("billingModel")}</p>
                 ) : null}
               </div>
 
@@ -350,7 +354,7 @@ export function FullProvisioningWizard() {
                   aria-invalid={Boolean(fieldError("tenantName"))}
                 />
                 {fieldError("tenantName") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("tenantName")}</p>
+                  <p className="form-field-error">{fieldError("tenantName")}</p>
                 ) : (
                   <p className="tenant-create-form-field-hint">Tenant code will be generated automatically.</p>
                 )}
@@ -375,7 +379,7 @@ export function FullProvisioningWizard() {
                   ))}
                 </select>
                 {fieldError("timezone") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("timezone")}</p>
+                  <p className="form-field-error">{fieldError("timezone")}</p>
                 ) : null}
               </div>
 
@@ -398,7 +402,7 @@ export function FullProvisioningWizard() {
                   ))}
                 </select>
                 {fieldError("currency") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("currency")}</p>
+                  <p className="form-field-error">{fieldError("currency")}</p>
                 ) : null}
               </div>
             </div>
@@ -447,7 +451,7 @@ export function FullProvisioningWizard() {
                   aria-invalid={Boolean(fieldError("ownerEmail"))}
                 />
                 {fieldError("ownerEmail") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("ownerEmail")}</p>
+                  <p className="form-field-error">{fieldError("ownerEmail")}</p>
                 ) : (
                   <p className="tenant-create-form-field-hint">
                     A new owner account will be created and invited during provisioning.
@@ -476,7 +480,7 @@ export function FullProvisioningWizard() {
                   ))}
                 </select>
                 {fieldError("ownerUserId") ? (
-                  <p className="tenant-create-form-field-error">{fieldError("ownerUserId")}</p>
+                  <p className="form-field-error">{fieldError("ownerUserId")}</p>
                 ) : null}
               </div>
             )}

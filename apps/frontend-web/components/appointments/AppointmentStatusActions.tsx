@@ -6,14 +6,7 @@ import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Badge } from "@/components/dashboard/Badge";
 import { Button } from "@/components/ui/button";
-import {
-  Modal,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from "@/components/ui/modal";
+import { ConfirmDialog } from "@/components/clinic-ui/confirm-dialog";
 import {
   useCancelClinicAppointment,
   useCompleteClinicAppointment,
@@ -159,27 +152,22 @@ export function AppointmentStatusActions({
         </Button>
       </div>
 
-      <Modal open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>{pendingCopy?.title}</ModalTitle>
-            <ModalDescription>{pendingCopy?.description}</ModalDescription>
-          </ModalHeader>
-          <ModalFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" disabled={isPending} onClick={() => setConfirmOpen(false)}>
-              Close
-            </Button>
-            <Button
-              variant={pendingAction === "cancel" ? "destructive" : "primary"}
-              disabled={isPending}
-              onClick={handleConfirm}
-            >
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {isPending ? "Working..." : pendingCopy?.confirmLabel}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) {
+            setPendingAction(null);
+          }
+        }}
+        title={pendingCopy?.title ?? "Confirm action"}
+        description={pendingCopy?.description}
+        cancelLabel="Close"
+        confirmLabel={pendingCopy?.confirmLabel ?? "Confirm"}
+        destructive={pendingAction === "cancel"}
+        loading={isPending}
+        onConfirm={handleConfirm}
+      />
     </>
   );
 }

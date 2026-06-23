@@ -3,14 +3,11 @@
 import { useMemo } from "react";
 import { BarChart } from "@/components/charts/bar-chart";
 import { Card } from "@/components/dashboard/Card";
+import { formatPlatformCurrency } from "@/lib/platform-formatting";
 import type { RevenueReportResponse } from "@/lib/reporting-types";
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(value);
+  return formatPlatformCurrency(value);
 }
 
 type RevenueReportTableProps = {

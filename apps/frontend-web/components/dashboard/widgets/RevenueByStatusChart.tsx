@@ -2,6 +2,7 @@
 
 import { DonutChart } from "@/components/charts/donut-chart";
 import { Card } from "@/components/dashboard/Card";
+import { formatPlatformCurrency } from "@/lib/platform-formatting";
 import type { DashboardMetricsResponse } from "@/lib/reporting-types";
 
 type RevenueByStatusChartProps = {
@@ -10,11 +11,7 @@ type RevenueByStatusChartProps = {
 };
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
+  return formatPlatformCurrency(value, undefined, 0);
 }
 
 export function RevenueByStatusChart({ data, isLoading }: RevenueByStatusChartProps) {

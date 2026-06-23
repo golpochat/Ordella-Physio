@@ -114,7 +114,7 @@ export function RoleCreateForm() {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-field">
             <Label htmlFor="role-name">Role name</Label>
@@ -130,7 +130,7 @@ export function RoleCreateForm() {
               }}
               disabled={createRole.isPending}
             />
-            {fieldErrors.name ? <p className="tenant-create-form-field-error">{fieldErrors.name}</p> : null}
+            {fieldErrors.name ? <p className="form-field-error">{fieldErrors.name}</p> : null}
           </div>
 
           <div className="tenant-create-form-field">
@@ -144,7 +144,7 @@ export function RoleCreateForm() {
               }}
               disabled={createRole.isPending}
             />
-            {fieldErrors.code ? <p className="tenant-create-form-field-error">{fieldErrors.code}</p> : null}
+            {fieldErrors.code ? <p className="form-field-error">{fieldErrors.code}</p> : null}
           </div>
 
           <div className="tenant-create-form-field">
@@ -162,7 +162,7 @@ export function RoleCreateForm() {
             {permissionsQuery.isLoading ? (
               <p className="dashboard-cell-muted">Loading permissions...</p>
             ) : permissionsQuery.isError ? (
-              <p className="tenant-create-form-error">Unable to load permissions.</p>
+              <p className="form-error-banner">Unable to load permissions.</p>
             ) : (
               <div className="role-permission-list">
                 {permissions.map((permission) => (
@@ -184,7 +184,7 @@ export function RoleCreateForm() {
               </div>
             )}
             {fieldErrors.permissions ? (
-              <p className="tenant-create-form-field-error">{fieldErrors.permissions}</p>
+              <p className="form-field-error">{fieldErrors.permissions}</p>
             ) : null}
           </div>
 

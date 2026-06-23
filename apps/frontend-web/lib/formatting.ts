@@ -6,15 +6,20 @@ import {
   resolveLocaleForNumberFormat,
   type NumberFormatStyle,
 } from "@ordella/shared";
+import {
+  PLATFORM_DEFAULT_LOCALE,
+  PLATFORM_DEFAULT_TIMEZONE,
+  PLATFORM_FALLBACK_CURRENCY,
+} from "@/lib/platform-formatting";
 import { useTenantStore } from "@/store/tenant.store";
 import type { TenantLocalizationPrefs } from "@/store/tenant.store";
 
 const DEFAULT_LOCALIZATION: TenantLocalizationPrefs = {
-  timezone: "UTC",
-  currency: "USD",
-  dateFormat: "YYYY-MM-DD",
+  timezone: PLATFORM_DEFAULT_TIMEZONE,
+  currency: PLATFORM_FALLBACK_CURRENCY,
+  dateFormat: "DD/MM/YYYY",
   timeFormat: "HH:mm",
-  numberFormat: "US",
+  numberFormat: "EU",
 };
 
 export function getTenantLocalizationContext(): TenantLocalizationPrefs & { locale: string } {
@@ -28,7 +33,10 @@ export function getTenantLocalizationContext(): TenantLocalizationPrefs & { loca
     dateFormat: localization?.dateFormat ?? DEFAULT_LOCALIZATION.dateFormat,
     timeFormat: localization?.timeFormat ?? DEFAULT_LOCALIZATION.timeFormat,
     numberFormat,
-    locale: resolveLocaleForNumberFormat(numberFormat),
+    locale:
+      numberFormat === "EU"
+        ? PLATFORM_DEFAULT_LOCALE
+        : resolveLocaleForNumberFormat(numberFormat),
   };
 }
 

@@ -27,9 +27,9 @@ export default function ContactPage() {
         <ContactForm />
 
         <div className="space-y-xl">
-          <ContactDetail icon="📧" label="Email" value={SUPPORT_EMAIL} />
-          <ContactDetail icon="📍" label="Location" value="Dublin, Ireland" />
-          <ContactDetail icon="⏰" label="Hours" value="Mon–Fri, 9:00–17:00" />
+          <ContactDetail icon="mail" label="Email" value={SUPPORT_EMAIL} />
+          <ContactDetail icon="location" label="Location" value="Dublin, Ireland" />
+          <ContactDetail icon="hours" label="Hours" value="Mon–Fri, 9:00–17:00" />
 
           <div
             className="flex h-64 items-center justify-center rounded-lg bg-brand-light shadow-soft"

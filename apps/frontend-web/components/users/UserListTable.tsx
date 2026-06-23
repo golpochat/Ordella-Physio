@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { User } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import { UserStatusBadge } from "@/components/users/UserStatusBadge";
@@ -140,21 +141,23 @@ export function UserListTable({
                 <UserStatusBadge status={user.status} />
               </div>
               <div className="dashboard-cell-muted">{formatCreatedAt(user.createdAt)}</div>
-              <div className="user-list-actions">
-                <Link href={`/clinic/users/${user.id}`} className="dashboard-link">
-                  View
-                </Link>
+              <TableRowActions>
+                <TableActionLink href={`/clinic/users/${user.id}`} label={`View ${formatName(user)}`} icon="view" />
                 {canManageUsers ? (
                   <>
-                    <Link href={`/clinic/users/${user.id}/edit`} className="dashboard-link">
-                      Edit
-                    </Link>
-                    <Link href={`/clinic/users/${user.id}/reset-password`} className="dashboard-link">
-                      Reset password
-                    </Link>
+                    <TableActionLink
+                      href={`/clinic/users/${user.id}/edit`}
+                      label={`Edit ${formatName(user)}`}
+                      icon="edit"
+                    />
+                    <TableActionLink
+                      href={`/clinic/users/${user.id}/reset-password`}
+                      label={`Reset password for ${formatName(user)}`}
+                      icon="settings"
+                    />
                   </>
                 ) : null}
-              </div>
+              </TableRowActions>
             </Row>
           );
         })}

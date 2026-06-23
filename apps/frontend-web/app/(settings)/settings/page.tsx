@@ -1,14 +1,15 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-muted-foreground">Account and workspace configuration scaffold.</p>
-      </div>
+    <>
+      <PageHeader
+        title="Settings"
+        subtitle="Account and workspace configuration scaffold."
+      />
       <div className="grid gap-4 md:grid-cols-3">
         {[
           { href: "/settings/profile", title: "Profile", description: "Personal account settings" },
@@ -53,6 +54,6 @@ export default function SettingsPage() {
           </Card>
         ))}
       </div>
-    </div>
+    </>
   );
 }

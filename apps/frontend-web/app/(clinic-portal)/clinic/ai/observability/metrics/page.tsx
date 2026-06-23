@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -5,6 +6,7 @@ import { MetricCharts } from "@/components/ai/observability/MetricCharts";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { useObservabilityMetrics } from "@/hooks/useAiObservability";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiObservabilitySectionNav } from "@/lib/ai-admin-section-nav";
 import { WithPermission } from "@/lib/auth/withPermission";
 
 export default function ClinicObservabilityMetricsPage() {
@@ -22,12 +24,7 @@ export default function ClinicObservabilityMetricsPage() {
         onRetry={() => void latency.refetch()}
         loadingRows={4}
       >
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.observability} className="ai-admin-nav-link">Dashboard</Link>
-          <Link href={clinicAiPaths.observabilityTraces} className="ai-admin-nav-link">Traces</Link>
-          <Link href={clinicAiPaths.observabilityLogs} className="ai-admin-nav-link">Logs</Link>
-          <Link href={clinicAiPaths.observabilityMetrics} className="ai-admin-nav-link ai-admin-nav-link-active">Metrics</Link>
-        </div>
+        <AiAdminSectionNav items={aiObservabilitySectionNav(clinicAiPaths)} />
         <MetricCharts
           latency={latency.data}
           errorRate={errorRate.data}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
 
 const NAV_ITEMS = [
@@ -28,14 +29,11 @@ export function AiAdminShell({ children }: { children: React.ReactNode }) {
       <nav className="ai-admin-nav" aria-label="AI admin">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`ai-admin-nav-link ${active ? "ai-admin-nav-link-active" : ""}`}
-            >
-              {item.label}
-            </Link>
+            <Button key={item.href} asChild variant={active ? "secondary" : "ghost"} size="sm">
+              <Link href={item.href}>{item.label}</Link>
+            </Button>
           );
         })}
       </nav>

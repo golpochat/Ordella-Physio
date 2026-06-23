@@ -74,7 +74,7 @@ export function TenantDomainForm({ tenantId, onForbidden, onCreated }: TenantDom
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -87,7 +87,7 @@ export function TenantDomainForm({ tenantId, onForbidden, onCreated }: TenantDom
                 aria-invalid={Boolean(fieldErrors.domain)}
               />
               {fieldErrors.domain ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.domain}</p>
+                <p className="form-field-error">{fieldErrors.domain}</p>
               ) : null}
             </div>
 

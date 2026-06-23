@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionButton } from "@/components/ui/table-row-actions";
 import type { AuditLogRecord } from "@/lib/security-types";
 
 export type AuditLogTableProps = {
@@ -26,9 +27,11 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
             {log.redacted ? <Badge variant="outline">Redacted</Badge> : null}
           </div>
           <div>
-            <button type="button" className="dashboard-link" onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}>
-              {expandedId === log.id ? "Hide" : "View"}
-            </button>
+            <TableActionButton
+              label={expandedId === log.id ? `Hide audit log ${log.id}` : `View audit log ${log.id}`}
+              icon="view"
+              onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
+            />
             {expandedId === log.id ? (
               <pre className="ai-security-metadata">{JSON.stringify({ request: log.requestMetadata, response: log.responseMetadata }, null, 2)}</pre>
             ) : null}

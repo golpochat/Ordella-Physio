@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { ListPage } from "@/components/dashboard/ListPage";
 import { AITestPanel } from "@/components/ai/AITestPanel";
-import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -30,11 +30,27 @@ export default function AISettingsPage() {
   });
 
   if (providersQuery.isLoading) {
-    return <PageLoading rows={4} />;
+    return (
+      <WithAllPermissions permissions={["ai.manage", "ai.use"]}>
+        <ListPage title="AI settings" isLoading loadingRows={4}>
+          <></>
+        </ListPage>
+      </WithAllPermissions>
+    );
   }
 
   if (providersQuery.isError) {
-    return <PageError onRetry={() => void providersQuery.refetch()} />;
+    return (
+      <WithAllPermissions permissions={["ai.manage", "ai.use"]}>
+        <ListPage
+          title="AI settings"
+          isError
+          onRetry={() => void providersQuery.refetch()}
+        >
+          <></>
+        </ListPage>
+      </WithAllPermissions>
+    );
   }
 
   const providers = providersQuery.data ?? [];
@@ -70,14 +86,10 @@ export default function AISettingsPage() {
 
   return (
     <WithAllPermissions permissions={["ai.manage", "ai.use"]}>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">AI settings</h1>
-          <p className="text-muted-foreground">
-            Configure tenant AI providers, routing priority, and test prompts.
-          </p>
-        </div>
-
+      <ListPage
+        title="AI settings"
+        subtitle="Configure tenant AI providers, routing priority, and test prompts."
+      >
         <Card>
           <CardHeader>
             <CardTitle>Configured providers</CardTitle>
@@ -203,7 +215,7 @@ export default function AISettingsPage() {
         </Card>
 
         <AITestPanel models={models} />
-      </div>
+      </ListPage>
     </WithAllPermissions>
   );
 }

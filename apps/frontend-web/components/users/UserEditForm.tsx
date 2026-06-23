@@ -180,7 +180,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
         />
 
         <form className="tenant-create-form" onSubmit={handleSubmit} noValidate>
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -192,7 +192,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
                 onChange={(event) => setFirstName(event.target.value)}
               />
               {fieldErrors.firstName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.firstName}</p>
+                <p className="form-field-error">{fieldErrors.firstName}</p>
               ) : null}
             </div>
 
@@ -205,7 +205,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
                 onChange={(event) => setLastName(event.target.value)}
               />
               {fieldErrors.lastName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.lastName}</p>
+                <p className="form-field-error">{fieldErrors.lastName}</p>
               ) : null}
             </div>
           </div>
@@ -222,7 +222,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
                 onChange={(event) => setEmail(event.target.value)}
               />
               {fieldErrors.email ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.email}</p>
+                <p className="form-field-error">{fieldErrors.email}</p>
               ) : null}
             </div>
 
@@ -237,7 +237,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
                 onChange={(event) => setPhone(event.target.value)}
               />
               {fieldErrors.phone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.phone}</p>
+                <p className="form-field-error">{fieldErrors.phone}</p>
               ) : null}
             </div>
           </div>
@@ -261,7 +261,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
                 ))}
               </select>
               {fieldErrors.role ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.role}</p>
+                <p className="form-field-error">{fieldErrors.role}</p>
               ) : null}
             </div>
 
@@ -283,7 +283,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
                 ))}
               </select>
               {fieldErrors.status ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.status}</p>
+                <p className="form-field-error">{fieldErrors.status}</p>
               ) : null}
             </div>
           </div>

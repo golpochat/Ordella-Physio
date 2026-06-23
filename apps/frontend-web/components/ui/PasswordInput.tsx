@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "@ordella/shared-icons";
 import { Input, Label } from "@/components/ui/input";
+import { FormFieldError, formInputInvalidClass } from "@/components/ui/form-feedback";
 import { cn } from "@/lib/cn";
 
 export type PasswordInputProps = {
@@ -38,7 +39,8 @@ export function PasswordInput({
           value={value}
           autoComplete={autoComplete}
           placeholder={placeholder}
-          className={cn("auth-password-input", error && "border-red-500")}
+          className={cn("auth-password-input", formInputInvalidClass(Boolean(error)))}
+          aria-invalid={Boolean(error)}
           onChange={(event) => onChange(event.target.value)}
           onBlur={onBlur}
         />
@@ -51,7 +53,7 @@ export function PasswordInput({
           {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
       </div>
-      {error ? <p className="auth-field-error">{error}</p> : null}
+      <FormFieldError>{error}</FormFieldError>
     </div>
   );
 }

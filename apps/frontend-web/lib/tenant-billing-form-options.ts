@@ -1,9 +1,9 @@
 export const TENANT_BILLING_COUNTRY_OPTIONS = [
+  { value: "IE", label: "Ireland" },
   { value: "GB", label: "United Kingdom" },
   { value: "US", label: "United States" },
   { value: "CA", label: "Canada" },
   { value: "AU", label: "Australia" },
-  { value: "IE", label: "Ireland" },
   { value: "DE", label: "Germany" },
   { value: "FR", label: "France" },
   { value: "NL", label: "Netherlands" },

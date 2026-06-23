@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { ModelRegistryRecord } from "@/lib/training-types";
 import { CLINIC_AI_BASE } from "@/lib/ai-admin-paths";
 
@@ -39,11 +39,13 @@ export function ModelRegistryList({ models, basePath = CLINIC_AI_BASE }: ModelRe
               {model.status}
             </Badge>
           </div>
-          <div>
-            <Link href={`${basePath}/models/${model.id}`} className="dashboard-link">
-              Details
-            </Link>
-          </div>
+          <TableRowActions>
+            <TableActionLink
+              href={`${basePath}/models/${model.id}`}
+              label={`View model ${model.modelName}`}
+              icon="view"
+            />
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

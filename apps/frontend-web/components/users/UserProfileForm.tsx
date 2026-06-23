@@ -118,7 +118,7 @@ export function UserProfileForm({ user: initialUser, onProfileUpdated }: UserPro
   }
 
   if (!user) {
-    return <p className="tenant-create-form-error">Unable to load profile.</p>;
+    return <p className="form-error-banner">Unable to load profile.</p>;
   }
 
   return (
@@ -137,7 +137,7 @@ export function UserProfileForm({ user: initialUser, onProfileUpdated }: UserPro
         />
 
         <form className="tenant-create-form" onSubmit={handleSubmit} noValidate>
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -149,7 +149,7 @@ export function UserProfileForm({ user: initialUser, onProfileUpdated }: UserPro
                 onChange={(event) => setFirstName(event.target.value)}
               />
               {fieldErrors.firstName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.firstName}</p>
+                <p className="form-field-error">{fieldErrors.firstName}</p>
               ) : null}
             </div>
 
@@ -162,7 +162,7 @@ export function UserProfileForm({ user: initialUser, onProfileUpdated }: UserPro
                 onChange={(event) => setLastName(event.target.value)}
               />
               {fieldErrors.lastName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.lastName}</p>
+                <p className="form-field-error">{fieldErrors.lastName}</p>
               ) : null}
             </div>
           </div>
@@ -178,7 +178,7 @@ export function UserProfileForm({ user: initialUser, onProfileUpdated }: UserPro
               onChange={(event) => setPhone(event.target.value)}
             />
             {fieldErrors.phone ? (
-              <p className="tenant-create-form-field-error">{fieldErrors.phone}</p>
+              <p className="form-field-error">{fieldErrors.phone}</p>
             ) : null}
           </div>
 

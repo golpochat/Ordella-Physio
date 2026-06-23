@@ -121,7 +121,7 @@ export function TenantLocalizationForm({
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -140,7 +140,7 @@ export function TenantLocalizationForm({
                 ))}
               </select>
               {fieldErrors.timezone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.timezone}</p>
+                <p className="form-field-error">{fieldErrors.timezone}</p>
               ) : null}
             </div>
 
@@ -160,7 +160,7 @@ export function TenantLocalizationForm({
                 ))}
               </select>
               {fieldErrors.currency ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.currency}</p>
+                <p className="form-field-error">{fieldErrors.currency}</p>
               ) : null}
             </div>
 
@@ -182,7 +182,7 @@ export function TenantLocalizationForm({
                 ))}
               </select>
               {fieldErrors.dateFormat ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.dateFormat}</p>
+                <p className="form-field-error">{fieldErrors.dateFormat}</p>
               ) : null}
             </div>
 
@@ -204,7 +204,7 @@ export function TenantLocalizationForm({
                 ))}
               </select>
               {fieldErrors.timeFormat ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.timeFormat}</p>
+                <p className="form-field-error">{fieldErrors.timeFormat}</p>
               ) : null}
             </div>
 
@@ -225,7 +225,7 @@ export function TenantLocalizationForm({
                 ))}
               </div>
               {fieldErrors.numberFormat ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.numberFormat}</p>
+                <p className="form-field-error">{fieldErrors.numberFormat}</p>
               ) : null}
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import { PageLoading } from "@/components/patient-portal/page-state";
+import { ListPage } from "@/components/dashboard/ListPage";
 import { useSearchAnalytics } from "@/hooks/useSearchIndex";
 
 export function SearchAnalyticsDashboard() {
@@ -10,31 +10,35 @@ export function SearchAnalyticsDashboard() {
   const data = analyticsQuery.data;
 
   if (analyticsQuery.isLoading) {
-    return <PageLoading rows={6} />;
+    return (
+      <ListPage title="Search analytics" isLoading loadingRows={6}>
+        <></>
+      </ListPage>
+    );
   }
 
   if (analyticsQuery.isError || !data) {
     return (
-      <Card>
-        <CardBody>
-          <p className="text-destructive">Unable to load search analytics.</p>
-        </CardBody>
-      </Card>
+      <ListPage title="Search analytics" isError>
+        <Card>
+          <CardBody>
+            <p className="text-destructive">Unable to load search analytics.</p>
+          </CardBody>
+        </Card>
+      </ListPage>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Search analytics</h1>
-          <p className="text-muted-foreground">Query volume, zero-result searches, and latency.</p>
-        </div>
+    <ListPage
+      title="Search analytics"
+      subtitle="Query volume, zero-result searches, and latency."
+      action={
         <Link href="/settings/search" className="text-sm underline">
           Search settings
         </Link>
-      </div>
-
+      }
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
@@ -111,6 +115,6 @@ export function SearchAnalyticsDashboard() {
           )}
         </CardBody>
       </Card>
-    </div>
+    </ListPage>
   );
 }

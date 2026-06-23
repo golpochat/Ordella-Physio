@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { TrainingJobRecord } from "@/lib/training-types";
 import { CLINIC_AI_BASE } from "@/lib/ai-admin-paths";
 
@@ -45,11 +45,13 @@ export function TrainingJobList({ jobs, basePath = CLINIC_AI_BASE }: TrainingJob
             <span className={statusClass(job.status)}>{job.status}</span>
           </div>
           <div>{formatDateTime(job.createdAt)}</div>
-          <div>
-            <Link href={`${basePath}/training/${job.id}`} className="dashboard-link">
-              View details
-            </Link>
-          </div>
+          <TableRowActions>
+            <TableActionLink
+              href={`${basePath}/training/${job.id}`}
+              label={`View training job ${job.id}`}
+              icon="view"
+            />
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

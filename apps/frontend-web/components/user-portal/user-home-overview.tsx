@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserAppointmentList } from "@/components/user-portal/appointment-list";
@@ -45,13 +46,11 @@ export function UserHomeOverview() {
   const notes = notesQuery.data ?? [];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Welcome, {displayName}</h1>
-        <p className="text-muted-foreground">
-          Your appointments, billing, and account information in one place.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title={`Welcome, ${displayName}`}
+        subtitle="Your appointments, billing, and account information in one place."
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
@@ -97,6 +96,6 @@ export function UserHomeOverview() {
       <p className="text-sm text-muted-foreground">
         {notes.length} notes available for read-only reference.
       </p>
-    </div>
+    </>
   );
 }

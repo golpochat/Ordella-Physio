@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -15,6 +16,7 @@ import {
 } from "@/hooks/useAiGateway";
 import { useAuth } from "@/hooks/useAuth";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiGatewaySectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -31,11 +33,7 @@ export default function ClinicGatewayKeysPage() {
   return (
     <WithPermission permission="ai.model.view">
       <ListPage title="AI Gateway keys" subtitle="Manage scoped API keys for AI workloads." isLoading={isLoading} isError={isError} onRetry={() => void refetch()} loadingRows={5}>
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.gatewayKeys} className="ai-admin-nav-link ai-admin-nav-link-active">Keys</Link>
-          <Link href={clinicAiPaths.gatewayUsage} className="ai-admin-nav-link">Usage</Link>
-          <Link href={clinicAiPaths.gatewayLimits} className="ai-admin-nav-link">Limits</Link>
-        </div>
+        <AiAdminSectionNav items={aiGatewaySectionNav(clinicAiPaths)} />
         {canManage ? (
           <ApiKeyEditor
             isSaving={createKey.isPending}

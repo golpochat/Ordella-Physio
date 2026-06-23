@@ -469,7 +469,7 @@ export default function CheckoutPage() {
                         ))}
                       </select>
                       {fieldErrors.billingCountry ? (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.billingCountry}</p>
+                        <p className="form-field-error">{fieldErrors.billingCountry}</p>
                       ) : null}
                     </div>
 
@@ -501,7 +501,7 @@ export default function CheckoutPage() {
                         }}
                       />
                       {fieldErrors.billingStreet ? (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.billingStreet}</p>
+                        <p className="form-field-error">{fieldErrors.billingStreet}</p>
                       ) : null}
                     </div>
 
@@ -534,7 +534,7 @@ export default function CheckoutPage() {
                           }}
                         />
                         {fieldErrors.billingCity ? (
-                          <p className="text-red-600 text-sm mt-1">{fieldErrors.billingCity}</p>
+                          <p className="form-field-error">{fieldErrors.billingCity}</p>
                         ) : null}
                       </div>
                       <div className="auth-field-stack">
@@ -565,7 +565,7 @@ export default function CheckoutPage() {
                           }}
                         />
                         {fieldErrors.billingPostal ? (
-                          <p className="text-red-600 text-sm mt-1">{fieldErrors.billingPostal}</p>
+                          <p className="form-field-error">{fieldErrors.billingPostal}</p>
                         ) : null}
                       </div>
                     </div>
@@ -627,7 +627,7 @@ export default function CheckoutPage() {
                         }}
                       />
                       {fieldErrors.cardholderName ? (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.cardholderName}</p>
+                        <p className="form-field-error">{fieldErrors.cardholderName}</p>
                       ) : null}
                     </div>
 
@@ -660,7 +660,7 @@ export default function CheckoutPage() {
                         }}
                       />
                       {fieldErrors.cardNumber ? (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.cardNumber}</p>
+                        <p className="form-field-error">{fieldErrors.cardNumber}</p>
                       ) : null}
                     </div>
 
@@ -695,7 +695,7 @@ export default function CheckoutPage() {
                           }}
                         />
                         {fieldErrors.cardExpiry ? (
-                          <p className="text-red-600 text-sm mt-1">{fieldErrors.cardExpiry}</p>
+                          <p className="form-field-error">{fieldErrors.cardExpiry}</p>
                         ) : null}
                       </div>
                       <div className="auth-field-stack">
@@ -727,7 +727,7 @@ export default function CheckoutPage() {
                           }}
                         />
                         {fieldErrors.cardCvc ? (
-                          <p className="text-red-600 text-sm mt-1">{fieldErrors.cardCvc}</p>
+                          <p className="form-field-error">{fieldErrors.cardCvc}</p>
                         ) : null}
                       </div>
                     </div>

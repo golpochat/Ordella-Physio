@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionButton, TableRowActions } from "@/components/ui/table-row-actions";
 import type { WorkflowVersionRecord } from "@/lib/automation-types";
 
 function formatDateTime(value: string): string {
@@ -65,23 +66,19 @@ export function WorkflowVersionList({
           <div>{version.label ?? "—"}</div>
           <div className="dashboard-cell-muted">{version.createdByUserId}</div>
           <div className="dashboard-cell-muted">{formatDateTime(version.createdAt)}</div>
-          <div className="user-list-actions">
-            <button
-              type="button"
-              className="dashboard-link"
+          <TableRowActions>
+            <TableActionButton
+              label={`View workflow version ${version.versionNumber}`}
+              icon="view"
               onClick={() => onSelectVersion(version.versionNumber)}
-            >
-              View
-            </button>
-            <button
-              type="button"
-              className="dashboard-link"
+            />
+            <TableActionButton
+              label={`Compare workflow version ${version.versionNumber}`}
+              icon="settings"
               onClick={() => onCompareVersion(version.versionNumber)}
-            >
-              Diff
-            </button>
+            />
             {renderActions(version)}
-          </div>
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

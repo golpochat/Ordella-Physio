@@ -34,6 +34,8 @@ export type ConfirmDialogProps = {
   loading?: boolean;
   destructive?: boolean;
   writeCapability?: PortalCapability;
+  /** When false, confirm is allowed without an active tenant (e.g. platform admin). Default true. */
+  requireTenant?: boolean;
 };
 
 export function ConfirmDialog({
@@ -47,9 +49,11 @@ export function ConfirmDialog({
   loading = false,
   destructive = false,
   writeCapability,
+  requireTenant = true,
 }: ConfirmDialogProps) {
   const { can, hasTenant } = useClinicScope();
-  const allowed = hasTenant && (!writeCapability || can(writeCapability));
+  const tenantOk = requireTenant ? hasTenant : true;
+  const allowed = tenantOk && (!writeCapability || can(writeCapability));
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -61,7 +65,7 @@ export function ConfirmDialog({
         {!allowed ? (
           <p className="text-sm text-muted-foreground">You do not have permission to perform this action.</p>
         ) : null}
-        <ModalFooter>
+        <ModalFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
             {cancelLabel}
           </Button>

@@ -5,14 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Modal,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from "@/components/ui/modal";
+import { ConfirmDialog } from "@/components/clinic-ui/confirm-dialog";
 import {
   useActivateClinicStaffMember,
   useDeactivateClinicStaffMember,
@@ -106,27 +99,20 @@ export function StaffStatusActions({ staff, onStatusChange }: StaffStatusActions
         </Button>
       )}
 
-      <Modal open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>{confirmTitle}</ModalTitle>
-            <ModalDescription>{confirmDescription}</ModalDescription>
-          </ModalHeader>
-          <ModalFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" disabled={isPending} onClick={() => setConfirmOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant={pendingAction === "deactivate" ? "destructive" : "primary"}
-              disabled={isPending}
-              onClick={handleConfirm}
-            >
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {isPending ? "Working..." : "Confirm"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) {
+            setPendingAction(null);
+          }
+        }}
+        title={confirmTitle}
+        description={confirmDescription}
+        destructive={pendingAction === "deactivate"}
+        loading={isPending}
+        onConfirm={handleConfirm}
+      />
     </>
   );
 }

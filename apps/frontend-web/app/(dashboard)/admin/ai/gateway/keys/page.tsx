@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -16,6 +17,7 @@ import {
 } from "@/hooks/useAiGateway";
 import { useAuth } from "@/hooks/useAuth";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiGatewaySectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -40,11 +42,7 @@ export default function AdminGatewayKeysPage() {
           onRetry={() => void refetch()}
           loadingRows={5}
         >
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.gatewayKeys} className="ai-admin-nav-link ai-admin-nav-link-active">Keys</Link>
-            <Link href={adminAiPaths.gatewayUsage} className="ai-admin-nav-link">Usage</Link>
-            <Link href={adminAiPaths.gatewayLimits} className="ai-admin-nav-link">Limits</Link>
-          </div>
+          <AiAdminSectionNav items={aiGatewaySectionNav(adminAiPaths)} />
           {canManage ? (
             <ApiKeyEditor
               isSaving={createKey.isPending}

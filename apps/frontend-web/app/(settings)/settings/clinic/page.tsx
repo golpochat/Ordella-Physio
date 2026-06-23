@@ -1,9 +1,13 @@
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ClinicSettingsPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Clinic settings</h1>
+    <>
+      <PageHeader
+        title="Clinic settings"
+        subtitle="Tenant-aware clinic configuration and branding."
+      />
       <Card>
         <CardHeader>
           <CardTitle>Clinic profile</CardTitle>
@@ -14,6 +18,6 @@ export default function ClinicSettingsPage() {
           </p>
         </CardBody>
       </Card>
-    </div>
+    </>
   );
 }

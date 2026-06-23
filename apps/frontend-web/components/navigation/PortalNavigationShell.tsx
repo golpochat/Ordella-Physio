@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/navigation/protected-route";
 import { RoleGuard } from "@/components/navigation/role-guard";
 import { Sidebar } from "@/components/navigation/Sidebar";
@@ -16,10 +15,10 @@ import {
 } from "@/lib/portal-navigation";
 import { getPrimaryPortalRole } from "@/lib/nav-roles";
 import { TenantSuspendedBanner } from "@/components/tenants/TenantSuspendedBanner";
+import { TrialBanner } from "@/components/tenants/TrialBanner";
+import { RegisteredTenantBanner } from "@/components/tenants/RegisteredTenantBanner";
 import { useUiStore } from "@/store/ui.store";
 import { cn } from "@/lib/cn";
-
-const RBAC_APP_LAYOUT_PORTALS = new Set<PortalId>(["clinic", "staff", "therapist"]);
 
 export type PortalNavigationShellProps = {
   portalId: PortalId;
@@ -71,29 +70,16 @@ export function PortalNavigationShell({
     return null;
   }
 
-  if (RBAC_APP_LAYOUT_PORTALS.has(portalId)) {
-    return (
-      <ProtectedRoute>
-        <RoleGuard
-          allowedRoles={requireRoles && config.allowedRoles.length ? config.allowedRoles : undefined}
-        >
-          <AppLayout
-            portalId={portalId}
-            title={pageMeta.title}
-            subtitle={pageMeta.subtitle}
-            showSearch={portalId === "clinic"}
-          >
-            {children}
-          </AppLayout>
-        </RoleGuard>
-      </ProtectedRoute>
-    );
-  }
-
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={requireRoles && config.allowedRoles.length ? config.allowedRoles : undefined}>
-        <div className={cn("dashboard-portal", portalId === "super-admin" && "super-admin-portal")}>
+        <div
+          className={cn(
+            "dashboard-portal",
+            portalId === "clinic" && "clinic-portal",
+            portalId === "super-admin" && "super-admin-portal",
+          )}
+        >
           <Sidebar
             config={config}
             displayName={displayName}
@@ -121,12 +107,19 @@ export function PortalNavigationShell({
           <div className="dashboard-main">
             <Topbar
               title={pageMeta.title}
+              subtitle={pageMeta.subtitle}
               showSearch={portalId === "clinic"}
               settingsHref={config.settingsHref}
               profileHref={config.profileHref}
             />
             <main className="dashboard-content">
               <TenantSuspendedBanner />
+              {portalId === "clinic" ? (
+                <>
+                  <RegisteredTenantBanner />
+                  <TrialBanner />
+                </>
+              ) : null}
               <div className="dashboard-page">{children}</div>
             </main>
           </div>

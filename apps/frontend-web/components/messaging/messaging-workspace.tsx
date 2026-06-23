@@ -11,9 +11,10 @@ import { useMessagingParticipants } from "@/hooks/useMessagingParticipants";
 
 type MessagingWorkspaceProps = {
   className?: string;
+  hideHeader?: boolean;
 };
 
-export function MessagingWorkspace({ className }: MessagingWorkspaceProps) {
+export function MessagingWorkspace({ className, hideHeader = false }: MessagingWorkspaceProps) {
   useMessagingRealtime();
   const { userId } = useMessagingContext();
   const conversationsQuery = useConversations();
@@ -30,13 +31,21 @@ export function MessagingWorkspace({ className }: MessagingWorkspaceProps) {
 
   return (
     <div className={className}>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold">Messages</h2>
-          <p className="text-sm text-muted-foreground">Real-time secure messaging within your tenant.</p>
+      {hideHeader ? null : (
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold">Messages</h2>
+            <p className="text-sm text-muted-foreground">Real-time secure messaging within your tenant.</p>
+          </div>
+          <Button onClick={() => setNewConversationOpen(true)}>New conversation</Button>
         </div>
-        <Button onClick={() => setNewConversationOpen(true)}>New conversation</Button>
-      </div>
+      )}
+
+      {hideHeader ? (
+        <div className="mb-4 flex justify-end">
+          <Button onClick={() => setNewConversationOpen(true)}>New conversation</Button>
+        </div>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(240px,1fr)_2fr]">
         <ConversationList

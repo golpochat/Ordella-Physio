@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useCostAlerts, useResolveCostAlert } from "@/hooks/useAiCost";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiCostSectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 import type { CostAlertRecord } from "@/lib/cost-types";
@@ -32,11 +34,7 @@ export default function AdminCostAlertsPage() {
           onRetry={() => void alerts.refetch()}
           loadingRows={5}
         >
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.cost} className="ai-admin-nav-link">Dashboard</Link>
-            <Link href={adminAiPaths.costBudget} className="ai-admin-nav-link">Budget</Link>
-            <Link href={adminAiPaths.costAlerts} className="ai-admin-nav-link ai-admin-nav-link-active">Alerts</Link>
-          </div>
+          <AiAdminSectionNav items={aiCostSectionNav(adminAiPaths)} />
           <div className="ai-cost-filter-row">
             {(["all", "BUDGET_SOFT", "BUDGET_HARD", "ANOMALY"] as const).map((type) => (
               <Button key={type} type="button" variant={filter === type ? "primary" : "ghost"} onClick={() => setFilter(type)}>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
@@ -88,11 +89,11 @@ export function SearchSettingsPanel() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Search settings</h1>
-        <p className="text-muted-foreground">Tune relevance, synonyms, and rebuild indexes.</p>
-      </div>
+    <>
+      <PageHeader
+        title="Search settings"
+        subtitle="Tune relevance, synonyms, and rebuild indexes."
+      />
 
       <Card>
         <CardHeader>
@@ -230,6 +231,6 @@ export function SearchSettingsPanel() {
           </Button>
         </CardBody>
       </Card>
-    </div>
+    </>
   );
 }

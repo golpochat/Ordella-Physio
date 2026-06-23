@@ -97,7 +97,7 @@ export function OrganizationPortalTenantAssignForm({
                 </option>
               ))}
             </select>
-            {fieldError ? <p className="tenant-create-form-error">{fieldError}</p> : null}
+            {fieldError ? <p className="form-error-banner">{fieldError}</p> : null}
           </div>
 
           <Button type="submit" className="btn-primary" disabled={assignTenant.isPending || isLoading}>

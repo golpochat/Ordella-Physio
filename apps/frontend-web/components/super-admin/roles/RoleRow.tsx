@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { PlatformRole } from "@/lib/super-admin-portal-types";
 import { Row } from "@/components/dashboard/Row";
 import { RoleBadge } from "@/components/super-admin/users/RoleBadge";
+import { TableActionLink } from "@/components/ui/table-row-actions";
 
 export type RoleRowProps = {
   role: PlatformRole;
@@ -23,9 +23,7 @@ export function RoleRow({ role }: RoleRowProps) {
         Level {level} · {permissionCount} permissions
       </p>
       {roleId ? (
-        <Link href={`/super-admin/roles/${roleId}`} className="dashboard-link">
-          View role
-        </Link>
+        <TableActionLink href={`/super-admin/roles/${roleId}`} label={`View role ${name}`} icon="view" />
       ) : (
         <span className="dashboard-cell-muted">N/A</span>
       )}

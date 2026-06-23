@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionButton, TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { DatasetVersionRecord } from "@/lib/dataset-types";
 import { CLINIC_AI_BASE } from "@/lib/ai-admin-paths";
 
@@ -62,30 +62,25 @@ export function DatasetVersionList({
             <div>{version.recordCount}</div>
             <div>{version.embeddingModel ?? "—"}</div>
             <div>{formatDateTime(version.createdAt)}</div>
-            <div className="dataset-row-actions">
-              <Link
+            <TableRowActions className="dataset-row-actions">
+              <TableActionLink
                 href={`${basePath}/datasets/${datasetId}/versions/${version.id}`}
-                className="dashboard-link"
-              >
-                Records
-              </Link>
-              <button
-                type="button"
-                className="dashboard-link"
+                label={`View records for version ${version.versionNumber}`}
+                icon="view"
+              />
+              <TableActionButton
+                label={`Compare version ${version.versionNumber}`}
+                icon="settings"
                 onClick={() => onCompareVersion(version.versionNumber)}
-              >
-                Compare
-              </button>
+              />
               {canManage && onRollback ? (
-                <button
-                  type="button"
-                  className="dashboard-link"
+                <TableActionButton
+                  label={`Rollback to version ${version.versionNumber}`}
+                  icon="edit"
                   onClick={() => onRollback(version.versionNumber)}
-                >
-                  Rollback
-                </button>
+                />
               ) : null}
-            </div>
+            </TableRowActions>
           </Row>
         );
       })}

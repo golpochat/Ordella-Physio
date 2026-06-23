@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import type { ClinicLocation, ClinicLocationListFilters } from "@/lib/clinic-portal-types";
@@ -120,14 +121,18 @@ export function LocationListTable({
             <div className="dashboard-cell-muted">{location.city}</div>
             <div className="dashboard-cell-muted">{location.status}</div>
             <div className="dashboard-cell-muted">{formatCreatedAt(location.createdAt)}</div>
-            <div className="user-list-actions">
-              <Link href={`/clinic/locations/${location.id}`} className="dashboard-link">
-                View
-              </Link>
-              <Link href={`/clinic/locations/${location.id}/edit`} className="dashboard-link">
-                Edit
-              </Link>
-            </div>
+            <TableRowActions>
+              <TableActionLink
+                href={`/clinic/locations/${location.id}`}
+                label={`View location ${location.name}`}
+                icon="view"
+              />
+              <TableActionLink
+                href={`/clinic/locations/${location.id}/edit`}
+                label={`Edit location ${location.name}`}
+                icon="edit"
+              />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

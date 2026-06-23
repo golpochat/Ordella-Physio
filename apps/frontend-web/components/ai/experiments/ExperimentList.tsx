@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { AbExperimentRecord } from "@/lib/feature-flag-types";
 
 export type ExperimentListProps = {
@@ -25,9 +25,13 @@ export function ExperimentList({ experiments, basePath = "/clinic/ai", experimen
           <div><Badge variant="secondary">{experiment.status}</Badge></div>
           <div>{experiment.variants.map((v) => `${v.key} (${v.weight}%)`).join(", ")}</div>
           <div>{experiment.metricsTracked.join(", ")}</div>
-          <div>
-            <Link href={`${detailBase}/${experiment.id}`} className="dashboard-link">View</Link>
-          </div>
+          <TableRowActions>
+            <TableActionLink
+              href={`${detailBase}/${experiment.id}`}
+              label={`View experiment ${experiment.name}`}
+              icon="view"
+            />
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

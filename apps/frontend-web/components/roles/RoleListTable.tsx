@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import type { ClinicRoleListFilters, ClinicRoleListItem } from "@/lib/user-role-portal-types";
@@ -112,14 +113,10 @@ export function RoleListTable({
             <div className="dashboard-cell-muted">{role.isSystem ? "Yes" : "No"}</div>
             <div className="dashboard-cell-muted">{role.permissionsCount}</div>
             <div className="dashboard-cell-muted">{formatCreatedAt(role.createdAt)}</div>
-            <div className="user-list-actions">
-              <Link href={`/clinic/roles/${role.id}`} className="dashboard-link">
-                View
-              </Link>
-              <Link href={`/clinic/roles/${role.id}/edit`} className="dashboard-link">
-                Edit
-              </Link>
-            </div>
+            <TableRowActions>
+              <TableActionLink href={`/clinic/roles/${role.id}`} label={`View role ${role.name}`} icon="view" />
+              <TableActionLink href={`/clinic/roles/${role.id}/edit`} label={`Edit role ${role.name}`} icon="edit" />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

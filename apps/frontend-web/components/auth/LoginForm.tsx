@@ -4,6 +4,11 @@ import { useState } from "react";
 import { Loader2 } from "@ordella/shared-icons";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Button } from "@/components/ui/button";
+import {
+  FormErrorBanner,
+  FormFieldError,
+  formInputInvalidClass,
+} from "@/components/ui/form-feedback";
 import { Input, Label } from "@/components/ui/input";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { TenantLoginOption } from "@/lib/auth-client";
@@ -85,7 +90,7 @@ export function LoginForm({
 
   return (
     <form className="auth-form-stack" onSubmit={handleSubmit} noValidate>
-      {formError ? <p className="auth-form-error">{formError}</p> : null}
+      {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
 
       {tenantOptions?.length ? (
         <div className="auth-field-stack">
@@ -114,11 +119,12 @@ export function LoginForm({
           autoComplete="email"
           placeholder="you@clinic.com"
           value={values.email}
-          className={fieldErrors.email ? "border-red-500" : undefined}
+          className={formInputInvalidClass(Boolean(fieldErrors.email))}
+          aria-invalid={Boolean(fieldErrors.email)}
           onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))}
           onBlur={() => setFieldErrors((current) => ({ ...current, email: validate(values).email }))}
         />
-        {fieldErrors.email ? <p className="auth-field-error">{fieldErrors.email}</p> : null}
+        <FormFieldError>{fieldErrors.email}</FormFieldError>
       </div>
 
       <PasswordInput

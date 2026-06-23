@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -7,6 +8,7 @@ import { UsageSummary } from "@/components/ai/gateway/UsageSummary";
 import { ListPage } from "@/components/dashboard/ListPage";
 import { useGatewayKeys, useGatewayUsageByKey, useGatewayUsageByModel, useGatewayUsageSummary } from "@/hooks/useAiGateway";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiGatewaySectionNav } from "@/lib/ai-admin-section-nav";
 import { WithPermission } from "@/lib/auth/withPermission";
 
 export default function ClinicGatewayUsagePage() {
@@ -30,11 +32,7 @@ export default function ClinicGatewayUsagePage() {
         }}
         loadingRows={4}
       >
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.gatewayKeys} className="ai-admin-nav-link">Keys</Link>
-          <Link href={clinicAiPaths.gatewayUsage} className="ai-admin-nav-link ai-admin-nav-link-active">Usage</Link>
-          <Link href={clinicAiPaths.gatewayLimits} className="ai-admin-nav-link">Limits</Link>
-        </div>
+        <AiAdminSectionNav items={aiGatewaySectionNav(clinicAiPaths)} />
         <UsageSummary summary={summary.data} />
         <UsageByModelChart models={byModel.data ?? []} />
         <UsageByKeyTable usage={byKey.data ?? []} keyNames={keyNames} />

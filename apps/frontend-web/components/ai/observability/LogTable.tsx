@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionButton } from "@/components/ui/table-row-actions";
 import type { LogEventRecord } from "@/lib/observability-types";
 
 export type LogTableProps = {
@@ -26,9 +27,11 @@ export function LogTable({ logs }: LogTableProps) {
           <div>{log.message}</div>
           <div>{new Date(log.timestamp).toLocaleString()}</div>
           <div>
-            <button type="button" className="dashboard-link" onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}>
-              {expandedId === log.id ? "Hide" : "View"}
-            </button>
+            <TableActionButton
+              label={expandedId === log.id ? `Hide log ${log.id}` : `View log ${log.id}`}
+              icon="view"
+              onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
+            />
             {expandedId === log.id ? (
               <pre className="ai-observability-metadata">{JSON.stringify(log.metadata, null, 2)}</pre>
             ) : null}

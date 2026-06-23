@@ -1,6 +1,11 @@
 /** Platform-wide currency defaults (matches pricing / Stripe local wiring). */
 export const PLATFORM_FALLBACK_CURRENCY = "EUR";
 
+/** Default tenant/platform locale region (Ireland). */
+export const PLATFORM_DEFAULT_TIMEZONE = "Europe/Dublin";
+export const PLATFORM_DEFAULT_COUNTRY = "IE";
+export const PLATFORM_DEFAULT_LOCALE = "en-IE";
+
 /** Map ISO currency to a sensible Intl locale for display. */
 export function resolveLocaleForCurrency(currency: string): string {
   switch (currency.toUpperCase()) {
@@ -13,6 +18,22 @@ export function resolveLocaleForCurrency(currency: string): string {
     default:
       return "en-US";
   }
+}
+
+/** Format amounts in major currency units (e.g. euros, not cents). */
+export function formatPlatformCurrency(
+  amount: number,
+  currency: string = PLATFORM_FALLBACK_CURRENCY,
+  maximumFractionDigits = 2,
+): string {
+  const code = currency.toUpperCase();
+
+  return new Intl.NumberFormat(resolveLocaleForCurrency(code), {
+    style: "currency",
+    currency: code,
+    minimumFractionDigits: 0,
+    maximumFractionDigits,
+  }).format(amount);
 }
 
 /** Format Stripe amounts stored in minor units (cents) using platform currency. */

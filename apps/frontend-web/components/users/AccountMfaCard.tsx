@@ -69,7 +69,7 @@ export function AccountMfaCard() {
         {profileQuery.isLoading ? (
           <p className="dashboard-cell-muted text-sm">Loading security settings…</p>
         ) : profileQuery.isError ? (
-          <p className="tenant-create-form-error text-sm">Unable to load MFA status.</p>
+          <p className="form-error-banner text-sm">Unable to load MFA status.</p>
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-3">

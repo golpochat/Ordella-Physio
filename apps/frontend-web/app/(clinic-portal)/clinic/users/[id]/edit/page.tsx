@@ -58,7 +58,7 @@ export default function ClinicUserEditPage() {
       {isLoading ? <PageLoading rows={6} /> : null}
 
       {!isLoading && isError ? (
-        <p className="tenant-create-form-error">Unable to load user. Please try again.</p>
+        <p className="form-error-banner">Unable to load user. Please try again.</p>
       ) : null}
 
       {!isLoading && user ? <UserEditForm user={user} /> : null}

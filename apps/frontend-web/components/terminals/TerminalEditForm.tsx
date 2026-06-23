@@ -144,7 +144,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -156,7 +156,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 aria-invalid={Boolean(fieldErrors.name)}
               />
               {fieldErrors.name ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.name}</p>
+                <p className="form-field-error">{fieldErrors.name}</p>
               ) : null}
             </div>
 
@@ -169,7 +169,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 aria-invalid={Boolean(fieldErrors.code)}
               />
               {fieldErrors.code ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.code}</p>
+                <p className="form-field-error">{fieldErrors.code}</p>
               ) : null}
             </div>
 
@@ -189,7 +189,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 ))}
               </select>
               {fieldErrors.type ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.type}</p>
+                <p className="form-field-error">{fieldErrors.type}</p>
               ) : null}
             </div>
 
@@ -211,7 +211,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 ))}
               </select>
               {fieldErrors.locationId ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.locationId}</p>
+                <p className="form-field-error">{fieldErrors.locationId}</p>
               ) : null}
             </div>
 
@@ -224,7 +224,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 aria-invalid={Boolean(fieldErrors.ipAddress)}
               />
               {fieldErrors.ipAddress ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.ipAddress}</p>
+                <p className="form-field-error">{fieldErrors.ipAddress}</p>
               ) : null}
             </div>
 
@@ -237,7 +237,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 aria-invalid={Boolean(fieldErrors.macAddress)}
               />
               {fieldErrors.macAddress ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.macAddress}</p>
+                <p className="form-field-error">{fieldErrors.macAddress}</p>
               ) : null}
             </div>
 
@@ -257,7 +257,7 @@ export function TerminalEditForm({ terminal }: TerminalEditFormProps) {
                 ))}
               </select>
               {fieldErrors.status ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.status}</p>
+                <p className="form-field-error">{fieldErrors.status}</p>
               ) : null}
             </div>
           </div>

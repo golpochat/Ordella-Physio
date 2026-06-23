@@ -113,7 +113,7 @@ export function UserRoleForm({ user }: UserRoleFormProps) {
       </CardHeader>
       <CardBody>
         <form className="tenant-create-form" onSubmit={handleSubmit} noValidate>
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-field">
             <Label htmlFor="role">Role</Label>
@@ -133,7 +133,7 @@ export function UserRoleForm({ user }: UserRoleFormProps) {
               ))}
             </select>
             {fieldErrors.role ? (
-              <p className="tenant-create-form-field-error">{fieldErrors.role}</p>
+              <p className="form-field-error">{fieldErrors.role}</p>
             ) : null}
           </div>
 

@@ -147,7 +147,7 @@ export function OrganizationCreateForm() {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <fieldset className="tenant-create-form-section">
             <legend className="tenant-create-form-section-title">Organization details</legend>
@@ -161,7 +161,7 @@ export function OrganizationCreateForm() {
                   aria-invalid={Boolean(fieldErrors.organizationName)}
                 />
                 {fieldErrors.organizationName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.organizationName}</p>
+                  <p className="form-field-error">{fieldErrors.organizationName}</p>
                 ) : null}
               </div>
 
@@ -184,7 +184,7 @@ export function OrganizationCreateForm() {
                   <option value="organization-level">Organization-level billing</option>
                 </select>
                 {fieldErrors.billingModel ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.billingModel}</p>
+                  <p className="form-field-error">{fieldErrors.billingModel}</p>
                 ) : null}
               </div>
 
@@ -211,7 +211,7 @@ export function OrganizationCreateForm() {
                   aria-invalid={Boolean(fieldErrors.primaryContactName)}
                 />
                 {fieldErrors.primaryContactName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.primaryContactName}</p>
+                  <p className="form-field-error">{fieldErrors.primaryContactName}</p>
                 ) : null}
               </div>
 
@@ -225,7 +225,7 @@ export function OrganizationCreateForm() {
                   aria-invalid={Boolean(fieldErrors.primaryContactEmail)}
                 />
                 {fieldErrors.primaryContactEmail ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.primaryContactEmail}</p>
+                  <p className="form-field-error">{fieldErrors.primaryContactEmail}</p>
                 ) : null}
               </div>
 
@@ -239,7 +239,7 @@ export function OrganizationCreateForm() {
                   aria-invalid={Boolean(fieldErrors.primaryContactPhone)}
                 />
                 {fieldErrors.primaryContactPhone ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.primaryContactPhone}</p>
+                  <p className="form-field-error">{fieldErrors.primaryContactPhone}</p>
                 ) : null}
               </div>
             </div>

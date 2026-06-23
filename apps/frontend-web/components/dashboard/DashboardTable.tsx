@@ -30,15 +30,17 @@ export function DashboardTable({
   }
 
   return (
-    <Card grid={grid} className={cn("dashboard-table", className)}>
-      <Row header>
-        {columns.map((column) => (
-          <span key={column} className="dashboard-cell dashboard-cell-header">
-            {column}
-          </span>
-        ))}
-      </Row>
-      <div className="dashboard-table-body">{children}</div>
-    </Card>
+    <div className="dashboard-table-wrap">
+      <Card grid={grid} className={cn("dashboard-table", className)}>
+        <Row header>
+          {columns.map((column) => (
+            <span key={column} className="dashboard-cell dashboard-cell-header">
+              {column}
+            </span>
+          ))}
+        </Row>
+        <div className="dashboard-table-body">{children}</div>
+      </Card>
+    </div>
   );
 }

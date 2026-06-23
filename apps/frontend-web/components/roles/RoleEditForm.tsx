@@ -140,7 +140,7 @@ export function RoleEditForm({ role, assignedPermissions }: RoleEditFormProps) {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-field">
             <Label htmlFor="role-name">Role name</Label>
@@ -150,7 +150,7 @@ export function RoleEditForm({ role, assignedPermissions }: RoleEditFormProps) {
               onChange={(event) => setName(event.target.value)}
               disabled={updateRole.isPending}
             />
-            {fieldErrors.name ? <p className="tenant-create-form-field-error">{fieldErrors.name}</p> : null}
+            {fieldErrors.name ? <p className="form-field-error">{fieldErrors.name}</p> : null}
           </div>
 
           <div className="tenant-create-form-field">
@@ -161,7 +161,7 @@ export function RoleEditForm({ role, assignedPermissions }: RoleEditFormProps) {
               onChange={(event) => setCode(event.target.value.toLowerCase())}
               disabled={updateRole.isPending}
             />
-            {fieldErrors.code ? <p className="tenant-create-form-field-error">{fieldErrors.code}</p> : null}
+            {fieldErrors.code ? <p className="form-field-error">{fieldErrors.code}</p> : null}
           </div>
 
           <div className="tenant-create-form-field">
@@ -179,7 +179,7 @@ export function RoleEditForm({ role, assignedPermissions }: RoleEditFormProps) {
             {permissionsQuery.isLoading ? (
               <p className="dashboard-cell-muted">Loading permissions...</p>
             ) : permissionsQuery.isError ? (
-              <p className="tenant-create-form-error">Unable to load permissions.</p>
+              <p className="form-error-banner">Unable to load permissions.</p>
             ) : (
               <div className="role-permission-list">
                 {permissions.map((permission) => (
@@ -201,7 +201,7 @@ export function RoleEditForm({ role, assignedPermissions }: RoleEditFormProps) {
               </div>
             )}
             {fieldErrors.permissions ? (
-              <p className="tenant-create-form-field-error">{fieldErrors.permissions}</p>
+              <p className="form-field-error">{fieldErrors.permissions}</p>
             ) : null}
           </div>
 

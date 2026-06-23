@@ -23,6 +23,10 @@ import {
   validateInvoicePrefix,
 } from "@/lib/tenant-billing-form-validation";
 import { TENANT_CURRENCY_OPTIONS } from "@/lib/tenant-form-options";
+import {
+  PLATFORM_DEFAULT_COUNTRY,
+  PLATFORM_FALLBACK_CURRENCY,
+} from "@/lib/platform-formatting";
 
 type TenantBillingFormProps = {
   tenant: PlatformTenant;
@@ -45,11 +49,13 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
   );
   const [billingCity, setBillingCity] = useState(initialValues?.billingCity ?? "");
   const [billingPostcode, setBillingPostcode] = useState(initialValues?.billingPostcode ?? "");
-  const [billingCountry, setBillingCountry] = useState(initialValues?.billingCountry ?? "GB");
+  const [billingCountry, setBillingCountry] = useState(
+    initialValues?.billingCountry ?? PLATFORM_DEFAULT_COUNTRY,
+  );
   const [taxNumber, setTaxNumber] = useState(initialValues?.taxNumber ?? "");
   const [invoicePrefix, setInvoicePrefix] = useState(initialValues?.invoicePrefix ?? "");
   const [defaultCurrency, setDefaultCurrency] = useState(
-    initialValues?.defaultCurrency ?? tenant.currency ?? "GBP",
+    initialValues?.defaultCurrency ?? tenant.currency ?? PLATFORM_FALLBACK_CURRENCY,
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -61,10 +67,12 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
     setBillingAddressLine2(initialValues?.billingAddressLine2 ?? "");
     setBillingCity(initialValues?.billingCity ?? "");
     setBillingPostcode(initialValues?.billingPostcode ?? "");
-    setBillingCountry(initialValues?.billingCountry ?? "GB");
+    setBillingCountry(initialValues?.billingCountry ?? PLATFORM_DEFAULT_COUNTRY);
     setTaxNumber(initialValues?.taxNumber ?? "");
     setInvoicePrefix(initialValues?.invoicePrefix ?? "");
-    setDefaultCurrency(initialValues?.defaultCurrency ?? tenant.currency ?? "GBP");
+    setDefaultCurrency(
+      initialValues?.defaultCurrency ?? tenant.currency ?? PLATFORM_FALLBACK_CURRENCY,
+    );
   }, [initialValues, tenant.currency]);
 
   function validateClient(): Record<string, string> {
@@ -148,7 +156,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -161,7 +169,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 aria-invalid={Boolean(fieldErrors.billingEmail)}
               />
               {fieldErrors.billingEmail ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingEmail}</p>
+                <p className="form-field-error">{fieldErrors.billingEmail}</p>
               ) : null}
             </div>
 
@@ -174,7 +182,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 aria-invalid={Boolean(fieldErrors.billingContactName)}
               />
               {fieldErrors.billingContactName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingContactName}</p>
+                <p className="form-field-error">{fieldErrors.billingContactName}</p>
               ) : null}
             </div>
 
@@ -187,7 +195,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 aria-invalid={Boolean(fieldErrors.billingAddressLine1)}
               />
               {fieldErrors.billingAddressLine1 ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingAddressLine1}</p>
+                <p className="form-field-error">{fieldErrors.billingAddressLine1}</p>
               ) : null}
             </div>
 
@@ -209,7 +217,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 aria-invalid={Boolean(fieldErrors.billingCity)}
               />
               {fieldErrors.billingCity ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingCity}</p>
+                <p className="form-field-error">{fieldErrors.billingCity}</p>
               ) : null}
             </div>
 
@@ -222,7 +230,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 aria-invalid={Boolean(fieldErrors.billingPostcode)}
               />
               {fieldErrors.billingPostcode ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingPostcode}</p>
+                <p className="form-field-error">{fieldErrors.billingPostcode}</p>
               ) : null}
             </div>
 
@@ -242,7 +250,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 ))}
               </select>
               {fieldErrors.billingCountry ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingCountry}</p>
+                <p className="form-field-error">{fieldErrors.billingCountry}</p>
               ) : null}
             </div>
 
@@ -264,7 +272,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 aria-invalid={Boolean(fieldErrors.invoicePrefix)}
               />
               {fieldErrors.invoicePrefix ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.invoicePrefix}</p>
+                <p className="form-field-error">{fieldErrors.invoicePrefix}</p>
               ) : null}
             </div>
 
@@ -284,7 +292,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
                 ))}
               </select>
               {fieldErrors.defaultCurrency ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.defaultCurrency}</p>
+                <p className="form-field-error">{fieldErrors.defaultCurrency}</p>
               ) : null}
             </div>
           </div>

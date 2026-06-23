@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ListPage } from "@/components/dashboard/ListPage";
 import { ProviderConfigForm } from "@/components/notifications/ProviderConfigForm";
 import { TestDeliveryModal } from "@/components/notifications/TestDeliveryModal";
 import { Button } from "@/components/ui/button";
@@ -79,15 +80,10 @@ export default function NotificationProvidersSettingsPage() {
 
   return (
     <WithAllPermissions permissions={["settings.read"]}>
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold">Notification providers</h1>
-            <p className="text-muted-foreground">
-              Configure tenant delivery providers, priorities, and credentials.
-            </p>
-          </div>
-
+      <ListPage
+        title="Notification providers"
+        subtitle="Configure tenant delivery providers, priorities, and credentials."
+        action={
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
               <Link href="/settings/notifications/logs">Delivery logs</Link>
@@ -102,8 +98,8 @@ export default function NotificationProvidersSettingsPage() {
               {showCreate ? "Close form" : "Add provider"}
             </Button>
           </div>
-        </div>
-
+        }
+      >
         {showCreate ? (
           <Card>
             <CardHeader>
@@ -181,7 +177,7 @@ export default function NotificationProvidersSettingsPage() {
         </Card>
 
         {testOpen ? <TestDeliveryModal open={testOpen} onOpenChange={setTestOpen} /> : null}
-      </div>
+      </ListPage>
     </WithAllPermissions>
   );
 }

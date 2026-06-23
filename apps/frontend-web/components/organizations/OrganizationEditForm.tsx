@@ -128,7 +128,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -140,7 +140,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 aria-invalid={Boolean(fieldErrors.name)}
               />
               {fieldErrors.name ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.name}</p>
+                <p className="form-field-error">{fieldErrors.name}</p>
               ) : null}
             </div>
 
@@ -172,7 +172,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 <option value="organization-level">Organization-level billing</option>
               </select>
               {fieldErrors.billingModel ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.billingModel}</p>
+                <p className="form-field-error">{fieldErrors.billingModel}</p>
               ) : null}
             </div>
 
@@ -185,7 +185,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 aria-invalid={Boolean(fieldErrors.description)}
               />
               {fieldErrors.description ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.description}</p>
+                <p className="form-field-error">{fieldErrors.description}</p>
               ) : null}
             </div>
 
@@ -198,7 +198,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 aria-invalid={Boolean(fieldErrors.primaryContactName)}
               />
               {fieldErrors.primaryContactName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.primaryContactName}</p>
+                <p className="form-field-error">{fieldErrors.primaryContactName}</p>
               ) : null}
             </div>
 
@@ -212,7 +212,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 aria-invalid={Boolean(fieldErrors.primaryContactEmail)}
               />
               {fieldErrors.primaryContactEmail ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.primaryContactEmail}</p>
+                <p className="form-field-error">{fieldErrors.primaryContactEmail}</p>
               ) : null}
             </div>
 
@@ -226,7 +226,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 aria-invalid={Boolean(fieldErrors.primaryContactPhone)}
               />
               {fieldErrors.primaryContactPhone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.primaryContactPhone}</p>
+                <p className="form-field-error">{fieldErrors.primaryContactPhone}</p>
               ) : null}
             </div>
 
@@ -246,7 +246,7 @@ export function OrganizationEditForm({ organization }: OrganizationEditFormProps
                 ))}
               </select>
               {fieldErrors.status ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.status}</p>
+                <p className="form-field-error">{fieldErrors.status}</p>
               ) : null}
             </div>
           </div>

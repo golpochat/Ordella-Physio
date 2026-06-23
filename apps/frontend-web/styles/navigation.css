@@ -14,7 +14,8 @@
 }
 
 .dashboard-portal .dashboard-content,
-.dashboard-portal.super-admin-portal .dashboard-content {
+.dashboard-portal.super-admin-portal .dashboard-content,
+.portal-page .dashboard-content {
   flex: 1;
   padding: var(--space-lg);
 }
@@ -298,7 +299,8 @@
     display: flex;
   }
 
-  .dashboard-portal .dashboard-content {
+  .dashboard-portal .dashboard-content,
+  .portal-page .dashboard-content {
     padding: var(--space-xl);
   }
 }

@@ -4,6 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
+import {
+  FormErrorBanner,
+  FormFieldError,
+  FormSuccessBanner,
+  formInputInvalidClass,
+} from "@/components/ui/form-feedback";
 import { Input, Label } from "@/components/ui/input";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { getPortalForRole, isSystemUser, mapAuthRoleToPortalRole } from "@/lib/auth/roleRedirect";
@@ -92,7 +98,7 @@ export function MFAVerify({ userId, tenantId }: MFAVerifyProps) {
 
   return (
     <form className="auth-form-stack" onSubmit={handleSubmit} noValidate>
-      {formError ? <p className="auth-form-error">{formError}</p> : null}
+      {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
 
       <div className="auth-field-stack">
         <Label htmlFor="mfa-login-code">Authenticator code</Label>
@@ -103,11 +109,12 @@ export function MFAVerify({ userId, tenantId }: MFAVerifyProps) {
           maxLength={6}
           placeholder="000000"
           value={token}
-          className={fieldErrors.token ? "border-red-500" : undefined}
+          className={formInputInvalidClass(Boolean(fieldErrors.token))}
+          aria-invalid={Boolean(fieldErrors.token)}
           onChange={(event) => setToken(event.target.value.replace(/\D/g, "").slice(0, 6))}
           onBlur={() => setFieldErrors(validateCode(token))}
         />
-        {fieldErrors.token ? <p className="auth-field-error">{fieldErrors.token}</p> : null}
+        <FormFieldError>{fieldErrors.token}</FormFieldError>
       </div>
 
       <Button type="submit" className="auth-submit-button" disabled={submitting}>

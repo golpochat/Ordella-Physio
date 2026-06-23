@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { ExperimentRecord } from "@/lib/training-types";
 import { CLINIC_AI_BASE } from "@/lib/ai-admin-paths";
 
@@ -51,17 +51,18 @@ export function ExperimentList({
             {String(experiment.metrics.accuracy ?? "—")}
           </div>
           <div>{experiment.label ?? "—"}</div>
-          <div>
-            <Link
+          <TableRowActions>
+            <TableActionLink
               href={`${basePath}/training/${jobId}/experiments/compare?ids=${experiment.id}`}
-              className="dashboard-link"
-            >
-              Compare
-            </Link>
-            <Link href={`${basePath}/experiments/${experiment.id}`} className="dashboard-link">
-              Details
-            </Link>
-          </div>
+              label={`Compare experiment ${experiment.experimentName}`}
+              icon="settings"
+            />
+            <TableActionLink
+              href={`${basePath}/experiments/${experiment.id}`}
+              label={`View experiment ${experiment.experimentName}`}
+              icon="view"
+            />
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

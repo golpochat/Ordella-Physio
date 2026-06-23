@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useAuditLogs } from "@/hooks/useAiSecurity";
 import { useAiApi } from "@/hooks/useAI";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiSecuritySectionNav } from "@/lib/ai-admin-section-nav";
 import type { AuditAction } from "@/lib/security-types";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -23,11 +25,7 @@ export default function AdminSecurityAuditPage() {
     <WithPermission permission="ai.admin">
       <AiAdminShell>
         <ListPage title="AI audit logs" subtitle="SOC2/ISO-aligned audit trail for all AI actions." isLoading={isLoading} isError={isError} onRetry={() => void refetch()} loadingRows={6}>
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.securityAudit} className="ai-admin-nav-link ai-admin-nav-link-active">Audit</Link>
-            <Link href={adminAiPaths.securityPolicies} className="ai-admin-nav-link">Policies</Link>
-            <Link href={adminAiPaths.securityPii} className="ai-admin-nav-link">PII</Link>
-          </div>
+          <AiAdminSectionNav items={aiSecuritySectionNav(adminAiPaths)} />
           <AuditLogFilters onFilter={setFilters} />
           <div className="ai-security-actions">
             <Button

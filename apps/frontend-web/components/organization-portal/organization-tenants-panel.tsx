@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageHeader } from "@/components/dashboard/PageHeader";
-import { PageError, PageLoading } from "@/components/patient-portal/page-state";
+import { ListPage } from "@/components/dashboard/ListPage";
+import { PageError } from "@/components/patient-portal/page-state";
 import { OrganizationPortalTenantAssignForm } from "@/components/organization-portal/organization-tenant-assign-form";
 import { OrganizationPortalTenantList } from "@/components/organization-portal/organization-tenant-list";
 import {
@@ -41,24 +41,18 @@ export function OrganizationTenantsPanel() {
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Clinics"
-        subtitle={`Manage clinic tenants linked to ${organizationName}.`}
-      />
-
-      {isLoading ? <PageLoading rows={4} /> : null}
-      {isError ? (
-        <PageError
-          onRetry={() => {
-            void refetchBillingContext();
-            void refetchTenants();
-          }}
-        />
-      ) : null}
-
-      {!isLoading && !isError && organizationId ? (
-        <div className="space-y-4">
+    <ListPage
+      title="Clinics"
+      subtitle={`Manage clinic tenants linked to ${organizationName}.`}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={() => {
+        void refetchBillingContext();
+        void refetchTenants();
+      }}
+    >
+      {organizationId ? (
+        <>
           <OrganizationPortalTenantAssignForm
             organizationId={organizationId}
             onAssigned={(tenant) => {
@@ -78,8 +72,8 @@ export function OrganizationTenantsPanel() {
               setTenants((current) => current.filter((tenant) => tenant.id !== tenantId));
             }}
           />
-        </div>
+        </>
       ) : null}
-    </div>
+    </ListPage>
   );
 }

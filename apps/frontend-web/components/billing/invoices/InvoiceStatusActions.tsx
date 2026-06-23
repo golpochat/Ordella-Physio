@@ -6,6 +6,7 @@ import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Badge } from "@/components/dashboard/Badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/clinic-ui/confirm-dialog";
 import { Input, Label } from "@/components/ui/input";
 import {
   Modal,
@@ -150,7 +151,7 @@ export function InvoiceStatusActions({ invoice, onStatusChange }: InvoiceStatusA
               <ModalDescription>{pendingCopy?.description}</ModalDescription>
             </ModalHeader>
             {pendingAction === "pay" ? (
-              <div className="space-y-2 px-6 pb-2">
+              <div className="space-y-2 py-4">
                 <Label htmlFor="payment-reference">Payment reference (optional)</Label>
                 <Input
                   id="payment-reference"
@@ -190,23 +191,21 @@ export function InvoiceStatusActions({ invoice, onStatusChange }: InvoiceStatusA
           {issueInvoice.isPending ? "Issuing..." : "Issue Invoice"}
         </Button>
 
-        <Modal open={confirmOpen} onOpenChange={setConfirmOpen}>
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>{pendingCopy?.title}</ModalTitle>
-              <ModalDescription>{pendingCopy?.description}</ModalDescription>
-            </ModalHeader>
-            <ModalFooter className="gap-2 sm:gap-0">
-              <Button variant="outline" disabled={isPending} onClick={() => setConfirmOpen(false)}>
-                Close
-              </Button>
-              <Button variant="primary" disabled={isPending} onClick={handleConfirm}>
-                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {isPending ? "Working..." : pendingCopy?.confirmLabel}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={(open) => {
+            setConfirmOpen(open);
+            if (!open) {
+              setPendingAction(null);
+            }
+          }}
+          title={pendingCopy?.title ?? "Confirm action"}
+          description={pendingCopy?.description}
+          cancelLabel="Close"
+          confirmLabel={pendingCopy?.confirmLabel ?? "Confirm"}
+          loading={isPending}
+          onConfirm={handleConfirm}
+        />
       </>
     );
   }

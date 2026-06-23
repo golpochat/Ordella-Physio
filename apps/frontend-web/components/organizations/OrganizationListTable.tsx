@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import type { OrganizationListFilters, PlatformOrganization } from "@/lib/super-admin-portal-types";
@@ -120,20 +121,18 @@ export function OrganizationListTable({
             <div className="dashboard-cell-muted">{formatPrimaryContact(organization)}</div>
             <div className="dashboard-cell-muted">{organization.status}</div>
             <div className="dashboard-cell-muted">{formatCreatedAt(organization.createdAt)}</div>
-            <div className="user-list-actions">
-              <Link
+            <TableRowActions>
+              <TableActionLink
                 href={`/super-admin/organizations/${organization.id}`}
-                className="dashboard-link"
-              >
-                View
-              </Link>
-              <Link
+                label={`View ${organization.name}`}
+                icon="view"
+              />
+              <TableActionLink
                 href={`/super-admin/organizations/${organization.id}/edit`}
-                className="dashboard-link"
-              >
-                Edit
-              </Link>
-            </div>
+                label={`Edit ${organization.name}`}
+                icon="edit"
+              />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

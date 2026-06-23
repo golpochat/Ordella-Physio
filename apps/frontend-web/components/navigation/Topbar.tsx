@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Menu, Moon, Sun } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -29,6 +30,7 @@ export function Topbar({
   settingsHref = "/settings",
   profileHref = "/settings/profile",
 }: TopbarProps) {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
@@ -46,8 +48,8 @@ export function Topbar({
   const canManageSettings = canAny(user, [Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE]);
 
   const menuItems = [
-    { label: "Profile", href: profileHref },
-    ...(canManageSettings ? [{ label: "Settings", href: settingsHref }] : []),
+    { label: "Profile", onSelect: () => router.push(profileHref) },
+    ...(canManageSettings ? [{ label: "Settings", onSelect: () => router.push(settingsHref) }] : []),
     { label: "Sign out", onSelect: () => void logout(), destructive: true },
   ];
 

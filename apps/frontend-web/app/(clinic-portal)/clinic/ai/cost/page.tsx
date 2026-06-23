@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -15,6 +16,7 @@ import {
   useCostTrends,
 } from "@/hooks/useAiCost";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiCostSectionNav } from "@/lib/ai-admin-section-nav";
 import { WithPermission } from "@/lib/auth/withPermission";
 
 export default function ClinicCostDashboardPage() {
@@ -27,11 +29,7 @@ export default function ClinicCostDashboardPage() {
   return (
     <WithPermission permission="ai.model.view">
       <ListPage title="AI cost" subtitle="Track spend and token usage." isLoading={summary.isLoading} isError={summary.isError} onRetry={() => void summary.refetch()} loadingRows={5}>
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.cost} className="ai-admin-nav-link ai-admin-nav-link-active">Dashboard</Link>
-          <Link href={clinicAiPaths.costBudget} className="ai-admin-nav-link">Budget</Link>
-          <Link href={clinicAiPaths.costAlerts} className="ai-admin-nav-link">Alerts</Link>
-        </div>
+        <AiAdminSectionNav items={aiCostSectionNav(clinicAiPaths)} />
         <CostSummaryCard summary={summary.data} />
         <CostTrendsChart trends={trends.data ?? []} />
         <CostByModelChart models={byModel.data ?? []} />

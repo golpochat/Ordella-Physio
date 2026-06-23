@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { PlatformTenant } from "@/lib/super-admin-portal-types";
 import { Row } from "@/components/dashboard/Row";
 import { TenantStatusBadge } from "@/components/super-admin/tenants/TenantStatusBadge";
+import { TableActionLink } from "@/components/ui/table-row-actions";
 
 export type TenantRowProps = {
   tenant: PlatformTenant;
@@ -20,9 +20,11 @@ export function TenantRow({ tenant }: TenantRowProps) {
       <p className="dashboard-cell-muted">{locale}</p>
       <TenantStatusBadge status={tenant?.status} isActive={tenant?.isActive} />
       {tenantId ? (
-        <Link href={`/super-admin/tenants/${tenantId}`} className="dashboard-link">
-          Manage tenant
-        </Link>
+        <TableActionLink
+          href={`/super-admin/tenants/${tenantId}`}
+          label={`Manage tenant ${name}`}
+          icon="view"
+        />
       ) : (
         <span className="dashboard-cell-muted">N/A</span>
       )}

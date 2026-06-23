@@ -7,7 +7,9 @@ import type { ReactNode } from "react";
 
 export type DropdownItem = {
   label: string;
+  /** Prefer onSelect for actions (including navigation via router.push). */
   onSelect?: () => void;
+  /** Use only for plain navigation links rendered as Next.js Link. */
   href?: string;
   destructive?: boolean;
 };
@@ -22,7 +24,7 @@ const itemClassName = (destructive?: boolean) =>
   cn(
     "relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
     "focus:bg-accent focus:text-accent-foreground",
-    destructive && "text-destructive focus:text-destructive",
+    destructive && "text-destructive focus:bg-destructive/10 focus:text-destructive",
   );
 
 export function Dropdown({ trigger, items, align = "end" }: DropdownProps) {

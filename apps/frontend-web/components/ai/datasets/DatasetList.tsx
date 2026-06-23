@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionButton, TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { DatasetRecord } from "@/lib/dataset-types";
 import { CLINIC_AI_BASE } from "@/lib/ai-admin-paths";
 
@@ -73,34 +74,35 @@ export function DatasetList({
           <div>{dataset.recordCount ?? 0}</div>
           <div>v{dataset.latestVersionNumber ?? 1}</div>
           <div>{formatDateTime(dataset.updatedAt)}</div>
-          <div className="dataset-row-actions">
-            <Link href={`${basePath}/datasets/${dataset.id}`} className="dashboard-link">
-              Open
-            </Link>
-            <Link href={`${basePath}/datasets/${dataset.id}/label`} className="dashboard-link">
-              Label
-            </Link>
+          <TableRowActions className="dataset-row-actions">
+            <TableActionLink
+              href={`${basePath}/datasets/${dataset.id}`}
+              label={`Open dataset ${dataset.name}`}
+              icon="view"
+            />
+            <TableActionLink
+              href={`${basePath}/datasets/${dataset.id}/label`}
+              label={`Label dataset ${dataset.name}`}
+              icon="edit"
+            />
             {canManage ? (
               <>
-                <button
-                  type="button"
-                  className="dashboard-link"
+                <TableActionButton
+                  label={`Clone dataset ${dataset.name}`}
+                  icon="copy"
                   disabled={isBusy}
                   onClick={() => onClone(dataset.id)}
-                >
-                  Clone
-                </button>
-                <button
-                  type="button"
-                  className="dashboard-link dataset-link-danger"
+                />
+                <TableActionButton
+                  label={`Delete dataset ${dataset.name}`}
+                  icon="delete"
+                  destructive
                   disabled={isBusy}
                   onClick={() => onDelete(dataset.id)}
-                >
-                  Delete
-                </button>
+                />
               </>
             ) : null}
-          </div>
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

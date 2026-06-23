@@ -10,6 +10,7 @@ export type PortalId =
   | "staff"
   | "pharmacy"
   | "patient"
+  | "user"
   | "legacy";
 
 export type NavItemConfig = {
@@ -91,7 +92,7 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
           item("dashboard", "Overview", adminRoutes.overview, ["admin"]),
           item("patients", "Patients", adminRoutes.patients, ["admin"]),
           item("calendar", "Appointments", adminRoutes.appointments, ["admin"]),
-          item("notes", "Pharmacy", adminRoutes.pharmacy, ["admin"]),
+          item("inventory", "Pharmacy", adminRoutes.pharmacy, ["admin"]),
           item("users", "Therapists", adminRoutes.therapists, ["admin"]),
           item("users", "Staff", adminRoutes.staff, ["admin"]),
         ],
@@ -107,9 +108,9 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
           item("enterprise", "Enterprise", adminRoutes.enterprise, ["admin"]),
           item("system", "AI platform", adminRoutes.ai, ["admin"]),
           item("users", "Users", adminRoutes.users, ["admin"]),
-          item("users", "Roles", adminRoutes.roles, ["admin"]),
+          item("settings", "Roles", adminRoutes.roles, ["admin"]),
           item("clinic", "Locations", adminRoutes.locations, ["admin"]),
-          item("clinic", "Terminals", adminRoutes.terminals, ["admin"]),
+          item("system", "Terminals", adminRoutes.terminals, ["admin"]),
           item("reports", "Reports", adminRoutes.reports, ["admin"]),
           item("logs", "Audit logs", adminRoutes.auditLogs, ["admin"]),
           item("settings", "Settings", adminRoutes.settings, ["admin"]),
@@ -232,6 +233,27 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
       },
     ],
   },
+  user: {
+    id: "user",
+    brandTitle: "User Portal",
+    allowedRoles: ["USER"],
+    profileHref: "/user/profile",
+    settingsHref: "/user/profile",
+    sections: [
+      {
+        title: "Account",
+        items: [
+          item("dashboard", "Overview", "/user", ["user"]),
+          item("calendar", "Appointments", "/user/appointments", ["user"]),
+          item("billing", "Billing", "/user/billing", ["user"]),
+          item("notes", "Notes", "/user/notes", ["user"]),
+          item("messages", "Messages", "/user/messages", ["user"]),
+          item("notifications", "Notifications", "/user/notifications", ["user"]),
+          item("settings", "Profile", "/user/profile", ["user"]),
+        ],
+      },
+    ],
+  },
 };
 
 const EMPTY_LEGACY_CONFIG: PortalNavConfig = {
@@ -245,6 +267,37 @@ const EMPTY_LEGACY_CONFIG: PortalNavConfig = {
 
 export function getPortalNavConfig(portalId: PortalId): PortalNavConfig {
   return PORTAL_NAV_CONFIG[portalId as Exclude<PortalId, "legacy">] ?? EMPTY_LEGACY_CONFIG;
+}
+
+function resolveLegacyNavIcon(href: string, label: string): NavIconName {
+  const byHref: Record<string, NavIconName> = {
+    "/appointments": "calendar",
+    "/patients": "patients",
+    "/billing": "billing",
+    "/notes": "notes",
+    "/settings": "settings",
+    "/dashboard": "dashboard",
+  };
+
+  const byLabel: Record<string, NavIconName> = {
+    Appointments: "calendar",
+    Patients: "patients",
+    Billing: "billing",
+    Notes: "notes",
+    Settings: "settings",
+    Dashboard: "dashboard",
+    Overview: "dashboard",
+    "Super Admin": "system",
+    Admin: "clinic",
+    Clinic: "clinic",
+    Therapist: "users",
+    Patient: "patients",
+    Pharmacy: "inventory",
+    Staff: "users",
+    User: "users",
+  };
+
+  return byHref[href] ?? byLabel[label] ?? "dashboard";
 }
 
 export function createNavConfigFromLinks(
@@ -261,7 +314,9 @@ export function createNavConfigFromLinks(
     sections: [
       {
         title: "Main",
-        items: links.map((link) => item("dashboard", link.label, link.href)),
+        items: links.map((link) =>
+          item(resolveLegacyNavIcon(link.href, link.label), link.label, link.href),
+        ),
       },
     ],
   };
@@ -304,5 +359,6 @@ export function resolvePortalIdFromPath(pathname: string): PortalId | null {
   if (pathname.startsWith("/staff")) return "staff";
   if (pathname.startsWith("/pharmacy")) return "pharmacy";
   if (pathname.startsWith("/patient")) return "patient";
+  if (pathname.startsWith("/user")) return "user";
   return null;
 }

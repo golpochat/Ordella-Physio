@@ -12,6 +12,10 @@ import {
   usePlatformUsers,
 } from "@/hooks/useSuperAdminPortal";
 import { TENANT_CURRENCY_OPTIONS, TENANT_TIMEZONE_OPTIONS } from "@/lib/tenant-form-options";
+import {
+  PLATFORM_DEFAULT_TIMEZONE,
+  PLATFORM_FALLBACK_CURRENCY,
+} from "@/lib/platform-formatting";
 import { parseTenantCreateErrors } from "@/lib/tenant-api-errors";
 import {
   validateTenantCurrency,
@@ -44,8 +48,8 @@ export function TenantCreateForm() {
   const [ownerMode, setOwnerMode] = useState<OwnerMode>("email");
   const [ownerUserId, setOwnerUserId] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-  const [timezone, setTimezone] = useState("UTC");
-  const [currency, setCurrency] = useState("USD");
+  const [timezone, setTimezone] = useState(PLATFORM_DEFAULT_TIMEZONE);
+  const [currency, setCurrency] = useState(PLATFORM_FALLBACK_CURRENCY);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [successSummary, setSuccessSummary] = useState<SuccessSummary | null>(null);
@@ -177,7 +181,7 @@ export function TenantCreateForm() {
               });
             }}
           >
-            {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+            {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
             <fieldset className="tenant-create-form-section">
               <legend className="tenant-create-form-section-title">Tenant identity</legend>
@@ -191,7 +195,7 @@ export function TenantCreateForm() {
                     aria-invalid={Boolean(fieldErrors.tenantName)}
                   />
                   {fieldErrors.tenantName ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.tenantName}</p>
+                    <p className="form-field-error">{fieldErrors.tenantName}</p>
                   ) : null}
                 </div>
 
@@ -215,7 +219,7 @@ export function TenantCreateForm() {
                     ))}
                   </select>
                   {fieldErrors.organizationId ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.organizationId}</p>
+                    <p className="form-field-error">{fieldErrors.organizationId}</p>
                   ) : null}
                 </div>
               </div>
@@ -243,7 +247,7 @@ export function TenantCreateForm() {
                     ))}
                   </select>
                   {fieldErrors.timezone ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.timezone}</p>
+                    <p className="form-field-error">{fieldErrors.timezone}</p>
                   ) : null}
                 </div>
 
@@ -266,7 +270,7 @@ export function TenantCreateForm() {
                     ))}
                   </select>
                   {fieldErrors.currency ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.currency}</p>
+                    <p className="form-field-error">{fieldErrors.currency}</p>
                   ) : null}
                 </div>
               </div>
@@ -326,7 +330,7 @@ export function TenantCreateForm() {
                       aria-invalid={Boolean(fieldErrors.ownerEmail)}
                     />
                     {fieldErrors.ownerEmail ? (
-                      <p className="tenant-create-form-field-error">{fieldErrors.ownerEmail}</p>
+                      <p className="form-field-error">{fieldErrors.ownerEmail}</p>
                     ) : (
                       <p className="tenant-create-form-field-hint">
                         A new owner account will be created and invited during provisioning.
@@ -355,7 +359,7 @@ export function TenantCreateForm() {
                       ))}
                     </select>
                     {fieldErrors.ownerUserId ? (
-                      <p className="tenant-create-form-field-error">{fieldErrors.ownerUserId}</p>
+                      <p className="form-field-error">{fieldErrors.ownerUserId}</p>
                     ) : users.length === 0 ? (
                       <p className="tenant-create-form-field-hint">
                         No users available. Switch to email invite to create a new owner.

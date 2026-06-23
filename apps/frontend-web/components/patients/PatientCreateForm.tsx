@@ -170,7 +170,7 @@ export function PatientCreateForm() {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <fieldset className="tenant-create-form-section">
             <legend className="tenant-create-form-section-title">Personal info</legend>
@@ -185,7 +185,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setFirstName(event.target.value)}
                 />
                 {fieldErrors.firstName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.firstName}</p>
+                  <p className="form-field-error">{fieldErrors.firstName}</p>
                 ) : null}
               </div>
 
@@ -199,7 +199,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setLastName(event.target.value)}
                 />
                 {fieldErrors.lastName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.lastName}</p>
+                  <p className="form-field-error">{fieldErrors.lastName}</p>
                 ) : null}
               </div>
 
@@ -214,7 +214,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setDateOfBirth(event.target.value)}
                 />
                 {fieldErrors.dateOfBirth ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.dateOfBirth}</p>
+                  <p className="form-field-error">{fieldErrors.dateOfBirth}</p>
                 ) : null}
               </div>
 
@@ -235,7 +235,7 @@ export function PatientCreateForm() {
                   ))}
                 </select>
                 {fieldErrors.gender ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.gender}</p>
+                  <p className="form-field-error">{fieldErrors.gender}</p>
                 ) : null}
               </div>
 
@@ -264,7 +264,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setPhone(event.target.value)}
                 />
                 {fieldErrors.phone ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.phone}</p>
+                  <p className="form-field-error">{fieldErrors.phone}</p>
                 ) : null}
               </div>
 
@@ -279,7 +279,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setEmail(event.target.value)}
                 />
                 {fieldErrors.email ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.email}</p>
+                  <p className="form-field-error">{fieldErrors.email}</p>
                 ) : null}
               </div>
             </div>
@@ -298,7 +298,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setAddressLine1(event.target.value)}
                 />
                 {fieldErrors.addressLine1 ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.addressLine1}</p>
+                  <p className="form-field-error">{fieldErrors.addressLine1}</p>
                 ) : null}
               </div>
 
@@ -322,7 +322,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setCity(event.target.value)}
                 />
                 {fieldErrors.city ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.city}</p>
+                  <p className="form-field-error">{fieldErrors.city}</p>
                 ) : null}
               </div>
 
@@ -336,7 +336,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setState(event.target.value)}
                 />
                 {fieldErrors.state ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.state}</p>
+                  <p className="form-field-error">{fieldErrors.state}</p>
                 ) : null}
               </div>
 
@@ -350,7 +350,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setPostalCode(event.target.value)}
                 />
                 {fieldErrors.postalCode ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.postalCode}</p>
+                  <p className="form-field-error">{fieldErrors.postalCode}</p>
                 ) : null}
               </div>
 
@@ -364,7 +364,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setCountry(event.target.value)}
                 />
                 {fieldErrors.country ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.country}</p>
+                  <p className="form-field-error">{fieldErrors.country}</p>
                 ) : null}
               </div>
             </div>
@@ -383,7 +383,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setEmergencyContactName(event.target.value)}
                 />
                 {fieldErrors.emergencyContactName ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.emergencyContactName}</p>
+                  <p className="form-field-error">{fieldErrors.emergencyContactName}</p>
                 ) : null}
               </div>
 
@@ -397,7 +397,7 @@ export function PatientCreateForm() {
                   onChange={(event) => setEmergencyContactPhone(event.target.value)}
                 />
                 {fieldErrors.emergencyContactPhone ? (
-                  <p className="tenant-create-form-field-error">{fieldErrors.emergencyContactPhone}</p>
+                  <p className="form-field-error">{fieldErrors.emergencyContactPhone}</p>
                 ) : null}
               </div>
             </div>
@@ -428,7 +428,7 @@ export function PatientCreateForm() {
                     onChange={(event) => setProviderName(event.target.value)}
                   />
                   {fieldErrors["insurance.providerName"] ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors["insurance.providerName"]}
                     </p>
                   ) : null}
@@ -444,7 +444,7 @@ export function PatientCreateForm() {
                     onChange={(event) => setPolicyNumber(event.target.value)}
                   />
                   {fieldErrors["insurance.policyNumber"] ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors["insurance.policyNumber"]}
                     </p>
                   ) : null}
@@ -461,7 +461,7 @@ export function PatientCreateForm() {
                     onChange={(event) => setExpiryDate(event.target.value)}
                   />
                   {fieldErrors["insurance.expiryDate"] ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors["insurance.expiryDate"]}
                     </p>
                   ) : null}

@@ -315,7 +315,7 @@ export function LocationConfigEditor({
               });
             }}
           >
-            {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+            {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
             <div className="tenant-config-mode-toggle">
               <button
@@ -366,7 +366,7 @@ export function LocationConfigEditor({
                   onChange={(event) => setJsonText(event.target.value)}
                   rows={12}
                 />
-                {jsonError ? <p className="tenant-create-form-field-error">{jsonError}</p> : null}
+                {jsonError ? <p className="form-field-error">{jsonError}</p> : null}
               </div>
             ) : null}
 
@@ -395,7 +395,7 @@ export function LocationConfigEditor({
                     />
                   </div>
                   {fieldErrors.primaryColor ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.primaryColor}</p>
+                    <p className="form-field-error">{fieldErrors.primaryColor}</p>
                   ) : null}
                 </div>
 
@@ -414,7 +414,7 @@ export function LocationConfigEditor({
                     }
                   />
                   {fieldErrors.logoUrl ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.logoUrl}</p>
+                    <p className="form-field-error">{fieldErrors.logoUrl}</p>
                   ) : null}
                 </div>
 
@@ -452,7 +452,7 @@ export function LocationConfigEditor({
                     }
                   />
                   {fieldErrors.maxDailyAppointments ? (
-                    <p className="tenant-create-form-field-error">
+                    <p className="form-field-error">
                       {fieldErrors.maxDailyAppointments}
                     </p>
                   ) : null}
@@ -500,7 +500,7 @@ export function LocationConfigEditor({
                     </div>
                   ))}
                   {fieldErrors.openingHours ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.openingHours}</p>
+                    <p className="form-field-error">{fieldErrors.openingHours}</p>
                   ) : null}
                 </div>
               </div>
@@ -573,7 +573,7 @@ export function LocationConfigEditor({
                     }
                   />
                   {fieldErrors.posDeviceId ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.posDeviceId}</p>
+                    <p className="form-field-error">{fieldErrors.posDeviceId}</p>
                   ) : null}
                 </div>
 
@@ -592,7 +592,7 @@ export function LocationConfigEditor({
                     }
                   />
                   {fieldErrors.printerIp ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.printerIp}</p>
+                    <p className="form-field-error">{fieldErrors.printerIp}</p>
                   ) : null}
                 </div>
 
@@ -611,7 +611,7 @@ export function LocationConfigEditor({
                     }
                   />
                   {fieldErrors.iotGatewayUrl ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.iotGatewayUrl}</p>
+                    <p className="form-field-error">{fieldErrors.iotGatewayUrl}</p>
                   ) : null}
                 </div>
               </div>

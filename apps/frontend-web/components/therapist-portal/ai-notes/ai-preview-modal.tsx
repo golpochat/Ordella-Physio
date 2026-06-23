@@ -41,7 +41,8 @@ export function AiPreviewModal({
           </ModalDescription>
         </ModalHeader>
 
-        <AiDisclaimer />
+        <div className="space-y-4 py-4">
+          <AiDisclaimer />
 
         {isLoading ? (
           <p className="py-8 text-center text-sm text-muted-foreground">{loadingMessage}</p>
@@ -114,6 +115,8 @@ export function AiPreviewModal({
             <SectionList title="Precautions" items={preview.data.precautions} />
           </div>
         ) : null}
+
+        </div>
 
         <ModalFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={onReject} disabled={isLoading}>

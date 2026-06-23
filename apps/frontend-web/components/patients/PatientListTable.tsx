@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import { useAuth } from "@/hooks/useAuth";
@@ -142,16 +143,20 @@ export function PatientListTable({
             <div className="dashboard-cell-muted">{formatDate(patient.dateOfBirth)}</div>
             <div className="dashboard-cell-muted">{patient.status}</div>
             <div className="dashboard-cell-muted">{formatDate(patient.createdAt)}</div>
-            <div className="user-list-actions">
-              <Link href={`/clinic/patients/${patient.id}`} className="dashboard-link">
-                View
-              </Link>
+            <TableRowActions>
+              <TableActionLink
+                href={`/clinic/patients/${patient.id}`}
+                label={`View ${patient.firstName} ${patient.lastName}`}
+                icon="view"
+              />
               {canEditPatient ? (
-                <Link href={`/clinic/patients/${patient.id}/edit`} className="dashboard-link">
-                  Edit
-                </Link>
+                <TableActionLink
+                  href={`/clinic/patients/${patient.id}/edit`}
+                  label={`Edit ${patient.firstName} ${patient.lastName}`}
+                  icon="edit"
+                />
               ) : null}
-            </div>
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

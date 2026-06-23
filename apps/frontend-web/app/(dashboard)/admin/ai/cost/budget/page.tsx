@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -9,6 +10,7 @@ import { ListPage } from "@/components/dashboard/ListPage";
 import { useAuth } from "@/hooks/useAuth";
 import { useCostBudget, useUpdateCostBudget } from "@/hooks/useAiCost";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiCostSectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -29,11 +31,7 @@ export default function AdminCostBudgetPage() {
           onRetry={() => void budget.refetch()}
           loadingRows={4}
         >
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.cost} className="ai-admin-nav-link">Dashboard</Link>
-            <Link href={adminAiPaths.costBudget} className="ai-admin-nav-link ai-admin-nav-link-active">Budget</Link>
-            <Link href={adminAiPaths.costAlerts} className="ai-admin-nav-link">Alerts</Link>
-          </div>
+          <AiAdminSectionNav items={aiCostSectionNav(adminAiPaths)} />
           <BudgetUsageBar budget={budget.data} />
           {canManage ? (
             <BudgetConfigPanel

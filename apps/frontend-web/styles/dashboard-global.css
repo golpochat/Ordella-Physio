@@ -11,13 +11,25 @@
   gap: var(--section-spacing);
 }
 
+.portal-page .dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-spacing);
+}
+
 .dashboard-portal .dashboard-page > * {
   margin-top: 0;
   margin-bottom: 0;
 }
 
+.portal-page .dashboard-page > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 /* Page header */
-.dashboard-portal .page-header {
+.dashboard-portal .page-header,
+.portal-page .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -25,22 +37,32 @@
   gap: var(--space-md);
 }
 
-.dashboard-portal .page-header h1 {
+.dashboard-portal .page-header h1,
+.portal-page .page-header h1 {
   font-size: 22px;
   font-weight: 600;
   line-height: 1.2;
   color: var(--brand-dark);
 }
 
-.dashboard-portal .page-header p {
+.dashboard-portal .page-header p,
+.portal-page .page-header p {
   font-size: 15px;
   opacity: 0.75;
   margin-top: 4px;
   color: var(--brand-gray);
 }
 
-.dashboard-portal .page-header-action {
+.dashboard-portal .page-header-action,
+.portal-page .page-header-action {
   flex-shrink: 0;
+}
+
+:is(.dashboard-portal, .portal-page) .dashboard-page section h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
 }
 
 /* Card */
@@ -182,6 +204,13 @@
   text-decoration: underline;
 }
 
+.dashboard-portal .table-row-actions,
+.portal-page .table-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 .dashboard-portal .dashboard-empty {
   color: var(--brand-gray);
   opacity: 0.8;
@@ -254,7 +283,8 @@
     display: none;
   }
 
-  .dashboard-portal .page-header {
+  .dashboard-portal .page-header,
+  .portal-page .page-header {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -689,8 +719,14 @@
   margin: 0;
 }
 
-.dashboard-portal .dashboard-table-wrap {
+:is(.dashboard-portal, .portal-page) .dashboard-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
+}
+
+:is(.dashboard-portal, .portal-page) .dashboard-table-wrap > .dashboard-table {
+  min-width: 40rem;
 }
 
 .dashboard-portal .dashboard-table {

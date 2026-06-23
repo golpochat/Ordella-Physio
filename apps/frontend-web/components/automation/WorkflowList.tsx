@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { WorkflowRecord } from "@/lib/automation-types";
 import { cn } from "@/lib/cn";
 
@@ -96,17 +96,18 @@ export function WorkflowList({ workflows, isBusy = false, onToggleActive }: Work
               <span className="dashboard-cell-muted">Never</span>
             )}
           </div>
-          <div className="user-list-actions">
-            <Link href={`/clinic/automation/workflows/${workflow.id}/edit`} className="dashboard-link">
-              Edit
-            </Link>
-            <Link
+          <TableRowActions>
+            <TableActionLink
+              href={`/clinic/automation/workflows/${workflow.id}/edit`}
+              label={`Edit workflow ${workflow.name}`}
+              icon="edit"
+            />
+            <TableActionLink
               href={`/clinic/automation/workflows/history?workflowId=${workflow.id}`}
-              className="dashboard-link"
-            >
-              History
-            </Link>
-          </div>
+              label={`View history for ${workflow.name}`}
+              icon="view"
+            />
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

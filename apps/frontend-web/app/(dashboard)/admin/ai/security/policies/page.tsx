@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -9,6 +10,7 @@ import { ListPage } from "@/components/dashboard/ListPage";
 import { useAccessPolicies, useAssignAccessPolicy, useRevokeAccessPolicy } from "@/hooks/useAiSecurity";
 import { useAuth } from "@/hooks/useAuth";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiSecuritySectionNav } from "@/lib/ai-admin-section-nav";
 import { userHasPermission } from "@/lib/auth/permissions";
 import { WithPermission } from "@/lib/auth/withPermission";
 
@@ -23,11 +25,7 @@ export default function AdminSecurityPoliciesPage() {
     <WithPermission permission="ai.admin">
       <AiAdminShell>
         <ListPage title="AI access policies" subtitle="Control which roles and users can access each model." isLoading={isLoading} isError={isError} onRetry={() => void refetch()} loadingRows={4}>
-          <div className="ai-gateway-subnav">
-            <Link href={adminAiPaths.securityAudit} className="ai-admin-nav-link">Audit</Link>
-            <Link href={adminAiPaths.securityPolicies} className="ai-admin-nav-link ai-admin-nav-link-active">Policies</Link>
-            <Link href={adminAiPaths.securityPii} className="ai-admin-nav-link">PII</Link>
-          </div>
+          <AiAdminSectionNav items={aiSecuritySectionNav(adminAiPaths)} />
           {canManage ? (
             <AccessPolicyEditor
               isSaving={assignPolicy.isPending}

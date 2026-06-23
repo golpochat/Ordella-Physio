@@ -5,17 +5,10 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/clinic-ui/confirm-dialog";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Grid } from "@/components/dashboard/Grid";
 import { Row } from "@/components/dashboard/Row";
-import {
-  Modal,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from "@/components/ui/modal";
 import { TenantStatusBadge } from "@/components/super-admin/tenants/TenantStatusBadge";
 import { useRemoveOrganizationTenant } from "@/hooks/useSuperAdminPortal";
 import { parseOrganizationTenantLinkErrors } from "@/lib/organization-api-errors";
@@ -115,25 +108,16 @@ export function OrganizationTenantList({
         </CardBody>
       </Card>
 
-      <Modal open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>Remove tenant</ModalTitle>
-            <ModalDescription>
-              Are you sure you want to remove this tenant from the organization?
-            </ModalDescription>
-          </ModalHeader>
-          <ModalFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" disabled={removeTenant.isPending} onClick={() => setConfirmOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" disabled={removeTenant.isPending} onClick={handleConfirm}>
-              {removeTenant.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {removeTenant.isPending ? "Working..." : "Confirm"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Remove tenant"
+        description="Are you sure you want to remove this tenant from the organization?"
+        destructive
+        loading={removeTenant.isPending}
+        requireTenant={false}
+        onConfirm={handleConfirm}
+      />
     </>
   );
 }

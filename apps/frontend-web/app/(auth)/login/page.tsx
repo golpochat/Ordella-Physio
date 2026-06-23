@@ -6,21 +6,11 @@ import { useState } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormErrorBanner, FormSuccessBanner } from "@/components/ui/form-feedback";
 import { useAuth } from "@/hooks/useAuth";
+import { LOGIN_REASON_MESSAGES, LOGIN_SUCCESS_MESSAGES } from "@/lib/auth-ui-messages";
 import { getGatewayBaseUrl } from "@/lib/gateway-proxy";
 import type { TenantLoginOption } from "@/lib/auth-client";
-
-const LOGIN_REASON_MESSAGES: Record<string, string> = {
-  "session-expired": "Your session expired. Please sign in again.",
-  unauthorized: "You do not have access to that page. Please sign in with the correct account.",
-  "missing-tenant": "Session context is missing. Please sign in again.",
-  "token-reuse-detected": "Your session was compromised. Please log in again.",
-  "trial-expired": "Your free trial has ended. Sign in to upgrade your plan.",
-};
-
-const LOGIN_SUCCESS_MESSAGES: Record<string, string> = {
-  "password-reset-success": "Your password has been reset successfully.",
-};
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -54,10 +44,10 @@ export default function LoginPage() {
         </CardHeader>
         <CardBody>
           {reason && LOGIN_REASON_MESSAGES[reason] ? (
-            <p className="auth-form-error">{LOGIN_REASON_MESSAGES[reason]}</p>
+            <FormErrorBanner>{LOGIN_REASON_MESSAGES[reason]}</FormErrorBanner>
           ) : null}
           {message && LOGIN_SUCCESS_MESSAGES[message] ? (
-            <p className="auth-form-success">{LOGIN_SUCCESS_MESSAGES[message]}</p>
+            <FormSuccessBanner>{LOGIN_SUCCESS_MESSAGES[message]}</FormSuccessBanner>
           ) : null}
 
           <LoginForm

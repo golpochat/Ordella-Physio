@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { Loader2 } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
+import {
+  FormErrorBanner,
+  FormFieldError,
+  FormSuccessBanner,
+  formInputInvalidClass,
+} from "@/components/ui/form-feedback";
 import { Input, Label } from "@/components/ui/input";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { authClient } from "@/lib/auth-client";
@@ -57,8 +63,8 @@ export function ForgotPasswordForm() {
 
   return (
     <form className="auth-form-stack" onSubmit={handleSubmit} noValidate>
-      {formError ? <p className="auth-form-error">{formError}</p> : null}
-      {successMessage ? <p className="auth-form-success">{successMessage}</p> : null}
+      {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
+      {successMessage ? <FormSuccessBanner>{successMessage}</FormSuccessBanner> : null}
 
       <div className="auth-field-stack">
         <Label htmlFor="email">Email</Label>
@@ -68,11 +74,12 @@ export function ForgotPasswordForm() {
           autoComplete="email"
           placeholder="you@clinic.com"
           value={email}
-          className={fieldErrors.email ? "border-red-500" : undefined}
+          className={formInputInvalidClass(Boolean(fieldErrors.email))}
+          aria-invalid={Boolean(fieldErrors.email)}
           onChange={(event) => setEmail(event.target.value)}
           onBlur={() => setFieldErrors((current) => ({ ...current, email: validate(email).email }))}
         />
-        {fieldErrors.email ? <p className="auth-field-error">{fieldErrors.email}</p> : null}
+        <FormFieldError>{fieldErrors.email}</FormFieldError>
       </div>
 
       <Button type="submit" className="auth-submit-button" disabled={submitting}>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { PlatformUser } from "@/lib/super-admin-portal-types";
 import { Row } from "@/components/dashboard/Row";
 import { RoleBadge } from "@/components/super-admin/users/RoleBadge";
+import { TableActionLink } from "@/components/ui/table-row-actions";
 
 export type UserRowUser = PlatformUser & {
   name?: string;
@@ -36,9 +37,11 @@ export function UserRow({ user }: UserRowProps) {
       <p className="dashboard-cell-muted">{tenant}</p>
       <RoleBadge role={role} />
       {userId && tenantId ? (
-        <Link href={`/super-admin/users/${userId}?tenantId=${tenantId}`} className="dashboard-link">
-          View user
-        </Link>
+        <TableActionLink
+          href={`/super-admin/users/${userId}?tenantId=${tenantId}`}
+          label={`View user ${name}`}
+          icon="view"
+        />
       ) : (
         <span className="dashboard-cell-muted">N/A</span>
       )}

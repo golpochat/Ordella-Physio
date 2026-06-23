@@ -1,0 +1,46 @@
+/**
+ * Canonical form validation & auth feedback styles (app-wide).
+ * Legacy class names alias here for backward compatibility during migration.
+ */
+
+.form-field-error,
+.auth-field-error,
+.tenant-create-form-field-error {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: hsl(var(--destructive));
+}
+
+.form-error-banner,
+.auth-form-error,
+.tenant-create-form-error {
+  margin: 0 0 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--destructive) / 0.35);
+  background: hsl(var(--destructive) / 0.08);
+  padding: 0.75rem 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: hsl(var(--destructive));
+}
+
+.form-success-banner,
+.auth-form-success {
+  margin: 0 0 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(142 76% 36% / 0.35);
+  background: hsl(142 76% 36% / 0.08);
+  padding: 0.75rem 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: hsl(142 45% 28%);
+}
+
+.form-input-invalid,
+input.form-input-invalid,
+textarea.form-input-invalid,
+select.form-input-invalid,
+.auth-password-input.form-input-invalid {
+  border-color: hsl(var(--destructive)) !important;
+}

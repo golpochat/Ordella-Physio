@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionButton, TableRowActions } from "@/components/ui/table-row-actions";
 import type { DatasetRecordItem } from "@/lib/dataset-types";
 
 function formatValue(value: unknown): string {
@@ -130,47 +131,40 @@ export function DatasetRecordTable({
                 : "—"}
             </div>
             <div>{record.embedding?.length ? `${record.embedding.length} dims` : "—"}</div>
-            <div className="dataset-row-actions">
+            <TableRowActions className="dataset-row-actions">
               {canManage ? (
                 editingId === record.id ? (
                   <>
-                    <button
-                      type="button"
-                      className="dashboard-link"
+                    <TableActionButton
+                      label="Save record"
+                      icon="save"
                       disabled={isBusy}
                       onClick={() => handleSaveEdit(record.id)}
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      className="dashboard-link"
+                    />
+                    <TableActionButton
+                      label="Cancel editing record"
+                      icon="cancel"
                       onClick={() => setEditingId(null)}
-                    >
-                      Cancel
-                    </button>
+                    />
                   </>
                 ) : (
                   <>
-                    <button
-                      type="button"
-                      className="dashboard-link"
+                    <TableActionButton
+                      label="Edit record"
+                      icon="edit"
                       onClick={() => startEdit(record)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="dashboard-link dataset-link-danger"
+                    />
+                    <TableActionButton
+                      label="Delete record"
+                      icon="delete"
+                      destructive
                       disabled={isBusy}
                       onClick={() => onDelete(record.id)}
-                    >
-                      Delete
-                    </button>
+                    />
                   </>
                 )
               ) : null}
-            </div>
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

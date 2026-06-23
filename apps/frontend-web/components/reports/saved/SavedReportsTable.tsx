@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { TableActionButton, TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Input, Label } from "@/components/ui/input";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
@@ -130,22 +131,25 @@ export function SavedReportsTable({ reports, isLoading = false }: SavedReportsTa
             <span className="dashboard-cell">{savedReportTypeLabel(report.type)}</span>
             <span className="dashboard-cell">{shortUserId(report.createdByUserId)}</span>
             <span className="dashboard-cell">{formatDate(report.createdAt)}</span>
-            <div className="user-list-actions">
-              <Link href={savedReportOpenHref(report.type, report.config)} className="dashboard-link">
-                Open
-              </Link>
-              <button type="button" className="dashboard-link" onClick={() => openEdit(report)}>
-                Edit
-              </button>
-              <button
-                type="button"
-                className="dashboard-link"
-                onClick={() => void handleDelete(report.id)}
+            <TableRowActions>
+              <TableActionLink
+                href={savedReportOpenHref(report.type, report.config)}
+                label={`Open report ${report.name}`}
+                icon="view"
+              />
+              <TableActionButton
+                label={`Edit report ${report.name}`}
+                icon="edit"
+                onClick={() => openEdit(report)}
+              />
+              <TableActionButton
+                label={`Delete report ${report.name}`}
+                icon="delete"
+                destructive
                 disabled={deletingId === report.id}
-              >
-                {deletingId === report.id ? "Deleting…" : "Delete"}
-              </button>
-            </div>
+                onClick={() => void handleDelete(report.id)}
+              />
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

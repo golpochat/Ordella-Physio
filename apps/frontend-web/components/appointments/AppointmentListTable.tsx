@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
 import { useAuth } from "@/hooks/useAuth";
@@ -134,16 +135,20 @@ export function AppointmentListTable({
             </div>
             <div className="dashboard-cell-muted">{formatPortalDateTime(appointment.endTime)}</div>
             <div className="dashboard-cell-muted">{appointment.status}</div>
-            <div className="user-list-actions">
-              <Link href={`/clinic/appointments/${appointment.id}`} className="dashboard-link">
-                View
-              </Link>
+            <TableRowActions>
+              <TableActionLink
+                href={`/clinic/appointments/${appointment.id}`}
+                label={`View appointment ${appointment.id}`}
+                icon="view"
+              />
               {canManageAppointments ? (
-                <Link href={`/clinic/appointments/${appointment.id}/edit`} className="dashboard-link">
-                  Edit
-                </Link>
+                <TableActionLink
+                  href={`/clinic/appointments/${appointment.id}/edit`}
+                  label={`Edit appointment ${appointment.id}`}
+                  icon="edit"
+                />
               ) : null}
-            </div>
+            </TableRowActions>
           </Row>
         ))}
       </DataTable>

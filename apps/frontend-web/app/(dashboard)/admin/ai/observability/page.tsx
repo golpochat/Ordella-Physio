@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { toast } from "sonner";
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 import { AiAdminShell } from "@/components/ai/admin";
 import { BottleneckAlerts } from "@/components/ai/observability/BottleneckAlerts";
 import { ErrorRateHeatmap } from "@/components/ai/observability/ErrorRateHeatmap";
@@ -16,18 +16,8 @@ import {
   useResolveBottleneck,
 } from "@/hooks/useAiObservability";
 import { adminAiPaths } from "@/lib/ai-admin-paths";
+import { aiObservabilitySectionNav } from "@/lib/ai-admin-section-nav";
 import { WithPermission } from "@/lib/auth/withPermission";
-
-function ObservabilitySubnav({ active }: { active: "dashboard" | "traces" | "logs" | "metrics" }) {
-  return (
-    <div className="ai-gateway-subnav">
-      <Link href={adminAiPaths.observability} className={`ai-admin-nav-link ${active === "dashboard" ? "ai-admin-nav-link-active" : ""}`}>Dashboard</Link>
-      <Link href={adminAiPaths.observabilityTraces} className={`ai-admin-nav-link ${active === "traces" ? "ai-admin-nav-link-active" : ""}`}>Traces</Link>
-      <Link href={adminAiPaths.observabilityLogs} className={`ai-admin-nav-link ${active === "logs" ? "ai-admin-nav-link-active" : ""}`}>Logs</Link>
-      <Link href={adminAiPaths.observabilityMetrics} className={`ai-admin-nav-link ${active === "metrics" ? "ai-admin-nav-link-active" : ""}`}>Metrics</Link>
-    </div>
-  );
-}
 
 export default function AdminObservabilityPage() {
   const { data, isLoading, isError, refetch } = useObservabilityDashboard();
@@ -47,7 +37,7 @@ export default function AdminObservabilityPage() {
           onRetry={() => void refetch()}
           loadingRows={6}
         >
-          <ObservabilitySubnav active="dashboard" />
+          <AiAdminSectionNav items={aiObservabilitySectionNav(adminAiPaths)} />
           {data ? (
             <div className="ai-observability-summary">
               <div className="ai-observability-summary-card"><span>Traces</span><strong>{data.summary.traceCount}</strong></div>

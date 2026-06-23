@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { ClinicInvoiceListFilters, ClinicInvoiceListItem } from "@/lib/clinic-portal-types";
 import { formatCurrency, formatPortalDateTime } from "@/lib/clinic-portal-utils";
 import { cn } from "@/lib/cn";
@@ -127,14 +128,20 @@ export function InvoiceListTable({
               <div className="font-medium">{formatCurrency(invoice.total, invoice.currency)}</div>
               <div>{formatPortalDateTime(invoice.createdAt)}</div>
               <div className="dashboard-row-actions">
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/billing/invoices/${invoice.id}`}>View</Link>
-                </Button>
-                {canEdit ? (
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href={`/billing/invoices/${invoice.id}/edit`}>Edit</Link>
-                  </Button>
-                ) : null}
+                <TableRowActions>
+                  <TableActionLink
+                    href={`/billing/invoices/${invoice.id}`}
+                    label={`View invoice ${invoice.invoiceNumber}`}
+                    icon="view"
+                  />
+                  {canEdit ? (
+                    <TableActionLink
+                      href={`/billing/invoices/${invoice.id}/edit`}
+                      label={`Edit invoice ${invoice.invoiceNumber}`}
+                      icon="edit"
+                    />
+                  ) : null}
+                </TableRowActions>
               </div>
             </Row>
           );

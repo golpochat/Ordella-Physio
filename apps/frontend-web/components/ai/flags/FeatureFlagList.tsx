@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Row } from "@/components/dashboard/Row";
 import { DataTable } from "@/components/super-admin/layout/DataTable";
+import { TableActionLink, TableRowActions } from "@/components/ui/table-row-actions";
 import type { FeatureFlagRecord } from "@/lib/feature-flag-types";
 
 export type FeatureFlagListProps = {
@@ -30,14 +30,18 @@ export function FeatureFlagList({ flags, basePath = "/clinic/ai", onToggleActive
           <div>
             <Badge variant={flag.isActive ? "default" : "secondary"}>{flag.isActive ? "Active" : "Off"}</Badge>
           </div>
-          <div className="automation-builder-actions">
+          <TableRowActions className="automation-builder-actions">
             {onToggleActive ? (
               <Button type="button" variant="ghost" onClick={() => onToggleActive(flag.id, !flag.isActive)}>
                 {flag.isActive ? "Disable" : "Enable"}
               </Button>
             ) : null}
-            <Link href={`${basePath}/flags?edit=${flag.id}`} className="dashboard-link">Edit</Link>
-          </div>
+            <TableActionLink
+              href={`${basePath}/flags?edit=${flag.id}`}
+              label={`Edit flag ${flag.key}`}
+              icon="edit"
+            />
+          </TableRowActions>
         </Row>
       ))}
     </DataTable>

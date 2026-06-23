@@ -97,7 +97,7 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -108,7 +108,7 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
                 onChange={(event) => setName(event.target.value)}
                 aria-invalid={Boolean(fieldErrors.name)}
               />
-              {fieldErrors.name ? <p className="tenant-create-form-field-error">{fieldErrors.name}</p> : null}
+              {fieldErrors.name ? <p className="form-field-error">{fieldErrors.name}</p> : null}
             </div>
 
             <div className="tenant-create-form-field">
@@ -138,7 +138,7 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
                 ))}
               </select>
               {fieldErrors.timezone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.timezone}</p>
+                <p className="form-field-error">{fieldErrors.timezone}</p>
               ) : null}
             </div>
 
@@ -158,7 +158,7 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
                 ))}
               </select>
               {fieldErrors.currency ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.currency}</p>
+                <p className="form-field-error">{fieldErrors.currency}</p>
               ) : null}
             </div>
 
@@ -178,7 +178,7 @@ export function TenantEditForm({ tenant }: TenantEditFormProps) {
                 ))}
               </select>
               {fieldErrors.status ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.status}</p>
+                <p className="form-field-error">{fieldErrors.status}</p>
               ) : null}
             </div>
           </div>

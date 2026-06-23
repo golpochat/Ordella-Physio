@@ -236,7 +236,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
               });
             }}
           >
-            {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+            {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
             <div className="tenant-config-mode-toggle">
               <button
@@ -291,7 +291,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                   onChange={(event) => setJsonText(event.target.value)}
                   rows={12}
                 />
-                {jsonError ? <p className="tenant-create-form-field-error">{jsonError}</p> : null}
+                {jsonError ? <p className="form-field-error">{jsonError}</p> : null}
               </div>
             ) : null}
 
@@ -320,7 +320,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     />
                   </div>
                   {fieldErrors.primaryColor ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.primaryColor}</p>
+                    <p className="form-field-error">{fieldErrors.primaryColor}</p>
                   ) : null}
                 </div>
 
@@ -340,7 +340,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     }
                   />
                   {fieldErrors.logoUrl ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.logoUrl}</p>
+                    <p className="form-field-error">{fieldErrors.logoUrl}</p>
                   ) : null}
                 </div>
 
@@ -358,7 +358,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     <span>Enable dark mode by default</span>
                   </label>
                   {fieldErrors.darkMode ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.darkMode}</p>
+                    <p className="form-field-error">{fieldErrors.darkMode}</p>
                   ) : null}
                 </div>
               </div>
@@ -387,7 +387,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                       <span>{label}</span>
                     </label>
                     {fieldErrors[key] ? (
-                      <p className="tenant-create-form-field-error">{fieldErrors[key]}</p>
+                      <p className="form-field-error">{fieldErrors[key]}</p>
                     ) : null}
                   </div>
                 ))}
@@ -411,7 +411,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     }
                   />
                   {fieldErrors.stripePublicKey ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.stripePublicKey}</p>
+                    <p className="form-field-error">{fieldErrors.stripePublicKey}</p>
                   ) : null}
                 </div>
 
@@ -443,7 +443,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     </button>
                   </div>
                   {fieldErrors.stripeSecretKey ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.stripeSecretKey}</p>
+                    <p className="form-field-error">{fieldErrors.stripeSecretKey}</p>
                   ) : null}
                 </div>
               </div>
@@ -470,7 +470,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     ))}
                   </select>
                   {fieldErrors.language ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.language}</p>
+                    <p className="form-field-error">{fieldErrors.language}</p>
                   ) : null}
                 </div>
 
@@ -493,7 +493,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     ))}
                   </select>
                   {fieldErrors.dateFormat ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.dateFormat}</p>
+                    <p className="form-field-error">{fieldErrors.dateFormat}</p>
                   ) : null}
                 </div>
 
@@ -516,7 +516,7 @@ export function TenantConfigEditor({ tenantId, tenantName, onForbidden }: Tenant
                     ))}
                   </select>
                   {fieldErrors.timeFormat ? (
-                    <p className="tenant-create-form-field-error">{fieldErrors.timeFormat}</p>
+                    <p className="form-field-error">{fieldErrors.timeFormat}</p>
                   ) : null}
                 </div>
               </div>

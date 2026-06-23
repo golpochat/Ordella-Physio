@@ -62,7 +62,11 @@ export function NotificationLauncher() {
           <ModalHeader>
             <div className="flex items-center justify-between gap-3">
               <ModalTitle>Notifications</ModalTitle>
-              <Link href={viewAllHref} className="text-sm font-medium text-primary hover:underline">
+              <Link
+                href={viewAllHref}
+                className="text-sm font-medium text-primary hover:underline"
+                aria-label="View all notifications"
+              >
                 View all
               </Link>
             </div>

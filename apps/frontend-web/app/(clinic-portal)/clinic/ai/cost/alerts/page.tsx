@@ -1,3 +1,4 @@
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
 
 import Link from "next/link";
@@ -7,6 +8,7 @@ import { ListPage } from "@/components/dashboard/ListPage";
 import { Button } from "@/components/ui/button";
 import { useCostAlerts } from "@/hooks/useAiCost";
 import { clinicAiPaths } from "@/lib/ai-admin-paths";
+import { aiCostSectionNav } from "@/lib/ai-admin-section-nav";
 import { WithPermission } from "@/lib/auth/withPermission";
 import type { CostAlertRecord } from "@/lib/cost-types";
 
@@ -17,11 +19,7 @@ export default function ClinicCostAlertsPage() {
   return (
     <WithPermission permission="ai.model.view">
       <ListPage title="AI cost alerts" subtitle="Budget and anomaly notifications." isLoading={alerts.isLoading} isError={alerts.isError} onRetry={() => void alerts.refetch()} loadingRows={5}>
-        <div className="ai-gateway-subnav">
-          <Link href={clinicAiPaths.cost} className="ai-admin-nav-link">Dashboard</Link>
-          <Link href={clinicAiPaths.costBudget} className="ai-admin-nav-link">Budget</Link>
-          <Link href={clinicAiPaths.costAlerts} className="ai-admin-nav-link ai-admin-nav-link-active">Alerts</Link>
-        </div>
+        <AiAdminSectionNav items={aiCostSectionNav(clinicAiPaths)} />
         <div className="ai-cost-filter-row">
           {(["all", "BUDGET_SOFT", "BUDGET_HARD", "ANOMALY"] as const).map((type) => (
             <Button key={type} type="button" variant={filter === type ? "primary" : "ghost"} onClick={() => setFilter(type)}>

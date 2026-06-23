@@ -1,4 +1,5 @@
 export const TENANT_TIMEZONE_OPTIONS = [
+  "Europe/Dublin",
   "UTC",
   "Europe/London",
   "Europe/Paris",
@@ -14,19 +15,19 @@ export const TENANT_TIMEZONE_OPTIONS = [
 ] as const;
 
 export const TENANT_CURRENCY_OPTIONS = [
-  "USD",
-  "GBP",
   "EUR",
+  "GBP",
+  "USD",
   "CAD",
   "AUD",
 ] as const;
 
 export const LOCATION_COUNTRY_OPTIONS = [
+  { value: "IE", label: "Ireland" },
   { value: "GB", label: "United Kingdom" },
   { value: "US", label: "United States" },
   { value: "CA", label: "Canada" },
   { value: "AU", label: "Australia" },
-  { value: "IE", label: "Ireland" },
   { value: "DE", label: "Germany" },
   { value: "FR", label: "France" },
   { value: "NL", label: "Netherlands" },

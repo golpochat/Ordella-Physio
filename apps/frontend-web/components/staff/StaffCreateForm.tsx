@@ -146,7 +146,7 @@ export function StaffCreateForm() {
             );
           }}
         >
-          {generalError ? <p className="tenant-create-form-error">{generalError}</p> : null}
+          {generalError ? <p className="form-error-banner">{generalError}</p> : null}
 
           <div className="tenant-create-form-grid">
             <div className="tenant-create-form-field">
@@ -159,7 +159,7 @@ export function StaffCreateForm() {
                 disabled={createStaff.isPending}
               />
               {fieldErrors.firstName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.firstName}</p>
+                <p className="form-field-error">{fieldErrors.firstName}</p>
               ) : null}
             </div>
 
@@ -173,7 +173,7 @@ export function StaffCreateForm() {
                 disabled={createStaff.isPending}
               />
               {fieldErrors.lastName ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.lastName}</p>
+                <p className="form-field-error">{fieldErrors.lastName}</p>
               ) : null}
             </div>
           </div>
@@ -191,7 +191,7 @@ export function StaffCreateForm() {
                 disabled={createStaff.isPending}
               />
               {fieldErrors.email ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.email}</p>
+                <p className="form-field-error">{fieldErrors.email}</p>
               ) : null}
             </div>
 
@@ -207,7 +207,7 @@ export function StaffCreateForm() {
                 disabled={createStaff.isPending}
               />
               {fieldErrors.phone ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.phone}</p>
+                <p className="form-field-error">{fieldErrors.phone}</p>
               ) : null}
             </div>
           </div>
@@ -232,7 +232,7 @@ export function StaffCreateForm() {
                 ))}
               </select>
               {fieldErrors.staffType ? (
-                <p className="tenant-create-form-field-error">{fieldErrors.staffType}</p>
+                <p className="form-field-error">{fieldErrors.staffType}</p>
               ) : null}
             </div>
 
@@ -262,7 +262,7 @@ export function StaffCreateForm() {
             {rolesQuery.isLoading ? (
               <p className="dashboard-cell-muted">Loading roles...</p>
             ) : rolesQuery.isError ? (
-              <p className="tenant-create-form-error">Unable to load roles.</p>
+              <p className="form-error-banner">Unable to load roles.</p>
             ) : (
               <select
                 id="staff-role"
@@ -283,7 +283,7 @@ export function StaffCreateForm() {
               </select>
             )}
             {fieldErrors.roleId ? (
-              <p className="tenant-create-form-field-error">{fieldErrors.roleId}</p>
+              <p className="form-field-error">{fieldErrors.roleId}</p>
             ) : null}
           </div>
 
@@ -292,7 +292,7 @@ export function StaffCreateForm() {
             {locationsQuery.isLoading ? (
               <p className="dashboard-cell-muted">Loading locations...</p>
             ) : locationsQuery.isError ? (
-              <p className="tenant-create-form-error">Unable to load locations.</p>
+              <p className="form-error-banner">Unable to load locations.</p>
             ) : locations.length === 0 ? (
               <p className="dashboard-cell-muted">No active locations available.</p>
             ) : (
@@ -316,7 +316,7 @@ export function StaffCreateForm() {
               </div>
             )}
             {fieldErrors.locations ? (
-              <p className="tenant-create-form-field-error">{fieldErrors.locations}</p>
+              <p className="form-field-error">{fieldErrors.locations}</p>
             ) : null}
           </div>
 

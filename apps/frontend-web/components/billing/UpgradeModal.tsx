@@ -2,6 +2,14 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Modal,
+  ModalContent,
+  ModalDescription,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+} from "@/components/ui/modal";
 import type { SubscriptionPlan } from "@/lib/subscription-billing-types";
 
 type UpgradeModalProps = {
@@ -21,20 +29,29 @@ export function UpgradeModal({
 }: UpgradeModalProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
-  if (!open || !plan) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-md rounded-lg border bg-background p-6 shadow-lg">
-        <h2 className="text-lg font-semibold">Confirm plan change</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Switch to <span className="font-medium">{plan.name}</span>?
-        </p>
+    <Modal
+      open={open && Boolean(plan)}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          onClose();
+        }
+      }}
+    >
+      <ModalContent className="max-w-md">
+        <ModalHeader>
+          <ModalTitle>Confirm plan change</ModalTitle>
+          <ModalDescription>
+            {plan ? (
+              <>
+                Switch to <span className="font-medium">{plan.name}</span>?
+              </>
+            ) : null}
+          </ModalDescription>
+        </ModalHeader>
 
-        {plan.priceMonthly > 0 ? (
-          <div className="mt-4 space-y-2">
+        {plan && plan.priceMonthly > 0 ? (
+          <div className="space-y-2 py-4">
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
@@ -56,19 +73,19 @@ export function UpgradeModal({
           </div>
         ) : null}
 
-        <div className="mt-6 flex justify-end gap-2">
+        <ModalFooter className="gap-2 sm:gap-0">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
           <Button
             type="button"
-            disabled={isSubmitting}
-            onClick={() => onConfirm({ planId: plan.id, billingCycle })}
+            disabled={isSubmitting || !plan}
+            onClick={() => plan && onConfirm({ planId: plan.id, billingCycle })}
           >
             {isSubmitting ? "Processing…" : "Confirm"}
           </Button>
-        </div>
-      </div>
-    </div>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
