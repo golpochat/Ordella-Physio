@@ -3,6 +3,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useApi, useQueryAuthReady } from "@/hooks/useApi";
+import {
+  useMyProfile,
+  useUpdateMyProfile,
+  useUploadAvatar,
+  useRemoveAvatar,
+  useChangePassword,
+} from "@/hooks/useAccountProfile";
 import { useTenant } from "@/hooks/useTenant";
 import {
   createClinicPortalApi,
@@ -39,7 +46,6 @@ import type {
   CreateClinicUserPayload,
   ClinicStaffMember,
   UpdateClinicUserPayload,
-  ChangePasswordPayload,
   ChangeClinicUserRolePayload,
   UpdateClinicPatientPayload,
   UpdateClinicProfilePayload,
@@ -856,19 +862,10 @@ export function useClinicNote(id: string) {
   });
 }
 
+export { useMyProfile, useUpdateMyProfile, useUploadAvatar, useRemoveAvatar, useChangePassword };
+
 export function useClinicProfile() {
-  const api = useApi();
-  const authReady = useQueryAuthReady();
-
-  return useQuery({
-    queryKey: ["user", "me"],
-    queryFn: () => api.get<UserProfile>("auth", "/users/me"),
-    enabled: authReady,
-  });
-}
-
-export function useMyProfile() {
-  return useClinicProfile();
+  return useMyProfile();
 }
 
 export function useClinicUsers(filters: ClinicUserListFilters = {}) {
@@ -957,15 +954,6 @@ export function useAdminResetClinicUserPassword(userId: string) {
   });
 }
 
-export function useChangePassword() {
-  const api = useApi();
-
-  return useMutation({
-    mutationFn: (payload: ChangePasswordPayload) =>
-      api.post<{ message: string }>("auth", "/users/change-password", payload),
-  });
-}
-
 export function useActivateClinicUser(userId: string) {
   const clinicApi = useClinicPortalApi();
   const queryClient = useQueryClient();
@@ -981,60 +969,5 @@ export function useActivateClinicUser(userId: string) {
 }
 
 export function useUpdateClinicProfile() {
-  const api = useApi();
-  const queryClient = useQueryClient();
-  const setSession = useAuthStore((state) => state.setSession);
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const user = useAuthStore((state) => state.user);
-
-  return useMutation({
-    mutationFn: (payload: UpdateClinicProfilePayload) =>
-      api.put<UpdateUserProfileResponse>("auth", "/users/me", payload),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
-      if (user && accessToken) {
-        setSession({
-          accessToken,
-          user: {
-            ...user,
-            email: response.user.email ?? user.email,
-            firstName: response.user.firstName ?? user.firstName,
-            lastName: response.user.lastName ?? user.lastName,
-          },
-        });
-      }
-    },
-  });
-}
-
-export function useUpdateMyProfile() {
-  return useUpdateClinicProfile();
-}
-
-export function useUploadAvatar() {
-  const api = useApi();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (file: File) => {
-      const formData = new FormData();
-      formData.append("avatar", file);
-      return api.postForm<UploadAvatarResponse>("auth", "/users/me/avatar", formData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
-    },
-  });
-}
-
-export function useRemoveAvatar() {
-  const api = useApi();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => api.delete<RemoveAvatarResponse>("auth", "/users/me/avatar"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
-    },
-  });
+  return useUpdateMyProfile();
 }

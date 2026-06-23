@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle } from "@ordella/shared-icons";
 import { AICopilotSidebar } from "@/components/ai/AICopilotSidebar";
 import { Button } from "@/components/ui/button";
 import { useCopilotEntity } from "@/components/ai/CopilotEntityContext";
@@ -30,10 +30,10 @@ export function AIAssistantBubble({ entityType: entityTypeProp, entityId: entity
   return (
     <IfHasPermission permission="ai.use">
       <>
-        <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
+        <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
           {miniOpen ? (
             <div className="w-64 rounded-lg border bg-background p-3 shadow-lg">
-              <p className="mb-2 text-sm font-medium">Quick questions</p>
+              <p className="mb-2 text-sm font-medium">AI assistant</p>
               <div className="space-y-1">
                 {QUICK_PROMPTS.map((prompt) => (
                   <Button
@@ -45,7 +45,6 @@ export function AIAssistantBubble({ entityType: entityTypeProp, entityId: entity
                     onClick={() => {
                       setMiniOpen(false);
                       setOpen(true);
-                      setMiniOpen(false);
                     }}
                   >
                     {prompt}
@@ -61,11 +60,13 @@ export function AIAssistantBubble({ entityType: entityTypeProp, entityId: entity
           <Button
             type="button"
             size="lg"
-            className="h-14 w-14 rounded-full shadow-lg"
+            className="h-14 min-w-14 gap-2 rounded-full px-4 shadow-lg"
             onClick={() => setMiniOpen((value) => !value)}
             aria-label="Open AI assistant"
+            aria-expanded={miniOpen}
           >
-            <MessageCircle className="h-6 w-6" />
+            <MessageCircle className="h-5 w-5 shrink-0 text-primary-foreground" aria-hidden />
+            <span className="text-sm font-semibold text-primary-foreground">AI</span>
           </Button>
         </div>
 

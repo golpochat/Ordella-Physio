@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { PharmacyProfileForm } from "@/components/pharmacy-portal/profile-form";
+import { AccountProfilePanel } from "@/components/profile/AccountProfilePanel";
 
 export default function PharmacyProfilePage() {
   return (
@@ -8,7 +8,7 @@ export default function PharmacyProfilePage() {
         title="Profile"
         subtitle="Manage your pharmacy account settings."
       />
-      <PharmacyProfileForm />
+      <AccountProfilePanel />
     </>
   );
 }

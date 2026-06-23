@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -23,7 +22,6 @@ const STEPS = [
 type StepKey = (typeof STEPS)[number]["key"];
 
 export function ProfileCompletionWizard() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const { accessToken, user } = useAuth();
   const [activeStep, setActiveStep] = useState<StepKey>("clinicProfile");
@@ -113,39 +111,51 @@ export function ProfileCompletionWizard() {
 
   return (
     <Card className="mb-6 border-brand-primary/20">
-      <CardHeader className="space-y-2">
+      <CardHeader className="space-y-4 border-b border-border/60 pb-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <CardTitle>Complete your clinic setup</CardTitle>
           <span className="rounded-full bg-muted px-3 py-1 text-sm font-medium">
             Profile {completion}% complete
           </span>
         </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-2 w-full shrink-0 overflow-hidden rounded-full bg-muted"
+          role="progressbar"
+          aria-valuenow={completion}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Clinic setup progress"
+        >
           <div
             className="h-full rounded-full bg-brand-primary transition-all"
             style={{ width: `${completion}%` }}
           />
         </div>
-      </CardHeader>
-      <CardBody className="space-y-6">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 pt-2" role="tablist" aria-label="Setup steps">
           {STEPS.map((step) => (
             <button
               key={step.key}
               type="button"
-              className={`rounded-full border px-3 py-1 text-xs font-medium ${
+              role="tab"
+              aria-selected={activeStep === step.key}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                 activeStep === step.key
                   ? "border-brand-primary bg-brand-primary/10 text-brand-primary"
-                  : "border-border text-muted-foreground"
+                  : "border-border bg-background text-muted-foreground hover:bg-muted/50"
               }`}
               onClick={() => setActiveStep(step.key)}
             >
-              {profile?.profileCompletion?.[step.key] ? "✓ " : ""}
+              {profile?.profileCompletion?.[step.key] ? (
+                <span className="mr-1 text-brand-primary" aria-hidden>
+                  ✓
+                </span>
+              ) : null}
               {step.title}
             </button>
           ))}
         </div>
-
+      </CardHeader>
+      <CardBody className="space-y-6 pt-6">
         {activeStep === "clinicProfile" ? (
           <div className="grid gap-4 md:grid-cols-2">
             <div className="auth-field-stack md:col-span-2">
@@ -293,11 +303,18 @@ export function ProfileCompletionWizard() {
         {activeStep === "integrations" ? (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Connect calendar sync and email/SMS providers when you are ready.
+              Optional: connect third-party services your clinic uses day to day.
             </p>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>Email and SMS notification providers (patient reminders, receipts)</li>
+              <li>Marketplace apps (accounting, telehealth) when you enable them</li>
+            </ul>
             <div className="flex flex-wrap gap-3">
-              <Button type="button" variant="outline" onClick={() => router.push("/clinic/notifications")}>
-                Configure notifications
+              <Button type="button" variant="outline" asChild>
+                <Link href="/settings/notifications/providers">Notification providers</Link>
+              </Button>
+              <Button type="button" variant="outline" asChild>
+                <Link href="/clinic/marketplace">Browse marketplace</Link>
               </Button>
               <Button
                 type="button"

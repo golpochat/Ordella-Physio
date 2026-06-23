@@ -17,8 +17,10 @@
     "test:workflow": "pnpm --filter @ordella/workflow-tests test",
     "test:all": "pnpm test && pnpm test:workflow && pnpm test:e2e",
     "seed:test-data": "node scripts/seed-test-data.mjs",
+    "stripe:wire-local": "node infrastructure/developer-tooling-layer/scripts/wire-stripe-local.mjs",
     "clean": "turbo run clean && rimraf node_modules",
-    "db:migrate:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs"
+    "db:migrate:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs",
+    "db:seed:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs --skip-migrate"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",

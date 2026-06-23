@@ -54,6 +54,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/packages ./packages
 COPY --from=build /app/shared ./shared
 COPY --from=build /app/services/billing-service ./services/billing-service
+RUN rm -f services/billing-service/.env services/billing-service/.env.local
 
 EXPOSE 3056
 

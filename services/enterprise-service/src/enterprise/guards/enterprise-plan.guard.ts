@@ -26,15 +26,22 @@ export class EnterprisePlanGuard implements CanActivate {
 
     const tenantId = request.tenantId ?? user.tenantId;
     const config = enterpriseConfig;
-    const url = `${config.tenantServiceUrl}/tenants/${tenantId}/subscription`;
+    const url = `${config.tenantServiceUrl}/tenants/internal/subscription/${tenantId}`;
 
     try {
       const response = await firstValueFrom(
         this.httpService.get<{ plan?: string }>(url, {
-          headers: request.headers.authorization ? { authorization: request.headers.authorization } : {},
+          headers: {
+            accept: "application/json",
+            "x-internal-service": "enterprise-service",
+          },
           validateStatus: () => true,
         }),
       );
+
+      if (response.status !== 200) {
+        throw new ForbiddenException("Unable to verify enterprise plan");
+      }
 
       const plan = response.data?.plan ?? "STARTER";
       if (plan !== "ENTERPRISE") {

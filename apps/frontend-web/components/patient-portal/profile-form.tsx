@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { ProfileAvatarSection } from "@/components/profile/ProfileAvatarSection";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,11 @@ export function ProfileForm() {
         <CardDescription>Update your personal information.</CardDescription>
       </CardHeader>
       <CardBody>
+        <ProfileAvatarSection
+          firstName={profileSource?.firstName}
+          lastName={profileSource?.lastName}
+          email={profileSource?.email}
+        />
         <form
           className="space-y-4"
           onSubmit={(event) => {

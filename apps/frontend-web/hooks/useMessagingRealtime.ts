@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useApi } from "@/hooks/useApi";
+import { useQueryAuthReady } from "@/hooks/useApi";
 import { useMessagingContext } from "@/hooks/useMessaging";
+import { isMessagingAvailable } from "@/lib/clinic-backend-client-scope";
 import { useAuthStore } from "@/store/auth.store";
 
 /**
@@ -11,12 +12,12 @@ import { useAuthStore } from "@/store/auth.store";
  */
 export function useMessagingRealtime() {
   const queryClient = useQueryClient();
-  const api = useApi();
-  const { tenantId, userId } = useMessagingContext();
+  const { tenantId, userId, tenantScoped } = useMessagingContext();
   const accessToken = useAuthStore((state) => state.accessToken);
+  const authReady = useQueryAuthReady();
 
   useEffect(() => {
-    if (!api || !tenantId || !userId || !accessToken) {
+    if (!isMessagingAvailable() || !authReady || !tenantScoped || !tenantId || !userId || !accessToken) {
       return;
     }
 
@@ -66,5 +67,5 @@ export function useMessagingRealtime() {
     })();
 
     return () => controller.abort();
-  }, [accessToken, api, queryClient, tenantId, userId]);
+  }, [accessToken, authReady, queryClient, tenantId, tenantScoped, userId]);
 }

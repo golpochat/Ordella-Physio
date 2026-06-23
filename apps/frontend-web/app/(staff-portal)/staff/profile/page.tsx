@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { StaffProfileForm } from "@/components/staff-portal/profile-form";
+import { AccountProfilePanel } from "@/components/profile/AccountProfilePanel";
 
 export default function StaffProfilePage() {
   return (
@@ -8,7 +8,7 @@ export default function StaffProfilePage() {
         title="Profile"
         subtitle="Manage your staff account settings."
       />
-      <StaffProfileForm />
+      <AccountProfilePanel />
     </>
   );
 }

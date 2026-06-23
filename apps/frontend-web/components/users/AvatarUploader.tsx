@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, User } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { useRemoveAvatar, useUploadAvatar } from "@/hooks/useClinicPortal";
+import { useRemoveAvatar, useUploadAvatar } from "@/hooks/useAccountProfile";
 import { getAvatarInitials, resolveAvatarUrl } from "@/lib/avatar-url";
 import { redirectToLogin } from "@/lib/session-manager";
 import { parseUserAvatarErrors } from "@/lib/user-api-errors";
@@ -100,7 +100,7 @@ export function AvatarUploader({
           const nextUrl = response.avatarUrl ?? response.user.avatarUrl ?? null;
           setCurrentUrl(nextUrl);
           onAvatarChange?.(nextUrl);
-          toast.success(response.message ?? "Avatar updated successfully.");
+          toast.success(response.message ?? "Profile photo updated.");
         },
         onError: (error) => {
           clearPreview();
@@ -148,7 +148,7 @@ export function AvatarUploader({
         clearPreview();
         setCurrentUrl(null);
         onAvatarChange?.(null);
-        toast.success(response.message ?? "Avatar removed successfully.");
+        toast.success(response.message ?? "Profile photo removed.");
       },
       onError: (error) => {
         const parsed = parseUserAvatarErrors(error);
@@ -200,55 +200,71 @@ export function AvatarUploader({
   };
 
   return (
-    <div className="avatar-uploader">
+    <div className="mb-6 flex flex-col gap-4">
       <div
         className={cn(
-          "avatar-uploader-dropzone",
-          isDragActive && "avatar-uploader-dropzone-active",
-          readOnly && "avatar-uploader-dropzone-readonly",
+          "flex flex-col gap-4 rounded-lg border border-dashed p-4 sm:flex-row sm:items-center",
+          isDragActive ? "border-brand-primary bg-brand-primary/5" : "border-border",
+          readOnly && "border-solid bg-muted/30",
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="avatar-uploader-preview">
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
           {displayUrl ? (
-            <img src={displayUrl} alt="" className="avatar-uploader-image" />
+            <img
+              src={displayUrl}
+              alt="Profile photo preview"
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <div className="avatar-uploader-placeholder" aria-hidden="true">
+            <div
+              className="flex h-full w-full items-center justify-center bg-brand-primary/10 text-brand-primary"
+              aria-hidden="true"
+            >
               {initials !== "?" ? (
-                <span className="avatar-uploader-initials">{initials}</span>
+                <span className="text-2xl font-semibold tracking-wide">{initials}</span>
               ) : (
-                <User className="avatar-uploader-icon" />
+                <User className="h-10 w-10" />
               )}
             </div>
           )}
 
           {isBusy ? (
-            <div className="avatar-uploader-spinner" aria-live="polite">
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black/45 text-white"
+              aria-live="polite"
+            >
               <Loader2 className="h-5 w-5 animate-spin" />
             </div>
           ) : null}
         </div>
 
-        {!readOnly ? (
-          <p className="avatar-uploader-hint">Drag and drop an image here, or use the buttons below.</p>
-        ) : null}
+        <div className="min-w-0 flex-1 space-y-2">
+          <p className="text-sm font-medium">Profile photo</p>
+          {readOnly ? (
+            <p className="text-sm text-muted-foreground">
+              Only the account owner can upload or remove their profile photo.
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              JPG, PNG, or WebP up to 2MB. Drag and drop here or use the buttons below.
+            </p>
+          )}
+        </div>
       </div>
 
-      {readOnly ? (
-        <p className="avatar-uploader-readonly-note">
-          Avatars are self-managed. Only the user can upload or remove their own avatar.
-        </p>
-      ) : (
-        <div className="avatar-uploader-actions">
+      {!readOnly ? (
+        <div className="flex flex-wrap items-center gap-2">
           <input
             ref={fileInputRef}
             type="file"
             accept={ACCEPTED_TYPES.join(",")}
-            className="avatar-uploader-input"
+            className="sr-only"
             onChange={handleFileSelection}
             disabled={isBusy}
+            aria-label="Choose profile photo"
           />
           <Button
             type="button"
@@ -267,9 +283,9 @@ export function AvatarUploader({
             Remove
           </Button>
         </div>
-      )}
+      ) : null}
 
-      {inlineError ? <p className="avatar-uploader-error">{inlineError}</p> : null}
+      {inlineError ? <p className="text-sm text-destructive">{inlineError}</p> : null}
     </div>
   );
 }

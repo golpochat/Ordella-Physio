@@ -1,14 +1,10 @@
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  formatPlatformCurrencyCents,
+  PLATFORM_FALLBACK_CURRENCY,
+} from "@/lib/platform-formatting";
 import type { PlatformBillingMetrics } from "@/lib/super-admin-portal-types";
-
-function formatUsd(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(cents / 100);
-}
 
 function formatPercent(value: number): string {
   return `${value.toFixed(2)}%`;
@@ -96,10 +92,13 @@ function BillingMetricsSkeleton() {
 export function PlatformBillingOverview({
   metrics,
   isLoading = false,
+  currency = PLATFORM_FALLBACK_CURRENCY,
 }: {
   metrics: PlatformBillingMetrics | null;
   isLoading?: boolean;
+  currency?: string;
 }) {
+  const formatMoney = (cents: number) => formatPlatformCurrencyCents(cents, currency);
   if (isLoading) {
     return <BillingMetricsSkeleton />;
   }
@@ -114,13 +113,13 @@ export function PlatformBillingOverview({
         <MetricTile
           title="Stripe-live MRR"
           description="Monthly recurring revenue from Stripe subscriptions and usage"
-          value={formatUsd(metrics.mrrStripeLive)}
+          value={formatMoney(metrics.mrrStripeLive)}
           tone="positive"
         />
         <MetricTile
           title="ARR"
           description="Annualized recurring revenue (MRR × 12)"
-          value={formatUsd(metrics.arrStripeLive)}
+          value={formatMoney(metrics.arrStripeLive)}
           tone="positive"
         />
         <MetricTile
@@ -165,19 +164,19 @@ export function PlatformBillingOverview({
             <div className="flex items-center justify-between">
               <span>Tenant-level revenue</span>
               <span className={`font-semibold tabular-nums ${toneClass.positive}`}>
-                {formatUsd(metrics.tenantRevenue)}
+                {formatMoney(metrics.tenantRevenue)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span>Organization-level revenue</span>
               <span className={`font-semibold tabular-nums ${toneClass.positive}`}>
-                {formatUsd(metrics.organizationRevenue)}
+                {formatMoney(metrics.organizationRevenue)}
               </span>
             </div>
             <div className="flex items-center justify-between border-t pt-3">
               <span>Usage revenue (metered)</span>
               <span className={`font-semibold tabular-nums ${toneClass.positive}`}>
-                {formatUsd(metrics.usageRevenue)}
+                {formatMoney(metrics.usageRevenue)}
               </span>
             </div>
           </CardBody>
@@ -200,7 +199,7 @@ export function PlatformBillingOverview({
             <div>
               <p className="text-sm text-muted-foreground">Usage revenue</p>
               <p className={`text-2xl font-semibold tabular-nums ${toneClass.positive}`}>
-                {formatUsd(metrics.aiNotesRevenue)}
+                {formatMoney(metrics.aiNotesRevenue)}
               </p>
             </div>
           </CardBody>

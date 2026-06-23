@@ -243,13 +243,17 @@ export class StripeBillingService {
 
   async createCustomerPortalSession(tenantId: string, dto: CreateCustomerPortalInput) {
     const resolved = await this.requireBillingAccount(tenantId);
-    const stripe = this.stripeClient.getClient();
     const context = await this.requireBillingContext(tenantId);
     const defaultReturn = isOrganizationLevelBilling(context.billingModel)
       ? `${this.stripeClient.getFrontendUrl()}/organization/billing`
       : `${this.stripeClient.getFrontendUrl()}/clinic/billing`;
     const returnUrl = dto.returnUrl ?? defaultReturn;
 
+    if (this.stripeClient.isMockMode()) {
+      return { url: returnUrl };
+    }
+
+    const stripe = this.stripeClient.getClient();
     const session = await stripe.billingPortal.sessions.create({
       customer: resolved.account.stripeCustomerId,
       return_url: returnUrl,
@@ -272,7 +276,6 @@ export class StripeBillingService {
     });
 
     const resolved = await this.requireBillingAccount(tenantId);
-    const stripe = this.stripeClient.getClient();
     const priceId = this.stripeClient.getPriceIdForPlan(plan);
     const frontend = this.stripeClient.getFrontendUrl();
     const successUrl =
@@ -280,6 +283,16 @@ export class StripeBillingService {
     const cancelUrl =
       dto.cancelUrl ??
       `${frontend}/checkout?intent=checkout&plan=${encodeURIComponent(dto.plan)}&cycle=${dto.billingCycle ?? "yearly"}`;
+
+    if (this.stripeClient.isMockMode()) {
+      const sessionId = `cs_mock_${tenantId}`;
+      return {
+        url: successUrl.replace("{CHECKOUT_SESSION_ID}", sessionId),
+        sessionId,
+      };
+    }
+
+    const stripe = this.stripeClient.getClient();
 
     const metadata: Record<string, string> = {
       plan,
@@ -1030,12 +1043,14 @@ export class StripeBillingService {
         );
       }
 
-      return {
+      const resolved: ResolvedBillingAccount = {
         entity: "organization",
         organizationId: context.organizationId,
         tenantId,
         account,
       };
+      await this.ensureStripeCustomerForAccount(resolved, context);
+      return resolved;
     }
 
     const account = await this.repository.findAccountByTenantId(tenantId);
@@ -1043,31 +1058,101 @@ export class StripeBillingService {
       throw new NotFoundException("Stripe customer not found for tenant. Create a customer first.");
     }
 
-    return { entity: "tenant", tenantId, account };
+    const resolved: ResolvedBillingAccount = { entity: "tenant", tenantId, account };
+    await this.ensureStripeCustomerForAccount(resolved, context);
+    return resolved;
+  }
+
+  private async ensureStripeCustomerForAccount(
+    resolved: ResolvedBillingAccount,
+    context: BillingTruthContext,
+  ): Promise<void> {
+    const customerId = resolved.account.stripeCustomerId;
+    if (this.stripeClient.isMockMode()) {
+      return;
+    }
+
+    const stripe = this.stripeClient.getClient();
+    try {
+      const customer = await stripe.customers.retrieve(customerId);
+      if (typeof customer !== "string" && !customer.deleted) {
+        return;
+      }
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (code !== "resource_missing") {
+        throw error;
+      }
+    }
+
+    if (!context.organizationId) {
+      throw new BadRequestException("Organization is required to recover Stripe customer.");
+    }
+
+    const customer = await stripe.customers.create({
+      email: resolved.account.email ?? undefined,
+      metadata: buildStripeCustomerMetadata({
+        billingModel: context.billingModel,
+        organizationId: context.organizationId,
+        ...(resolved.entity === "tenant" ? { tenantId: resolved.tenantId } : {}),
+      }),
+    });
+
+    if (resolved.entity === "organization") {
+      await this.repository.updateOrganizationAccount(resolved.organizationId, {
+        stripeCustomerId: customer.id,
+      });
+      await this.organizationSync.syncBilling({
+        organizationId: resolved.organizationId,
+        stripeCustomerId: customer.id,
+      });
+    } else {
+      await this.repository.updateAccount(resolved.tenantId, {
+        stripeCustomerId: customer.id,
+      });
+      await this.tenantSync.syncBilling({
+        tenantId: resolved.tenantId,
+        stripeCustomerId: customer.id,
+      });
+    }
+
+    resolved.account.stripeCustomerId = customer.id;
   }
 
   private async fetchStripeInvoices(customerId: string) {
-    const stripe = this.stripeClient.getClient();
-    const invoices = await stripe.invoices.list({
-      customer: customerId,
-      limit: 24,
-    });
+    if (this.stripeClient.isMockMode()) {
+      return [];
+    }
 
-    return invoices.data.map((invoice) => ({
-      id: invoice.id,
-      number: invoice.number,
-      status: invoice.status,
-      amountDue: invoice.amount_due,
-      amountPaid: invoice.amount_paid,
-      currency: invoice.currency,
-      hostedInvoiceUrl: invoice.hosted_invoice_url,
-      invoicePdf: invoice.invoice_pdf,
-      createdAt: new Date(invoice.created * 1000).toISOString(),
-      periodStart: invoice.period_start
-        ? new Date(invoice.period_start * 1000).toISOString()
-        : null,
-      periodEnd: invoice.period_end ? new Date(invoice.period_end * 1000).toISOString() : null,
-    }));
+    const stripe = this.stripeClient.getClient();
+    try {
+      const invoices = await stripe.invoices.list({
+        customer: customerId,
+        limit: 24,
+      });
+
+      return invoices.data.map((invoice) => ({
+        id: invoice.id,
+        number: invoice.number,
+        status: invoice.status,
+        amountDue: invoice.amount_due,
+        amountPaid: invoice.amount_paid,
+        currency: invoice.currency,
+        hostedInvoiceUrl: invoice.hosted_invoice_url,
+        invoicePdf: invoice.invoice_pdf,
+        createdAt: new Date(invoice.created * 1000).toISOString(),
+        periodStart: invoice.period_start
+          ? new Date(invoice.period_start * 1000).toISOString()
+          : null,
+        periodEnd: invoice.period_end ? new Date(invoice.period_end * 1000).toISOString() : null,
+      }));
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (code === "resource_missing") {
+        return [];
+      }
+      throw error;
+    }
   }
 
   private resolveCustomerId(

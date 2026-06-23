@@ -93,6 +93,14 @@ export function createApiClient(getContext: () => ApiClientContext) {
       session = { ...getContext(), ...context };
     }
 
+    const requiresAuthenticatedSession =
+      service !== "auth" &&
+      (Boolean(session.accessToken) || hasPersistedSession);
+
+    if (requiresAuthenticatedSession && !session.accessToken) {
+      throw new ApiError("Authentication required", 401);
+    }
+
     const roles =
       session.roles?.map((role) => mapAuthRoleToPortalRole(role)) ??
       (session.role ? [mapAuthRoleToPortalRole(session.role)] : []);

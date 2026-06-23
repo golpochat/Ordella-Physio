@@ -4,7 +4,9 @@ export type AuthenticatedEnterpriseUser = {
   userId: string;
   tenantId: string;
   role: string;
+  effectiveRole?: string;
   email?: string;
+  permissions?: string[];
 };
 
 export function maskSecret(value: string | null | undefined): string | null {

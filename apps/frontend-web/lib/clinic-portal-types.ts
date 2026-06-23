@@ -480,6 +480,7 @@ export type UserProfile = {
   avatarUrl?: string;
   role: string;
   status: "ACTIVE" | "DISABLED";
+  mfaEnabled?: boolean;
   createdAt: string;
   updatedAt: string;
 };

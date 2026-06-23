@@ -72,7 +72,7 @@ export function buildContentSecurityPolicy(options: CspOptions = {}): string {
     "default-src 'self'",
     `script-src ${scriptSrc.join(" ")}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https:",
+    "img-src 'self' data: blob: https:",
     "font-src 'self'",
     `connect-src ${readConnectOrigins().join(" ")}`,
     "frame-ancestors 'none'",

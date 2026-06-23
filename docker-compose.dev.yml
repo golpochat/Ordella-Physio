@@ -110,6 +110,9 @@ services:
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_auth?schema=public
       JWT_SECRET: *jwt-secret
       JWT_ACCESS_SECRET: *jwt-secret
+      AVATAR_UPLOAD_DIR: /data/avatars
+    volumes:
+      - ordella-physio-avatar-uploads:/data/avatars
     depends_on:
       db:
         condition: service_healthy
@@ -338,8 +341,8 @@ services:
       PORT: 3056
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_billing?schema=public
       JWT_ACCESS_SECRET: *jwt-secret
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_local_dev_stripe_secret_key}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_local_dev_stripe_webhook_secret}
       STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-price_local_starter}
       STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO:-price_local_pro}
       STRIPE_PRICE_ENTERPRISE: ${STRIPE_PRICE_ENTERPRISE:-price_local_enterprise}
@@ -795,5 +798,6 @@ networks:
 
 volumes:
   ordella-physio-db-data:
+  ordella-physio-avatar-uploads:
   ordella-clinic-backend-db-data:
   ordella-clinic-backend-backups:

@@ -1,8 +1,10 @@
 # Ordella Physio — Manual Full-System Test Tracker
 
 > **Started:** 2026-06-21  
+> **Last updated:** 2026-06-23  
 > **Mode:** Microservices (Docker dev stack + `frontend-web` :3010 + API gateway :3049)  
-> **Rule:** Stop on failure — fix before continuing. Record every step below.
+> **Rule:** Stop on failure — fix before continuing. Record every step below.  
+> **Manual run status:** Phases 0–12 **complete** (2026-06-21). Post-run backlog items BL-5.x and BL-D.1–D.3 **shipped**; see [Post-manual-test backlog](#post-manual-test-backlog).
 
 ---
 
@@ -43,6 +45,7 @@
 | **10** | Reporting & audit | Reports, audit logs |
 | **11** | AI platform UI | Clinic AI routes (services mostly not in dev stack) |
 | **12** | Direct service health | Per-microservice `/health` via gateway or port |
+| **13** | Backlog verification (optional) | Re-run PASS\* cases after demo seeds, Stripe wiring, profile work |
 
 ---
 
@@ -149,7 +152,7 @@
 | 9.7 | 9 | Clinic — terminals | http://localhost:3010/clinic/terminals | `clinicadmin@ordella.dev` | Terminals list loads; terminal API 200 | Empty list OK | **PASS** | |
 | 9.8 | 9 | Clinic — register terminal | http://localhost:3010/clinic/terminals/new | `clinicadmin@ordella.dev` | New terminal form loads; no blocking errors | OK | **PASS** | |
 | 9.9 | 9 | Clinic — patient attachments | http://localhost:3010/clinic/patients/{id}/attachments | `clinicadmin@ordella.dev` | Attachments page loads; files API 200 | OK after fixes #9.1–9.3 | **PASS** | Patient ID `c3L8xtzMQFQqOm45DMXqEG6O` |
-| 9.10 | 9 | API — enterprise SSO | `GET /api/enterprise/sso` | `clinicadmin@ordella.dev` | Feature gate or config UI (403 OK for non-enterprise plan) | 403 "Enterprise plan required" | **PASS*** | Expected for demo tenant without enterprise plan |
+| 9.10 | 9 | API — enterprise SSO | `GET /api/enterprise/sso` | `clinicadmin@ordella.dev` | Feature gate or config UI (403 OK for non-enterprise plan) | 200 after BL-D.5 seed | **PASS** | Retest after `pnpm db:migrate:local` |
 | 9.11 | 9 | API — files list | `GET /api/files?patientId=...` | `clinicadmin@ordella.dev` | 200 with empty list or attachments | 200 empty list | **PASS** | After fix #9.3 |
 | 10.1 | 10 | Gateway — reporting health | http://localhost:3049/reporting/health | — | 200 | 200 | **PASS** | After fix #10.2 |
 | 10.2 | 10 | Gateway — audit health | http://localhost:3049/audit-logs/health | — | 200 | 200 | **PASS** | |
@@ -186,6 +189,11 @@
 | 12.7 | 12 | Gateway — terminals ready | http://localhost:3049/terminals/ready | — | 200 (no JWT) | 200 after fix #12.2 | **PASS** | Was 401 — stale image routed `ready` to `GET /:id` with JwtGuard |
 | 12.8 | 12 | Gateway — pharmacy ready | http://localhost:3049/pharmacy/ready | — | 200 | 200 | **PASS** | |
 | 12.9 | 12 | Phase 12 probe summary | `_probe-phase12.mjs` | — | 39/39 pass | 39/39 pass | **PASS** | Phase 12 complete |
+| 6.4a | 13 | Clinic — staff (seed retest) | http://localhost:3010/clinic/staff | `clinicadmin@ordella.dev` | Staff list shows seeded members (therapist + staff + admin) | `_probe-bl-d-1-staff-seed.mjs` 4/4 | **PASS** | BL-D.1 — `staff-service/prisma/seed.ts` |
+| 6.5a | 13 | Clinic — notes (seed retest) | http://localhost:3010/clinic/notes | `clinicadmin@ordella.dev` | Notes oversight shows seeded SOAP/progress notes (read-only) | `_probe-bl-d-2-notes-seed.mjs` | **PASS** | BL-D.2 — `notes-service/prisma/seed.ts` |
+| 7.3a | 13 | Therapist — notes list (seed retest) | http://localhost:3010/therapist/notes | `therapist@ordella.dev` | Notes list shows seeded entries; Create note still works | Probe + manual | **PASS** | BL-D.2 |
+| 6.6a | 13 | Clinic — billing (Stripe retest) | http://localhost:3010/clinic/billing | `clinicadmin@ordella.dev` | Subscribe/portal CTAs wired when `STRIPE_*` in billing-service `.env` | `_probe-bl-d-3-stripe-wiring.mjs` | **PASS*** | BL-D.3 — run `pnpm stripe:wire-local` first; subscription may still be `none` until checkout |
+| 5.15 | 13 | Org — profile security | http://localhost:3010/organization/profile | `orgadmin@ordella.dev` | Password change + MFA card on org profile | `_probe-bl-5-4-org-profile-security.mjs` | **PASS** | BL-5.4 |
 
 ---
 
@@ -240,57 +248,73 @@
 - **Phase 10 complete** (2026-06-21): 10.1–10.12 reporting & audit — clinic reports (hub, appointments, revenue, patients, saved), audit logs, super-admin reports/audit; staff/pharmacy reports verified in Phase 7 (7.13, 7.25).
 - **Phase 11 complete** (2026-06-21): 11.1–11.14 AI platform UI — clinic AI routes render with graceful upstream 502; therapist AI notes create OK; AI microservices not in dev stack (PASS*).
 - **Phase 12 complete** (2026-06-21): 12.1–12.9 direct service health — 20 dev-stack `/health` + 5 `/ready` probes all 200 via gateway; 14 off-stack services 502 (PASS*); `_probe-phase12.mjs` 39/39.
+- **Backlog verification** (2026-06-22–23): BL-5.1–5.4, BL-D.1–D.3 shipped; Phase 13 retests 6.4a–6.6a, 7.3a, 5.15 added. Probe scripts under `infrastructure/developer-tooling-layer/scripts/_probe-bl-*.mjs`.
+- **BL-A.1 + BL-A.2 complete** (2026-06-23): `AccountProfilePanel` on therapist/staff/pharmacy/clinic/settings/user/org profiles; `useAccountProfile` + session hydration via `auth-bootstrap` / `useQueryAuthReady`.
+- **BL-D.4 complete** (2026-06-23): super-admin billing metrics use platform `defaultCurrency` (EUR fallback).
+- **BL-S.5 complete** (2026-06-23): `pnpm db:migrate:local` seeds demo data; `pnpm db:seed:local` for re-seed only.
+- **BL-S.3 complete** (2026-06-23): `/api/messaging/stream` BFF route with SSE streaming proxy; `useMessagingRealtime` waits for auth readiness.
+- **BL-D.5 complete** (2026-06-23): `demo-tenant` ENTERPRISE subscription seed; org billing ENTERPRISE; demo SSO config scaffold; enterprise plan guard uses internal tenant subscription API; `enterprise.read`/`enterprise.write` in platform RBAC; enterprise-service JWT passes resolved permissions — `_probe-bl-d-5-enterprise-plan.mjs` 4/4.
+- **BL-S.4 complete** (2026-06-23): targeted rebuild matrix + stale-image symptoms in `docker-stack-reference.md`.
 - Login → trial onboarding is a 2-step funnel: `/checkout?intent=trial` first, then `/register` after "Start Free Trial" (not a direct link to `/register`).
 
 ---
 
 ## Post-manual-test backlog
 
-> **Status:** Manual run Phases 0–12 complete (2026-06-21). Items below are follow-ups, not blockers for closing the test run.
+> **Status:** Manual run Phases 0–12 complete (2026-06-21). P1 org portal + P2 demo-data items **BL-5.1–5.4** and **BL-D.1–D.3** are **done**. Remaining items are polish, dev-stack completeness, or production prep.
 
-### P1 — Organization portal (product gaps)
+### P1 — Organization portal — **complete**
 
-| ID | Item | Why | Trigger / finish line |
-|----|------|-----|------------------------|
-| BL-5.1 | **Org tenants UI** — list/link clinics under `demo-org` at e.g. `/organization/tenants` | Org admin can `GET /organizations` via API but has no tenant-management screen; Phase 5 finish line implied org dashboard beyond billing | Org admin can view linked tenants without super-admin portal | **DONE** (2026-06-21) |
-| BL-5.2 | **`ORG_BILLING_ADMIN` role** — seed user + manual test login/billing/profile | Only `ORG_ADMIN` exercised in Phase 5; billing-only role permissions differ (`ORG_BILLING_MANAGE` without `ORG_TENANTS_*`) | Login lands on org portal; billing + profile work; no spurious 403s | **DONE** (2026-06-21) |
-| BL-5.3 | **Commit Phase 5 work** — org seeds, RBAC (`billing.read` on org roles), `portal-scope`, `/organization/profile`, probes | All local/uncommitted after manual test fixes | Single reviewable commit on `main` | **DONE** (2026-06-21) |
-| BL-5.4 | **Profile enhancements** — password change, MFA status on org profile | Account form only updates name/email today | Parity with therapist/staff profile |
+| ID | Item | Finish line | Status |
+|----|------|-------------|--------|
+| BL-5.1 | Org tenants UI (`/organization/tenants`) | Linked clinics list + assign/unlink | **DONE** (2026-06-21) — test 5.9 |
+| BL-5.2 | `ORG_BILLING_ADMIN` seed + smoke test | Login, billing, profile; tenants API 403 | **DONE** (2026-06-21) — tests 5.10–5.14; `_probe-phase5-org-billing-admin.mjs` |
+| BL-5.3 | Commit Phase 5 work | Reviewable commit on `main` | **DONE** (2026-06-21) |
+| BL-5.4 | Org profile — password change + MFA card | `_probe-bl-5-4-org-profile-security.mjs` | **DONE** (2026-06-21) — test 5.15 |
 
-### P2 — Demo data & PASS\* debt from manual run
+### P2 — Demo data & PASS\* debt
 
-| ID | Item | Notes from tracker |
-|----|------|-------------------|
-| BL-D.1 | **Staff members seed** | 6.4 — `staff@ordella.dev` exists in auth; `staff_members` table empty |
-| BL-D.2 | **Clinical notes seed** | 6.5, 7.3 — therapist notes list always empty in demo |
-| BL-D.3 | **Stripe local wiring** | 6.6 — platform subscription `none`; clinic/org billing panels need `STRIPE_*` keys for subscribe/portal flows |
-| BL-D.4 | **Super-admin billing currency** | 4.5 — metrics show `$` (USD hardcoded); platform default may be EUR |
-| BL-D.5 | **Enterprise plan on demo tenant** | 9.10 — SSO API returns 403 "Enterprise plan required" (expected PASS\*) |
+| ID | Item | Notes | Status |
+|----|------|-------|--------|
+| BL-D.1 | Staff members seed | `services/staff-service/prisma/seed.ts`; retest 6.4a | **DONE** (2026-06-21) |
+| BL-D.2 | Clinical notes seed | `services/notes-service/prisma/seed.ts`; retests 6.5a, 7.3a | **DONE** (2026-06-21) |
+| BL-D.3 | Stripe local wiring | `pnpm stripe:wire-local` → `services/billing-service/.env`; retest 6.6a | **DONE** (2026-06-22) |
+| BL-D.4 | **Super-admin billing currency** | 4.5 — metrics show `$`; `SettingsForm` defaults `USD`; platform/EU tenants may use EUR | **DONE** (2026-06-23) — `usePlatformCurrency` + `formatPlatformCurrencyCents` |
+| BL-D.5 | **Enterprise plan on demo tenant** | 9.10 — SSO API 403 without enterprise plan | **DONE** (2026-06-23) — seeds + plan guard + platform `enterprise.*` RBAC; probe 4/4 |
+
+### P2 — Account profile parity (in progress)
+
+| ID | Item | Notes | Status |
+|----|------|-------|--------|
+| BL-A.1 | **Unified account profile** — shared `UserProfileForm`, avatar upload, MFA card, `/settings/profile` | `AccountProfilePanel`; all role portals use auth `/users/me` | **DONE** (2026-06-23) |
+| BL-A.2 | **Auth session hydration** — eliminate 401 races on portal load | `useQueryAuthReady`, `SessionReadyProvider`, `auth-bootstrap` | **DONE** (2026-06-23) |
 
 ### P2 — Dev stack completeness
 
-| ID | Item | Notes |
-|----|------|-------|
-| BL-S.1 | **AI microservices in `docker-compose.dev.yml`** | Phase 11/12 — 14 services 502 off-stack; clinic AI pages show graceful 502 |
-| BL-S.2 | **payment, communication, search-index** in dev compose | Phase 12.3 — gateway health 502 |
-| BL-S.3 | **Messaging SSE stream** | 7.18, 7.26 — `/api/messaging/stream` 404; inbox UI OK without realtime |
-| BL-S.4 | **Docker build hygiene** | Full `docker compose build` can fail on unrelated services (e.g. `search-index-service`); prefer targeted rebuilds via `docker-compose.dev.yml` |
-| BL-S.5 | **Rebuild images with Phase 5 seeds** | Org admin seed applied via `docker cp` + manual seed; bake into images or document re-seed runbook |
+| ID | Item | Notes | Status |
+|----|------|-------|--------|
+| BL-S.1 | AI microservices in `docker-compose.dev.yml` | Phase 11/12 — 14 services 502 off-stack | **OPEN** — only if actively developing AI |
+| BL-S.2 | payment, communication, search-index in dev compose | Phase 12.3 — gateway health 502 | **OPEN** |
+| BL-S.3 | **Messaging SSE stream** | Dedicated `/api/messaging/stream` BFF route + streaming proxy | **DONE** (2026-06-23) |
+| BL-S.4 | Docker build hygiene | Prefer targeted rebuilds via `docker-compose.dev.yml` | **DONE** (2026-06-23) — [Build hygiene](./docker-stack-reference.md#build-hygiene-targeted-rebuilds) |
+| BL-S.5 | **Demo seeds in fresh stack** | `pnpm db:migrate:local` runs migrations + seeds; `pnpm db:seed:local` for seeds only | **DONE** (2026-06-23) |
 
 ### P3 — Production & security (existing docs)
 
-| ID | Item | Reference |
-|----|------|-----------|
-| BL-P.1 | Replace `change-me-*` secrets, Redis/Upstash, backup cron | `.cursor/rules/security-hardening-deferred.mdc` |
-| BL-P.2 | JWT automated rotation runbook | `docs/runbooks/jwt-rotation.md` |
-| BL-P.3 | ClamAV on uploads (`CLAMAV_ENABLED=true`) | Already wired; enable in prod compose |
-| BL-P.4 | `subscription-billing` service directory removal | `docs/implementation-audit-tracker.md` — deprecation complete, delete deferred |
+| ID | Item | Reference | Status |
+|----|------|-----------|--------|
+| BL-P.1 | Replace `change-me-*` secrets, Redis/Upstash, backup cron | `.cursor/rules/security-hardening-deferred.mdc` | Pre-deploy |
+| BL-P.2 | JWT automated rotation runbook | `docs/runbooks/jwt-rotation.md` | Deferred |
+| BL-P.3 | ClamAV on uploads (`CLAMAV_ENABLED=true`) | Already wired; enable in prod compose | Pre-deploy |
+| BL-P.4 | `subscription-billing` service directory removal | `docs/implementation-audit-tracker.md` | Deferred cleanup |
 
-### Suggested pick order
+### Suggested pick order (updated 2026-06-23)
 
-1. ~~**BL-5.3** — commit current fixes while context is fresh~~
-2. ~~**BL-5.1** — org tenants UI (biggest org-portal product gap)~~
-3. ~~**BL-5.2** — `ORG_BILLING_ADMIN` seed + smoke test~~
-4. **BL-D.3** — Stripe keys for end-to-end billing demo  
-5. **BL-S.1** — AI stack in dev (only if actively developing AI features)
+| Priority | Item | Why |
+|----------|------|-----|
+| **1** | **Stabilize & commit** | Large uncommitted diff (profile, RBAC, enterprise, seeds) — commit or split PRs before more infra work |
+| **2** | **BL-S.2** | payment, communication, search-index — only if you need those integrations in dev |
+| **3** | **BL-S.1** | AI microservices — only if actively developing AI features |
+
+**Completed (no longer on pick list):** BL-5.1–5.4, BL-D.1–D.5, BL-A.1, BL-A.2, BL-S.3, BL-S.4, BL-S.5.
 

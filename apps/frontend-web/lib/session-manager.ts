@@ -1,7 +1,7 @@
 import { resolveSessionPermissions } from "@/lib/auth/build-session-user";
 import { authClient } from "@/lib/auth-client";
 import { ApiError } from "@/lib/api-client";
-import { getStoredIsAuthenticated } from "@/lib/auth-storage";
+import { getStoredAuthUser, getStoredIsAuthenticated } from "@/lib/auth-storage";
 import { PUBLIC_ROUTES } from "@/lib/constants";
 import { resolveUserRoles } from "@/lib/rbac";
 import { isSystemUser } from "@/lib/auth/roleRedirect";
@@ -228,10 +228,19 @@ export async function validateStoredSession(): Promise<boolean> {
     return false;
   }
 
-  const { accessToken, isAuthenticated, user } = useAuthStore.getState();
+  let { accessToken, isAuthenticated, user } = useAuthStore.getState();
 
   if (!isAuthenticated || !user) {
-    return false;
+    if (!getStoredIsAuthenticated()) {
+      return false;
+    }
+
+    user = getStoredAuthUser();
+    if (!user) {
+      return false;
+    }
+
+    isAuthenticated = true;
   }
 
   syncTenantFromSession();

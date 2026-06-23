@@ -721,7 +721,7 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
           platformName: "Ordella Physio",
           supportEmail: "support@ordella.com",
           defaultTimezone: "UTC",
-          defaultCurrency: "USD",
+          defaultCurrency: "EUR",
           maintenanceMode: false,
         }));
     },

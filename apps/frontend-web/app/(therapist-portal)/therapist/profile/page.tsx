@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { TherapistProfileForm } from "@/components/therapist-portal/profile-form";
+import { AccountProfilePanel } from "@/components/profile/AccountProfilePanel";
 
 export default function TherapistProfilePage() {
   return (
@@ -8,7 +8,7 @@ export default function TherapistProfilePage() {
         title="Profile"
         subtitle="Manage your therapist account settings."
       />
-      <TherapistProfileForm />
+      <AccountProfilePanel />
     </>
   );
 }

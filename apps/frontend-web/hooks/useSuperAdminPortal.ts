@@ -10,6 +10,7 @@ import {
   normalizeUserListResponse,
   normalizeOrganizationList,
 } from "@/lib/super-admin-portal-api";
+import { PLATFORM_FALLBACK_CURRENCY } from "@/lib/platform-formatting";
 import type {
   AuthAuditLogFilters,
   CreatePlatformRolePayload,
@@ -37,6 +38,8 @@ import {
   TENANT_STAFF_EXCLUDE_ROLES,
 } from "@/lib/super-admin-portal-utils";
 import { isSystemUser } from "@/lib/auth/roleRedirect";
+import { useSessionReady } from "@/lib/auth/session-ready";
+import { useAuthStoreHydrated } from "@/lib/auth/store-hydration";
 import { resolveUserRoles } from "@/lib/rbac";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
@@ -59,6 +62,8 @@ export function useSuperAdminQueryReady(): boolean {
   const accessToken = useAuthStore((state) => state.accessToken);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
+  const sessionReady = useSessionReady();
+  const authStoreHydrated = useAuthStoreHydrated();
   const tenantId = useTenantStore((state) => state.tenant?.id) ?? user?.tenantId ?? null;
   const [hydrated, setHydrated] = useState(false);
 
@@ -69,7 +74,14 @@ export function useSuperAdminQueryReady(): boolean {
   const roles = user ? resolveUserRoles(user) : [];
   const scopeReady = isSystemUser(roles) || Boolean(tenantId);
 
-  return hydrated && isAuthenticated && Boolean(accessToken) && scopeReady;
+  return (
+    hydrated &&
+    authStoreHydrated &&
+    sessionReady &&
+    isAuthenticated &&
+    Boolean(accessToken) &&
+    scopeReady
+  );
 }
 
 function requireApi(api: ReturnType<typeof createSuperAdminPortalApi> | null) {
@@ -721,6 +733,12 @@ export function usePlatformSettings() {
     queryKey: ["super-admin", "settings"],
     queryFn: () => requireApi(portalApi).getSettings(),
   });
+}
+
+/** Platform default currency from settings (EUR when API unavailable). */
+export function usePlatformCurrency(): string {
+  const settingsQuery = usePlatformSettings();
+  return settingsQuery.data?.defaultCurrency ?? PLATFORM_FALLBACK_CURRENCY;
 }
 
 export function useUpdatePlatformSettings() {

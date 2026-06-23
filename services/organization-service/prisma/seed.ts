@@ -20,6 +20,9 @@ async function main() {
       primaryContactPhone: "+44 20 7946 0958",
       billingModel: "ORGANIZATION_LEVEL",
       status: "ACTIVE",
+      stripeCustomerId: "cus_e2e_demoorg",
+      stripeSubscriptionId: "sub_demo_org_pro",
+      subscriptionStatus: "ACTIVE",
     },
     update: {
       name: "Demo Organization",
@@ -27,6 +30,9 @@ async function main() {
       status: "ACTIVE",
       primaryContactName: "Org Admin",
       primaryContactEmail: "orgadmin@ordella.dev",
+      stripeCustomerId: "cus_e2e_demoorg",
+      stripeSubscriptionId: "sub_demo_org_pro",
+      subscriptionStatus: "ACTIVE",
     },
   });
 
@@ -44,6 +50,27 @@ async function main() {
   });
 
   console.log(`  ✓ linked tenant ${DEMO_TENANT_ID} → ${DEMO_ORG_ID}`);
+
+  await prisma.organizationSsoConfig.upsert({
+    where: { organizationId: DEMO_ORG_ID },
+    create: {
+      organizationId: DEMO_ORG_ID,
+      ssoEnabled: false,
+      ssoProtocol: "OIDC",
+      ssoIssuer: "https://demo-idp.ordella.dev",
+      ssoClientId: "ordella-demo-sso-client",
+      ssoRedirectUri: "http://localhost:3010/clinic/enterprise/sso/callback",
+      ssoMetadataUrl: null,
+    },
+    update: {
+      ssoProtocol: "OIDC",
+      ssoIssuer: "https://demo-idp.ordella.dev",
+      ssoClientId: "ordella-demo-sso-client",
+      ssoRedirectUri: "http://localhost:3010/clinic/enterprise/sso/callback",
+    },
+  });
+
+  console.log("  ✓ demo SSO config scaffold (disabled — enable in clinic enterprise UI)");
   console.log("Organization seed complete.");
 }
 

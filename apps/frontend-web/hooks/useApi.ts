@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { createApiClient } from "@/lib/api-client";
 import { getApiClientContext } from "@/lib/api-session";
+import { isOrganizationPortalUser, isSystemPortalUser } from "@/lib/auth/portal-scope";
+import { useSessionReady } from "@/lib/auth/session-ready";
+import { useAuthStoreHydrated } from "@/lib/auth/store-hydration";
 import { useAuthStore } from "@/store/auth.store";
 import { useTenantStore } from "@/store/tenant.store";
 import { useUiStore } from "@/store/ui.store";
@@ -30,6 +33,9 @@ export function useApi() {
 export function useQueryAuthReady(): boolean {
   const accessToken = useAuthStore((state) => state.accessToken);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const sessionReady = useSessionReady();
+  const authStoreHydrated = useAuthStoreHydrated();
   const { tenantId } = useTenant();
   const [hydrated, setHydrated] = useState(false);
 
@@ -37,5 +43,18 @@ export function useQueryAuthReady(): boolean {
     setHydrated(true);
   }, []);
 
-  return hydrated && isAuthenticated && Boolean(accessToken) && Boolean(tenantId);
+  const role = user?.role;
+  const hasScope =
+    Boolean(tenantId) ||
+    isSystemPortalUser(role) ||
+    (isOrganizationPortalUser(role) && Boolean(user?.organizationId));
+
+  return (
+    hydrated &&
+    authStoreHydrated &&
+    sessionReady &&
+    isAuthenticated &&
+    Boolean(accessToken) &&
+    hasScope
+  );
 }

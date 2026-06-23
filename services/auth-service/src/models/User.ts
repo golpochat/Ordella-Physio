@@ -93,6 +93,7 @@ export type SanitizedUser = {
   avatarUrl?: string;
   role: UserRole;
   status: UserStatus;
+  mfaEnabled: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -111,6 +112,7 @@ export function sanitizeManagedUser(user: {
   avatarUrl?: string | null;
   role: string;
   isActive: boolean;
+  mfaEnabled?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }): SanitizedUser {
@@ -124,6 +126,7 @@ export function sanitizeManagedUser(user: {
     avatarUrl: user.avatarUrl ?? undefined,
     role: user.role as UserRole,
     status: toUserStatus(user.isActive),
+    mfaEnabled: user.mfaEnabled ?? false,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };

@@ -194,6 +194,9 @@ export class ProxyService {
     if (rawBody && rawBody.length > 0) {
       return rawBody;
     }
+    if (Buffer.isBuffer(request.body) && request.body.length > 0) {
+      return request.body;
+    }
     return request.body;
   }
 }

@@ -6,10 +6,12 @@ import { PageError, PageLoading } from "@/components/patient-portal/page-state";
 import { RoleGuard } from "@/components/navigation/role-guard";
 import { Button } from "@/components/ui/button";
 import { usePlatformBillingMetrics } from "@/hooks/usePlatformBillingMetrics";
+import { usePlatformCurrency } from "@/hooks/useSuperAdminPortal";
 import { WithAllPermissions } from "@/lib/auth/withPermission";
 
 export default function AdminRevenuePage() {
   const metricsQuery = usePlatformBillingMetrics();
+  const platformCurrency = usePlatformCurrency();
 
   if (metricsQuery.isLoading) {
     return <PageLoading rows={4} />;
@@ -35,7 +37,10 @@ export default function AdminRevenuePage() {
             </Button>
           </div>
 
-          <PlatformBillingOverview metrics={metricsQuery.data ?? null} />
+          <PlatformBillingOverview
+            metrics={metricsQuery.data ?? null}
+            currency={platformCurrency}
+          />
         </div>
       </WithAllPermissions>
     </RoleGuard>

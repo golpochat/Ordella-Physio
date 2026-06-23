@@ -33,7 +33,7 @@ export function sanitizeValue(value: unknown): unknown {
 @Injectable()
 export class SanitizeMiddleware implements NestMiddleware {
   use(request: OrdellaRequest, _response: Response, next: NextFunction): void {
-    if (request.body && typeof request.body === "object") {
+    if (request.body && typeof request.body === "object" && !Buffer.isBuffer(request.body)) {
       request.body = sanitizeValue(request.body);
     }
 

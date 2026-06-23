@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { UserProfileForm } from "@/components/users/UserProfileForm";
+import { AccountProfilePanel } from "@/components/profile/AccountProfilePanel";
 
 export default function ClinicProfilePage() {
   return (
@@ -8,7 +8,7 @@ export default function ClinicProfilePage() {
         title="Profile"
         subtitle="Manage your clinic admin account settings."
       />
-      <UserProfileForm />
+      <AccountProfilePanel />
     </>
   );
 }

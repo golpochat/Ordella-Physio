@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useApi } from "@/hooks/useApi";
+import { useApi, useQueryAuthReady } from "@/hooks/useApi";
 import { useTenant } from "@/hooks/useTenant";
 import { createPharmacyPortalApi, normalizeList } from "@/lib/pharmacy-portal-api";
 import type { UpdatePharmacyProfilePayload } from "@/lib/pharmacy-portal-types";
@@ -30,11 +30,12 @@ function requireApi(api: ReturnType<typeof createPharmacyPortalApi> | null) {
 export function usePharmacyPatients() {
   const pharmacyApi = usePharmacyPortalApi();
   const { tenantId } = usePharmacyContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["pharmacy", "patients", tenantId],
     queryFn: async () => normalizeList(await requireApi(pharmacyApi).listPatients({ limit: 100 })),
-    enabled: Boolean(tenantId),
+    enabled: authReady && Boolean(tenantId),
   });
 }
 
@@ -51,12 +52,13 @@ export function usePharmacyPatient(id: string) {
 export function usePharmacyAppointments() {
   const pharmacyApi = usePharmacyPortalApi();
   const { tenantId } = usePharmacyContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["pharmacy", "appointments", tenantId],
     queryFn: async () =>
       normalizeList(await requireApi(pharmacyApi).listAppointments({ limit: 100 })),
-    enabled: Boolean(tenantId),
+    enabled: authReady && Boolean(tenantId),
   });
 }
 
@@ -73,11 +75,12 @@ export function usePharmacyAppointment(id: string) {
 export function usePharmacyBilling() {
   const pharmacyApi = usePharmacyPortalApi();
   const { tenantId } = usePharmacyContext();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["pharmacy", "billing", tenantId],
     queryFn: async () => normalizeList(await requireApi(pharmacyApi).listBilling()),
-    enabled: Boolean(tenantId),
+    enabled: authReady && Boolean(tenantId),
   });
 }
 
@@ -96,10 +99,12 @@ export function usePharmacyPrescriptions(filters?: {
   status?: import("@/lib/clinic-pharmacy-types").PrescriptionStatus;
 }) {
   const pharmacyApi = usePharmacyPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["pharmacy", "prescriptions", filters],
     queryFn: () => requireApi(pharmacyApi).listPrescriptions(filters),
+    enabled: authReady,
   });
 }
 
@@ -117,10 +122,12 @@ export function usePharmacyFulfillmentOrders(filters?: {
   fulfillmentStatus?: import("@/lib/clinic-pharmacy-types").FulfillmentStatus;
 }) {
   const pharmacyApi = usePharmacyPortalApi();
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["pharmacy", "fulfillment", filters],
     queryFn: () => requireApi(pharmacyApi).listFulfillmentOrders(filters),
+    enabled: authReady,
   });
 }
 
@@ -137,11 +144,12 @@ export function usePharmacyFulfillmentOrder(id: string) {
 export function usePharmacyProfile() {
   const pharmacyApi = usePharmacyPortalApi();
   const user = useAuthStore((state) => state.user);
+  const authReady = useQueryAuthReady();
 
   return useQuery({
     queryKey: ["pharmacy", "profile", user?.id],
     queryFn: () => requireApi(pharmacyApi).getProfile(),
-    enabled: Boolean(user?.id),
+    enabled: authReady && Boolean(user?.id),
     retry: false,
   });
 }

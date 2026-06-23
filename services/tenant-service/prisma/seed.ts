@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 const DEMO_TENANT_ID = "demo-tenant";
 const DEMO_ORG_ID = "demo-org";
+const DEMO_SUBSCRIPTION_ID = "dev_subscription_demo_tenant";
 
 const STAFF_MEMBERS: Array<{ userId: string; role: string; label: string }> = [
   { userId: "dev_user_clinicadmin", role: "ADMIN", label: "clinicadmin@ordella.dev" },
@@ -88,6 +89,35 @@ async function main() {
   `;
 
   console.log("  ✓ main location");
+
+  await prisma.$executeRaw`
+    INSERT INTO tenant_subscriptions (
+      id,
+      "tenantId",
+      plan,
+      "subscriptionStatus",
+      "usageCurrent",
+      "aiNotesUsageCount",
+      "createdAt",
+      "updatedAt"
+    )
+    VALUES (
+      ${DEMO_SUBSCRIPTION_ID},
+      ${DEMO_TENANT_ID},
+      'ENTERPRISE'::"SubscriptionPlan",
+      'ACTIVE',
+      0,
+      0,
+      NOW(),
+      NOW()
+    )
+    ON CONFLICT ("tenantId") DO UPDATE SET
+      plan = 'ENTERPRISE'::"SubscriptionPlan",
+      "subscriptionStatus" = 'ACTIVE',
+      "updatedAt" = NOW()
+  `;
+
+  console.log(`  ✓ ENTERPRISE subscription for ${DEMO_TENANT_ID}`);
 
   for (const member of STAFF_MEMBERS) {
     const staffId = `dev_staff_${member.userId}`;

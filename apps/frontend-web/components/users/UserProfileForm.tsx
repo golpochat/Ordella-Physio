@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { AvatarUploader } from "@/components/users/AvatarUploader";
@@ -9,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { UserStatusBadge } from "@/components/users/UserStatusBadge";
-import { useMyProfile, useUpdateMyProfile } from "@/hooks/useClinicPortal";
+import { useMyProfile, useUpdateMyProfile } from "@/hooks/useAccountProfile";
 import { redirectToLogin } from "@/lib/session-manager";
 import type { UserProfile } from "@/lib/clinic-portal-types";
 import { parseUserProfileErrors, type UserFieldErrors } from "@/lib/user-api-errors";
@@ -204,15 +203,10 @@ export function UserProfileForm({ user: initialUser, onProfileUpdated }: UserPro
             </div>
           </dl>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit" disabled={updateProfile.isPending}>
-              {updateProfile.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {updateProfile.isPending ? "Saving..." : "Save changes"}
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/clinic/account/change-password">Change password</Link>
-            </Button>
-          </div>
+          <Button type="submit" disabled={updateProfile.isPending}>
+            {updateProfile.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {updateProfile.isPending ? "Saving..." : "Save changes"}
+          </Button>
         </form>
       </CardBody>
     </Card>

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useChangePassword } from "@/hooks/useClinicPortal";
+import { useChangePassword } from "@/hooks/useAccountProfile";
 import { clearAuthSession, redirectToLogin } from "@/lib/session-manager";
 import { parseUserPasswordErrors, type UserFieldErrors } from "@/lib/user-api-errors";
 

@@ -3,10 +3,11 @@
 import { PlatformBillingOverview } from "@/components/super-admin-portal/billing-overview";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PageError } from "@/components/patient-portal/page-state";
-import { usePlatformBilling } from "@/hooks/useSuperAdminPortal";
+import { usePlatformBilling, usePlatformCurrency } from "@/hooks/useSuperAdminPortal";
 
 export default function SuperAdminBillingPage() {
   const { data: metrics, isLoading, isError, refetch } = usePlatformBilling();
+  const platformCurrency = usePlatformCurrency();
   const showError = isError || (!isLoading && metrics == null);
 
   return (
@@ -22,7 +23,11 @@ export default function SuperAdminBillingPage() {
           onRetry={() => void refetch()}
         />
       ) : (
-        <PlatformBillingOverview metrics={metrics ?? null} isLoading={isLoading} />
+        <PlatformBillingOverview
+          metrics={metrics ?? null}
+          isLoading={isLoading}
+          currency={platformCurrency}
+        />
       )}
     </>
   );

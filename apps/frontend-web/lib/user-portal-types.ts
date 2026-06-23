@@ -62,6 +62,7 @@ export type PortalUserProfile = {
   lastName?: string;
   tenantId: string;
   role?: string;
+  mfaEnabled?: boolean;
 };
 
 export type UpdatePortalUserProfilePayload = {

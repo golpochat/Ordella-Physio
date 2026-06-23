@@ -100,6 +100,7 @@ export async function proxyToGateway(
   request: NextRequest,
   service: ApiServiceKey,
   pathSuffix = "",
+  options?: { streaming?: boolean },
 ): Promise<NextResponse> {
   if (service === "files" && useClinicBackend()) {
     return proxyToClinicBackend(request, service);
@@ -150,10 +151,18 @@ export async function proxyToGateway(
     headers,
     body,
     redirect: "manual",
+    cache: options?.streaming ? "no-store" : undefined,
   });
 
   const responseHeaders = new Headers(upstream.headers);
   responseHeaders.delete("transfer-encoding");
+
+  if (options?.streaming) {
+    responseHeaders.set("Content-Type", "text/event-stream");
+    responseHeaders.set("Cache-Control", "no-cache, no-transform");
+    responseHeaders.set("Connection", "keep-alive");
+    responseHeaders.set("X-Accel-Buffering", "no");
+  }
 
   return new NextResponse(upstream.body, {
     status: upstream.status,

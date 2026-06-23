@@ -15,6 +15,7 @@ import { configureBillingMiddleware } from "@/middleware";
     SecurityGuardsModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === "production",
       envFilePath: [".env", ".env.local"],
     }),
     DatabaseModule,

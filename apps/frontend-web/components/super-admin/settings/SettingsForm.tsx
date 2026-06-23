@@ -19,7 +19,7 @@ export function SettingsForm() {
   const [platformName, setPlatformName] = useState("");
   const [supportEmail, setSupportEmail] = useState("");
   const [defaultTimezone, setDefaultTimezone] = useState("UTC");
-  const [defaultCurrency, setDefaultCurrency] = useState("USD");
+  const [defaultCurrency, setDefaultCurrency] = useState("EUR");
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   useEffect(() => {

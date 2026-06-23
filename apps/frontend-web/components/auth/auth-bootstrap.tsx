@@ -1,10 +1,12 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { PageLoading } from "@/components/patient-portal/page-state";
 import { SystemRouteEnforcer } from "@/components/navigation/system-route-enforcer";
 import { eraseSessionCookie } from "@/lib/auth/session-cookie-client";
+import { SessionReadyProvider } from "@/lib/auth/session-ready";
+import { useAuthStoreHydrated } from "@/lib/auth/store-hydration";
 import {
   clearAuthSession,
   clearStaleAuthOnPublicPath,
@@ -25,7 +27,9 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [ready, setReady] = useState(false);
+  const authStoreHydrated = useAuthStoreHydrated();
+  const [ready, setReady] = useState(() => isPublicPath(pathname));
+  const bootstrappedRef = useRef(isPublicPath(pathname));
 
   // Stale refresh cookies after DB resets trigger TOKEN_REUSE_DETECTED — clear before retrying login.
   useEffect(() => {
@@ -37,46 +41,59 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
     void eraseSessionCookie();
   }, [searchParams]);
 
-  // Validate session once per sign-in — not on every client navigation.
   useEffect(() => {
-    let active = true;
+    if (!authStoreHydrated) {
+      return;
+    }
 
-    async function validateSession() {
-      if (isPublicPath(window.location.pathname)) {
+    if (bootstrappedRef.current) {
+      if (isPublicPath(pathname)) {
+        clearStaleAuthOnPublicPath();
         return;
       }
 
-      const hasSession = isAuthenticated || getStoredIsAuthenticated();
-      if (hasSession) {
-        await validateStoredSession();
-      }
+      syncTenantFromSession();
+      syncSessionCookieFromUser(
+        useAuthStore.getState().user ?? getStoredAuthUser(),
+      );
+      return;
     }
 
-    void validateSession().finally(() => {
-      if (active) {
-        setReady(true);
+    let active = true;
+
+    async function bootstrapSession() {
+      if (isPublicPath(pathname)) {
+        clearStaleAuthOnPublicPath();
+        return;
       }
+
+      syncTenantFromSession();
+      syncSessionCookieFromUser(
+        useAuthStore.getState().user ?? getStoredAuthUser(),
+      );
+
+      const hasSession = isAuthenticated || getStoredIsAuthenticated();
+      if (!hasSession) {
+        return;
+      }
+
+      await validateStoredSession();
+      await ensureFreshAccessToken();
+    }
+
+    void bootstrapSession().finally(() => {
+      if (!active) {
+        return;
+      }
+
+      bootstrappedRef.current = true;
+      setReady(true);
     });
 
     return () => {
       active = false;
     };
-  }, [isAuthenticated]);
-
-  // Keep middleware cookie in sync when navigating; avoid re-validating /me each time.
-  useEffect(() => {
-    if (isPublicPath(pathname)) {
-      clearStaleAuthOnPublicPath();
-      setReady(true);
-      return;
-    }
-
-    syncTenantFromSession();
-    syncSessionCookieFromUser(
-      useAuthStore.getState().user ?? getStoredAuthUser(),
-    );
-    setReady(true);
-  }, [pathname]);
+  }, [authStoreHydrated, isAuthenticated, pathname]);
 
   useEffect(() => {
     if (!isAuthenticated || isPublicPath(pathname)) {
@@ -107,7 +124,7 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
     };
   }, [isAuthenticated, pathname]);
 
-  if (!ready && !isPublicPath(pathname)) {
+  if ((!ready || !authStoreHydrated) && !isPublicPath(pathname)) {
     return (
       <div className="flex min-h-screen items-center justify-center p-6">
         <PageLoading rows={4} />
@@ -116,9 +133,9 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
   }
 
   return (
-    <>
+    <SessionReadyProvider ready={ready}>
       <SystemRouteEnforcer />
       {children}
-    </>
+    </SessionReadyProvider>
   );
 }

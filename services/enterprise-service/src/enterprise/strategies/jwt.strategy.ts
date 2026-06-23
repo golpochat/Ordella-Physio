@@ -1,15 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { enterpriseConfig } from "@ordella/config";
+import type { AccessTokenPayload } from "@ordella/security";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import type { AuthenticatedEnterpriseUser } from "@/utils/enterprise-helpers";
 
-type JwtPayload = {
-  sub: string;
-  userId?: string;
-  tenantId: string;
-  role: string;
-  email?: string;
+type JwtPayload = AccessTokenPayload & {
+  permissions?: string[];
+  resolvedPermissions?: string[];
+  effectiveRole?: string;
 };
 
 @Injectable()
@@ -25,9 +24,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   validate(payload: JwtPayload): AuthenticatedEnterpriseUser {
     return {
       userId: payload.userId ?? payload.sub,
-      tenantId: payload.tenantId,
+      tenantId: payload.tenantId ?? "",
       role: payload.role,
+      effectiveRole: payload.effectiveRole,
       email: payload.email,
+      permissions: payload.resolvedPermissions ?? payload.permissions,
     };
   }
 }

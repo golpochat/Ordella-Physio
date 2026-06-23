@@ -13,6 +13,7 @@ describe("productized RBAC", () => {
     const { resolvedPermissions } = resolvePermissions({ role: "ADMIN" });
     expect(resolvedPermissions).toContain(PLATFORM_PERMISSIONS.PATIENTS_WRITE);
     expect(resolvedPermissions).not.toContain(PLATFORM_PERMISSIONS.PATIENTS_DELETE);
+    expect(resolvedPermissions).toContain(PLATFORM_PERMISSIONS.ENTERPRISE_READ);
   });
 
   it("maps THERAPIST to clinical workflow permissions", () => {

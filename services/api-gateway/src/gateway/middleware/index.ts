@@ -22,6 +22,7 @@ import { AuthContextMiddleware } from "./auth-context.middleware";
 import { JwtPreflightMiddleware } from "./jwt-preflight.middleware";
 import { RegionRoutingMiddleware } from "@/gateway/region/region-routing.middleware";
 import { TenantContextMiddleware } from "./tenant-context.middleware";
+import { createGatewayMultipartRawBodyMiddleware } from "./multipart-raw-body.middleware";
 
 const config = gatewayConfig;
 const metricsRegistry = createMetricsRegistry({ serviceName: "api-gateway" });
@@ -65,6 +66,7 @@ export function configureGatewayMiddleware(consumer: MiddlewareConsumer): void {
     .apply(
       createHelmetMiddleware(),
       createCorsMiddleware({ origin: config.corsOrigin, credentials: true }),
+      createGatewayMultipartRawBodyMiddleware(),
       createJsonLimitMiddleware({
         limit: config.gatewayBodyLimit,
         verify: (request, _response, buffer) => {

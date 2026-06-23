@@ -43,6 +43,9 @@ export const PLATFORM_PERMISSIONS = {
   FULFILLMENT_START: "fulfillment.start",
   FULFILLMENT_COMPLETE: "fulfillment.complete",
   FULFILLMENT_FAIL: "fulfillment.fail",
+  ENTERPRISE_READ: "enterprise.read",
+  ENTERPRISE_WRITE: "enterprise.write",
+  ENTERPRISE_MANAGE: "enterprise.manage",
   ORG_TENANTS_READ: "org.tenants.read",
   ORG_TENANTS_WRITE: "org.tenants.write",
   ORG_BILLING_MANAGE: "org.billing.manage",
@@ -101,6 +104,8 @@ export const TENANT_LEVEL_PERMISSIONS: PlatformPermission[] = [
   PLATFORM_PERMISSIONS.FULFILLMENT_START,
   PLATFORM_PERMISSIONS.FULFILLMENT_COMPLETE,
   PLATFORM_PERMISSIONS.FULFILLMENT_FAIL,
+  PLATFORM_PERMISSIONS.ENTERPRISE_READ,
+  PLATFORM_PERMISSIONS.ENTERPRISE_WRITE,
 ];
 
 export const ORG_LEVEL_PERMISSIONS: PlatformPermission[] = [

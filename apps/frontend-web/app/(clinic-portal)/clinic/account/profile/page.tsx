@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { UserProfileForm } from "@/components/users/UserProfileForm";
+import { AccountProfilePanel } from "@/components/profile/AccountProfilePanel";
 
 export default function ClinicAccountProfilePage() {
   return (
@@ -13,7 +13,7 @@ export default function ClinicAccountProfilePage() {
         title="My profile"
         subtitle="Update your personal account information."
       />
-      <UserProfileForm />
+      <AccountProfilePanel />
     </>
   );
 }
