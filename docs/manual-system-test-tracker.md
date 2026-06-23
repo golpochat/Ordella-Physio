@@ -255,13 +255,14 @@
 - **BL-S.3 complete** (2026-06-23): `/api/messaging/stream` BFF route with SSE streaming proxy; `useMessagingRealtime` waits for auth readiness.
 - **BL-D.5 complete** (2026-06-23): `demo-tenant` ENTERPRISE subscription seed; org billing ENTERPRISE; demo SSO config scaffold; enterprise plan guard uses internal tenant subscription API; `enterprise.read`/`enterprise.write` in platform RBAC; enterprise-service JWT passes resolved permissions — `_probe-bl-d-5-enterprise-plan.mjs` 4/4.
 - **BL-S.4 complete** (2026-06-23): targeted rebuild matrix + stale-image symptoms in `docker-stack-reference.md`.
+- **Backlog commit pushed** (2026-06-23): `c17a828` on `origin/main` — profiles, seeds, enterprise SSO, dev docs.
 - Login → trial onboarding is a 2-step funnel: `/checkout?intent=trial` first, then `/register` after "Start Free Trial" (not a direct link to `/register`).
 
 ---
 
 ## Post-manual-test backlog
 
-> **Status:** Manual run Phases 0–12 complete (2026-06-21). P1 org portal + P2 demo-data items **BL-5.1–5.4** and **BL-D.1–D.3** are **done**. Remaining items are polish, dev-stack completeness, or production prep.
+> **Status:** Manual run Phases 0–12 complete (2026-06-21). P1 org portal + P2 demo-data/profile/dev-stack items through **BL-S.5** are **done** (2026-06-23). **Feature backlog paused** — resume BL-S.1/S.2 only when a feature needs those services; otherwise proceed to **BL-P.\*** pre-deploy when ready.
 
 ### P1 — Organization portal — **complete**
 
@@ -312,9 +313,10 @@
 
 | Priority | Item | Why |
 |----------|------|-----|
-| **1** | **Stabilize & commit** | Large uncommitted diff (profile, RBAC, enterprise, seeds) — commit or split PRs before more infra work |
-| **2** | **BL-S.2** | payment, communication, search-index — only if you need those integrations in dev |
-| **3** | **BL-S.1** | AI microservices — only if actively developing AI features |
+| **Now** | **Pause feature backlog** | Core portals, seeds, enterprise SSO, and dev docs are shipped (`c17a828`) |
+| **When needed** | **BL-S.2** | payment, communication, search-index — only if those integrations are in active development |
+| **When needed** | **BL-S.1** | AI microservices — only if actively developing AI platform features |
+| **Pre-deploy** | **BL-P.1–P.3** | Secrets, Redis/Upstash, backup cron, ClamAV — see `.cursor/rules/security-hardening-deferred.mdc` |
 
-**Completed (no longer on pick list):** BL-5.1–5.4, BL-D.1–D.5, BL-A.1, BL-A.2, BL-S.3, BL-S.4, BL-S.5.
+**Completed (no longer on pick list):** BL-5.1–5.4, BL-D.1–D.5, BL-A.1, BL-A.2, BL-S.3, BL-S.4, BL-S.5, stabilize & commit.
 
