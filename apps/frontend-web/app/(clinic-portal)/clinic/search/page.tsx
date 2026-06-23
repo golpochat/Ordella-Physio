@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { SearchResultHighlight } from "@/components/search/SearchResultHighlight";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageLoading } from "@/components/patient-portal/page-state";
 import {
@@ -126,20 +127,20 @@ export default function ClinicSearchPage() {
 
   return (
     <WithPermission permission="search.query">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Search results</h1>
-          <p className="text-muted-foreground">
-            {query
+      <div className="dashboard-page">
+        <PageHeader
+          title="Search results"
+          subtitle={
+            query
               ? `Showing results for "${query}"${indexName === "all" ? " across all indexes." : ` in ${indexName}.`}`
-              : "Enter a query from the global search bar."}
+              : "Enter a query from the global search bar."
+          }
+        />
+        {semanticEnabled ? (
+          <p className="text-sm text-muted-foreground">
+            Hybrid search active: combining keyword + semantic relevance.
           </p>
-          {semanticEnabled ? (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Hybrid search active: combining keyword + semantic relevance.
-            </p>
-          ) : null}
-        </div>
+        ) : null}
 
         {suggestionsQuery.data?.didYouMean ? (
           <Card>

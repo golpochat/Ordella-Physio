@@ -6,6 +6,7 @@ import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddressFormFields } from "@/components/address";
 import { Input, Label } from "@/components/ui/input";
 import { useUpdateClinicPatient } from "@/hooks/useClinicPortal";
 import { parsePatientUpdateErrors } from "@/lib/clinic-patient-api-errors";
@@ -13,6 +14,12 @@ import type {
   ClinicPatientDetailResponse,
   ClinicPatientGender,
 } from "@/lib/clinic-portal-types";
+import {
+  fromPatientAddress,
+  mapPostalErrorsToPatientKeys,
+  toPatientAddressPayload,
+  validatePostalAddress,
+} from "@/lib/postal-address";
 
 const PATIENT_GENDER_OPTIONS: Array<{ value: ClinicPatientGender; label: string }> = [
   { value: "MALE", label: "Male" },
@@ -39,12 +46,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
   const [bloodGroup, setBloodGroup] = useState(detail.patient.bloodGroup ?? "");
   const [phone, setPhone] = useState(detail.patient.phone ?? "");
   const [email, setEmail] = useState(detail.patient.email ?? "");
-  const [addressLine1, setAddressLine1] = useState(detail.patient.addressLine1 ?? "");
-  const [addressLine2, setAddressLine2] = useState(detail.patient.addressLine2 ?? "");
-  const [city, setCity] = useState(detail.patient.city ?? "");
-  const [state, setState] = useState(detail.patient.state ?? "");
-  const [postalCode, setPostalCode] = useState(detail.patient.postalCode ?? "");
-  const [country, setCountry] = useState(detail.patient.country ?? "");
+  const [address, setAddress] = useState(() => fromPatientAddress(detail.patient));
   const [emergencyContactName, setEmergencyContactName] = useState(
     detail.patient.emergencyContactName ?? "",
   );
@@ -67,12 +69,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
     setBloodGroup(detail.patient.bloodGroup ?? "");
     setPhone(detail.patient.phone ?? "");
     setEmail(detail.patient.email ?? "");
-    setAddressLine1(detail.patient.addressLine1 ?? "");
-    setAddressLine2(detail.patient.addressLine2 ?? "");
-    setCity(detail.patient.city ?? "");
-    setState(detail.patient.state ?? "");
-    setPostalCode(detail.patient.postalCode ?? "");
-    setCountry(detail.patient.country ?? "");
+    setAddress(fromPatientAddress(detail.patient));
     setEmergencyContactName(detail.patient.emergencyContactName ?? "");
     setEmergencyContactPhone(detail.patient.emergencyContactPhone ?? "");
     setIncludeInsurance(Boolean(detail.insurance));
@@ -112,6 +109,13 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
     if (!emergencyContactName.trim() || !emergencyContactPhone.trim()) {
       errors.emergencyContactName = "Emergency contact is required";
     }
+
+    Object.assign(
+      errors,
+      mapPostalErrorsToPatientKeys(
+        validatePostalAddress(address, { requireRegion: true }),
+      ),
+    );
 
     if (includeInsurance) {
       if (!providerName.trim()) {
@@ -159,12 +163,7 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
                 dateOfBirth: dateOfBirth.trim(),
                 gender,
                 bloodGroup: bloodGroup.trim() || undefined,
-                addressLine1: addressLine1.trim(),
-                addressLine2: addressLine2.trim() || undefined,
-                city: city.trim(),
-                state: state.trim(),
-                postalCode: postalCode.trim(),
-                country: country.trim(),
+                ...toPatientAddressPayload(address),
                 emergencyContactName: emergencyContactName.trim(),
                 emergencyContactPhone: emergencyContactPhone.trim(),
                 insurance: includeInsurance
@@ -312,71 +311,21 @@ export function PatientEditForm({ detail }: PatientEditFormProps) {
 
           <fieldset className="tenant-create-form-section">
             <legend className="tenant-create-form-section-title">Address</legend>
-            <div className="tenant-create-form-grid">
-              <div className="tenant-create-form-field sm:col-span-2">
-                <Label htmlFor="edit-patient-address-line-1">Address line 1</Label>
-                <Input
-                  id="edit-patient-address-line-1"
-                  value={addressLine1}
-                  disabled={updatePatient.isPending}
-                  aria-invalid={Boolean(fieldErrors.addressLine1)}
-                  onChange={(event) => setAddressLine1(event.target.value)}
-                />
-                {fieldErrors.addressLine1 ? (
-                  <p className="form-field-error">{fieldErrors.addressLine1}</p>
-                ) : null}
-              </div>
-
-              <div className="tenant-create-form-field sm:col-span-2">
-                <Label htmlFor="edit-patient-address-line-2">Address line 2 (optional)</Label>
-                <Input
-                  id="edit-patient-address-line-2"
-                  value={addressLine2}
-                  disabled={updatePatient.isPending}
-                  onChange={(event) => setAddressLine2(event.target.value)}
-                />
-              </div>
-
-              <div className="tenant-create-form-field">
-                <Label htmlFor="edit-patient-city">City</Label>
-                <Input
-                  id="edit-patient-city"
-                  value={city}
-                  disabled={updatePatient.isPending}
-                  onChange={(event) => setCity(event.target.value)}
-                />
-              </div>
-
-              <div className="tenant-create-form-field">
-                <Label htmlFor="edit-patient-state">State</Label>
-                <Input
-                  id="edit-patient-state"
-                  value={state}
-                  disabled={updatePatient.isPending}
-                  onChange={(event) => setState(event.target.value)}
-                />
-              </div>
-
-              <div className="tenant-create-form-field">
-                <Label htmlFor="edit-patient-postal-code">Postal code</Label>
-                <Input
-                  id="edit-patient-postal-code"
-                  value={postalCode}
-                  disabled={updatePatient.isPending}
-                  onChange={(event) => setPostalCode(event.target.value)}
-                />
-              </div>
-
-              <div className="tenant-create-form-field">
-                <Label htmlFor="edit-patient-country">Country</Label>
-                <Input
-                  id="edit-patient-country"
-                  value={country}
-                  disabled={updatePatient.isPending}
-                  onChange={(event) => setCountry(event.target.value)}
-                />
-              </div>
-            </div>
+            <AddressFormFields
+              idPrefix="edit-patient"
+              value={address}
+              onChange={setAddress}
+              disabled={updatePatient.isPending}
+              showRegion
+              errors={{
+                line1: fieldErrors.addressLine1,
+                line2: fieldErrors.addressLine2,
+                city: fieldErrors.city,
+                region: fieldErrors.state,
+                postalCode: fieldErrors.postalCode,
+                country: fieldErrors.country,
+              }}
+            />
           </fieldset>
 
           <fieldset className="tenant-create-form-section">

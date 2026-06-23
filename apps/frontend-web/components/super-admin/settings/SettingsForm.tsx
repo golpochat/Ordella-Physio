@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -124,6 +125,17 @@ export function SettingsForm() {
             {updateSettings.isPending ? "Saving..." : "Save platform settings"}
           </Button>
         </form>
+      </Card>
+
+      <Card>
+        <p className="dashboard-section-title">Address lookup</p>
+        <p className="dashboard-cell-muted">
+          Configure platform-wide address autocomplete vendors and API credentials. When no vendor is
+          active, users enter addresses manually.
+        </p>
+        <Link href="/super-admin/settings/integrations" className="btn-secondary inline-flex mt-3">
+          Manage address vendors
+        </Link>
       </Card>
 
       <Card>

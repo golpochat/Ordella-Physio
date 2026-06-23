@@ -493,6 +493,66 @@ node scripts/docker/sync-dockerignore.mjs
 
 ---
 
+## Platform address lookup (Postcoder / Ideal Postcodes)
+
+Address autocomplete is **platform-wide** (not per clinic). Credentials live in **auth-service** (`core-service`), encrypted at rest. Only **Super Admin** can manage vendors.
+
+| Concern | Where |
+|---------|--------|
+| Admin UI | http://localhost:3010/super-admin/settings/integrations |
+| Encrypted storage | `ordella_auth.platform_integrations` + `platform_runtime_state` |
+| BFF routes | `/api/address/config`, `/api/address/suggest`, `/api/address/resolve` |
+| No active vendor | Manual address entry only (lookup field hidden) |
+
+### First-time setup (dev stack)
+
+1. Run migrations (includes platform integration tables):
+
+```powershell
+node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs
+```
+
+2. Rebuild services that changed:
+
+```powershell
+docker compose -f docker-compose.dev.yml build core-service frontend
+docker compose -f docker-compose.dev.yml up -d --force-recreate core-service frontend
+```
+
+3. Log in as super admin → **Settings → Manage address vendors** → pick a provider card → add **Ideal Postcodes** (recommended) or Postcoder profile → **Test connection** → **Activate**.
+
+4. `core-service` needs `PLATFORM_SECRETS_ENCRYPTION_KEY` (32+ chars) — set in compose or `.env`.
+
+### Test connection
+
+| Action | Where |
+|--------|--------|
+| Test saved profile | **Integrations** → **Test connection** on a profile row |
+| Test before save | **Test key before save** on the add-profile form |
+| API (super admin) | `POST /auth/platform/integrations/address-lookup/:id/test` or `POST .../address-lookup/test` with `{ vendor, apiKey }` |
+
+Tests run a lightweight Ireland address search against the vendor API and return connected / not connected with a message. Results are not stored in the database.
+
+### Optional env fallback (local dev only)
+
+If the DB has no active vendor, you can set on `frontend`:
+
+```env
+ADDRESS_LOOKUP_PROVIDER=ideal_postcodes   # or postcoder
+ADDRESS_LOOKUP_API_KEY=ak_...
+```
+
+Production should use the Super Admin integrations UI, not env vars.
+
+### Vendor billing models
+
+| Vendor | Suggest | Billable event |
+|--------|---------|----------------|
+| **Ideal Postcodes** | Free | User **selects** an address (resolve) |
+| **Postcoder** | Per request | Each search call |
+
+---
+
 ## Quick reference card
 
 | Action | Dev stack | Full stack |

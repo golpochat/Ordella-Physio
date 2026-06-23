@@ -75,6 +75,8 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
         items: [
           item("system", "System health", "/super-admin/system"),
           item("logs", "Audit logs", "/super-admin/audit-logs", ["superadmin", "system"]),
+          item("settings", "Settings", "/super-admin/settings", ["superadmin", "system"]),
+          item("enterprise", "Integrations", "/super-admin/settings/integrations", ["superadmin", "system"]),
         ],
       },
     ],
@@ -93,8 +95,8 @@ export const PORTAL_NAV_CONFIG: Record<Exclude<PortalId, "legacy">, PortalNavCon
           item("patients", "Patients", adminRoutes.patients, ["admin"]),
           item("calendar", "Appointments", adminRoutes.appointments, ["admin"]),
           item("inventory", "Pharmacy", adminRoutes.pharmacy, ["admin"]),
-          item("users", "Therapists", adminRoutes.therapists, ["admin"]),
-          item("users", "Staff", adminRoutes.staff, ["admin"]),
+          item("therapist", "Therapists", adminRoutes.therapists, ["admin"]),
+          item("staff", "Staff", adminRoutes.staff, ["admin"]),
         ],
       },
       {
@@ -290,10 +292,11 @@ function resolveLegacyNavIcon(href: string, label: string): NavIconName {
     "Super Admin": "system",
     Admin: "clinic",
     Clinic: "clinic",
-    Therapist: "users",
+    Therapist: "therapist",
+    Therapists: "therapist",
     Patient: "patients",
     Pharmacy: "inventory",
-    Staff: "users",
+    Staff: "staff",
     User: "users",
   };
 

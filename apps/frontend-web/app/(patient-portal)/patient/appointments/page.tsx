@@ -17,23 +17,25 @@ export default function PatientAppointmentsPage() {
       isError={isError}
       onRetry={() => void refetch()}
     >
-      <section>
-        <h2>Upcoming</h2>
-        <AppointmentList
-          appointments={upcoming}
-          emptyTitle="No upcoming appointments"
-          emptyDescription="Your scheduled visits will appear here."
-        />
-      </section>
+      <div className="dashboard-page">
+        <section>
+          <h2>Upcoming</h2>
+          <AppointmentList
+            appointments={upcoming}
+            emptyTitle="No upcoming appointments"
+            emptyDescription="Your scheduled visits will appear here."
+          />
+        </section>
 
-      <section>
-        <h2>Past appointments</h2>
-        <AppointmentList
-          appointments={past}
-          emptyTitle="No past appointments"
-          emptyDescription="Completed and cancelled visits will appear here."
-        />
-      </section>
+        <section>
+          <h2>Past appointments</h2>
+          <AppointmentList
+            appointments={past}
+            emptyTitle="No past appointments"
+            emptyDescription="Completed and cancelled visits will appear here."
+          />
+        </section>
+      </div>
     </ListPage>
   );
 }

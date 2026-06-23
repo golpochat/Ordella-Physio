@@ -6,12 +6,16 @@ import { toast } from "sonner";
 import { Loader2 } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddressFormFields } from "@/components/address";
 import { Input, Label } from "@/components/ui/input";
 import { useUpdateClinicLocation } from "@/hooks/useClinicPortal";
 import { parseLocationUpdateErrors } from "@/lib/location-api-errors";
 import type { ClinicLocation } from "@/lib/clinic-portal-types";
 import {
-  LOCATION_COUNTRY_OPTIONS,
+  fromLocationAddress,
+  toLocationAddressPayload,
+} from "@/lib/postal-address";
+import {
   TENANT_TIMEZONE_OPTIONS,
 } from "@/lib/tenant-form-options";
 
@@ -29,12 +33,7 @@ export function LocationEditForm({ location }: LocationEditFormProps) {
 
   const [name, setName] = useState(location.name);
   const [code, setCode] = useState(location.code);
-  const [addressLine1, setAddressLine1] = useState(location.addressLine1);
-  const [addressLine2, setAddressLine2] = useState(location.addressLine2 ?? "");
-  const [city, setCity] = useState(location.city);
-  const [state, setState] = useState(location.state ?? "");
-  const [postalCode, setPostalCode] = useState(location.postalCode);
-  const [country, setCountry] = useState(location.country);
+  const [address, setAddress] = useState(() => fromLocationAddress(location));
   const [phone, setPhone] = useState(location.phone ?? "");
   const [email, setEmail] = useState(location.email ?? "");
   const [timezone, setTimezone] = useState(location.timezone);
@@ -45,12 +44,7 @@ export function LocationEditForm({ location }: LocationEditFormProps) {
   useEffect(() => {
     setName(location.name);
     setCode(location.code);
-    setAddressLine1(location.addressLine1);
-    setAddressLine2(location.addressLine2 ?? "");
-    setCity(location.city);
-    setState(location.state ?? "");
-    setPostalCode(location.postalCode);
-    setCountry(location.country);
+    setAddress(fromLocationAddress(location));
     setPhone(location.phone ?? "");
     setEmail(location.email ?? "");
     setTimezone(location.timezone);
@@ -98,12 +92,10 @@ export function LocationEditForm({ location }: LocationEditFormProps) {
               {
                 name: name.trim(),
                 code: code.trim().toLowerCase(),
-                addressLine1: addressLine1.trim(),
-                addressLine2: addressLine2.trim() || null,
-                city: city.trim(),
-                state: state.trim() || null,
-                postalCode: postalCode.trim(),
-                country: country.trim().toUpperCase(),
+                ...toLocationAddressPayload(address),
+                addressLine2: address.line2.trim() || null,
+                state: address.region.trim() || null,
+                country: address.country.trim().toUpperCase(),
                 phone: phone.trim() || null,
                 email: email.trim() || null,
                 timezone: timezone.trim(),
@@ -164,82 +156,21 @@ export function LocationEditForm({ location }: LocationEditFormProps) {
               ) : null}
             </div>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="edit-location-address-line-1">Address line 1</Label>
-              <Input
-                id="edit-location-address-line-1"
-                value={addressLine1}
-                onChange={(event) => setAddressLine1(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.addressLine1)}
-              />
-              {fieldErrors.addressLine1 ? (
-                <p className="form-field-error">{fieldErrors.addressLine1}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="edit-location-address-line-2">Address line 2</Label>
-              <Input
-                id="edit-location-address-line-2"
-                value={addressLine2}
-                onChange={(event) => setAddressLine2(event.target.value)}
-              />
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="edit-location-city">City</Label>
-              <Input
-                id="edit-location-city"
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.city)}
-              />
-              {fieldErrors.city ? (
-                <p className="form-field-error">{fieldErrors.city}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="edit-location-state">State</Label>
-              <Input
-                id="edit-location-state"
-                value={state}
-                onChange={(event) => setState(event.target.value)}
-              />
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="edit-location-postal-code">Postal code</Label>
-              <Input
-                id="edit-location-postal-code"
-                value={postalCode}
-                onChange={(event) => setPostalCode(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.postalCode)}
-              />
-              {fieldErrors.postalCode ? (
-                <p className="form-field-error">{fieldErrors.postalCode}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="edit-location-country">Country</Label>
-              <select
-                id="edit-location-country"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={country}
-                onChange={(event) => setCountry(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.country)}
-              >
-                {LOCATION_COUNTRY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {fieldErrors.country ? (
-                <p className="form-field-error">{fieldErrors.country}</p>
-              ) : null}
-            </div>
+            <AddressFormFields
+              idPrefix="edit-location"
+              value={address}
+              onChange={setAddress}
+              disabled={updateLocation.isPending}
+              showRegion
+              errors={{
+                line1: fieldErrors.addressLine1,
+                line2: fieldErrors.addressLine2,
+                city: fieldErrors.city,
+                region: fieldErrors.state,
+                postalCode: fieldErrors.postalCode,
+                country: fieldErrors.country,
+              }}
+            />
 
             <div className="tenant-create-form-field">
               <Label htmlFor="edit-location-phone">Phone</Label>

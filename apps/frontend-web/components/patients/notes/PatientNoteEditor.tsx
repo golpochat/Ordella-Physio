@@ -6,6 +6,7 @@ import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { FormErrorBanner, FormFieldError } from "@/components/ui/form-feedback";
 import {
   Modal,
   ModalContent,
@@ -145,7 +146,7 @@ export function PatientNoteEditor({
         </ModalHeader>
 
         <div className="space-y-4">
-          {generalError ? <p className="text-sm text-destructive">{generalError}</p> : null}
+          {generalError ? <FormErrorBanner>{generalError}</FormErrorBanner> : null}
 
           <div className="space-y-2">
             <Label htmlFor="patient-note-type">Note type</Label>
@@ -163,7 +164,7 @@ export function PatientNoteEditor({
               ))}
             </select>
             {fieldErrors.noteType ? (
-              <p className="text-sm text-destructive">{fieldErrors.noteType}</p>
+              <FormFieldError>{fieldErrors.noteType}</FormFieldError>
             ) : null}
           </div>
 
@@ -175,7 +176,7 @@ export function PatientNoteEditor({
               disabled={isPending}
               onChange={(event) => setTitle(event.target.value)}
             />
-            {fieldErrors.title ? <p className="text-sm text-destructive">{fieldErrors.title}</p> : null}
+            {fieldErrors.title ? <FormFieldError>{fieldErrors.title}</FormFieldError> : null}
           </div>
 
           <div className="space-y-2">
@@ -189,7 +190,7 @@ export function PatientNoteEditor({
               onChange={(event) => setContent(event.target.value)}
             />
             {fieldErrors.content ? (
-              <p className="text-sm text-destructive">{fieldErrors.content}</p>
+              <FormFieldError>{fieldErrors.content}</FormFieldError>
             ) : null}
           </div>
         </div>

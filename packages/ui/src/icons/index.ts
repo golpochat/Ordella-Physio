@@ -24,9 +24,11 @@ export {
   Pencil,
   Search,
   Settings,
+  Stethoscope,
   Sun,
   Trash2,
   User,
+  UserCog,
   Users,
   X,
 } from "lucide-react";

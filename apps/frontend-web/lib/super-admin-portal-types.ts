@@ -338,6 +338,44 @@ export type PlatformSettings = {
 
 export type UpdatePlatformSettingsPayload = Partial<PlatformSettings>;
 
+export type AddressLookupVendor = "postcoder" | "ideal_postcodes";
+
+export type PlatformAddressLookupIntegration = {
+  id: string;
+  category: "ADDRESS_LOOKUP";
+  vendor: AddressLookupVendor;
+  label: string;
+  apiKeyLast4: string | null;
+  metadata: Record<string, unknown>;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  updatedByUserId: string | null;
+};
+
+export type CreatePlatformAddressLookupIntegrationPayload = {
+  vendor: AddressLookupVendor;
+  label: string;
+  apiKey: string;
+};
+
+export type UpdatePlatformAddressLookupIntegrationPayload = {
+  label?: string;
+  apiKey?: string;
+};
+
+export type AddressLookupConnectionTestResult = {
+  connected: boolean;
+  message: string;
+  suggestionCount: number;
+  testedAt: string;
+};
+
+export type TestAddressLookupCredentialsPayload = {
+  vendor: AddressLookupVendor;
+  apiKey: string;
+};
+
 export type ServiceHealthStatus = {
   service: string;
   status: "ok" | "degraded" | "down" | "unknown";

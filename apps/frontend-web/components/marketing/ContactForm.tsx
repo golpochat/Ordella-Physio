@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
+import { FormErrorBanner } from "@/components/ui/form-feedback";
 import { trackContactFormSubmit, trackFunnelStep } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import { marketingButtonPrimaryClass } from "@/lib/marketing-ui";
@@ -159,11 +160,7 @@ export function ContactForm() {
         />
       </div>
 
-      {error ? (
-        <p className="text-sm text-destructive" role="alert">
-          {error}
-        </p>
-      ) : null}
+      {error ? <FormErrorBanner>{error}</FormErrorBanner> : null}
 
       <Button
         type="submit"

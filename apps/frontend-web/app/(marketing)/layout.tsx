@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+  // Marketing uses Navbar/Footer chrome; app portals use --space-lg via .dashboard-content.
   const nonce = getRequestNonce();
 
   return (

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { FormErrorBanner } from "@/components/ui/form-feedback";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function PageLoading({ rows = 3 }: { rows?: number }) {
@@ -19,11 +20,11 @@ export function PageError({
   onRetry?: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-6">
-      <p className="font-medium text-destructive">Unable to load data</p>
-      <p className="mt-2 text-sm text-muted-foreground">{message}</p>
+    <div className="space-y-4">
+      <FormErrorBanner>Unable to load data</FormErrorBanner>
+      <p className="text-sm text-muted-foreground">{message}</p>
       {onRetry ? (
-        <Button className="mt-4" variant="outline" onClick={onRetry}>
+        <Button variant="outline" onClick={onRetry}>
           Try again
         </Button>
       ) : null}

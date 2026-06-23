@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { PharmacyPrescriptionList } from "@/components/pharmacy-portal/prescription-list";
 import { ListPage } from "@/components/dashboard/ListPage";
+import { Button } from "@/components/ui/button";
 import { usePharmacyPrescriptions } from "@/hooks/usePharmacyPortal";
 import type { PrescriptionStatus } from "@/lib/clinic-pharmacy-types";
 
@@ -18,6 +20,11 @@ export default function PharmacyPrescriptionsPage() {
       isLoading={isLoading}
       isError={isError}
       onRetry={() => void refetch()}
+      action={
+        <Button asChild size="sm">
+          <Link href="/pharmacy/prescriptions/new">New prescription</Link>
+        </Button>
+      }
     >
       <PharmacyPrescriptionList
         prescriptions={data ?? []}

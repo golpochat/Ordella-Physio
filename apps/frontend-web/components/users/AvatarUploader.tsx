@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, User } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { FormFieldError } from "@/components/ui/form-feedback";
 import { useRemoveAvatar, useUploadAvatar } from "@/hooks/useAccountProfile";
 import { getAvatarInitials, resolveAvatarUrl } from "@/lib/avatar-url";
 import { redirectToLogin } from "@/lib/session-manager";
@@ -285,7 +286,7 @@ export function AvatarUploader({
         </div>
       ) : null}
 
-      {inlineError ? <p className="text-sm text-destructive">{inlineError}</p> : null}
+      {inlineError ? <FormFieldError>{inlineError}</FormFieldError> : null}
     </div>
   );
 }

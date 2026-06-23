@@ -1,5 +1,6 @@
-import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 "use client";
+
+import { AiAdminSectionNav } from "@/components/ai/admin/AiAdminSectionNav";
 
 import Link from "next/link";
 import { AccessPolicyTable } from "@/components/ai/security/AccessPolicyTable";

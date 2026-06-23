@@ -6,10 +6,16 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddressFormFields } from "@/components/address";
 import { Input, Label } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { authClient, type TenantProfile } from "@/lib/auth-client";
-import { LOCATION_COUNTRY_OPTIONS, TENANT_TIMEZONE_OPTIONS } from "@/lib/tenant-form-options";
+import {
+  emptyPostalAddress,
+  fromTenantProfileAddress,
+  toTenantProfileAddressPayload,
+} from "@/lib/postal-address";
+import { TENANT_TIMEZONE_OPTIONS } from "@/lib/tenant-form-options";
 
 const STEPS = [
   { key: "clinicProfile", title: "Clinic profile", description: "Name, address, timezone, and logo." },
@@ -27,23 +33,16 @@ export function ProfileCompletionWizard() {
   const [activeStep, setActiveStep] = useState<StepKey>("clinicProfile");
   const [form, setForm] = useState({
     name: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    country: LOCATION_COUNTRY_OPTIONS[0]?.label ?? "Ireland",
     timezone: "Europe/Dublin",
     logoUrl: "",
     vatNumber: "",
   } as {
     name: string;
-    address: string;
-    city: string;
-    postalCode: string;
-    country: string;
     timezone: string;
     logoUrl: string;
     vatNumber: string;
   });
+  const [clinicAddress, setClinicAddress] = useState(() => emptyPostalAddress());
 
   const profileQuery = useQuery({
     queryKey: ["tenant-profile"],
@@ -61,14 +60,11 @@ export function ProfileCompletionWizard() {
 
     setForm({
       name: profile.name ?? "",
-      address: profile.address ?? "",
-      city: profile.city ?? "",
-      postalCode: profile.postalCode ?? "",
-      country: profile.country ?? LOCATION_COUNTRY_OPTIONS[0]?.label ?? "Ireland",
       timezone: profile.timezone ?? "Europe/Dublin",
       logoUrl: profile.logoUrl ?? "",
       vatNumber: profile.vatNumber ?? "",
     });
+    setClinicAddress(fromTenantProfileAddress(profile));
   }, [profile]);
 
   if (!accessToken || !user?.tenantId) {
@@ -98,10 +94,7 @@ export function ProfileCompletionWizard() {
   const handleClinicProfileSave = async () => {
     await markStepComplete("clinicProfile", {
       name: form.name.trim(),
-      address: form.address.trim(),
-      city: form.city.trim(),
-      postalCode: form.postalCode.trim(),
-      country: form.country,
+      ...toTenantProfileAddressPayload(clinicAddress),
       timezone: form.timezone,
       logoUrl: form.logoUrl.trim() || undefined,
     });
@@ -167,45 +160,14 @@ export function ProfileCompletionWizard() {
               />
             </div>
             <div className="auth-field-stack md:col-span-2">
-              <Label htmlFor="wizard-address">Address</Label>
-              <Input
-                id="wizard-address"
-                value={form.address}
-                onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))}
+              <AddressFormFields
+                idPrefix="wizard"
+                layout="auth-stack"
+                value={clinicAddress}
+                onChange={setClinicAddress}
+                showLine2={false}
+                line1Label="Address"
               />
-            </div>
-            <div className="auth-field-stack">
-              <Label htmlFor="wizard-city">City</Label>
-              <Input
-                id="wizard-city"
-                value={form.city}
-                onChange={(event) => setForm((current) => ({ ...current, city: event.target.value }))}
-              />
-            </div>
-            <div className="auth-field-stack">
-              <Label htmlFor="wizard-postal">Postal code</Label>
-              <Input
-                id="wizard-postal"
-                value={form.postalCode}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, postalCode: event.target.value }))
-                }
-              />
-            </div>
-            <div className="auth-field-stack">
-              <Label htmlFor="wizard-country">Country</Label>
-              <select
-                id="wizard-country"
-                className="auth-select"
-                value={form.country}
-                onChange={(event) => setForm((current) => ({ ...current, country: event.target.value }))}
-              >
-                {LOCATION_COUNTRY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
             </div>
             <div className="auth-field-stack">
               <Label htmlFor="wizard-timezone">Timezone</Label>

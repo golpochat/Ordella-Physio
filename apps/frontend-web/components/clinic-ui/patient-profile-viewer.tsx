@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { FormErrorBanner } from "@/components/ui/form-feedback";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PortalReadOnlyBadge, PortalRoleGate } from "@/components/navigation/PortalRoleGate";
 import { cn } from "@/lib/cn";
@@ -41,11 +42,7 @@ export function PatientProfileViewer({
   const fullName = `${patient.firstName} ${patient.lastName}`.trim();
 
   if (!hasTenant && patient.tenantId && tenantId && patient.tenantId !== tenantId) {
-    return (
-      <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
-        Patient record belongs to a different tenant.
-      </div>
-    );
+    return <FormErrorBanner>Patient record belongs to a different tenant.</FormErrorBanner>;
   }
 
   if (!hasTenant) {

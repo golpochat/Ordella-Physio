@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useApi } from "@/hooks/useApi";
+import { reloadAddressLookupRuntimeCache } from "@/lib/address-lookup/reload-runtime-cache";
 import {
   createSuperAdminPortalApi,
   normalizeAuthAuditLogListResponse,
@@ -14,11 +15,14 @@ import { PLATFORM_FALLBACK_CURRENCY } from "@/lib/platform-formatting";
 import type {
   AuthAuditLogFilters,
   CreatePlatformRolePayload,
+  CreatePlatformAddressLookupIntegrationPayload,
   CreatePlatformTenantPayload,
   FullProvisioningPayload,
   CreatePlatformUserPayload,
   PlatformUserListFilters,
   UpdatePlatformProfilePayload,
+  UpdatePlatformAddressLookupIntegrationPayload,
+  TestAddressLookupCredentialsPayload,
   UpdatePlatformRolePayload,
   UpdatePlatformSettingsPayload,
   UpdatePlatformTenantPayload,
@@ -749,6 +753,98 @@ export function useUpdatePlatformSettings() {
     mutationFn: (payload: UpdatePlatformSettingsPayload) =>
       requireApi(portalApi).updateSettings(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["super-admin", "settings"] }),
+  });
+}
+
+async function refreshAddressLookupAfterIntegrationChange(queryClient: ReturnType<typeof useQueryClient>) {
+  await reloadAddressLookupRuntimeCache();
+  await queryClient.invalidateQueries({ queryKey: ["address-lookup-config"] });
+}
+
+export function useAddressLookupIntegrations() {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useQuery({
+    queryKey: ["super-admin", "address-lookup-integrations"],
+    queryFn: () => requireApi(portalApi).listAddressLookupIntegrations(),
+  });
+}
+
+export function useCreateAddressLookupIntegration() {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreatePlatformAddressLookupIntegrationPayload) =>
+      requireApi(portalApi).createAddressLookupIntegration(payload),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "address-lookup-integrations"] });
+      await refreshAddressLookupAfterIntegrationChange(queryClient);
+    },
+  });
+}
+
+export function useUpdateAddressLookupIntegration() {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdatePlatformAddressLookupIntegrationPayload;
+    }) => requireApi(portalApi).updateAddressLookupIntegration(id, payload),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "address-lookup-integrations"] });
+      await refreshAddressLookupAfterIntegrationChange(queryClient);
+    },
+  });
+}
+
+export function useDeleteAddressLookupIntegration() {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => requireApi(portalApi).deleteAddressLookupIntegration(id),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "address-lookup-integrations"] });
+      await refreshAddressLookupAfterIntegrationChange(queryClient);
+    },
+  });
+}
+
+export function useSetActiveAddressLookupIntegration() {
+  const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (integrationId: string | null) =>
+      requireApi(portalApi).setActiveAddressLookupIntegration(integrationId),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "address-lookup-integrations"] });
+      await refreshAddressLookupAfterIntegrationChange(queryClient);
+    },
+  });
+}
+
+export function useTestAddressLookupIntegration() {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useMutation({
+    mutationFn: (integrationId: string) =>
+      requireApi(portalApi).testAddressLookupIntegration(integrationId),
+  });
+}
+
+export function useTestAddressLookupCredentials() {
+  const portalApi = useSuperAdminPortalApi();
+
+  return useMutation({
+    mutationFn: (payload: TestAddressLookupCredentialsPayload) =>
+      requireApi(portalApi).testAddressLookupCredentials(payload),
   });
 }
 

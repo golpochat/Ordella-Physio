@@ -1,5 +1,6 @@
 "use client";
 
+import { FormErrorBanner } from "@/components/ui/form-feedback";
 import { useClinicScope } from "./use-clinic-scope";
 
 export function TenantScopeBanner() {
@@ -7,9 +8,11 @@ export function TenantScopeBanner() {
 
   if (!hasTenant) {
     return (
-      <div className="mb-4 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm">
-        <p className="font-medium text-destructive">Tenant required</p>
-        <p className="mt-1 text-muted-foreground">Select or activate a clinic tenant to load scoped data.</p>
+      <div className="mb-4">
+        <FormErrorBanner>Tenant required</FormErrorBanner>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Select or activate a clinic tenant to load scoped data.
+        </p>
       </div>
     );
   }

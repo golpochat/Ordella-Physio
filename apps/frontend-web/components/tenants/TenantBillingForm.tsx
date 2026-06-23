@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddressFormFields } from "@/components/address";
 import { Input, Label } from "@/components/ui/input";
 import { useUpdatePlatformTenantBilling } from "@/hooks/useSuperAdminPortal";
 import type {
@@ -13,15 +14,17 @@ import type {
 import { parseTenantBillingErrors } from "@/lib/tenant-api-errors";
 import { TENANT_BILLING_COUNTRY_OPTIONS } from "@/lib/tenant-billing-form-options";
 import {
-  validateBillingAddressLine1,
-  validateBillingCity,
   validateBillingContactName,
-  validateBillingCountry,
   validateBillingDefaultCurrency,
   validateBillingEmail,
-  validateBillingPostcode,
   validateInvoicePrefix,
 } from "@/lib/tenant-billing-form-validation";
+import {
+  fromTenantBillingAddress,
+  mapPostalErrorsToBillingKeys,
+  toTenantBillingAddressPayload,
+  validatePostalAddress,
+} from "@/lib/postal-address";
 import { TENANT_CURRENCY_OPTIONS } from "@/lib/tenant-form-options";
 import {
   PLATFORM_DEFAULT_COUNTRY,
@@ -41,16 +44,14 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
   const [billingContactName, setBillingContactName] = useState(
     initialValues?.billingContactName ?? "",
   );
-  const [billingAddressLine1, setBillingAddressLine1] = useState(
-    initialValues?.billingAddressLine1 ?? "",
-  );
-  const [billingAddressLine2, setBillingAddressLine2] = useState(
-    initialValues?.billingAddressLine2 ?? "",
-  );
-  const [billingCity, setBillingCity] = useState(initialValues?.billingCity ?? "");
-  const [billingPostcode, setBillingPostcode] = useState(initialValues?.billingPostcode ?? "");
-  const [billingCountry, setBillingCountry] = useState(
-    initialValues?.billingCountry ?? PLATFORM_DEFAULT_COUNTRY,
+  const [billingAddress, setBillingAddress] = useState(() =>
+    fromTenantBillingAddress({
+      billingAddressLine1: initialValues?.billingAddressLine1,
+      billingAddressLine2: initialValues?.billingAddressLine2,
+      billingCity: initialValues?.billingCity,
+      billingPostcode: initialValues?.billingPostcode,
+      billingCountry: initialValues?.billingCountry ?? PLATFORM_DEFAULT_COUNTRY,
+    }),
   );
   const [taxNumber, setTaxNumber] = useState(initialValues?.taxNumber ?? "");
   const [invoicePrefix, setInvoicePrefix] = useState(initialValues?.invoicePrefix ?? "");
@@ -63,11 +64,15 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
   useEffect(() => {
     setBillingEmail(initialValues?.billingEmail ?? "");
     setBillingContactName(initialValues?.billingContactName ?? "");
-    setBillingAddressLine1(initialValues?.billingAddressLine1 ?? "");
-    setBillingAddressLine2(initialValues?.billingAddressLine2 ?? "");
-    setBillingCity(initialValues?.billingCity ?? "");
-    setBillingPostcode(initialValues?.billingPostcode ?? "");
-    setBillingCountry(initialValues?.billingCountry ?? PLATFORM_DEFAULT_COUNTRY);
+    setBillingAddress(
+      fromTenantBillingAddress({
+        billingAddressLine1: initialValues?.billingAddressLine1,
+        billingAddressLine2: initialValues?.billingAddressLine2,
+        billingCity: initialValues?.billingCity,
+        billingPostcode: initialValues?.billingPostcode,
+        billingCountry: initialValues?.billingCountry ?? PLATFORM_DEFAULT_COUNTRY,
+      }),
+    );
     setTaxNumber(initialValues?.taxNumber ?? "");
     setInvoicePrefix(initialValues?.invoicePrefix ?? "");
     setDefaultCurrency(
@@ -84,17 +89,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
     const billingContactNameError = validateBillingContactName(billingContactName);
     if (billingContactNameError) errors.billingContactName = billingContactNameError;
 
-    const billingAddressLine1Error = validateBillingAddressLine1(billingAddressLine1);
-    if (billingAddressLine1Error) errors.billingAddressLine1 = billingAddressLine1Error;
-
-    const billingCityError = validateBillingCity(billingCity);
-    if (billingCityError) errors.billingCity = billingCityError;
-
-    const billingPostcodeError = validateBillingPostcode(billingPostcode);
-    if (billingPostcodeError) errors.billingPostcode = billingPostcodeError;
-
-    const billingCountryError = validateBillingCountry(billingCountry);
-    if (billingCountryError) errors.billingCountry = billingCountryError;
+    Object.assign(errors, mapPostalErrorsToBillingKeys(validatePostalAddress(billingAddress)));
 
     const defaultCurrencyError = validateBillingDefaultCurrency(defaultCurrency);
     if (defaultCurrencyError) errors.defaultCurrency = defaultCurrencyError;
@@ -130,11 +125,7 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
               {
                 billingEmail: billingEmail.trim(),
                 billingContactName: billingContactName.trim(),
-                billingAddressLine1: billingAddressLine1.trim(),
-                billingAddressLine2: billingAddressLine2.trim() || null,
-                billingCity: billingCity.trim(),
-                billingPostcode: billingPostcode.trim(),
-                billingCountry,
+                ...toTenantBillingAddressPayload(billingAddress),
                 taxNumber: taxNumber.trim() || null,
                 invoicePrefix: invoicePrefix.trim().toUpperCase() || null,
                 defaultCurrency,
@@ -186,73 +177,20 @@ export function TenantBillingForm({ tenant, initialValues, onForbidden }: Tenant
               ) : null}
             </div>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="billing-address-line-1">Address line 1</Label>
-              <Input
-                id="billing-address-line-1"
-                value={billingAddressLine1}
-                onChange={(event) => setBillingAddressLine1(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.billingAddressLine1)}
-              />
-              {fieldErrors.billingAddressLine1 ? (
-                <p className="form-field-error">{fieldErrors.billingAddressLine1}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="billing-address-line-2">Address line 2</Label>
-              <Input
-                id="billing-address-line-2"
-                value={billingAddressLine2}
-                onChange={(event) => setBillingAddressLine2(event.target.value)}
-              />
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="billing-city">City</Label>
-              <Input
-                id="billing-city"
-                value={billingCity}
-                onChange={(event) => setBillingCity(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.billingCity)}
-              />
-              {fieldErrors.billingCity ? (
-                <p className="form-field-error">{fieldErrors.billingCity}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="billing-postcode">Postcode</Label>
-              <Input
-                id="billing-postcode"
-                value={billingPostcode}
-                onChange={(event) => setBillingPostcode(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.billingPostcode)}
-              />
-              {fieldErrors.billingPostcode ? (
-                <p className="form-field-error">{fieldErrors.billingPostcode}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="billing-country">Country</Label>
-              <select
-                id="billing-country"
-                className="tenant-create-form-select"
-                value={billingCountry}
-                onChange={(event) => setBillingCountry(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.billingCountry)}
-              >
-                {TENANT_BILLING_COUNTRY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {fieldErrors.billingCountry ? (
-                <p className="form-field-error">{fieldErrors.billingCountry}</p>
-              ) : null}
-            </div>
+            <AddressFormFields
+              idPrefix="billing"
+              value={billingAddress}
+              onChange={setBillingAddress}
+              showLine2
+              countryOptions={TENANT_BILLING_COUNTRY_OPTIONS}
+              errors={{
+                line1: fieldErrors.billingAddressLine1,
+                line2: fieldErrors.billingAddressLine2,
+                city: fieldErrors.billingCity,
+                postalCode: fieldErrors.billingPostcode,
+                country: fieldErrors.billingCountry,
+              }}
+            />
 
             <div className="tenant-create-form-field">
               <Label htmlFor="billing-tax-number">Tax number</Label>

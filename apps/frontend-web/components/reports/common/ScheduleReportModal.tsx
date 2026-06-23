@@ -6,6 +6,7 @@ import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { FormFieldError } from "@/components/ui/form-feedback";
 import {
   Modal,
   ModalContent,
@@ -196,7 +197,7 @@ export function ScheduleReportModal({ open, onOpenChange, savedReportId }: Sched
               />
               <p className="text-sm text-muted-foreground">Separate multiple emails with commas.</p>
             </div>
-            {inlineError ? <p className="text-sm text-destructive">{inlineError}</p> : null}
+            {inlineError ? <FormFieldError>{inlineError}</FormFieldError> : null}
           </div>
           <ModalFooter className="gap-2 sm:gap-0">
             <Button

@@ -6,6 +6,7 @@ import { Loader2 } from "@ordella/shared-icons";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { FormErrorBanner, FormFieldError } from "@/components/ui/form-feedback";
 import { useUploadClinicPatientAttachment } from "@/hooks/useClinicPortal";
 import {
   parsePatientAttachmentUploadErrors,
@@ -112,7 +113,7 @@ export function PatientAttachmentUploader({
             disabled={disabled || isPending}
             onChange={handleFileChange}
           />
-          {fieldErrors.file ? <p className="text-sm text-destructive">{fieldErrors.file}</p> : null}
+          {fieldErrors.file ? <FormFieldError>{fieldErrors.file}</FormFieldError> : null}
           <p className="text-sm text-muted-foreground">
             PDF, images, DOCX, DOC, or TXT up to 20MB each.
           </p>
@@ -128,12 +129,12 @@ export function PatientAttachmentUploader({
             onChange={(event) => setDescription(event.target.value)}
           />
           {fieldErrors.description ? (
-            <p className="text-sm text-destructive">{fieldErrors.description}</p>
+            <FormFieldError>{fieldErrors.description}</FormFieldError>
           ) : null}
         </div>
       </div>
 
-      {generalError ? <p className="text-sm text-destructive">{generalError}</p> : null}
+      {generalError ? <FormErrorBanner>{generalError}</FormErrorBanner> : null}
 
       <div className="user-list-filters-actions">
         <Button type="button" disabled={disabled || isPending} onClick={() => void handleUpload()}>

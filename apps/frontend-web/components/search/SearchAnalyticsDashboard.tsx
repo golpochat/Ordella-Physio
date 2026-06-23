@@ -19,12 +19,12 @@ export function SearchAnalyticsDashboard() {
 
   if (analyticsQuery.isError || !data) {
     return (
-      <ListPage title="Search analytics" isError>
-        <Card>
-          <CardBody>
-            <p className="text-destructive">Unable to load search analytics.</p>
-          </CardBody>
-        </Card>
+      <ListPage
+        title="Search analytics"
+        isError
+        onRetry={() => void analyticsQuery.refetch()}
+      >
+        <></>
       </ListPage>
     );
   }

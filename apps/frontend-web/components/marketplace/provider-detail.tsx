@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
+import { FormFieldError } from "@/components/ui/form-feedback";
 import { IntegrationStatusBadge } from "@/components/marketplace/integration-status-badge";
 import { UsageLogsTable } from "@/components/marketplace/usage-logs-table";
 import {
@@ -140,7 +141,7 @@ export function ProviderDetail({
             </div>
           ) : null}
 
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          {error ? <FormFieldError>{error}</FormFieldError> : null}
 
           {allowConnect ? (
             <div className="flex flex-wrap gap-3">

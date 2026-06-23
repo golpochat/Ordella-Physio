@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -39,7 +38,7 @@ export function PharmacyPrescriptionList({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Select
           value={statusFilter}
           onValueChange={(value) => onStatusFilterChange(value as PrescriptionStatus | "ALL")}
@@ -55,9 +54,6 @@ export function PharmacyPrescriptionList({
             ))}
           </SelectContent>
         </Select>
-        <Button asChild size="sm" className="btn-primary">
-          <Link href="/pharmacy/prescriptions/new">New prescription</Link>
-        </Button>
       </div>
 
       {!filtered.length ? (

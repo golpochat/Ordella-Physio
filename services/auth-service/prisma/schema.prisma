@@ -95,3 +95,34 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+enum PlatformIntegrationCategory {
+  ADDRESS_LOOKUP
+}
+
+model PlatformIntegration {
+  id                   String                      @id @default(cuid())
+  category             PlatformIntegrationCategory @default(ADDRESS_LOOKUP)
+  vendor               String
+  label                String
+  credentialsEncrypted String
+  apiKeyLast4          String?
+  metadata             Json                        @default("{}")
+  createdAt            DateTime                    @default(now())
+  updatedAt            DateTime                    @updatedAt
+  updatedByUserId      String?
+  activeRuntimeStates  PlatformRuntimeState[]
+
+  @@index([category])
+  @@map("platform_integrations")
+}
+
+model PlatformRuntimeState {
+  id                               String               @id @default("default")
+  activeAddressLookupIntegrationId String?
+  activeAddressLookupIntegration   PlatformIntegration? @relation(fields: [activeAddressLookupIntegrationId], references: [id], onDelete: SetNull)
+  updatedAt                        DateTime             @updatedAt
+  updatedByUserId                  String?
+
+  @@map("platform_runtime_state")
+}

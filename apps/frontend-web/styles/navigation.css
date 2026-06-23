@@ -20,6 +20,7 @@
   padding: var(--space-lg);
 }
 
+/* Super-admin portal: intentional darker canvas (--sa-bg) while sharing sidebar/topbar spacing tokens. */
 .dashboard-portal.super-admin-portal .dashboard-content {
   background: var(--sa-bg);
 }

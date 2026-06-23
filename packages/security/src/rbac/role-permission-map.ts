@@ -10,6 +10,7 @@ export const PERMISSION_ROLE_MAP = {
   "patients.write": platformMap[PLATFORM_PERMISSIONS.PATIENTS_WRITE] ?? ["TENANT_OWNER", "ADMIN"],
   "billing.manage": platformMap[PLATFORM_PERMISSIONS.BILLING_MANAGE] ?? ["TENANT_OWNER", "ADMIN", "BILLING_ADMIN"],
   "platform.billing.metrics": platformMap[PLATFORM_PERMISSIONS.PLATFORM_BILLING_METRICS] ?? ["SUPER_ADMIN"],
+  "platform.integrations.manage": ["SUPER_ADMIN"],
   "tenant.manage": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER"],
   "user.manage": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN"],
   "billing.analytics.view": ["SUPER_ADMIN", "TENANT_OWNER", "OWNER", "ADMIN", "BILLING_ADMIN"],

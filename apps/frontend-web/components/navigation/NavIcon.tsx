@@ -9,7 +9,9 @@ import {
   Home,
   MessageCircle,
   Settings,
+  Stethoscope,
   User,
+  UserCog,
   Users,
 } from "@ordella/shared-icons";
 import { cn } from "@/lib/cn";
@@ -32,7 +34,9 @@ export type NavIconName =
   | "enterprise"
   | "notes"
   | "flags"
-  | "system";
+  | "system"
+  | "therapist"
+  | "staff";
 
 const ICON_MAP: Record<NavIconName, LucideIcon> = {
   dashboard: Home,
@@ -53,6 +57,8 @@ const ICON_MAP: Record<NavIconName, LucideIcon> = {
   notes: FileText,
   flags: AlertCircle,
   system: Activity,
+  therapist: Stethoscope,
+  staff: UserCog,
 };
 
 export type NavIconProps = {

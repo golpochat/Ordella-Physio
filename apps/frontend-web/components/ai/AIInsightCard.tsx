@@ -2,6 +2,7 @@
 
 import { Loader2 } from "@ordella/shared-icons";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormFieldError } from "@/components/ui/form-feedback";
 
 type AIInsightCardProps = {
   title?: string;
@@ -33,7 +34,7 @@ export function AIInsightCard({
         </CardTitle>
       </CardHeader>
       <CardBody className="space-y-4 text-sm">
-        {error ? <p className="text-destructive">{error}</p> : null}
+        {error ? <FormFieldError>{error}</FormFieldError> : null}
         {!error && isLoading ? (
           <p className="text-muted-foreground">Generating insights…</p>
         ) : null}

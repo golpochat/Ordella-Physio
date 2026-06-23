@@ -9,6 +9,9 @@
 FROM ordella-base:latest AS base
 FROM base AS build
 ENV CI=true
+# Overlay current workspace packages (icons, ui, etc.) — ordella-base alone can be stale.
+COPY --from=workspace packages ./packages
+COPY --from=workspace shared ./shared
 COPY . ./apps/frontend-web
 RUN rm -rf apps/frontend-web/app/api/subscription-billing \
   && rm -f apps/frontend-web/lib/subscription-billing-api.ts \
@@ -60,10 +63,14 @@ ENV HOSTNAME=0.0.0.0
 COPY --from=build /app/apps/frontend-web/.next/standalone ./
 COPY --from=build /app/apps/frontend-web/.next/static ./apps/frontend-web/.next/static
 COPY --from=build /app/apps/frontend-web/public ./apps/frontend-web/public
+COPY --from=build /app/apps/frontend-web/docker-entrypoint.sh ./apps/frontend-web/docker-entrypoint.sh
+RUN tr -d '\r' < ./apps/frontend-web/docker-entrypoint.sh > ./apps/frontend-web/docker-entrypoint.sh.tmp \
+  && mv ./apps/frontend-web/docker-entrypoint.sh.tmp ./apps/frontend-web/docker-entrypoint.sh \
+  && chmod +x ./apps/frontend-web/docker-entrypoint.sh
 
 EXPOSE 3010
 
 # ---------------------------------------------------------
 # 4. START COMMAND
 # ---------------------------------------------------------
-CMD ["node", "apps/frontend-web/server.js"]
+CMD ["sh", "apps/frontend-web/docker-entrypoint.sh"]

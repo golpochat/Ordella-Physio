@@ -6,11 +6,18 @@ import { toast } from "sonner";
 import { Loader2 } from "@ordella/shared-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddressFormFields } from "@/components/address";
 import { Input, Label } from "@/components/ui/input";
 import { useCreateClinicLocation } from "@/hooks/useClinicPortal";
 import { parseLocationCreateErrors } from "@/lib/location-api-errors";
 import {
-  LOCATION_COUNTRY_OPTIONS,
+  emptyPostalAddress,
+  mapPostalErrorsToLocationKeys,
+  toLocationAddressPayload,
+  validatePostalAddress,
+} from "@/lib/postal-address";
+import { PLATFORM_DEFAULT_COUNTRY } from "@/lib/platform-formatting";
+import {
   TENANT_TIMEZONE_OPTIONS,
 } from "@/lib/tenant-form-options";
 
@@ -32,12 +39,7 @@ export function LocationCreateForm() {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [codeTouched, setCodeTouched] = useState(false);
-  const [addressLine1, setAddressLine1] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [country, setCountry] = useState("GB");
+  const [address, setAddress] = useState(() => emptyPostalAddress(PLATFORM_DEFAULT_COUNTRY));
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [timezone, setTimezone] = useState("Europe/London");
@@ -57,21 +59,7 @@ export function LocationCreateForm() {
       errors.code = "Code must be lowercase and can contain letters, numbers, and hyphens";
     }
 
-    if (!addressLine1.trim()) {
-      errors.addressLine1 = "Address is required";
-    }
-
-    if (!city.trim()) {
-      errors.city = "City is required";
-    }
-
-    if (!postalCode.trim()) {
-      errors.postalCode = "Postal code is required";
-    }
-
-    if (!country.trim()) {
-      errors.country = "Country is required";
-    }
+    Object.assign(errors, mapPostalErrorsToLocationKeys(validatePostalAddress(address)));
 
     if (!timezone.trim()) {
       errors.timezone = "Timezone is required";
@@ -107,12 +95,8 @@ export function LocationCreateForm() {
               {
                 name: name.trim(),
                 code: code.trim().toLowerCase(),
-                addressLine1: addressLine1.trim(),
-                addressLine2: addressLine2.trim() || undefined,
-                city: city.trim(),
-                state: state.trim() || undefined,
-                postalCode: postalCode.trim(),
-                country: country.trim().toUpperCase(),
+                ...toLocationAddressPayload(address),
+                country: address.country.trim().toUpperCase(),
                 phone: phone.trim() || undefined,
                 email: email.trim() || undefined,
                 timezone: timezone.trim(),
@@ -174,82 +158,21 @@ export function LocationCreateForm() {
               ) : null}
             </div>
 
-            <div className="tenant-create-form-field">
-              <Label htmlFor="location-address-line-1">Address line 1</Label>
-              <Input
-                id="location-address-line-1"
-                value={addressLine1}
-                onChange={(event) => setAddressLine1(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.addressLine1)}
-              />
-              {fieldErrors.addressLine1 ? (
-                <p className="form-field-error">{fieldErrors.addressLine1}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="location-address-line-2">Address line 2</Label>
-              <Input
-                id="location-address-line-2"
-                value={addressLine2}
-                onChange={(event) => setAddressLine2(event.target.value)}
-              />
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="location-city">City</Label>
-              <Input
-                id="location-city"
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.city)}
-              />
-              {fieldErrors.city ? (
-                <p className="form-field-error">{fieldErrors.city}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="location-state">State</Label>
-              <Input
-                id="location-state"
-                value={state}
-                onChange={(event) => setState(event.target.value)}
-              />
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="location-postal-code">Postal code</Label>
-              <Input
-                id="location-postal-code"
-                value={postalCode}
-                onChange={(event) => setPostalCode(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.postalCode)}
-              />
-              {fieldErrors.postalCode ? (
-                <p className="form-field-error">{fieldErrors.postalCode}</p>
-              ) : null}
-            </div>
-
-            <div className="tenant-create-form-field">
-              <Label htmlFor="location-country">Country</Label>
-              <select
-                id="location-country"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={country}
-                onChange={(event) => setCountry(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.country)}
-              >
-                {LOCATION_COUNTRY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {fieldErrors.country ? (
-                <p className="form-field-error">{fieldErrors.country}</p>
-              ) : null}
-            </div>
+            <AddressFormFields
+              idPrefix="location"
+              value={address}
+              onChange={setAddress}
+              disabled={createLocation.isPending}
+              showRegion
+              errors={{
+                line1: fieldErrors.addressLine1,
+                line2: fieldErrors.addressLine2,
+                city: fieldErrors.city,
+                region: fieldErrors.state,
+                postalCode: fieldErrors.postalCode,
+                country: fieldErrors.country,
+              }}
+            />
 
             <div className="tenant-create-form-field">
               <Label htmlFor="location-phone">Phone</Label>

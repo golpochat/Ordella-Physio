@@ -7,7 +7,7 @@ import { BarChart } from "@/components/charts/bar-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PageLoading } from "@/components/patient-portal/page-state";
+import { PageLoading, PageError } from "@/components/patient-portal/page-state";
 import { useNotificationAnalytics } from "@/hooks/useNotificationProviders";
 import type { NotificationChannel, NotificationProviderName } from "@/lib/notification-provider-types";
 
@@ -58,13 +58,7 @@ export function NotificationAnalyticsDashboard() {
   }
 
   if (analyticsQuery.isError) {
-    return (
-      <Card>
-        <CardBody>
-          <p className="text-destructive">Unable to load notification analytics.</p>
-        </CardBody>
-      </Card>
-    );
+    return <PageError onRetry={() => void analyticsQuery.refetch()} />;
   }
 
   return (

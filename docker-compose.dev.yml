@@ -110,6 +110,7 @@ services:
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_auth?schema=public
       JWT_SECRET: *jwt-secret
       JWT_ACCESS_SECRET: *jwt-secret
+      PLATFORM_SECRETS_ENCRYPTION_KEY: ${PLATFORM_SECRETS_ENCRYPTION_KEY:-change-me-platform-secrets-key-min-32-chars}
       AVATAR_UPLOAD_DIR: /data/avatars
     volumes:
       - ordella-physio-avatar-uploads:/data/avatars
@@ -147,6 +148,8 @@ services:
       DEFAULT_TENANT_ID: ${DEFAULT_TENANT_ID:-demo-tenant}
       NEXTAUTH_URL: http://localhost:3010
       NEXTAUTH_SECRET: *jwt-secret
+      ADDRESS_LOOKUP_PROVIDER: ${ADDRESS_LOOKUP_PROVIDER:-none}
+      ADDRESS_LOOKUP_API_KEY: ${ADDRESS_LOOKUP_API_KEY:-}
     depends_on:
       - api-gateway
     networks:

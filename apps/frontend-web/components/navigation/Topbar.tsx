@@ -13,7 +13,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUiStore } from "@/store/ui.store";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/cn";
-import { can, canAny, Permission } from "@/lib/permissions";
+import { isSystemUser } from "@/lib/auth/roleRedirect";
+import { resolveUserRoles } from "@/lib/rbac";
+import { canAny, Permission } from "@/lib/permissions";
 
 export type TopbarProps = {
   title: string;
@@ -45,7 +47,9 @@ export function Topbar({
   }, []);
 
   const initials = user?.email?.slice(0, 2).toUpperCase() ?? "OR";
-  const canManageSettings = canAny(user, [Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE]);
+  const canManageSettings =
+    (user ? isSystemUser(resolveUserRoles(user)) : false) ||
+    canAny(user, [Permission.SETTINGS_MANAGE, Permission.TENANT_MANAGE]);
 
   const menuItems = [
     { label: "Profile", onSelect: () => router.push(profileHref) },

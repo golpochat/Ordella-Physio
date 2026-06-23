@@ -3,10 +3,14 @@ import type { UpdateUserProfileResponse } from "@/lib/clinic-portal-types";
 import type { ApiServiceKey } from "@/lib/constants";
 import type {
   CreatePlatformRolePayload,
+  CreatePlatformAddressLookupIntegrationPayload,
+  AddressLookupConnectionTestResult,
+  TestAddressLookupCredentialsPayload,
   CreatePlatformTenantPayload,
   CreatePlatformTenantResponse,
   CreatePlatformUserPayload,
   PlatformProfile,
+  PlatformAddressLookupIntegration,
   PlatformRole,
   PlatformSettings,
   PlatformTenant,
@@ -15,6 +19,7 @@ import type {
   PlatformUserListResponse,
   ServiceHealthStatus,
   UpdatePlatformProfilePayload,
+  UpdatePlatformAddressLookupIntegrationPayload,
   UpdatePlatformRolePayload,
   UpdatePlatformSettingsPayload,
   UpdatePlatformTenantPayload,
@@ -728,6 +733,70 @@ export function createSuperAdminPortalApi(api: SuperAdminApiClient) {
 
     updateSettings(payload: UpdatePlatformSettingsPayload) {
       return api.patch<PlatformSettings>("auth", "/settings", payload, { context: GLOBAL_CONTEXT });
+    },
+
+    listAddressLookupIntegrations() {
+      return api.get<PlatformAddressLookupIntegration[]>(
+        "auth",
+        "/platform/integrations/address-lookup",
+        { context: GLOBAL_CONTEXT },
+      );
+    },
+
+    createAddressLookupIntegration(payload: CreatePlatformAddressLookupIntegrationPayload) {
+      return api.post<PlatformAddressLookupIntegration>(
+        "auth",
+        "/platform/integrations/address-lookup",
+        payload,
+        { context: GLOBAL_CONTEXT },
+      );
+    },
+
+    updateAddressLookupIntegration(
+      id: string,
+      payload: UpdatePlatformAddressLookupIntegrationPayload,
+    ) {
+      return api.patch<PlatformAddressLookupIntegration>(
+        "auth",
+        `/platform/integrations/address-lookup/${id}`,
+        payload,
+        { context: GLOBAL_CONTEXT },
+      );
+    },
+
+    deleteAddressLookupIntegration(id: string) {
+      return api.delete<{ deleted: true }>(
+        "auth",
+        `/platform/integrations/address-lookup/${id}`,
+        { context: GLOBAL_CONTEXT },
+      );
+    },
+
+    setActiveAddressLookupIntegration(integrationId: string | null) {
+      return api.put<{ activeIntegrationId: string | null }>(
+        "auth",
+        "/platform/integrations/address-lookup/active",
+        { integrationId },
+        { context: GLOBAL_CONTEXT },
+      );
+    },
+
+    testAddressLookupIntegration(id: string) {
+      return api.post<AddressLookupConnectionTestResult>(
+        "auth",
+        `/platform/integrations/address-lookup/${id}/test`,
+        {},
+        { context: GLOBAL_CONTEXT },
+      );
+    },
+
+    testAddressLookupCredentials(payload: TestAddressLookupCredentialsPayload) {
+      return api.post<AddressLookupConnectionTestResult>(
+        "auth",
+        "/platform/integrations/address-lookup/test",
+        payload,
+        { context: GLOBAL_CONTEXT },
+      );
     },
 
     listAuditLogs(params?: AuthAuditLogFilters) {

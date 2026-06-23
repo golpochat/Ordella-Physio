@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
+import { FormFieldError } from "@/components/ui/form-feedback";
 
 import type {
 
@@ -286,7 +287,7 @@ export function ProviderConfigForm({
 
 
 
-      {jsonError ? <p className="text-sm text-destructive">{jsonError}</p> : null}
+      {jsonError ? <FormFieldError>{jsonError}</FormFieldError> : null}
 
 
 

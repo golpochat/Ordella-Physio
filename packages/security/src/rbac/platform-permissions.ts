@@ -54,6 +54,7 @@ export const PLATFORM_PERMISSIONS = {
   PLATFORM_TENANTS_MANAGE: "platform.tenants.manage",
   PLATFORM_BILLING_METRICS: "platform.billing.metrics",
   PLATFORM_AUDIT_READ: "platform.audit.read",
+  PLATFORM_INTEGRATIONS_MANAGE: "platform.integrations.manage",
 } as const;
 
 export type PlatformPermission = (typeof PLATFORM_PERMISSIONS)[keyof typeof PLATFORM_PERMISSIONS];
@@ -122,6 +123,7 @@ export const PLATFORM_LEVEL_PERMISSIONS: PlatformPermission[] = [
   PLATFORM_PERMISSIONS.PLATFORM_TENANTS_MANAGE,
   PLATFORM_PERMISSIONS.PLATFORM_BILLING_METRICS,
   PLATFORM_PERMISSIONS.PLATFORM_AUDIT_READ,
+  PLATFORM_PERMISSIONS.PLATFORM_INTEGRATIONS_MANAGE,
 ];
 
 export const DELETE_LEVEL_PERMISSIONS: PlatformPermission[] = [

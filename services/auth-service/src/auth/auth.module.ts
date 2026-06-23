@@ -33,6 +33,7 @@ import { VerificationService } from "@/services/verification.service";
 import { MfaService } from "@/services/mfa.service";
 import { TokenBuilder } from "@/utils/token-builder";
 import { AuditModule } from "@/audit/audit.module";
+import { PlatformIntegrationModule } from "@/platform-integrations/platform-integration.module";
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AuditModule } from "@/audit/audit.module";
     AuditModule,
     EmailModule,
     EventsModule,
+    PlatformIntegrationModule,
   ],
   controllers: [
     AuthController,

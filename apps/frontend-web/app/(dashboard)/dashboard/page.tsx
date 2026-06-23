@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { DASHBOARD_NAV_LINKS, DASHBOARD_TITLES } from "@/lib/dashboard-nav";
 
 export default function DashboardHomePage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-muted-foreground">Choose a role-specific workspace.</p>
-      </div>
+    <div className="dashboard-page">
+      <PageHeader title="Dashboard" subtitle="Choose a role-specific workspace." />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {DASHBOARD_NAV_LINKS.map((item) => (
           <Card key={item.href}>

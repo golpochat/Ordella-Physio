@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AddressFormFields } from "@/components/address";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
@@ -24,7 +25,18 @@ import {
   type OnboardingIntent,
   type PlanId,
 } from "@/lib/pricing-plans";
+import {
+  clearCheckoutDraft,
+  readCheckoutDraft,
+  writeCheckoutDraft,
+} from "@/lib/checkout-draft-storage";
 import { getPortalForRole } from "@/lib/auth/roleRedirect";
+import {
+  emptyPostalAddress,
+  mapPostalErrorsToCheckoutKeys,
+  toCheckoutBillingPayload,
+  validatePostalAddress,
+} from "@/lib/postal-address";
 
 const CHECKOUT_PLANS = ["starter", "pro"] as const;
 type CheckoutPlanId = (typeof CHECKOUT_PLANS)[number];
@@ -64,30 +76,43 @@ export default function CheckoutPage() {
   const [trialDays, setTrialDays] = useState(14);
   const [vatCountries, setVatCountries] = useState(VAT_COUNTRIES);
   const [submitting, setSubmitting] = useState(false);
+  const [billingAddress, setBillingAddress] = useState(() => emptyPostalAddress());
   const [form, setForm] = useState({
-    billingCountry: "IE",
-    billingStreet: "",
-    billingCity: "",
-    billingPostal: "",
     companyName: "",
     cardholderName: "",
     cardNumber: "",
     cardExpiry: "",
     cardCvc: "",
   });
+  const [draftRestored, setDraftRestored] = useState(false);
+  const skipNextDraftWrite = useRef(false);
+
+  const checkoutContext = useMemo(
+    () => ({
+      plan,
+      cycle: billingCycle,
+      intent,
+    }),
+    [plan, billingCycle, intent],
+  );
 
   const planInfo = useMemo(() => PRICING_PLANS[rawPlan], [rawPlan]);
+
+  const vatCountryOptions = useMemo(
+    () => vatCountries.map((country) => ({ value: country.code, label: country.label })),
+    [vatCountries],
+  );
 
   const summary = useMemo(() => {
     if (isTrial || isEnterprise) {
       return null;
     }
     try {
-      return computeCheckoutSummary(plan, billingCycle, form.billingCountry);
+      return computeCheckoutSummary(plan, billingCycle, billingAddress.country);
     } catch {
       return null;
     }
-  }, [billingCycle, form.billingCountry, isEnterprise, isTrial, plan]);
+  }, [billingAddress.country, billingCycle, isEnterprise, isTrial, plan]);
 
   useEffect(() => {
     void authClient
@@ -100,6 +125,47 @@ export default function CheckoutPage() {
       })
       .catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (isTrial || isEnterprise || draftRestored) {
+      return;
+    }
+
+    const draft = readCheckoutDraft(checkoutContext);
+    if (draft) {
+      skipNextDraftWrite.current = true;
+      setBillingAddress(draft.billingAddress);
+      setForm((current) => ({ ...current, companyName: draft.companyName }));
+    }
+
+    setDraftRestored(true);
+  }, [checkoutContext, draftRestored, isEnterprise, isTrial]);
+
+  useEffect(() => {
+    if (isTrial || isEnterprise || !draftRestored) {
+      return;
+    }
+
+    if (skipNextDraftWrite.current) {
+      skipNextDraftWrite.current = false;
+      return;
+    }
+
+    writeCheckoutDraft({
+      version: 1,
+      ...checkoutContext,
+      billingAddress,
+      companyName: form.companyName,
+      savedAt: new Date().toISOString(),
+    });
+  }, [
+    billingAddress,
+    checkoutContext,
+    draftRestored,
+    form.companyName,
+    isEnterprise,
+    isTrial,
+  ]);
 
   useEffect(() => {
     if (!isAuthenticated || !isTrial || !accessToken) {
@@ -217,12 +283,9 @@ export default function CheckoutPage() {
   };
 
   const validateAllPaidFields = (): boolean => {
-    const nextErrors: Partial<Record<string, string>> = {};
-
-    nextErrors.billingCountry = validateBillingCountry(form.billingCountry) ?? undefined;
-    nextErrors.billingStreet = validateBillingStreet(form.billingStreet) ?? undefined;
-    nextErrors.billingCity = validateBillingCity(form.billingCity) ?? undefined;
-    nextErrors.billingPostal = validateBillingPostal(form.billingPostal) ?? undefined;
+    const nextErrors: Partial<Record<string, string>> = {
+      ...mapPostalErrorsToCheckoutKeys(validatePostalAddress(billingAddress)),
+    };
 
     if (!useStripeCheckout) {
       nextErrors.cardholderName = validateCardholderName(form.cardholderName) ?? undefined;
@@ -305,6 +368,7 @@ export default function CheckoutPage() {
           successUrl: `${origin}/checkout/success`,
           cancelUrl: `${origin}/checkout${checkoutParams ? `?${checkoutParams}` : ""}`,
         });
+        clearCheckoutDraft();
         window.location.href = session.url;
         return;
       }
@@ -316,16 +380,14 @@ export default function CheckoutPage() {
       await completeCheckout({
         plan,
         billingCycle,
-        billingCountry: form.billingCountry,
-        billingStreet: form.billingStreet.trim(),
-        billingCity: form.billingCity.trim(),
-        billingPostal: form.billingPostal.trim(),
+        ...toCheckoutBillingPayload(billingAddress),
         companyName: form.companyName.trim() || undefined,
         cardholderName: form.cardholderName.trim(),
         cardNumber: form.cardNumber.trim(),
         cardExpiry: form.cardExpiry.trim(),
         cardCvc: form.cardCvc.trim(),
       });
+      clearCheckoutDraft();
     } catch (error) {
       // Errors are expected to be handled by auth/onboarding redirects.
       // Validation is handled inline on this page.
@@ -435,140 +497,34 @@ export default function CheckoutPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardBody className="auth-form-stack">
-                    <div className="auth-field-stack">
-                      <Label htmlFor="billingCountry">Billing country</Label>
-                      <select
-                        id="billingCountry"
-                        className="auth-select"
-                        value={form.billingCountry}
-                        onChange={(event) => {
-                          const value = event.target.value;
-                          setForm((current) => ({ ...current, billingCountry: value }));
-                          setFieldErrors((current) => {
-                            const shouldValidate = validationAttempted || Boolean(current.billingCountry);
-                            return {
-                              ...current,
-                              billingCountry: shouldValidate
-                                ? validateField("billingCountry", value) ?? undefined
-                                : current.billingCountry,
-                            };
-                          });
-                        }}
-                        onBlur={(event) => {
-                          const value = event.currentTarget.value;
-                          setFieldErrors((current) => ({
-                            ...current,
-                            billingCountry: validateField("billingCountry", value) ?? undefined,
-                          }));
-                        }}
-                      >
-                        {vatCountries.map((country) => (
-                          <option key={country.code} value={country.code}>
-                            {country.label}
-                          </option>
-                        ))}
-                      </select>
-                      {fieldErrors.billingCountry ? (
-                        <p className="form-field-error">{fieldErrors.billingCountry}</p>
-                      ) : null}
-                    </div>
-
-                    <div className="auth-field-stack">
-                      <Label htmlFor="billingStreet">Street address</Label>
-                      <Input
-                        id="billingStreet"
-                        value={form.billingStreet}
-                        onChange={(event) => {
-                          const value = event.target.value;
-                          setForm((current) => ({ ...current, billingStreet: value }));
-                          setFieldErrors((current) => {
-                            const shouldValidate =
-                              validationAttempted || Boolean(current.billingStreet);
-                            return {
-                              ...current,
-                              billingStreet: shouldValidate
-                                ? validateField("billingStreet", value) ?? undefined
-                                : current.billingStreet,
-                            };
-                          });
-                        }}
-                        onBlur={(event) => {
-                          const value = event.currentTarget.value;
-                          setFieldErrors((current) => ({
-                            ...current,
-                            billingStreet: validateField("billingStreet", value) ?? undefined,
-                          }));
-                        }}
-                      />
-                      {fieldErrors.billingStreet ? (
-                        <p className="form-field-error">{fieldErrors.billingStreet}</p>
-                      ) : null}
-                    </div>
-
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="auth-field-stack">
-                        <Label htmlFor="billingCity">City</Label>
-                        <Input
-                          id="billingCity"
-                          value={form.billingCity}
-                          onChange={(event) => {
-                            const value = event.target.value;
-                            setForm((current) => ({ ...current, billingCity: value }));
-                            setFieldErrors((current) => {
-                              const shouldValidate =
-                                validationAttempted || Boolean(current.billingCity);
-                              return {
-                                ...current,
-                                billingCity: shouldValidate
-                                  ? validateField("billingCity", value) ?? undefined
-                                  : current.billingCity,
-                              };
-                            });
-                          }}
-                          onBlur={(event) => {
-                            const value = event.currentTarget.value;
-                            setFieldErrors((current) => ({
-                              ...current,
-                              billingCity: validateField("billingCity", value) ?? undefined,
-                            }));
-                          }}
-                        />
-                        {fieldErrors.billingCity ? (
-                          <p className="form-field-error">{fieldErrors.billingCity}</p>
-                        ) : null}
-                      </div>
-                      <div className="auth-field-stack">
-                        <Label htmlFor="billingPostal">Postal code</Label>
-                        <Input
-                          id="billingPostal"
-                          value={form.billingPostal}
-                          onChange={(event) => {
-                            const value = event.target.value;
-                            setForm((current) => ({ ...current, billingPostal: value }));
-                            setFieldErrors((current) => {
-                              const shouldValidate =
-                                validationAttempted || Boolean(current.billingPostal);
-                              return {
-                                ...current,
-                                billingPostal: shouldValidate
-                                  ? validateField("billingPostal", value) ?? undefined
-                                  : current.billingPostal,
-                              };
-                            });
-                          }}
-                          onBlur={(event) => {
-                            const value = event.currentTarget.value;
-                            setFieldErrors((current) => ({
-                              ...current,
-                              billingPostal: validateField("billingPostal", value) ?? undefined,
-                            }));
-                          }}
-                        />
-                        {fieldErrors.billingPostal ? (
-                          <p className="form-field-error">{fieldErrors.billingPostal}</p>
-                        ) : null}
-                      </div>
-                    </div>
+                    <AddressFormFields
+                      idPrefix="checkout-billing"
+                      layout="auth-stack"
+                      value={billingAddress}
+                      onChange={setBillingAddress}
+                      showLine2={false}
+                      line1Label="Street address"
+                      countryOptions={vatCountryOptions}
+                      errors={{
+                        line1: fieldErrors.billingStreet,
+                        city: fieldErrors.billingCity,
+                        postalCode: fieldErrors.billingPostal,
+                        country: fieldErrors.billingCountry,
+                      }}
+                      onFieldBlur={(field, value) => {
+                        const draft = { ...billingAddress, [field]: value };
+                        const shouldValidate =
+                          validationAttempted ||
+                          Boolean(draft.line1 || draft.city || draft.postalCode || draft.country);
+                        if (!shouldValidate) {
+                          return;
+                        }
+                        setFieldErrors((current) => ({
+                          ...current,
+                          ...mapPostalErrorsToCheckoutKeys(validatePostalAddress(draft)),
+                        }));
+                      }}
+                    />
 
                     <div className="auth-field-stack">
                       <Label htmlFor="companyName">Company name (optional)</Label>
