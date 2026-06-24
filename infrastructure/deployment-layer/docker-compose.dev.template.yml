@@ -1,8 +1,11 @@
 name: ordella-physio
 
-# Lightweight local development — essential services only.
+# Lightweight local development — essential services only (5 containers).
+# Portal microservices: docker compose -f docker-compose.dev.yml --profile portal up -d
+# Clinic monolith:       docker compose -f docker-compose.dev.yml --profile clinic-backend up -d
 # Usage: docker compose -f docker-compose.dev.yml up -d
 # Rebuild only when Dockerfiles change: docker compose -f docker-compose.dev.yml build <service>
+# Regenerate: node scripts/docker/sync-compose.mjs
 
 x-jwt-secret: &jwt-secret ${JWT_ACCESS_SECRET:-change-me-local-jwt-secret-min-32-chars}
 x-postgres-user: &postgres-user ${POSTGRES_USER:-physio}
@@ -20,16 +23,6 @@ x-gateway-urls: &gateway-urls
   MESSAGING_SERVICE_URL: http://messaging-service:3061
   NOTIFICATION_SERVICE_URL: http://notification-service:3062
   AI_NOTES_SERVICE_URL: http://ai-notes-service:3063
-  MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
-  ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
-  ORGANIZATION_SERVICE_URL: http://organization-service:3066
-  TERMINAL_SERVICE_URL: http://terminal-service:3067
-  USER_ROLE_SERVICE_URL: http://user-role-service:3068
-  STAFF_SERVICE_URL: http://staff-service:3069
-  AUDIT_SERVICE_URL: http://audit-service:3070
-  FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
-  NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
-  SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
   AI_SERVICE_URL: http://ai-service:3075
   AI_TRAINING_SERVICE_URL: http://ai-training-service:3076
   AI_MONITORING_SERVICE_URL: http://ai-monitoring-service:3077
@@ -40,6 +33,18 @@ x-gateway-urls: &gateway-urls
   AI_SECURITY_SERVICE_URL: http://ai-security-service:3082
   AI_OBSERVABILITY_SERVICE_URL: http://ai-observability-service:3083
   AI_AGENTS_SERVICE_URL: http://ai-agents-service:3084
+  MARKETPLACE_SERVICE_URL: http://marketplace-service:3064
+  ENTERPRISE_SERVICE_URL: http://enterprise-service:3065
+  ORGANIZATION_SERVICE_URL: http://organization-service:3066
+  TERMINAL_SERVICE_URL: http://terminal-service:3067
+  USER_ROLE_SERVICE_URL: http://user-role-service:3068
+  STAFF_SERVICE_URL: http://staff-service:3069
+  AUDIT_SERVICE_URL: http://audit-service:3070
+  FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
+  NOTIFICATION_PROVIDER_SERVICE_URL: http://notification-provider-service:3072
+  SEARCH_INDEX_SERVICE_URL: http://search-index-service:3073
+  PHARMACY_SERVICE_URL: http://pharmacy-service:3085
+  CLINIC_BACKEND_URL: ${CLINIC_BACKEND_URL:-http://clinic-backend:4000}
 
 services:
   api-gateway:
@@ -47,7 +52,7 @@ services:
     build:
       context: ./
       dockerfile: services/api-gateway/Dockerfile
-    image: ordella-physio-api-gateway:latest
+    image: ordella-physio-api-gateway:dev
     ports:
       - "${API_GATEWAY_PORT:-3049}:3049"
     environment:
@@ -70,12 +75,16 @@ services:
     build:
       context: ./
       dockerfile: services/auth-service/Dockerfile
-    image: ordella-physio-core-service:latest
+    image: ordella-physio-core-service:dev
     environment:
       PORT: 3051
       DATABASE_URL: postgresql://physio:physio@db:5432/ordella_auth?schema=public
       JWT_SECRET: *jwt-secret
       JWT_ACCESS_SECRET: *jwt-secret
+      PLATFORM_SECRETS_ENCRYPTION_KEY: ${PLATFORM_SECRETS_ENCRYPTION_KEY:-change-me-platform-secrets-key-min-32-chars}
+      AVATAR_UPLOAD_DIR: /data/avatars
+    volumes:
+      - ordella-physio-avatar-uploads:/data/avatars
     depends_on:
       db:
         condition: service_healthy
@@ -90,14 +99,18 @@ services:
       args:
         NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
         NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
-    image: ordella-physio-frontend:latest
+    image: ordella-physio-frontend:dev
     ports:
       - "${FRONTEND_WEB_PORT:-3010}:3010"
     environment:
       PORT: 3010
       DISABLE_API_RATE_LIMIT: "true"
+      DISABLE_NONCE_CSP: "true"
       NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3049
       API_GATEWAY_INTERNAL_URL: http://api-gateway:3049
+      CLINIC_BACKEND_INTERNAL_URL: http://api-gateway:3049
+      USE_CLINIC_BACKEND: "false"
+      NEXT_PUBLIC_USE_CLINIC_BACKEND: "false"
       NEXT_PUBLIC_DEFAULT_TENANT_ID: ${NEXT_PUBLIC_DEFAULT_TENANT_ID:-demo-tenant}
       DEFAULT_TENANT_ID: ${DEFAULT_TENANT_ID:-demo-tenant}
       NEXTAUTH_URL: http://localhost:3010
@@ -135,66 +148,98 @@ services:
       - ordella-physio-network
 
 # ---------------------------------------------------------
-# OPTIONAL SERVICES (DISABLED BY DEFAULT)
-# Uncomment only when needed
+# PORTAL MICROSERVICES (profile: portal — disabled by default)
+# Usage: docker compose -f docker-compose.dev.yml --profile portal up -d
 # ---------------------------------------------------------
-#  tenant-service:
-#    container_name: ordella-physio-tenant-service
-#    build:
-#      context: ./
-#      dockerfile: services/tenant-service/Dockerfile
-#    image: ordella-physio-tenant-service:latest
-#    environment:
-#      PORT: 3052
-#      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_tenant?schema=public
-#      JWT_ACCESS_SECRET: change-me-local-jwt-secret-min-32-chars
-#      AUTH_SERVICE_URL: http://core-service:3051
-#    depends_on:
-#      - db
-#      - core-service
-#    networks:
-#      - ordella-physio-network
+# PORTAL_SERVICES_ANCHOR
 
-#  patient-service:
-#    container_name: ordella-physio-patient-service
-#    build:
-#      context: ./
-#      dockerfile: services/patient-service/Dockerfile
-#    image: ordella-physio-patient-service:latest
-#    environment:
-#      PORT: 3053
-#      DATABASE_URL: postgresql://physio:physio@db:5432/ordella_patient?schema=public
-#      JWT_ACCESS_SECRET: change-me-local-jwt-secret-min-32-chars
-#      TENANT_SERVICE_URL: http://tenant-service:3052
-#    depends_on:
-#      - db
-#      - tenant-service
-#    networks:
-#      - ordella-physio-network
-
+# ---------------------------------------------------------
+# OPTIONAL: search-index (uncomment in portal profile block or add here)
+# ---------------------------------------------------------
 #  search-index-service:
+#    profiles: ["portal"]
 #    container_name: ordella-physio-search-index-service
 #    build:
 #      context: ./
 #      dockerfile: services/search-index/Dockerfile
-#    image: ordella-physio-search-index-service:latest
+#    image: ordella-physio-search-index-service:dev
 #    networks:
 #      - ordella-physio-network
 
-#  notification-service:
-#    container_name: ordella-physio-notification-service
-#    build:
-#      context: ./
-#      dockerfile: services/notification-service/Dockerfile
-#    image: ordella-physio-notification-service:latest
-#    networks:
-#      - ordella-physio-network
+# ---------------------------------------------------------
+# OPTIONAL: Monolithic clinic backend (profile: clinic-backend)
+# Usage: docker compose -f docker-compose.dev.yml --profile clinic-backend up -d
+# ---------------------------------------------------------
 
-#  nats:
-#    container_name: ordella-physio-nats
-#    image: nats:2.10-alpine
-#    networks:
-#      - ordella-physio-network
+  clinic-backend-db:
+    profiles: ["clinic-backend"]
+    container_name: ordella-physio-clinic-backend-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: clinic_backend
+    ports:
+      - "${CLINIC_BACKEND_DB_PORT:-5434}:5432"
+    volumes:
+      - ordella-physio-clinic-backend-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ordella-physio-network
+
+  clinic-backend:
+    profiles: ["clinic-backend"]
+    container_name: ordella-physio-clinic-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: ordella-physio-clinic-backend:dev
+    ports:
+      - "${CLINIC_BACKEND_PORT:-4000}:4000"
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:postgres@clinic-backend-db:5432/clinic_backend?schema=public
+      JWT_SECRET: *jwt-secret
+      JWT_REFRESH_SECRET: *jwt-secret
+      TENANT_HEADER: x-tenant-id
+      FILE_STORAGE_SERVICE_URL: http://file-storage-service:3071
+      FILE_STORAGE_MAX_BYTES: 52428800
+      CLAMAV_REQUIRED: "true"
+    depends_on:
+      clinic-backend-db:
+        condition: service_healthy
+    networks:
+      - ordella-physio-network
+
+  clinic-backend-backup-cron:
+    profiles: ["backup"]
+    container_name: ordella-physio-clinic-backend-backup-cron
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - ordella-physio-clinic-backend-backups:/app/backups
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@clinic-backend-db:5432/clinic_backend?schema=public
+      BACKUP_ENCRYPTION_KEY: ${BACKUP_ENCRYPTION_KEY:-dev-backup-encryption-key-min-32-chars}
+      BACKUP_OUTPUT_DIR: /app/backups
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-30}
+      BACKUP_CRON_SCHEDULE: ${BACKUP_CRON_SCHEDULE:-0 2 * * *}
+    depends_on:
+      clinic-backend-db:
+        condition: service_healthy
+    command: >
+      sh -c "apk add --no-cache postgresql-client openssl
+      && mkdir -p /app/backups
+      && echo \"$${BACKUP_CRON_SCHEDULE} /app/scripts/backup-run.sh\" > /etc/crontabs/root
+      && crond -f -l 2"
+    networks:
+      - ordella-physio-network
 
 # ---------------------------------------------------------
 # NETWORKS & VOLUMES
@@ -206,3 +251,6 @@ networks:
 
 volumes:
   ordella-physio-db-data:
+  ordella-physio-avatar-uploads:
+  ordella-physio-clinic-backend-db-data:
+  ordella-physio-clinic-backend-backups:

@@ -993,7 +993,7 @@ CLAMAV_REQUIRED=false
 BACKUP_ENCRYPTION_KEY=       # min 32 chars
 BACKUP_OUTPUT_DIR=backups
 BACKUP_RETENTION_DAYS=30
-BACKUP_DOCKER_CONTAINER=ordella-clinic-backend-db
+BACKUP_DOCKER_CONTAINER=ordella-physio-clinic-backend-db
 BACKUP_CRON_SCHEDULE=0 2 * * *
 ```
 

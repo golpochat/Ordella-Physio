@@ -23,7 +23,12 @@ function dockerDbRunning(): boolean {
   try {
     const output = execFileSync(
       "docker",
-      ["inspect", "-f", "{{.State.Running}}", process.env.BACKUP_DOCKER_CONTAINER ?? "ordella-clinic-backend-db"],
+      [
+        "inspect",
+        "-f",
+        "{{.State.Running}}",
+        process.env.BACKUP_DOCKER_CONTAINER ?? "ordella-physio-clinic-backend-db",
+      ],
       { encoding: "utf8" },
     ).trim();
     return output === "true";

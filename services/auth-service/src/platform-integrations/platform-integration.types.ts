@@ -13,10 +13,18 @@ export type PlatformIntegrationPublic = {
   label: string;
   apiKeyLast4: string | null;
   metadata: Record<string, unknown>;
+  lastConnectionTest: StoredConnectionTest | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
   updatedByUserId: string | null;
+};
+
+export type StoredConnectionTest = {
+  testedAt: string;
+  connected: boolean;
+  message: string;
+  suggestionCount: number;
 };
 
 export type AddressLookupRuntimeConfig = {

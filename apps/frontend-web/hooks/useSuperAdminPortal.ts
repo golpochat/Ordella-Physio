@@ -832,10 +832,14 @@ export function useSetActiveAddressLookupIntegration() {
 
 export function useTestAddressLookupIntegration() {
   const portalApi = useSuperAdminPortalApi();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (integrationId: string) =>
       requireApi(portalApi).testAddressLookupIntegration(integrationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin", "address-lookup-integrations"] });
+    },
   });
 }
 

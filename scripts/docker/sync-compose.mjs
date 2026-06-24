@@ -59,7 +59,10 @@ function normalizeBuildBlocks(content) {
           continue;
         }
         if (inArgs) {
-          if (/^[^\s]/.test(current) || /^    [a-z]/i.test(current) && !/^      /.test(current)) {
+          if (
+            /^[^\s]/.test(current) ||
+            (/^    [a-z]/i.test(current) && !/^      /.test(current))
+          ) {
             inArgs = false;
             break;
           }
@@ -100,7 +103,20 @@ function normalizeBuildBlocks(content) {
   return result.join("\n");
 }
 
-function processFullCompose(source) {
+function applyImageTags(content, imageTag) {
+  if (imageTag === "latest") {
+    return content.replace(/image: ordella-physio-([^:\n]+):dev/g, "image: ordella-physio-$1:latest");
+  }
+
+  return content
+    .replace(/image: ordella-physio-([^:\n]+):latest/g, "image: ordella-physio-$1:dev")
+    .replace(
+      /image: ordella-physio-clinic-backend:latest/g,
+      "image: ordella-physio-clinic-backend:dev",
+    );
+}
+
+function processCompose(source, { imageTag = "latest" } = {}) {
   let out = source
     .replace(/^version:\s*["']?3\.9["']?\s*\n/m, "")
     .replace(
@@ -115,6 +131,18 @@ function processFullCompose(source) {
       return `container_name: ${PROJECT}-${name}`;
     })
     .replace(
+      /container_name: ordella-clinic-backend-db/g,
+      "container_name: ordella-physio-clinic-backend-db",
+    )
+    .replace(
+      /container_name: ordella-clinic-backend-backup-cron/g,
+      "container_name: ordella-physio-clinic-backend-backup-cron",
+    )
+    .replace(
+      /container_name: ordella-clinic-backend$/gm,
+      "container_name: ordella-physio-clinic-backend",
+    )
+    .replace(
       /\.\/postgres\/init-databases\.sql/g,
       "./infrastructure/deployment-layer/postgres/init-databases.sql",
     )
@@ -123,9 +151,9 @@ function processFullCompose(source) {
       "$1infrastructure/deployment-layer/.env.local",
     )
     .replace(/image: postgres:15$/m, "image: postgres:15-alpine")
-    .replace(/image: redis:7$/m, "image: redis:7-alpine")
-    .replace(/image: ordella-physio-[^:]+:dev/g, (m) => m.replace(":dev", ":latest"));
+    .replace(/image: redis:7$/m, "image: redis:7-alpine");
 
+  out = applyImageTags(out, imageTag);
   out = normalizeBuildBlocks(out);
 
   const volumeNames = [
@@ -142,6 +170,15 @@ function processFullCompose(source) {
     out = out.replace(new RegExp(`^  ${vol}:$`, "gm"), `  ${PROJECT}-${vol}:`);
     out = out.replace(new RegExp(`- ${vol}:`, "g"), `- ${PROJECT}-${vol}:`);
   }
+
+  out = out.replace(
+    /ordella-clinic-backend-db-data/g,
+    "ordella-physio-clinic-backend-db-data",
+  );
+  out = out.replace(
+    /ordella-clinic-backend-backups/g,
+    "ordella-physio-clinic-backend-backups",
+  );
 
   const lines = out.split(/\r?\n/);
   const result = [];
@@ -167,7 +204,11 @@ function processFullCompose(source) {
     }
 
     if (inBuild && !hasImage && /^    container_name:/.test(line) && currentService) {
-      result.push(`    image: ${PROJECT}-${currentService}:latest`);
+      const serviceImage =
+        currentService === "clinic-backend"
+          ? `${PROJECT}-clinic-backend:${imageTag}`
+          : `${PROJECT}-${currentService}:${imageTag}`;
+      result.push(`    image: ${serviceImage}`);
       hasImage = true;
       inBuild = false;
     }
@@ -178,22 +219,45 @@ function processFullCompose(source) {
   return result.join("\n");
 }
 
+function mergeDevTemplates(essentialSource, portalSource) {
+  const anchor = "# PORTAL_SERVICES_ANCHOR";
+  if (!essentialSource.includes(anchor)) {
+    throw new Error(`Dev template missing anchor: ${anchor}`);
+  }
+
+  const portalBlock = portalSource
+    .replace(/^#[^\n]*\n/gm, "")
+    .replace(/^\s+$/gm, "")
+    .trimEnd();
+
+  return essentialSource.replace(anchor, portalBlock);
+}
+
 const fullSource = readFileSync(
   join(ROOT, "infrastructure/deployment-layer/docker-compose.full.yml"),
   "utf8",
 );
 
-writeFileSync(join(ROOT, "docker-compose.yml"), processFullCompose(fullSource), "utf8");
+writeFileSync(
+  join(ROOT, "docker-compose.yml"),
+  processCompose(fullSource, { imageTag: "latest" }),
+  "utf8",
+);
 console.log("wrote docker-compose.yml");
 
-const devSource = readFileSync(
+const devEssential = readFileSync(
   join(ROOT, "infrastructure/deployment-layer/docker-compose.dev.template.yml"),
+  "utf8",
+);
+
+const devPortal = readFileSync(
+  join(ROOT, "infrastructure/deployment-layer/docker-compose.dev.portal.template.yml"),
   "utf8",
 );
 
 writeFileSync(
   join(ROOT, "docker-compose.dev.yml"),
-  processFullCompose(devSource),
+  processCompose(mergeDevTemplates(devEssential, devPortal), { imageTag: "dev" }),
   "utf8",
 );
 console.log("wrote docker-compose.dev.yml");

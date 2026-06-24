@@ -32,13 +32,13 @@ This rulebook applies to:
 
 All names **MUST** follow this pattern:
 
-| Resource | Pattern | Example |
-|----------|---------|---------|
-| Container | `projectname-servicename` | `ordella-physio-api-gateway` |
-| Image (dev) | `projectname-servicename:dev` | `ordella-physio-api-gateway:dev` |
+| Resource           | Pattern                          | Example                             |
+| ------------------ | -------------------------------- | ----------------------------------- |
+| Container          | `projectname-servicename`        | `ordella-physio-api-gateway`        |
+| Image (dev)        | `projectname-servicename:dev`    | `ordella-physio-api-gateway:dev`    |
 | Image (full stack) | `projectname-servicename:latest` | `ordella-physio-api-gateway:latest` |
-| Network | `projectname-network` | `ordella-physio-network` |
-| Volume | `projectname-volumename` | `ordella-db-data` |
+| Network            | `projectname-network`            | `ordella-physio-network`            |
+| Volume             | `projectname-volumename`         | `ordella-db-data`                   |
 
 **Examples:**
 
@@ -62,11 +62,11 @@ Third-party images (Postgres, Redis, NATS, etc.) keep upstream tags but **must**
 
 Every service **MUST** use the multi-stage Dockerfile template:
 
-| Stage | Purpose |
-|-------|---------|
-| **base** | Install dependencies once |
-| **build** | Compile TypeScript or build frontend assets |
-| **production** | Minimal runtime image only |
+| Stage          | Purpose                                     |
+| -------------- | ------------------------------------------- |
+| **base**       | Install dependencies once                   |
+| **build**      | Compile TypeScript or build frontend assets |
+| **production** | Minimal runtime image only                  |
 
 **Requirements:**
 
@@ -80,9 +80,21 @@ Every service **MUST** use the multi-stage Dockerfile template:
 
 ```bash
 node scripts/docker/sync-dockerfiles.mjs
+node scripts/docker/sync-dockerfiles-slim.mjs   # production-stage pnpm deploy (<400MB)
 ```
 
-Build context for this monorepo is always the **repository root** (`./`), with service-specific paths such as `services/<name>/Dockerfile`.
+Production images use a **deploy stage** (`pnpm deploy --filter=<pkg> --prod`) plus a copied `dist/` tree — not the full workspace `node_modules`. Runtime starts with `node` / `npx prisma` (no pnpm in the final image).
+
+Build context for this monorepo uses **service-local context** plus a workspace overlay:
+
+- `context: ./services/<name>` (or `./apps/<name>`) with `dockerfile: Dockerfile`
+- `additional_contexts: workspace: .` for monorepo packages (`pnpm` workspace deps)
+
+Regenerate compose files after template changes:
+
+```bash
+node scripts/docker/sync-compose.mjs
+```
 
 ---
 
@@ -119,7 +131,8 @@ node scripts/docker/sync-dockerignore.mjs
 **MUST:**
 
 - Run only essential services (see §6)
-- Comment out optional services by default
+- Keep optional services **disabled by default** — commented out in the template or behind Compose **profiles** (e.g. `--profile portal`)
+- Tag built dev images `:dev` (full stack uses `:latest`; see §2)
 - Use strict naming conventions (§2)
 - Use a **single** shared network: `ordella-physio-network`
 - Use named volumes only when required (e.g. `ordella-db-data`)
@@ -148,7 +161,8 @@ node scripts/docker/sync-dockerignore.mjs
 Always run compose from the **repository root**:
 
 ```bash
-docker compose -f docker-compose.dev.yml up -d   # daily dev
+docker compose -f docker-compose.dev.yml up -d   # daily dev (5 containers)
+docker compose -f docker-compose.dev.yml --profile portal up -d   # portal QA (+ microservices)
 docker compose up -d                             # full stack (rare)
 ```
 
@@ -167,7 +181,12 @@ The local dev environment **MUST**:
 - **NOT** run heavy or optional services unless explicitly uncommented in `docker-compose.dev.yml`
 - **NOT** run the full production stack locally for routine work
 
-Optional services (tenant, patient, search, notifications, NATS, observability, etc.) stay **commented out** in `docker-compose.dev.yml` until needed.
+Optional services (tenant, patient, search, notifications, NATS, observability, etc.) stay **disabled** in `docker-compose.dev.yml` until needed — either **commented out** in the template or started with an explicit Compose **profile**:
+
+```bash
+docker compose -f docker-compose.dev.yml --profile portal up -d
+docker compose -f docker-compose.dev.yml --profile clinic-backend up -d
+```
 
 **Dev URLs:**
 
@@ -202,12 +221,12 @@ docker compose -f docker-compose.dev.yml build core-service
 docker compose -f docker-compose.dev.yml up -d core-service
 ```
 
-| Change | Action |
-|--------|--------|
-| Application source only | Host `pnpm dev` or restart container — **no** rebuild |
-| `Dockerfile` / `.dockerignore` | `docker compose … build <service>` |
-| Lockfile / workspace deps | Rebuild affected services |
-| Compose env vars only | `docker compose … up -d` (no `--build`) |
+| Change                         | Action                                                |
+| ------------------------------ | ----------------------------------------------------- |
+| Application source only        | Host `pnpm dev` or restart container — **no** rebuild |
+| `Dockerfile` / `.dockerignore` | `docker compose … build <service>`                    |
+| Lockfile / workspace deps      | Rebuild affected services                             |
+| Compose env vars only          | `docker compose … up -d` (no `--build`)               |
 
 ---
 
@@ -282,14 +301,18 @@ The project is considered **Docker-compliant** when:
 
 ## Reference — project files
 
-| File | Role |
-|------|------|
-| `docker-compose.dev.yml` | Lightweight daily dev stack |
-| `docker-compose.yml` | Full local stack (all microservices + observability) |
-| `scripts/docker-clean.sh` | Weekly cleanup script |
-| `scripts/docker/sync-dockerfiles.mjs` | Regenerate multi-stage Dockerfiles |
-| `scripts/docker/sync-dockerignore.mjs` | Regenerate standard `.dockerignore` files |
-| `scripts/docker/audit-orphans.mjs` | List/prune Docker resources violating naming rules |
-| `infrastructure/deployment-layer/docker-compose.full.yml` | Source for full-stack compose regeneration |
+| File                                                      | Role                                                 |
+| --------------------------------------------------------- | ---------------------------------------------------- |
+| `docker-compose.dev.yml`                                  | Lightweight daily dev stack (5 containers; portal via `--profile portal`) |
+| `docker-compose.yml`                                      | Full local stack (all microservices + observability) |
+| `infrastructure/deployment-layer/docker-compose.dev.template.yml` | Essential dev services source |
+| `infrastructure/deployment-layer/docker-compose.dev.portal.template.yml` | Portal microservices (`--profile portal`) |
+| `scripts/docker/sync-compose.mjs`                         | Regenerate root compose files from templates |
+| `scripts/docker/generate-portal-template.mjs`             | Refresh portal template from last committed dev compose |
+| `scripts/docker-clean.sh`                                 | Weekly cleanup script                                |
+| `scripts/docker/sync-dockerfiles.mjs`                     | Regenerate multi-stage Dockerfiles                   |
+| `scripts/docker/sync-dockerignore.mjs`                    | Regenerate standard `.dockerignore` files            |
+| `scripts/docker/audit-orphans.mjs`                        | List/prune Docker resources violating naming rules   |
+| `infrastructure/deployment-layer/docker-compose.full.yml` | Source for full-stack compose regeneration           |
 
 Deployment-specific compose under `deploy/` and `infrastructure/` is allowed for staging/production only and must still follow naming conventions where applicable.

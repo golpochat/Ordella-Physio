@@ -22,12 +22,13 @@ import { cn } from "@/lib/cn";
 import type {
   AddressLookupConnectionTestResult,
   AddressLookupVendor,
+  PlatformIntegrationConnectionTest,
 } from "@/lib/super-admin-portal-types";
 
 function ConnectionTestStatus({
   result,
 }: {
-  result: AddressLookupConnectionTestResult | null | undefined;
+  result: PlatformIntegrationConnectionTest | AddressLookupConnectionTestResult | null | undefined;
 }) {
   if (!result) {
     return null;
@@ -42,7 +43,7 @@ function ConnectionTestStatus({
     >
       {result.connected ? "Connected" : "Not connected"} — {result.message}
       <span className="dashboard-cell-muted block text-xs">
-        Tested {formatPortalDateTime(result.testedAt)}
+        Last tested {formatPortalDateTime(result.testedAt)}
       </span>
     </p>
   );
@@ -59,9 +60,6 @@ export function AddressLookupIntegrationsPanel() {
   const [label, setLabel] = useState("");
   const [vendor, setVendor] = useState<AddressLookupVendor>("ideal_postcodes");
   const [apiKey, setApiKey] = useState("");
-  const [profileTestResults, setProfileTestResults] = useState<
-    Record<string, AddressLookupConnectionTestResult>
-  >({});
   const [draftTestResult, setDraftTestResult] = useState<AddressLookupConnectionTestResult | null>(
     null,
   );
@@ -100,6 +98,11 @@ export function AddressLookupIntegrationsPanel() {
               ? `${activeIntegration.label} (${addressLookupVendorLabel(activeIntegration.vendor)})`
               : "None — manual address entry across the platform"}
           </p>
+          {activeIntegration?.lastConnectionTest ? (
+            <div className="mt-3">
+              <ConnectionTestStatus result={activeIntegration.lastConnectionTest} />
+            </div>
+          ) : null}
           {activeIntegration ? (
             <Button
               type="button"
@@ -129,7 +132,7 @@ export function AddressLookupIntegrationsPanel() {
                       {integration.apiKeyLast4 ? ` · key ending ${integration.apiKeyLast4}` : ""}
                       {integration.isActive ? " · Active" : ""}
                     </p>
-                    <ConnectionTestStatus result={profileTestResults[integration.id]} />
+                    <ConnectionTestStatus result={integration.lastConnectionTest} />
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button
@@ -139,10 +142,6 @@ export function AddressLookupIntegrationsPanel() {
                       onClick={() => {
                         testIntegration.mutate(integration.id, {
                           onSuccess: (result) => {
-                            setProfileTestResults((current) => ({
-                              ...current,
-                              [integration.id]: result,
-                            }));
                             if (result.connected) {
                               toast.success(result.message);
                             } else {
@@ -176,14 +175,7 @@ export function AddressLookupIntegrationsPanel() {
                       disabled={deleteIntegration.isPending || integration.isActive}
                       onClick={() => {
                         deleteIntegration.mutate(integration.id, {
-                          onSuccess: () => {
-                            setProfileTestResults((current) => {
-                              const next = { ...current };
-                              delete next[integration.id];
-                              return next;
-                            });
-                            toast.success("Vendor profile removed");
-                          },
+                          onSuccess: () => toast.success("Vendor profile removed"),
                           onError: () =>
                             toast.error(
                               "Unable to delete vendor. Deactivate it first if it is active.",

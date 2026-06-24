@@ -10,6 +10,11 @@ import { AuditService } from "@/services/audit.service";
 import { PlatformIntegrationRepository } from "@/platform-integrations/platform-integration.repository";
 import { probeAddressLookupVendor } from "@/platform-integrations/address-lookup-vendor-probe";
 import {
+  clearConnectionTestMetadata,
+  readConnectionTest,
+  writeConnectionTestMetadata,
+} from "@/platform-integrations/platform-integration-metadata";
+import {
   ADDRESS_LOOKUP_VENDORS,
   type AddressLookupConnectionTestInput,
   type AddressLookupConnectionTestResult,
@@ -106,6 +111,7 @@ export class PlatformIntegrationService {
       label: row.label,
       apiKeyLast4: row.apiKeyLast4,
       metadata: normalizeMetadata(row.metadata),
+      lastConnectionTest: readConnectionTest(normalizeMetadata(row.metadata)),
       isActive: row.id === activeId,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
@@ -180,12 +186,18 @@ export class PlatformIntegrationService {
       throw new BadRequestException("API key cannot be empty.");
     }
 
+    const existingMetadata = normalizeMetadata(existing.metadata);
+    const metadataAfterKeyChange = apiKey
+      ? clearConnectionTestMetadata(existingMetadata)
+      : existingMetadata;
+
     const row = await this.repository.updateAddressLookupIntegration(id, {
       ...(label ? { label } : {}),
       ...(apiKey
         ? {
             credentialsEncrypted: this.encryptCredentials({ apiKey }),
             apiKeyLast4: lastFour(apiKey),
+            metadata: metadataAfterKeyChange as Prisma.InputJsonValue,
           }
         : {}),
       ...(input.metadata !== undefined
@@ -300,6 +312,14 @@ export class PlatformIntegrationService {
     const vendor = parseVendor(existing.vendor);
     const credentials = this.decryptCredentials(existing.credentialsEncrypted);
     const result = await probeAddressLookupVendor(vendor, credentials.apiKey);
+
+    await this.repository.updateAddressLookupIntegration(id, {
+      metadata: writeConnectionTestMetadata(
+        normalizeMetadata(existing.metadata),
+        result,
+      ) as Prisma.InputJsonValue,
+      updatedByUserId: actor.userId,
+    });
 
     await this.auditService.logEvent({
       userId: actor.userId,

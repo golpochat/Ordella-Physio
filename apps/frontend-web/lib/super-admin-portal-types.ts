@@ -347,10 +347,18 @@ export type PlatformAddressLookupIntegration = {
   label: string;
   apiKeyLast4: string | null;
   metadata: Record<string, unknown>;
+  lastConnectionTest: PlatformIntegrationConnectionTest | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
   updatedByUserId: string | null;
+};
+
+export type PlatformIntegrationConnectionTest = {
+  testedAt: string;
+  connected: boolean;
+  message: string;
+  suggestionCount: number;
 };
 
 export type CreatePlatformAddressLookupIntegrationPayload = {

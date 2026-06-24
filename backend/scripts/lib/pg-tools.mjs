@@ -27,7 +27,8 @@ export function parseDatabaseUrl(databaseUrl) {
 }
 
 export function resolveBackupRuntime() {
-  const dockerContainer = process.env.BACKUP_DOCKER_CONTAINER ?? "ordella-clinic-backend-db";
+  const dockerContainer =
+    process.env.BACKUP_DOCKER_CONTAINER ?? "ordella-physio-clinic-backend-db";
 
   if (commandExists("pg_dump") && commandExists("pg_restore") && commandExists("psql")) {
     return { mode: "local" };

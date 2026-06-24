@@ -91,7 +91,7 @@ Base path: `/api`. Used for onboarding, tenant profile/trial, and optional full 
 | **Statements** | (via patients) | PDF generation | **Implemented** |
 | **Security** | (middleware) | Brute force, token revocation, CSP helpers | **Implemented** |
 
-**Monolith Docker:** `clinic-backend` + `clinic-backend-db` (optional profile in `docker-compose.dev.yml`).
+**Monolith Docker:** `clinic-backend` + `clinic-backend-db` (optional `--profile clinic-backend` in `docker-compose.dev.yml`).
 
 ---
 
@@ -265,7 +265,7 @@ Full repo contains **36 service packages** (some not in dev compose).
 | Component | Container | Status | Purpose |
 |-----------|-----------|--------|---------|
 | PostgreSQL (microservices) | `ordella-physio-db` | **Implemented** | Multi-DB (`ordella_*` schemas) |
-| PostgreSQL (monolith) | `ordella-clinic-backend-db` | **Implemented** | Optional clinic backend |
+| PostgreSQL (monolith) | `ordella-physio-clinic-backend-db` | **Implemented** | Optional clinic backend |
 | Redis | `ordella-physio-redis` | **Implemented** | Cache, rate limits |
 | NATS | `ordella-physio-nats` | **Implemented** | JetStream events |
 | ClamAV | `ordella-physio-clamav` | **Implemented** | Upload virus scan |

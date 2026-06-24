@@ -16,7 +16,7 @@ cd "d:\Exclusive projects\ordella-physio"
 
 | Stack | Compose file | Containers | When to use |
 |-------|--------------|------------|-------------|
-| **Dev (recommended)** | `docker-compose.dev.yml` | **25** (+3 optional) | Daily development, manual QA, portal testing |
+| **Dev (recommended)** | `docker-compose.dev.yml` | **5** default; **+20** with `--profile portal`; **+2** with `--profile clinic-backend` | Daily dev; add `portal` profile for manual QA across portals |
 | **Full** | `docker-compose.yml` | **46** | Full microservices + AI + observability + Traefik |
 
 Both stacks share the network `ordella-physio-network` and naming prefix `ordella-physio-*`.
@@ -62,57 +62,35 @@ Service Dockerfiles use `ordella-base:latest`. If builds fail with “ordella-ba
 
 ## Dev stack — `docker-compose.dev.yml`
 
-**25 containers** run by default. Covers all portals (clinic, org, pharmacy, staff, patient, super-admin) via microservices.
+**5 containers** run by default (per `docker-rules.md` §6). Built images use the `:dev` tag.
 
-### Infrastructure (4)
+```powershell
+docker compose -f docker-compose.dev.yml up -d
+```
+
+### Default (essential)
 
 | Compose service | Container name | Image | Host port |
 |-----------------|----------------|-------|-----------|
 | `db` | `ordella-physio-db` | `postgres:15-alpine` | 5433 |
 | `redis` | `ordella-physio-redis` | `redis:7-alpine` | 6379 |
-| `nats` | `ordella-physio-nats` | `nats:2.10-alpine` | (internal) |
-| `clamav` | `ordella-physio-clamav` | `clamav/clamav:latest` | (internal) |
+| `core-service` | `ordella-physio-core-service` | `ordella-physio-core-service:dev` | (internal) |
+| `api-gateway` | `ordella-physio-api-gateway` | `ordella-physio-api-gateway:dev` | 3049 |
+| `frontend` | `ordella-physio-frontend` | `ordella-physio-frontend:dev` | 3010 |
 
-### Edge (2)
+### Portal profile (`--profile portal`)
 
-| Compose service | Container name | Image | Host port |
-|-----------------|----------------|-------|-----------|
-| `api-gateway` | `ordella-physio-api-gateway` | `ordella-physio-api-gateway:latest` | 3049 |
-| `frontend` | `ordella-physio-frontend` | `ordella-physio-frontend:latest` | 3010 |
+**+20 containers** — tenant, patient, billing, staff, pharmacy, file-storage, NATS, ClamAV, and related microservices.
 
-### Core & domain microservices (19)
+```powershell
+docker compose -f docker-compose.dev.yml --profile portal up -d
+```
 
-| Compose service | Container name | Image | Internal port |
-|-----------------|----------------|-------|---------------|
-| `core-service` | `ordella-physio-core-service` | `ordella-physio-core-service:latest` | 3051 |
-| `tenant-service` | `ordella-physio-tenant-service` | `ordella-physio-tenant-service:latest` | 3052 |
-| `patient-service` | `ordella-physio-patient-service` | `ordella-physio-patient-service:latest` | 3053 |
-| `appointment-service` | `ordella-physio-appointment-service` | `ordella-physio-appointment-service:latest` | 3054 |
-| `notes-service` | `ordella-physio-notes-service` | `ordella-physio-notes-service:latest` | 3055 |
-| `billing-service` | `ordella-physio-billing-service` | `ordella-physio-billing-service:latest` | 3056 |
-| `messaging-service` | `ordella-physio-messaging-service` | `ordella-physio-messaging-service:latest` | 3061 |
-| `notification-service` | `ordella-physio-notification-service` | `ordella-physio-notification-service:latest` | 3062 |
-| `marketplace-service` | `ordella-physio-marketplace-service` | `ordella-physio-marketplace-service:latest` | 3064 |
-| `enterprise-service` | `ordella-physio-enterprise-service` | `ordella-physio-enterprise-service:latest` | 3065 |
-| `organization-service` | `ordella-physio-organization-service` | `ordella-physio-organization-service:latest` | 3066 |
-| `terminal-service` | `ordella-physio-terminal-service` | `ordella-physio-terminal-service:latest` | 3067 |
-| `user-role-service` | `ordella-physio-user-role-service` | `ordella-physio-user-role-service:latest` | 3068 |
-| `staff-service` | `ordella-physio-staff-service` | `ordella-physio-staff-service:latest` | 3069 |
-| `audit-service` | `ordella-physio-audit-service` | `ordella-physio-audit-service:latest` | 3070 |
-| `file-storage-service` | `ordella-physio-file-storage-service` | `ordella-physio-file-storage-service:latest` | 3071 |
-| `notification-provider-service` | `ordella-physio-notification-provider-service` | `ordella-physio-notification-provider-service:latest` | 3072 |
-| `reporting-service` | `ordella-physio-reporting-service` | `ordella-physio-reporting-service:latest` | 3059 |
-| `pharmacy-service` | `ordella-physio-pharmacy-service` | `ordella-physio-pharmacy-service:latest` | 3085 |
-
-### Commented out in dev (enable manually in compose)
-
-| Service | Notes |
-|---------|-------|
-| `search-index-service` | Uncomment block in `docker-compose.dev.yml` |
+Regenerate compose from templates: `node scripts/docker/sync-compose.mjs`.
 
 ### Not in dev compose (only in full stack)
 
-`payment-service`, `communication-service`, all `ai-*` services, `event-bus-service`, `auth-service` (dev uses `core-service` instead), observability, Traefik.
+`payment-service`, `communication-service`, all `ai-*` services, `event-bus-service`, `auth-service` (dev uses `core-service` instead), observability, Traefik, `search-index-service` (commented in dev template).
 
 Gateway env still lists URLs for payment/communication; those routes 502 until the services are added or full stack is used.
 
@@ -124,9 +102,9 @@ Gateway env still lists URLs for payment/communication; those routes 502 until t
 
 | Compose service | Container name | Image | Host port |
 |-----------------|----------------|-------|-----------|
-| `clinic-backend-db` | `ordella-clinic-backend-db` | `postgres:16-alpine` | 5434 |
-| `clinic-backend` | `ordella-clinic-backend` | `ordella-clinic-backend:latest` | 4000 |
-| `clinic-backend-backup-cron` | `ordella-clinic-backend-backup-cron` | `node:22-alpine` | — |
+| `clinic-backend-db` | `ordella-physio-clinic-backend-db` | `postgres:16-alpine` | 5434 |
+| `clinic-backend` | `ordella-physio-clinic-backend` | `ordella-physio-clinic-backend:dev` | 4000 |
+| `clinic-backend-backup-cron` | `ordella-physio-clinic-backend-backup-cron` | `node:22-alpine` | — |
 
 ```powershell
 docker compose -f docker-compose.dev.yml --profile clinic-backend up -d clinic-backend-db clinic-backend
@@ -531,7 +509,7 @@ docker compose -f docker-compose.dev.yml up -d --force-recreate core-service fro
 | Test before save | **Test key before save** on the add-profile form |
 | API (super admin) | `POST /auth/platform/integrations/address-lookup/:id/test` or `POST .../address-lookup/test` with `{ vendor, apiKey }` |
 
-Tests run a lightweight Ireland address search against the vendor API and return connected / not connected with a message. Results are not stored in the database.
+Tests run a lightweight Ireland address search against the vendor API and return connected / not connected with a message. Results for saved profiles are stored on the integration record (`metadata.connectionTest`) and shown after refresh.
 
 ### Optional env fallback (local dev only)
 

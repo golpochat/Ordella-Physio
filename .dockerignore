@@ -1,4 +1,6 @@
-# Workspace additional_context — exclude non-workspace artifacts
+# Workspace additional_context — exclude service/app sources and host artifacts
+apps
+services
 deploy
 infrastructure
 docs

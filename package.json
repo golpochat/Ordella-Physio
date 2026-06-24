@@ -20,7 +20,9 @@
     "stripe:wire-local": "node infrastructure/developer-tooling-layer/scripts/wire-stripe-local.mjs",
     "clean": "turbo run clean && rimraf node_modules",
     "db:migrate:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs",
-    "db:seed:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs --skip-migrate"
+    "db:seed:local": "node infrastructure/deployment-layer/scripts/migrate-local-databases.mjs --skip-migrate",
+    "docker:sync-compose": "node scripts/docker/sync-compose.mjs",
+    "docker:sync-dockerfiles-slim": "node scripts/docker/sync-dockerfiles-slim.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
